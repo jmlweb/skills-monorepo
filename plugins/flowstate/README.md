@@ -32,7 +32,7 @@ Flowstate adds a structured, file-based backlog to any project. Everything lives
 
 ```bash
 # From the marketplace (recommended)
-claude plugin marketplace add jmlweb/claude-plugins
+claude plugin marketplace add jmlweb/skills-monorepo
 claude plugin install flowstate@jmlweb
 ```
 
@@ -62,7 +62,7 @@ That's it. You're managing a backlog. 🎉
 <summary><strong>🏪 Marketplace (recommended)</strong></summary>
 
 ```bash
-claude plugin marketplace add jmlweb/claude-plugins
+claude plugin marketplace add jmlweb/skills-monorepo
 claude plugin install flowstate@jmlweb
 ```
 
@@ -75,7 +75,7 @@ Add the marketplace to your project's `.claude/settings.json` so everyone has ac
 
 ```json
 {
-  "extraKnownMarketplaces": ["jmlweb/claude-plugins"]
+  "extraKnownMarketplaces": ["jmlweb/skills-monorepo"]
 }
 ```
 
@@ -93,13 +93,15 @@ claude plugin install flowstate@jmlweb
 No build step needed — `dist/` ships pre-built.
 
 ```bash
-git clone https://github.com/jmlweb/flowstate-skill.git ~/.claude/plugins/flowstate
+git clone https://github.com/jmlweb/skills-monorepo.git
+# then point Claude Code at the plugin subdirectory:
+claude --plugin-dir ./skills-monorepo/plugins/flowstate
 ```
 
 Or as a submodule:
 
 ```bash
-git submodule add https://github.com/jmlweb/flowstate-skill.git .claude/plugins/flowstate
+git submodule add https://github.com/jmlweb/skills-monorepo.git .claude/skills-monorepo
 ```
 
 </details>

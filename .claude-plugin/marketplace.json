@@ -12,13 +12,13 @@
     {
       "name": "flowstate",
       "source": "./plugins/flowstate",
-      "description": "Backlog management for Claude Code — tasks, plans, reports, and learnings, all in plain files.",
+      "description": "Backlog management for Claude Code — tasks, ideas, reports, and learnings, all in plain files.",
       "version": "2.2.1",
       "keywords": [
         "backlog",
         "tasks",
         "project-management",
-        "plans",
+        "ideas",
         "reports",
         "learnings"
       ]
