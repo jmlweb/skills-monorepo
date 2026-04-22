@@ -23,7 +23,17 @@ jq --arg v "$VERSION" '.version = $v' "$PLUGIN" > "$TMP" && mv "$TMP" "$PLUGIN"
 SKILL="$ROOT/SKILL.md"
 sed -i "s/^version: .*/version: $VERSION/" "$SKILL"
 
+# 5. Sync to marketplace.json
+MONO_ROOT="$(cd "$ROOT/../.." && pwd)"
+node "$MONO_ROOT/scripts/version-sync.js"
+
 echo "Bumped to $VERSION"
 echo "  - package.json"
 echo "  - .claude-plugin/plugin.json"
 echo "  - SKILL.md"
+echo "  - .claude-plugin/marketplace.json"
+echo ""
+echo "To release:"
+echo "  git add -A && git commit -m \"chore: release flowstate v$VERSION\""
+echo "  git tag plugins/flowstate/v$VERSION"
+echo "  git push && git push --tags"

@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "plugins/*/v*"
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Parse tag
+        id: tag
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PLUGIN=$(echo "$TAG" | cut -d'/' -f2)
+          VERSION=$(echo "$TAG" | cut -d'/' -f3)
+          echo "plugin=$PLUGIN" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          PREV_TAG=$(git tag --sort=-version:refname | grep "plugins/$PLUGIN/" | sed -n '2p')
+          echo "prev_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES_FLAG=""
+          if [ -n "${{ steps.tag.outputs.prev_tag }}" ]; then
+            NOTES_FLAG="--notes-start-tag ${{ steps.tag.outputs.prev_tag }}"
+          fi
+          gh release create "${{ github.ref_name }}" \
+            --title "${{ steps.tag.outputs.plugin }} ${{ steps.tag.outputs.version }}" \
+            --generate-notes \
+            $NOTES_FLAG

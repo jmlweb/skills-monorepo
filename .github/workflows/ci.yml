@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    tags-ignore: ["**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Check dist is up-to-date
+        run: |
+          if ! git diff --exit-code -- '*/dist/**'; then
+            echo ""
+            echo "ERROR: dist/ is out of date."
+            echo "Run 'pnpm build' locally and commit the result."
+            exit 1
+          fi
+
+      - name: Check version sync
+        run: |
+          pnpm version:sync
+          if ! git diff --exit-code -- '.claude-plugin/marketplace.json'; then
+            echo ""
+            echo "ERROR: marketplace.json is out of sync."
+            echo "Run 'pnpm version:sync' locally and commit the result."
+            exit 1
+          fi
