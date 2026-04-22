@@ -49,4 +49,28 @@ scripts/              # Monorepo scripts (version-sync, etc.)
 - **Zero runtime dependencies** per plugin — only devDependencies allowed
 - **ESM only** — all packages use `"type": "module"`
 - **Version sync** — `plugin.json` version must match `marketplace.json` version (enforced by `version:sync`)
+- For plugins with relative paths, set `version` in the marketplace entry, not in `plugin.json`
 - Shared TypeScript config lives in `packages/shared-config/tsconfig.base.json`
+
+## Validation
+
+Before publishing or opening a PR, validate the marketplace:
+
+```bash
+claude plugin validate .
+# or inside Claude Code:
+/plugin validate .
+```
+
+## Plugin Authoring Notes
+
+- **`${CLAUDE_PLUGIN_ROOT}`** — use in hooks and MCP server configs to reference files inside the plugin's install directory (copied to cache on install)
+- **`${CLAUDE_PLUGIN_DATA}`** — use for persistent data that must survive plugin updates
+- **`strict` mode** (default: `true`) — `plugin.json` is the authority for component definitions; marketplace entry can only add on top. Set to `false` to let the marketplace entry define everything
+- **`metadata.pluginRoot`** in `marketplace.json` — base directory prepended to relative plugin sources (e.g. `"./plugins"` lets you write `"source": "my-plugin"` instead of `"source": "./plugins/my-plugin"`)
+
+## References
+
+- [Plugin Marketplaces](https://code.claude.com/docs/es/plugin-marketplaces) — full schema, sources, strict mode, validation
+- [Plugins Reference](https://code.claude.com/docs/es/plugins-reference) — plugin.json schema, `${CLAUDE_PLUGIN_ROOT}`, caching
+- [Skill Creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md) — how to write, evaluate and optimize SKILL.md files (progressive disclosure, description triggering, evals)
