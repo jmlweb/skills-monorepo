@@ -71,11 +71,24 @@ git status
 
 ## Security
 
-**NEVER commit**: `.env*`, `credentials.json`, `secrets.json`, `*.pem`, `*.key`, `*.crt`, SSH keys (`id_rsa*`, `id_ed25519*`), `.npmrc`/`.yarnrc` (may contain tokens), any file with `API_KEY`, `SECRET`, or `PASSWORD` in the name.
+Run the deterministic scanner over staged changes instead of eyeballing patterns:
 
-**Scan staged content for**: `sk_live_`, `AIza`, `ghp_`, `npm_`, hardcoded passwords and connection strings.
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" scan-secrets --json true
+```
 
-If a flagged file is staged, warn the user and require explicit confirmation before committing.
+Exit codes:
+
+- `0` — clean, proceed
+- `1` — findings detected; show them to the user and require explicit confirmation before committing
+- `2` — scanner error (not a git repo, git unavailable); report and stop
+
+The scanner covers:
+
+- **Sensitive filenames**: `.env*`, `credentials.json`, `secrets.json`, `*.pem`/`*.key`/`*.crt`/`*.p12`/`*.pfx`, SSH keys (`id_rsa*`, `id_ed25519*`, `id_dsa*`, `id_ecdsa*`), `.npmrc`/`.yarnrc`, any filename containing `api_key`/`secret`/`password`/`passwd`.
+- **Content patterns in added lines**: Stripe keys (`sk_live_`, `rk_live_`), Google API keys (`AIza…`), GitHub tokens (`ghp_`/`ghs_`/`gho_`/`ghu_`/`ghr_`), npm tokens (`npm_`), AWS access keys (`AKIA…`/`ASIA…`), Slack tokens (`xox[abprs]-…`), PEM private-key blocks, DB connection strings with credentials, and hardcoded password assignments.
+
+When any finding appears, surface the file + line + pattern name to the user verbatim. Do NOT proceed until they explicitly confirm (or they unstage/redact).
 
 ## Error Handling
 

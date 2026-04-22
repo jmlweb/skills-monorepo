@@ -3,8 +3,20 @@
   "version": "1.0.2",
   "description": "Developer workflow tools for Claude Code",
   "type": "module",
+  "bin": {
+    "dev-workflow": "./dist/bin/dev-workflow.js"
+  },
   "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
     "bump": "bash ../../scripts/bump-plugin.sh dev-workflow"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
   },
   "keywords": [
     "claude-code",
