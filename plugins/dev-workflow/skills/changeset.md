@@ -81,10 +81,6 @@ If not provided via argument:
 
 ```text
 type(scope): description
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 ## 8. Create Commit
