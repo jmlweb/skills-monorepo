@@ -33,3 +33,7 @@ export function getStagedDiff(cwd) {
         "--diff-filter=AM",
     ]);
 }
+export function getCurrentBranch(cwd) {
+    const out = runGit(cwd, ["rev-parse", "--abbrev-ref", "HEAD"]).trim();
+    return out === "HEAD" ? "" : out;
+}

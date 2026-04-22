@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-import { getStagedDiff, getStagedFiles } from "../core/git.js";
+import { getCurrentBranch, getStagedDiff, getStagedFiles, } from "../core/git.js";
 import { scanSecrets } from "../commands/scan-secrets.js";
+import { detectScope, readPackageNameFromDisk, } from "../commands/detect-scope.js";
 const EXIT_CLEAN = 0;
 const EXIT_FINDINGS = 1;
 const EXIT_ERROR = 2;
@@ -40,7 +41,7 @@ function printHuman(findings) {
 async function main() {
     const [command, ...rest] = process.argv.slice(2);
     if (!command || command === "--help" || command === "-h") {
-        console.error("Usage: dev-workflow <command> [flags]\n\nCommands:\n  scan-secrets   Scan staged changes for secrets and sensitive files");
+        console.error("Usage: dev-workflow <command> [flags]\n\nCommands:\n  scan-secrets   Scan staged changes for secrets and sensitive files\n  detect-scope   Suggest a Conventional Commits scope from staged files and branch");
         return command ? EXIT_CLEAN : EXIT_ERROR;
     }
     const flags = parseFlags(rest);
@@ -57,6 +58,23 @@ async function main() {
                     printHuman(result.findings);
                 }
                 return result.findings.length > 0 ? EXIT_FINDINGS : EXIT_CLEAN;
+            }
+            case "detect-scope": {
+                const files = flags["files"]
+                    ? flags["files"]
+                        .split(",")
+                        .map((f) => f.trim())
+                        .filter(Boolean)
+                    : getStagedFiles(cwd);
+                const branch = flags["branch"] ?? getCurrentBranch(cwd);
+                const result = detectScope(files, branch, (ws, dir) => readPackageNameFromDisk(cwd, ws, dir));
+                if (json) {
+                    console.log(JSON.stringify(result, null, 2));
+                }
+                else if (result.suggested) {
+                    console.log(result.suggested);
+                }
+                return EXIT_CLEAN;
             }
             default:
                 console.error(`Unknown command: ${command}`);

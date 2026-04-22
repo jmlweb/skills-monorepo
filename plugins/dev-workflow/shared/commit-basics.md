@@ -47,11 +47,31 @@ Rules for the description:
 
 ### Scope Detection
 
-- `apps/{name}/` → `{name}`
-- `packages/{name}/` → short package name from `package.json`
-- Branch `feature/auth-flow` → `auth`
-- 3+ scopes → omit scope
-- 2 scopes → pick the most significant or list both
+Run the deterministic detector instead of applying the rules by hand:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" detect-scope --json true
+```
+
+Output:
+
+```json
+{ "scopes": ["dev-workflow"], "suggested": "dev-workflow", "source": "files" }
+```
+
+- `suggested` is the ready-to-use scope string. Use it verbatim after `type(...)`. When it is `null`, omit the scope.
+- `source` is `files` (derived from staged paths), `branch` (fallback), or `none`.
+- `scopes` is the full deduped list if you need to inspect it.
+
+Rules the detector applies (for reference — no need to re-implement):
+
+- `apps/{X}/...` → `X`
+- `packages/{X}/...` and `plugins/{X}/...` → short name from that package's `package.json` (falls back to `X` if unreadable)
+- 2 scopes → joined by `,`
+- 3+ scopes → `suggested` is `null` (omit scope)
+- No workspace files → falls back to the current branch: strips known prefixes (`feature/`, `fix/`, `chore/`, `task/`, …), preserves `PROJ-123`-style task IDs, otherwise takes the first hyphen-separated word. Excludes `main`/`master`/`develop`/`dev`/`trunk`.
+
+You can override the inputs with `--files a,b,c` and `--branch name` if you need to dry-run against a hypothetical set.
 
 ## Commit Execution (HEREDOC)
 
