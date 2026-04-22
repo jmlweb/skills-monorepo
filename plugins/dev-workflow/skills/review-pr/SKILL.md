@@ -1,4 +1,5 @@
 ---
+name: review-pr
 argument-hint: [PR number or URL]
 description: Comprehensive PR review using specialized agents
 model: sonnet

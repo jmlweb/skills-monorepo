@@ -1,4 +1,5 @@
 ---
+name: changeset
 argument-hint: [commit message]
 description: Generate changeset for modified packages and create git commit
 model: sonnet

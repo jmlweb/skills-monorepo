@@ -1,4 +1,5 @@
 ---
+name: check-docs
 argument-hint: [path or scope]
 description: Validate and update project documentation and agent instructions
 model: sonnet

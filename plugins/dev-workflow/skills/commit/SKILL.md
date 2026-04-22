@@ -1,4 +1,5 @@
 ---
+name: commit
 argument-hint: [commit message]
 description: Create git commit following Conventional Commits
 model: sonnet
