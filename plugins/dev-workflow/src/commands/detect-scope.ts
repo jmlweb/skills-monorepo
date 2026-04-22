@@ -1,5 +1,4 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readPackageInfo } from "../core/packages.js";
 
 export type ScopeSource = "files" | "branch" | "none";
 
@@ -122,16 +121,7 @@ export function readPackageNameFromDisk(
   workspaceDir: string,
   dirName: string,
 ): string | null {
-  try {
-    const pkgPath = join(cwd, workspaceDir, dirName, "package.json");
-    const contents = readFileSync(pkgPath, "utf-8");
-    const json = JSON.parse(contents) as { name?: unknown };
-    if (typeof json.name !== "string" || !json.name) return null;
-    const slash = json.name.lastIndexOf("/");
-    return slash === -1 ? json.name : json.name.slice(slash + 1);
-  } catch {
-    return null;
-  }
+  return readPackageInfo(cwd, `${workspaceDir}/${dirName}`)?.shortName ?? null;
 }
 
 function stripBranchPrefix(branch: string): string {

@@ -30,11 +30,13 @@ Follow `shared/commit-basics.md` → *Pre-commit Analysis* and *Validate Staged 
 
 ## 2. Detect Modified Packages
 
+Use the deterministic CLI instead of parsing `git diff` by hand:
+
 ```bash
-git diff --staged --name-only | grep '^packages/' | cut -d'/' -f2 | sort -u
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" detect-packages --json true
 ```
 
-For nested structures, walk up to find `package.json`. Read each to get the package name. Skip private packages.
+Returns `{ packages: [{ name, shortName, private, dir }, …] }`. Private packages are filtered out by default; pass `--include-private true` if you ever need them. If the returned list is empty, stop — there is nothing to version.
 
 ## 3. Determine Change Type
 
@@ -48,7 +50,15 @@ Default to `patch`.
 
 ## 4. Generate Changeset File
 
-**Location**: `.changeset/<adjective-noun-verb>.md`
+Get an unused filename from the CLI (it checks `.changeset/` for collisions):
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" changeset-name
+```
+
+Prints the full relative path, e.g. `.changeset/brave-cats-dance.md`. Use `--json true` if you need structured output, or `--dir <path>` to target a non-standard directory.
+
+Write the file with the frontmatter and description:
 
 ```markdown
 ---
@@ -57,12 +67,6 @@ Default to `patch`.
 
 Brief description of what changed and why.
 ```
-
-**Name generator** — combine one from each group:
-
-- adjective: `brave`, `calm`, `cool`, `fast`, `happy`, `kind`, `loud`, `nice`, `quick`, `warm`, `wild`, `wise`
-- noun: `ants`, `bees`, `cats`, `dogs`, `eels`, `fish`, `goats`, `hawks`, `jays`, `lions`
-- verb: `dance`, `fly`, `grow`, `hide`, `jump`, `kick`, `leap`, `march`, `play`, `rest`, `sing`, `walk`
 
 ## 5. Draft Commit Message
 

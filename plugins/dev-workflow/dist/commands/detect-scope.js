@@ -1,5 +1,4 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readPackageInfo } from "../core/packages.js";
 const WORKSPACE_DIRS = ["apps", "packages", "plugins"];
 const BRANCH_PREFIXES = [
     "feature",
@@ -81,18 +80,7 @@ export function detectScope(files, branch, readPackageName) {
     return { scopes: [], suggested: null, source: "none" };
 }
 export function readPackageNameFromDisk(cwd, workspaceDir, dirName) {
-    try {
-        const pkgPath = join(cwd, workspaceDir, dirName, "package.json");
-        const contents = readFileSync(pkgPath, "utf-8");
-        const json = JSON.parse(contents);
-        if (typeof json.name !== "string" || !json.name)
-            return null;
-        const slash = json.name.lastIndexOf("/");
-        return slash === -1 ? json.name : json.name.slice(slash + 1);
-    }
-    catch {
-        return null;
-    }
+    return readPackageInfo(cwd, `${workspaceDir}/${dirName}`)?.shortName ?? null;
 }
 function stripBranchPrefix(branch) {
     for (const prefix of BRANCH_PREFIXES) {

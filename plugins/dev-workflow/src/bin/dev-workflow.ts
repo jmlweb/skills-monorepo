@@ -10,6 +10,12 @@ import {
   detectScope,
   readPackageNameFromDisk,
 } from "../commands/detect-scope.js";
+import { detectPackages } from "../commands/detect-packages.js";
+import {
+  generateUniqueChangesetName,
+  listChangesetNames,
+} from "../commands/changeset-name.js";
+import { readPackageInfo } from "../core/packages.js";
 
 const EXIT_CLEAN = 0;
 const EXIT_FINDINGS = 1;
@@ -54,7 +60,15 @@ async function main(): Promise<number> {
 
   if (!command || command === "--help" || command === "-h") {
     console.error(
-      "Usage: dev-workflow <command> [flags]\n\nCommands:\n  scan-secrets   Scan staged changes for secrets and sensitive files\n  detect-scope   Suggest a Conventional Commits scope from staged files and branch",
+      [
+        "Usage: dev-workflow <command> [flags]",
+        "",
+        "Commands:",
+        "  scan-secrets     Scan staged changes for secrets and sensitive files",
+        "  detect-scope     Suggest a Conventional Commits scope from staged files and branch",
+        "  detect-packages  List workspace packages touched by staged files",
+        "  changeset-name   Generate an unused adjective-noun-verb name for .changeset/",
+      ].join("\n"),
     );
     return command ? EXIT_CLEAN : EXIT_ERROR;
   }
@@ -89,6 +103,40 @@ async function main(): Promise<number> {
           console.log(JSON.stringify(result, null, 2));
         } else if (result.suggested) {
           console.log(result.suggested);
+        }
+        return EXIT_CLEAN;
+      }
+      case "detect-packages": {
+        const files = flags["files"]
+          ? flags["files"]
+              .split(",")
+              .map((f) => f.trim())
+              .filter(Boolean)
+          : getStagedFiles(cwd);
+        const includePrivate = flags["include-private"] === "true";
+        const packages = detectPackages(
+          files,
+          (relDir) => readPackageInfo(cwd, relDir),
+          { includePrivate },
+        );
+        if (json) {
+          console.log(JSON.stringify({ packages }, null, 2));
+        } else {
+          for (const p of packages) {
+            console.log(p.name);
+          }
+        }
+        return EXIT_CLEAN;
+      }
+      case "changeset-name": {
+        const dir = flags["dir"] ?? ".changeset";
+        const existing = listChangesetNames(cwd, dir);
+        const name = generateUniqueChangesetName((n) => !existing.has(n));
+        const path = `${dir}/${name}.md`;
+        if (json) {
+          console.log(JSON.stringify({ name, path }, null, 2));
+        } else {
+          console.log(path);
         }
         return EXIT_CLEAN;
       }
