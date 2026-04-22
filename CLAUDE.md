@@ -43,9 +43,32 @@ scripts/              # Monorepo scripts (version-sync, etc.)
 2. Add an entry to `.claude-plugin/marketplace.json` with `"source": "./plugins/<name>"`
 3. Run `pnpm version:sync` to verify versions match
 
+## Releasing a Plugin
+
+To cut a new release for a plugin (e.g. `flowstate`):
+
+```bash
+# 1. Bump version — updates package.json, plugin.json, SKILL.md, marketplace.json
+cd plugins/flowstate
+pnpm bump patch   # or: minor | major | x.y.z
+
+# 2. Commit and tag (exact commands are printed by the bump script)
+cd ../..
+git add -A
+git commit -m "chore: release flowstate v<VERSION>"
+git tag plugins/flowstate/v<VERSION>
+git push && git push --tags
+```
+
+Pushing the tag triggers `.github/workflows/release.yml`, which creates a GitHub Release automatically.
+
+**Tag convention:** `plugins/<name>/v<semver>` — e.g. `plugins/flowstate/v2.3.0`
+
+**Note:** `dist/` is rebuilt and staged automatically by the pre-commit hook whenever `src/` changes are committed. You do not need to run `pnpm build` or `git add dist/` manually.
+
 ## Key Constraints
 
-- **`dist/` must be committed** — Claude Code clones the repo and does not run build steps
+- **`dist/` must be committed** — Claude Code clones the repo and does not run build steps. The pre-commit hook handles this automatically when `src/` changes are staged.
 - **Zero runtime dependencies** per plugin — only devDependencies allowed
 - **ESM only** — all packages use `"type": "module"`
 - **Version sync** — `plugin.json` version must match `marketplace.json` version (enforced by `version:sync`)
