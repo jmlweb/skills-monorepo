@@ -1,8 +1,11 @@
 {
   "name": "@jmlweb/dev-workflow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Developer workflow tools for Claude Code",
   "type": "module",
+  "scripts": {
+    "bump": "./scripts/bump-version.sh"
+  },
   "keywords": [
     "claude-code",
     "claude-code-plugin",
