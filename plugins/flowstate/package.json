@@ -1,0 +1,40 @@
+{
+  "name": "@flowstate/cli",
+  "version": "2.2.1",
+  "description": "Deterministic CLI for flowstate backlog management",
+  "type": "module",
+  "bin": {
+    "flowstate": "./dist/bin/flowstate.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "bump": "./scripts/bump-version.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "backlog",
+    "task-management",
+    "markdown",
+    "cli"
+  ],
+  "author": "jmlweb (https://github.com/jmlweb)",
+  "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/flowstate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmlweb/skills-monorepo.git",
+    "directory": "plugins/flowstate"
+  },
+  "bugs": {
+    "url": "https://github.com/jmlweb/skills-monorepo/issues"
+  },
+  "license": "MIT"
+}

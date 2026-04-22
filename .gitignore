@@ -1,0 +1,18 @@
+# System
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+
+# Turbo
+.turbo/
+
+# Claude Code local settings
+.claude/settings.local.json

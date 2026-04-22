@@ -1,0 +1,27 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "jmlweb",
+  "owner": {
+    "name": "jmlweb",
+    "email": "josemanuel@jmlweb.es"
+  },
+  "metadata": {
+    "description": "Claude Code plugins by jmlweb"
+  },
+  "plugins": [
+    {
+      "name": "flowstate",
+      "source": "./plugins/flowstate",
+      "description": "Backlog management for Claude Code — tasks, plans, reports, and learnings, all in plain files.",
+      "version": "2.2.1",
+      "keywords": [
+        "backlog",
+        "tasks",
+        "project-management",
+        "plans",
+        "reports",
+        "learnings"
+      ]
+    }
+  ]
+}

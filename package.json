@@ -1,0 +1,16 @@
+{
+  "name": "@jmlweb/skills-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.26.2",
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "version:sync": "node scripts/version-sync.js"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
+}

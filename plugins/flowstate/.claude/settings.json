@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "flowstate@jmlweb": true,
+    "skill-creator@claude-plugins-official": true
+  }
+}

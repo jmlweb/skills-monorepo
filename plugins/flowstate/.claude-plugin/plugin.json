@@ -1,0 +1,21 @@
+{
+  "name": "flowstate",
+  "description": "Generic backlog management system. Manage tasks, ideas, reports, and learnings for any project via .backlog/ directory.",
+  "version": "2.2.1",
+  "author": {
+    "name": "jmlweb",
+    "url": "https://github.com/jmlweb"
+  },
+  "repository": "https://github.com/jmlweb/skills-monorepo",
+  "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/flowstate",
+  "license": "MIT",
+  "keywords": [
+    "backlog",
+    "tasks",
+    "project-management",
+    "ideas",
+    "reports",
+    "learnings"
+  ],
+  "skills": "./skills/"
+}
