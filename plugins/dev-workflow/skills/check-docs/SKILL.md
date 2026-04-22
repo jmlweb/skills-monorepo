@@ -1,7 +1,8 @@
 ---
 name: check-docs
 argument-hint: [path or scope]
-description: Validate and update project documentation and agent instructions
+description: Audit markdown documentation and agent instructions (README, CLAUDE.md, AGENTS.md) for freshness, formatting, and consistency. Use when the user says "check docs", "audit documentation", "are the docs up to date?", after significant code changes that may have staled the docs, or before a release. Auto-fixes safe issues (missing code-fence language, trailing whitespace, version drift) and asks before content changes. Monorepo-aware.
+allowed-tools: Read, Edit, Write, Grep, Glob, Task, Bash(git:*), Bash(find:*), Bash(test:*)
 model: sonnet
 ---
 
@@ -21,7 +22,6 @@ Audit and fix project documentation, ensuring it follows standards and agent ins
 Before proceeding, verify:
 1. Is it a git repo? Check for `.git/` directory
 2. Do standard paths exist? (CLAUDE.md, AGENTS.md)
-3. Is markdownlint available?
 
 If critical files don't exist, report clearly and continue with available files.
 
@@ -29,7 +29,6 @@ If critical files don't exist, report clearly and continue with available files.
 
 1. Read project documentation rules from: AGENTS.md, .claude/CLAUDE.md, CONTRIBUTING.md, docs/STYLE_GUIDE.md
 2. Reference global `~/.claude/CLAUDE.md` for markdown formatting rules, comment policy, language requirements
-3. Check for markdownlint configuration
 
 ### Phase 2: Inventory Documentation Files
 
@@ -49,9 +48,8 @@ For `.claude/` files:
 
 ### Phase 4: Validate General Documentation
 
-1. Run markdownlint if available
-2. Check format: code blocks have language, H1 first line, no duplicate headings, proper tables
-3. Check content: links work, examples match API, instructions valid, versions current
+1. Check format: code blocks have language, H1 first line, no duplicate headings, proper tables
+2. Check content: links work, examples match API, instructions valid, versions current
 
 ### Phase 5: Generate Report and Fix
 
@@ -93,6 +91,5 @@ Use `--dry-run` to preview changes without modifying files.
 
 - Preserve user's intentional formatting
 - Don't add documentation where none existed (unless agent instructions)
-- Respect .markdownlintignore
 - For monorepos, check each package independently
 - When in doubt, report rather than auto-fix

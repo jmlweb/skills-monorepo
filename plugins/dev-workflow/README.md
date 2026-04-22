@@ -100,7 +100,7 @@ Audits markdown files for freshness, formatting issues, and consistency. Fixes w
 | `/commit` | Git |
 | `/changeset` | Git + `.changeset/` directory |
 | `/review-pr` | Git + GitHub CLI (`gh`) |
-| `/check-docs` | Git (markdownlint optional) |
+| `/check-docs` | Git |
 
 ## License
 

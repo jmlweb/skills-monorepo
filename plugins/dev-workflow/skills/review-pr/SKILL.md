@@ -1,7 +1,8 @@
 ---
 name: review-pr
 argument-hint: [PR number or URL]
-description: Comprehensive PR review using specialized agents
+description: Review a GitHub pull request with specialized agents running in parallel (code quality, security, QA, architecture as needed). Use when the user says "review PR", "review this pull request", "/review-pr", pastes a GitHub PR URL, or finishes a branch and wants feedback before merge. Fetches diff via `gh`, checks CI status, produces a structured report with risk matrix and merge recommendation. Requires GitHub CLI authenticated.
+allowed-tools: Read, Write, Grep, Task, Bash(gh:*), Bash(git:*), Bash(command:*)
 model: sonnet
 ---
 
@@ -72,60 +73,7 @@ gh pr checks 123
 
 ## 5. Aggregate Reviews
 
-### Report Template
-
-```markdown
-# PR Review: #{number} - {title}
-
-**Author**: @{author}
-**Branch**: `{headRefName}` → `{baseRefName}`
-**Status**: {state} | **Mergeable**: {mergeable}
-**Size**: {complexity} ({files} files, +{additions}/-{deletions} lines)
-
----
-
-## Summary
-{One paragraph overview}
-
-## Risk Assessment
-**Overall Risk**: 🟢 Low | 🟡 Medium | 🔴 High
-
-| Area | Risk | Reasoning |
-|------|------|-----------|
-| Security | {icon} | {summary} |
-| Quality | {icon} | {summary} |
-| Tests | {icon} | {summary} |
-| Perf | {icon} | {summary} |
-
-## Code Review
-{code-reviewer output}
-
-## Security Review
-{security-reviewer output if applicable}
-
-## Test Coverage
-{qa-engineer output if applicable}
-
-## Architecture
-{architect outputs if applicable}
-
-## CI Checks
-| Check | Status |
-|-------|--------|
-
-## Recommendations
-
-### 🔴 Critical (blocks merge)
-### 🟠 Must Fix (blocks merge)
-### 🟡 Should Fix (before merge recommended)
-### 🟢 Nice to Have (follow-up)
-### ℹ️ Info (no action needed)
-
-## Decision
-- [ ] ✅ **Approve**
-- [ ] 🔄 **Request Changes**
-- [ ] 💬 **Comment**
-```
+Fill in the report template at `assets/report-template.md` with the outputs from every agent that ran, the CI status, and risk assessment.
 
 ## 6. Post Review Actions
 
@@ -139,22 +87,7 @@ gh pr review 123 --comment --body "$(cat review.md)"
 
 ## Review Checklists
 
-### Code Quality
-- Project conventions (AGENTS.md, CLAUDE.md), named exports, functional approach
-- TypeScript strict, no `any`, proper error handling, no console.log in prod
-- Meaningful names, no magic numbers
-
-### Security
-- No secrets in code, input validation, auth checks
-- SQL/XSS/CSRF prevention, secure dependencies
-
-### Testing
-- Unit tests for new logic, integration for APIs, E2E for critical flows
-- Edge cases covered, deterministic, ≥80% coverage for new code
-
-### Performance
-- No unnecessary re-renders, optimized queries, virtualized lists
-- Optimized images, acceptable bundle size, no memory leaks
+See `assets/checklists.md` for the per-area checklists (code quality, security, testing, performance) that agents should apply.
 
 ## Error Handling
 
