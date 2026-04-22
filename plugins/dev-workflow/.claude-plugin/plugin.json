@@ -1,0 +1,21 @@
+{
+  "name": "dev-workflow",
+  "description": "Developer workflow tools for Claude Code: documentation auditing, PR reviews, commits, and task orchestration.",
+  "version": "1.0.0",
+  "author": {
+    "name": "jmlweb",
+    "url": "https://github.com/jmlweb"
+  },
+  "repository": "https://github.com/jmlweb/skills-monorepo",
+  "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/dev-workflow",
+  "license": "MIT",
+  "keywords": [
+    "documentation",
+    "workflow",
+    "git",
+    "commit",
+    "review",
+    "pr"
+  ],
+  "skills": "./skills/"
+}

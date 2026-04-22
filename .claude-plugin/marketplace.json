@@ -1,5 +1,4 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "jmlweb",
   "owner": {
     "name": "jmlweb",
@@ -9,6 +8,20 @@
     "description": "Claude Code plugins by jmlweb"
   },
   "plugins": [
+    {
+      "name": "dev-workflow",
+      "source": "./plugins/dev-workflow",
+      "description": "Developer workflow tools — documentation auditing, PR reviews, commits, and task orchestration.",
+      "version": "1.0.0",
+      "keywords": [
+        "documentation",
+        "workflow",
+        "git",
+        "commit",
+        "review",
+        "pr"
+      ]
+    },
     {
       "name": "flowstate",
       "source": "./plugins/flowstate",

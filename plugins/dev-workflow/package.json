@@ -1,0 +1,26 @@
+{
+  "name": "@jmlweb/dev-workflow",
+  "version": "1.0.0",
+  "description": "Developer workflow tools for Claude Code",
+  "type": "module",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "documentation",
+    "workflow",
+    "git",
+    "commit",
+    "review"
+  ],
+  "author": "jmlweb (https://github.com/jmlweb)",
+  "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/dev-workflow",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmlweb/skills-monorepo.git",
+    "directory": "plugins/dev-workflow"
+  },
+  "bugs": {
+    "url": "https://github.com/jmlweb/skills-monorepo/issues"
+  },
+  "license": "MIT"
+}
