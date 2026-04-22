@@ -21,6 +21,7 @@
 | Plugin | Description | Version | Status |
 |--------|-------------|:-------:|:------:|
 | 🌊 [**flowstate**](./plugins/flowstate/) | Backlog management — tasks, ideas, reports & learnings in plain markdown | `2.2.1` | ✅ Stable |
+| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, and doc audits | `1.0.2` | ✅ Stable |
 
 > 🔭 More plugins coming soon. Contributions welcome!
 
@@ -68,16 +69,20 @@ pnpm version:sync   # Sync plugin.json versions → marketplace.json
 
 ### Repository structure
 
-```
+```text
 .claude-plugin/           # Root marketplace definition
 plugins/
-└── flowstate/            # Plugin source code
-    ├── .claude-plugin/   # Plugin manifest (plugin.json) + hooks
+├── flowstate/            # Backlog management plugin
+│   ├── .claude-plugin/   # Plugin manifest (plugin.json) + hooks
+│   ├── skills/           # Slash command definitions (*.md)
+│   ├── src/              # TypeScript source
+│   │   ├── commands/     # CLI command implementations
+│   │   └── core/         # Shared modules (fs, paths, id, markdown…)
+│   ├── dist/             # ⚠️ Pre-built — must be committed
+│   └── package.json
+└── dev-workflow/         # Developer workflow plugin
+    ├── .claude-plugin/   # Plugin manifest
     ├── skills/           # Slash command definitions (*.md)
-    ├── src/              # TypeScript source
-    │   ├── commands/     # CLI command implementations
-    │   └── core/         # Shared modules (fs, paths, id, markdown…)
-    ├── dist/             # ⚠️ Pre-built — must be committed
     └── package.json
 packages/
 └── shared-config/        # Shared TypeScript base config

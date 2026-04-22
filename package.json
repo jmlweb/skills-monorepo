@@ -7,7 +7,8 @@
   "scripts": {
     "postinstall": "simple-git-hooks",
     "build": "turbo run build",
-    "test": "turbo run test",
+    "test": "turbo run test && pnpm test:scripts",
+    "test:scripts": "node --test scripts/*.test.mjs",
     "typecheck": "turbo run typecheck",
     "version:sync": "node scripts/version-sync.js"
   },

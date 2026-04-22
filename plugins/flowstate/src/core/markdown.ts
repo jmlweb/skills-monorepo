@@ -56,6 +56,21 @@ export function appendToSection(
   return lines.join("\n");
 }
 
+export function hasSection(content: string, heading: string): boolean {
+  const headingPattern = new RegExp(`^##\\s+${escapeRegex(heading)}\\s*$`);
+  return content.split("\n").some((line) => headingPattern.test(line));
+}
+
+export function appendToBody(body: string, entry: string): string {
+  const lines = body.split("\n");
+  let insertIndex = lines.length;
+  while (insertIndex > 0 && lines[insertIndex - 1]!.trim() === "") {
+    insertIndex--;
+  }
+  lines.splice(insertIndex, 0, entry);
+  return lines.join("\n");
+}
+
 export function addTableRow(
   content: string,
   heading: string,

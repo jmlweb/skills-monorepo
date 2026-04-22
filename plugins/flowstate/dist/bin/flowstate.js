@@ -20,6 +20,31 @@ import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
 import { findBacklogRoot } from "../core/paths.js";
+import { InvalidArgumentError } from "../core/errors.js";
+const VALID_ENTITY_TYPES = new Set([
+    "task",
+    "idea",
+    "report",
+    "learning",
+]);
+const VALID_TASK_STATUSES = new Set([
+    "pending",
+    "active",
+    "blocked",
+    "complete",
+]);
+function asEntityType(value) {
+    if (!VALID_ENTITY_TYPES.has(value)) {
+        throw new InvalidArgumentError(`Invalid entity type: "${value}". Expected: task, idea, report, learning`);
+    }
+    return value;
+}
+function asTaskStatus(value) {
+    if (!VALID_TASK_STATUSES.has(value)) {
+        throw new InvalidArgumentError(`Invalid status: "${value}". Expected: pending, active, blocked, complete`);
+    }
+    return value;
+}
 function parseArgs(args) {
     const flags = {};
     const flagArrays = {};
@@ -86,12 +111,12 @@ async function main() {
                 break;
             }
             case "next-id": {
-                const type = positional[0];
-                if (!type) {
+                const raw = positional[0];
+                if (!raw) {
                     console.error("Usage: flowstate next-id <task|idea|report|learning>");
                     process.exit(1);
                 }
-                const id = await nextId(cwd, type);
+                const id = await nextId(cwd, asEntityType(raw));
                 output({ id }, json);
                 break;
             }
@@ -112,7 +137,7 @@ async function main() {
                 break;
             }
             case "task-list": {
-                const status = flags["status"];
+                const status = flags["status"] ? asTaskStatus(flags["status"]) : undefined;
                 const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
                 const items = await taskList(cwd, status, limit);
                 output(items, json);

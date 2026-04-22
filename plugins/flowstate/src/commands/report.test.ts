@@ -50,4 +50,20 @@ describe("reportMove", () => {
     expect(fm["status"]).toBe("triaged");
     expect(fm["task-id"]).toBe("TSK-001");
   });
+
+  it("moves report to complete/ with discarded status when no task is linked", async () => {
+    const { id } = await reportCreate(tmp, {
+      title: "Duplicate",
+      type: "bug",
+      severity: "low",
+      body: "Already reported elsewhere",
+    });
+
+    const result = await reportMove(tmp, id, "discarded");
+    const doc = await readEntity(result.path);
+    const fm = doc.frontmatter as Record<string, unknown>;
+    expect(fm["status"]).toBe("discarded");
+    expect(fm["task-id"]).toBeUndefined();
+    expect(result.path).toContain("/reports/complete/");
+  });
 });

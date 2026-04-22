@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { ensureDir } from "./fs.js";
 import { backlogRoot, taskDir, ideaDir, reportDir, taskIndexPath, findBacklogRoot } from "./paths.js";
+import { BacklogNotFoundError } from "./errors.js";
 
 describe("paths", () => {
   const cwd = "/project";
@@ -59,7 +60,8 @@ describe("findBacklogRoot", () => {
     expect(findBacklogRoot(sub)).toBe(tmp);
   });
 
-  it("throws when no .backlog/ exists in any ancestor", () => {
+  it("throws BacklogNotFoundError when no .backlog/ exists in any ancestor", () => {
+    expect(() => findBacklogRoot(tmp)).toThrow(BacklogNotFoundError);
     expect(() => findBacklogRoot(tmp)).toThrow(
       /No \.backlog\/ directory found/,
     );

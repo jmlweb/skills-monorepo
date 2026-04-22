@@ -3,7 +3,8 @@ import type { TaskStatus } from "../core/types.js";
 import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity } from "../core/fs.js";
 import { today } from "../core/date.js";
-import { EntityNotFoundError } from "../core/errors.js";
+import { EntityNotFoundError, InvalidArgumentError } from "../core/errors.js";
+import { appendToBody } from "../core/markdown.js";
 
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active", "complete"];
 
@@ -31,7 +32,7 @@ export async function taskUpdate(
   const REJECTED_KEYS = ["status", "blocked-by"];
   for (const key of Object.keys(updates)) {
     if (REJECTED_KEYS.includes(key)) {
-      throw new Error(
+      throw new InvalidArgumentError(
         `Cannot set "${key}" via task-update. Use task-move for status transitions or task-block/task-unblock for blocking.`,
       );
     }
@@ -47,20 +48,9 @@ export async function taskUpdate(
   let body = doc.body;
   if (log) {
     const date = today();
-    const entry = `- [${date}] ${log}`;
-    body = appendToEnd(body, entry);
+    body = appendToBody(body, `- [${date}] ${log}`);
   }
 
   await writeEntity(filePath, fm, body);
   return { path: filePath };
-}
-
-function appendToEnd(body: string, entry: string): string {
-  const lines = body.split("\n");
-  let insertIndex = lines.length;
-  while (insertIndex > 0 && lines[insertIndex - 1]!.trim() === "") {
-    insertIndex--;
-  }
-  lines.splice(insertIndex, 0, entry);
-  return lines.join("\n");
 }

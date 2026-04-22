@@ -3,12 +3,8 @@ import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity, moveFile } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
+import { appendToBody } from "../core/markdown.js";
 import { indexRebuild } from "./index-rebuild.js";
-const STATUS_TO_DIR = {
-    active: "active",
-    complete: "complete",
-    pending: "pending",
-};
 const SEARCH_DIRS = ["pending", "active", "complete"];
 export async function taskMove(cwd, id, to) {
     // Find the task in any directory
@@ -41,32 +37,18 @@ export async function taskMove(cwd, id, to) {
         if (!fm["started"])
             fm["started"] = date;
     }
-    // Add progress log entry
     const actionMap = {
         active: "Started",
         complete: "Completed",
         pending: "Returned to pending",
+        blocked: "Blocked",
     };
-    const logEntry = `- [${date}] ${actionMap[to] ?? to}`;
-    const body = appendProgressLog(doc.body, logEntry);
-    const destDir = taskDir(cwd, STATUS_TO_DIR[to]);
-    const destPath = join(destDir, fileName);
+    const body = appendToBody(doc.body, `- [${date}] ${actionMap[to]}`);
+    const destPath = join(taskDir(cwd, to), fileName);
     await writeEntity(sourcePath, fm, body);
     if (sourcePath !== destPath) {
         await moveFile(sourcePath, destPath);
     }
-    // Rebuild index from filesystem to avoid stale read-modify-write races
     await indexRebuild(cwd, "tasks");
     return { path: destPath };
-}
-function appendProgressLog(body, entry) {
-    const lines = body.split("\n");
-    // Find last non-empty line (progress log entries are at the end)
-    let insertIndex = lines.length;
-    // Just append at end
-    while (insertIndex > 0 && lines[insertIndex - 1].trim() === "") {
-        insertIndex--;
-    }
-    lines.splice(insertIndex, 0, entry);
-    return lines.join("\n");
 }

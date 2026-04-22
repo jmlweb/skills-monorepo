@@ -1,12 +1,13 @@
+import { InvalidArgumentError } from "./errors.js";
 const DELIMITER = "---";
 export function parseFrontmatter(content) {
     const lines = content.split("\n");
     if (lines[0] !== DELIMITER) {
-        throw new Error("Missing frontmatter opening delimiter");
+        throw new InvalidArgumentError("Missing frontmatter opening delimiter");
     }
     const closingIndex = lines.indexOf(DELIMITER, 1);
     if (closingIndex === -1) {
-        throw new Error("Missing frontmatter closing delimiter");
+        throw new InvalidArgumentError("Missing frontmatter closing delimiter");
     }
     const frontmatter = {};
     for (let i = 1; i < closingIndex; i++) {

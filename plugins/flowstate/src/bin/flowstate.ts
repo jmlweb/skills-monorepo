@@ -22,6 +22,39 @@ import { learningUpdate } from "../commands/learning-update.js";
 import type { EntityType, TaskStatus } from "../core/types.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
 import { findBacklogRoot } from "../core/paths.js";
+import { InvalidArgumentError } from "../core/errors.js";
+
+const VALID_ENTITY_TYPES = new Set<EntityType>([
+  "task",
+  "idea",
+  "report",
+  "learning",
+]);
+
+const VALID_TASK_STATUSES = new Set<TaskStatus>([
+  "pending",
+  "active",
+  "blocked",
+  "complete",
+]);
+
+function asEntityType(value: string): EntityType {
+  if (!VALID_ENTITY_TYPES.has(value as EntityType)) {
+    throw new InvalidArgumentError(
+      `Invalid entity type: "${value}". Expected: task, idea, report, learning`,
+    );
+  }
+  return value as EntityType;
+}
+
+function asTaskStatus(value: string): TaskStatus {
+  if (!VALID_TASK_STATUSES.has(value as TaskStatus)) {
+    throw new InvalidArgumentError(
+      `Invalid status: "${value}". Expected: pending, active, blocked, complete`,
+    );
+  }
+  return value as TaskStatus;
+}
 
 function parseArgs(args: readonly string[]): {
   flags: Record<string, string>;
@@ -102,12 +135,12 @@ async function main(): Promise<void> {
       }
 
       case "next-id": {
-        const type = positional[0] as EntityType | undefined;
-        if (!type) {
+        const raw = positional[0];
+        if (!raw) {
           console.error("Usage: flowstate next-id <task|idea|report|learning>");
           process.exit(1);
         }
-        const id = await nextId(cwd, type);
+        const id = await nextId(cwd, asEntityType(raw));
         output({ id }, json);
         break;
       }
@@ -130,7 +163,7 @@ async function main(): Promise<void> {
       }
 
       case "task-list": {
-        const status = flags["status"] as TaskStatus | undefined;
+        const status = flags["status"] ? asTaskStatus(flags["status"]) : undefined;
         const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
         const items = await taskList(cwd, status, limit);
         output(items, json);

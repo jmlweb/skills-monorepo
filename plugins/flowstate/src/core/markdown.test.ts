@@ -5,6 +5,8 @@ import {
   removeTableRow,
   replaceSection,
   updateStatsTable,
+  appendToBody,
+  hasSection,
 } from "./markdown.js";
 
 describe("appendToSection", () => {
@@ -126,5 +128,50 @@ describe("updateStatsTable", () => {
     expect(result).toContain("| Pending | 3 |");
     expect(result).toContain("| Active | 1 |");
     expect(result).toContain("| Complete | 5 |");
+  });
+});
+
+describe("hasSection", () => {
+  it("returns true when the heading is present", () => {
+    expect(hasSection("# Title\n\n## Learnings\n\nContent", "Learnings")).toBe(true);
+  });
+
+  it("returns false when the heading is absent", () => {
+    expect(hasSection("# Title\n\n## Notes\n", "Learnings")).toBe(false);
+  });
+
+  it("does not match substrings of other headings", () => {
+    expect(hasSection("## Learnings extra\n", "Learnings")).toBe(false);
+  });
+});
+
+describe("appendToBody", () => {
+  it("appends an entry to a body without trailing blank lines", () => {
+    const body = "- [2026-04-01] Created";
+    const result = appendToBody(body, "- [2026-04-02] Updated");
+    expect(result).toBe("- [2026-04-01] Created\n- [2026-04-02] Updated");
+  });
+
+  it("inserts before trailing blank lines", () => {
+    const body = "- [2026-04-01] Created\n\n";
+    const result = appendToBody(body, "- [2026-04-02] Updated");
+    expect(result).toBe("- [2026-04-01] Created\n- [2026-04-02] Updated\n\n");
+  });
+
+  it("handles multiple trailing blank lines", () => {
+    const body = "- first\n\n\n";
+    const result = appendToBody(body, "- second");
+    expect(result).toBe("- first\n- second\n\n\n");
+  });
+
+  it("handles an empty body", () => {
+    const result = appendToBody("", "- entry");
+    expect(result).toBe("- entry\n");
+  });
+
+  it("preserves non-trailing blank lines inside the body", () => {
+    const body = "## Heading\n\nParagraph\n\n- item";
+    const result = appendToBody(body, "- another");
+    expect(result).toBe("## Heading\n\nParagraph\n\n- item\n- another");
   });
 });

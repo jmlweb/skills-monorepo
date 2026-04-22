@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "bump": "./scripts/bump-version.sh"
+    "bump": "bash ../../scripts/bump-plugin.sh flowstate"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

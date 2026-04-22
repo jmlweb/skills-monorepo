@@ -168,6 +168,38 @@ describe("CLI integration", () => {
     expect(items).toHaveLength(1);
   });
 
+  it("rejects an invalid entity type for next-id", () => {
+    run("setup", "--project-name", "IntTest");
+    try {
+      execFileSync("node", [CLI, "next-id", "bogus"], {
+        cwd: tmp,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect.unreachable("should have thrown");
+    } catch (err) {
+      const error = err as { status: number; stderr: string };
+      expect(error.status).toBe(1);
+      expect(error.stderr.toString()).toMatch(/task.*idea.*report.*learning/i);
+    }
+  });
+
+  it("rejects an invalid status for task-list", () => {
+    run("setup", "--project-name", "IntTest");
+    try {
+      execFileSync("node", [CLI, "task-list", "--status", "foo"], {
+        cwd: tmp,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect.unreachable("should have thrown");
+    } catch (err) {
+      const error = err as { status: number; stderr: string };
+      expect(error.status).toBe(1);
+      expect(error.stderr.toString()).toMatch(/Invalid.*status/i);
+    }
+  });
+
   it("exits with error when no .backlog/ exists in any ancestor", async () => {
     const isolated = await mkdtemp(join(tmpdir(), "flowstate-no-backlog-"));
     try {

@@ -7,7 +7,6 @@ export declare function reportDir(cwd: string, status: "pending" | "complete"): 
 export declare function learningsDir(cwd: string): string;
 export declare function taskIndexPath(cwd: string): string;
 export declare function learningsIndexPath(cwd: string): string;
-export declare const TASK_DIRS: readonly TaskStatus[];
 export declare const ENTITY_DIRS: Record<EntityType, readonly {
     readonly dir: string;
     readonly status: string;

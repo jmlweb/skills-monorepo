@@ -10,8 +10,8 @@ Flowstate is a Claude Code skill plugin that provides file-based backlog managem
 
 ```bash
 pnpm build          # Compile TypeScript → dist/
-pnpm test           # Run all tests (vitest)
-pnpm test -- --run  # Run tests once without watch
+pnpm test           # Run all tests once (vitest run, non-watch)
+pnpm test:watch     # Run tests in watch mode
 pnpm run typecheck  # Type-check without emitting
 
 # Run a single test file
@@ -47,6 +47,10 @@ IDs are zero-padded to 3 digits (e.g., `TSK-001`). The `id.ts` module handles pa
 - **`frontmatter.ts`** — Custom YAML frontmatter parser/serializer (no library). Handles `[array]` syntax.
 - **`markdown.ts`** — Section manipulation: find, append, replace, table row add/remove, stats table update. Used by index rebuilds.
 - **`errors.ts`** — `BacklogNotFoundError`, `EntityNotFoundError`, `InvalidArgumentError`.
+- **`types.ts`** — Shared type aliases: `EntityType`, `Priority`, `TaskStatus`, `IdeaStatus`, `ReportStatus`, `LearningStatus`, `ReportType`.
+- **`id.ts`** — `parseId`/`formatId`/`normalizeIdInput` — zero-padded IDs, case-insensitive input, bare number support.
+- **`date.ts`** — `today()` returns `YYYY-MM-DD` string.
+- **`slug.ts`** — `titleToSlug()` converts a title to a kebab-case slug (max 5 words).
 
 ### Command Pattern
 

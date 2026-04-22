@@ -1,3 +1,4 @@
+import { InvalidArgumentError } from "./errors.js";
 export const ENTITY_PREFIXES = {
     task: "TSK",
     idea: "PLN",
@@ -15,22 +16,26 @@ const COMPLEXITIES = new Set(["low", "medium", "high"]);
 const REPORT_TYPES = new Set(["bug", "finding", "improvement", "security"]);
 const SEVERITIES = new Set(["critical", "high", "medium", "low"]);
 export const validatePriority = (v) => {
-    if (!PRIORITIES.has(v))
-        throw new Error(`Invalid priority: "${v}". Expected: P1, P2, P3, P4`);
+    if (!PRIORITIES.has(v)) {
+        throw new InvalidArgumentError(`Invalid priority: "${v}". Expected: P1, P2, P3, P4`);
+    }
     return v;
 };
 export const validateComplexity = (v) => {
-    if (!COMPLEXITIES.has(v))
-        throw new Error(`Invalid complexity: "${v}". Expected: low, medium, high`);
+    if (!COMPLEXITIES.has(v)) {
+        throw new InvalidArgumentError(`Invalid complexity: "${v}". Expected: low, medium, high`);
+    }
     return v;
 };
 export const validateReportType = (v) => {
-    if (!REPORT_TYPES.has(v))
-        throw new Error(`Invalid report type: "${v}". Expected: bug, finding, improvement, security`);
+    if (!REPORT_TYPES.has(v)) {
+        throw new InvalidArgumentError(`Invalid report type: "${v}". Expected: bug, finding, improvement, security`);
+    }
     return v;
 };
 export const validateSeverity = (v) => {
-    if (!SEVERITIES.has(v))
-        throw new Error(`Invalid severity: "${v}". Expected: critical, high, medium, low`);
+    if (!SEVERITIES.has(v)) {
+        throw new InvalidArgumentError(`Invalid severity: "${v}". Expected: critical, high, medium, low`);
+    }
     return v;
 };

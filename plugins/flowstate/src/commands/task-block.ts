@@ -4,6 +4,7 @@ import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
+import { appendToBody } from "../core/markdown.js";
 
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active"];
 
@@ -34,15 +35,7 @@ export async function taskBlock(
   fm["blocked-by"] = reason;
 
   const date = today();
-  const entry = `- [${date}] Blocked: ${reason}`;
-
-  const lines = doc.body.split("\n");
-  let insertIndex = lines.length;
-  while (insertIndex > 0 && lines[insertIndex - 1]!.trim() === "") {
-    insertIndex--;
-  }
-  lines.splice(insertIndex, 0, entry);
-  const body = lines.join("\n");
+  const body = appendToBody(doc.body, `- [${date}] Blocked: ${reason}`);
 
   await writeEntity(filePath, fm, body);
   return { path: filePath };

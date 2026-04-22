@@ -48,6 +48,43 @@ describe("learningCreate", () => {
     expect(index).toContain("| LRN-001 | Always test edge cases |");
   });
 
+  it("does not fail when the target task has no Learnings section", async () => {
+    await taskCreate(tmp, {
+      title: "Legacy task",
+      priority: "P2",
+      tags: [],
+      description: "Desc",
+      criteria: [],
+      source: "manual",
+      dependsOn: [],
+    });
+
+    // Strip the Learnings section to simulate a legacy/manual task
+    const { writeFile } = await import("node:fs/promises");
+    const taskFile = join(
+      tmp,
+      ".backlog",
+      "tasks",
+      "pending",
+      "TSK-001-legacy-task.md",
+    );
+    const original = await readFile(taskFile, "utf-8");
+    const stripped = original.replace(/\n## Learnings\n/, "\n");
+    await writeFile(taskFile, stripped, "utf-8");
+
+    await expect(
+      learningCreate(tmp, {
+        title: "Still works",
+        tags: [],
+        body: "Content",
+        task: "TSK-001",
+      }),
+    ).resolves.toMatchObject({ id: "LRN-001" });
+
+    const after = await readFile(taskFile, "utf-8");
+    expect(after).toBe(stripped);
+  });
+
   it("appends link to task when task specified", async () => {
     await taskCreate(tmp, {
       title: "Fix bug",

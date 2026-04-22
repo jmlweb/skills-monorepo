@@ -3,6 +3,7 @@ import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
+import { appendToBody } from "../core/markdown.js";
 const SEARCH_DIRS = ["pending", "active", "complete"];
 export async function taskUnblock(cwd, id, resolution) {
     let filePath;
@@ -23,19 +24,9 @@ export async function taskUnblock(cwd, id, resolution) {
     delete fm["blocked-by"];
     // Restore status based on whether task was started
     fm["status"] = fm["started"] ? "active" : "pending";
-    // Add progress log
     const date = today();
-    const logMsg = resolution
-        ? `Unblocked: ${resolution}`
-        : "Unblocked";
-    const entry = `- [${date}] ${logMsg}`;
-    const lines = doc.body.split("\n");
-    let insertIndex = lines.length;
-    while (insertIndex > 0 && lines[insertIndex - 1].trim() === "") {
-        insertIndex--;
-    }
-    lines.splice(insertIndex, 0, entry);
-    const body = lines.join("\n");
+    const logMsg = resolution ? `Unblocked: ${resolution}` : "Unblocked";
+    const body = appendToBody(doc.body, `- [${date}] ${logMsg}`);
     await writeEntity(filePath, fm, body);
     return { path: filePath };
 }

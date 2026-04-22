@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter.js";
+import { InvalidArgumentError } from "./errors.js";
 
 describe("parseFrontmatter", () => {
   it("parses simple key-value pairs", () => {
@@ -74,8 +75,16 @@ Body`;
     );
   });
 
-  it("throws on missing frontmatter delimiters", () => {
-    expect(() => parseFrontmatter("no frontmatter here")).toThrow();
+  it("throws InvalidArgumentError on missing opening delimiter", () => {
+    expect(() => parseFrontmatter("no frontmatter here")).toThrow(
+      InvalidArgumentError,
+    );
+  });
+
+  it("throws InvalidArgumentError on missing closing delimiter", () => {
+    expect(() => parseFrontmatter("---\nid: TSK-001\n")).toThrow(
+      InvalidArgumentError,
+    );
   });
 
   it("handles empty string values", () => {
