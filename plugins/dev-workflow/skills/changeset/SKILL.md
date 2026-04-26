@@ -6,59 +6,49 @@ allowed-tools: Read, Write, Grep, Bash(git:*), Bash(test:*)
 model: sonnet
 ---
 
-Generate a Changesets entry for modified packages and commit it following Conventional Commits. CI applies changesets and publishes automatically.
+Generate a Changesets entry for the modified packages and commit it. CI applies changesets and publishes — never run `changeset version` locally.
 
-Shared rules (pre-commit analysis, staged validation, Conventional Commits format + type table, scope detection, security scan, error handling) live in `../../shared/commit-basics.md`. Read that file at the start of the run and follow it.
+Read `../../shared/commit-basics.md` first; it owns the pre-commit analysis, staged validation, Conventional Commits format, scope detection, secret scan, and error handling. Don't re-implement those rules here.
 
 ## Usage
 
-- `/changeset` — Interactive mode
-- `/changeset "feat: add feature"` — Direct with message
-- `/changeset "feat(scope): description"` — With scope
+- `/changeset` — interactive
+- `/changeset "feat: add feature"` — direct
+- `/changeset "feat(scope): description"` — with scope
 
-## 0. Validate Project Structure
+## 1. Validate project
 
-1. **Monorepo?** Check for a `packages/` directory
-2. **Changesets configured?** Check for `.changeset/`
-3. **Git repo?** Check for `.git/`
+`packages/` exists, `.changeset/` exists, `.git/` exists. Otherwise stop.
 
-**IMPORTANT**: Do NOT run `changeset version` locally — CI handles versioning and publishing.
+## 2. Pre-commit analysis
 
-## 1. Pre-commit Analysis
+Follow `commit-basics.md` → *Pre-commit Analysis* and *Validate Staged Changes*.
 
-Follow `shared/commit-basics.md` → *Pre-commit Analysis* and *Validate Staged Changes*.
-
-## 2. Detect Modified Packages
-
-Use the deterministic CLI instead of parsing `git diff` by hand:
+## 3. Detect modified packages
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" detect-packages --json true
 ```
 
-Returns `{ packages: [{ name, shortName, private, dir }, …] }`. Private packages are filtered out by default; pass `--include-private true` if you ever need them. If the returned list is empty, stop — there is nothing to version.
+Returns `{ packages: [{ name, shortName, private, dir }, …] }`. Private packages are filtered out by default (`--include-private true` to include them). Empty list → nothing to version, stop.
 
-## 3. Determine Change Type
+## 4. Pick the bump
 
-| Type | Bump | Indicators |
-|------|------|------------|
-| Breaking change | `major` | API changes, removed exports, renamed functions |
-| New feature | `minor` | New exports, new optional params, new functionality |
-| Bug fix / improvement | `patch` | Fixes, internal refactoring, docs |
+| Bump | When |
+|------|------|
+| `major` | breaking API change, removed/renamed exports |
+| `minor` | new exports, new optional params, new functionality |
+| `patch` | bug fix, internal refactor, docs |
 
 Default to `patch`.
 
-## 4. Generate Changeset File
-
-Get an unused filename from the CLI (it checks `.changeset/` for collisions):
+## 5. Write the changeset
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" changeset-name
 ```
 
-Prints the full relative path, e.g. `.changeset/brave-cats-dance.md`. Use `--json true` if you need structured output, or `--dir <path>` to target a non-standard directory.
-
-Write the file with the frontmatter and description:
+Prints a collision-free path like `.changeset/brave-cats-dance.md`. Write:
 
 ```markdown
 ---
@@ -68,16 +58,12 @@ Write the file with the frontmatter and description:
 Brief description of what changed and why.
 ```
 
-## 5. Draft Commit Message
+## 6. Commit
 
-If not provided as argument, follow `shared/commit-basics.md` → *Conventional Commits Format* + *Scope Detection*. For changesets specifically: single package → its short name as scope; `apps/xxx/` → `xxx`; 3+ packages → omit scope.
+If no message was provided, draft one per `commit-basics.md` → *Conventional Commits Format* + *Scope Detection*. Changeset-specific scope rules: single package → its short name; `apps/xxx/` → `xxx`; 3+ packages → omit scope.
 
-## 6. Create Commit
-
-1. Stage the changeset: `git add .changeset/*.md`
-2. Commit using the HEREDOC pattern from `shared/commit-basics.md` → *Commit Execution*
+1. `git add .changeset/*.md`
+2. Commit with the HEREDOC pattern from `commit-basics.md` → *Commit Execution*
 3. Verify with `git log -1 --oneline` and `git status`
 
-## Security & Error Handling
-
-See `shared/commit-basics.md` → *Security* and *Error Handling*.
+Security and error handling: see `commit-basics.md` → *Security* and *Error Handling*.

@@ -1,95 +1,67 @@
 ---
 name: check-docs
 argument-hint: [path or scope]
-description: Audit markdown documentation and agent instructions (README, CLAUDE.md, AGENTS.md) for freshness, formatting, and consistency. Use when the user says "check docs", "audit documentation", "are the docs up to date?", after significant code changes that may have staled the docs, or before a release. Auto-fixes safe issues (missing code-fence language, trailing whitespace, version drift) and asks before content changes. Monorepo-aware.
-allowed-tools: Read, Edit, Write, Grep, Glob, Task, Bash(git:*), Bash(find:*), Bash(test:*)
+description: Audit project docs (README, CLAUDE.md, AGENTS.md, package READMEs) for staleness and correctness — versions, commands, paths, examples, and instructions out of sync with the current code. Use when the user says "check docs", "are the docs up to date?", after significant code changes, or before a release. Reports content issues; defers markdown style/formatting to a linter. Monorepo-aware.
+allowed-tools: Read, Edit, Write, Grep, Glob, Task, Bash(git:*), Bash(test:*)
 model: sonnet
 ---
 
-Audit and fix project documentation, ensuring it follows standards and agent instructions are optimal.
+Audit documentation for content that no longer matches the codebase. Focus is **freshness and correctness** — markdown style belongs to a linter, not to this skill.
 
 ## Usage
 
-- `/check-docs` - Full audit of all documentation
-- `/check-docs README.md` - Check specific file
-- `/check-docs packages/` - Check specific directory
-- `/check-docs agents` - Focus on agent instructions only
+- `/check-docs` — full audit
+- `/check-docs README.md` — single file
+- `/check-docs packages/foo` — single package
+- `/check-docs agents` — only agent instructions (`AGENTS.md`, `CLAUDE.md`, `.claude/`)
+
+## What to verify
+
+For every doc in scope, compare its claims against the current repo:
+
+- **Commands**: shell snippets and `package.json` scripts referenced in docs still exist and behave as described
+- **Versions**: language/runtime/framework/dep versions match `package.json`, `engines`, `.nvmrc`, lockfiles, CI config
+- **Paths**: every relative path or file reference resolves in the tree (`git ls-files`)
+- **Examples**: code snippets call APIs/exports/CLIs that still exist with the documented signatures
+- **Tech stack & structure**: described stack and directory layout match the actual deps and tree
+- **Instructions**: setup, install, run, build, deploy steps are still accurate (smoke-check by reading the relevant code/config — do not execute)
+- **Internal links**: cross-references between repo docs resolve
+
+For agent instructions (`AGENTS.md`, `CLAUDE.md`, `.claude/**/*.md`) also check:
+
+- Critical info up front, no contradictions, no dead pointers
+- Conventions still reflected by the code (named exports, error handling style, etc.)
+- Frontmatter (where applicable) is valid and up-to-date
 
 ## Workflow
 
-### Phase 0: Validate Environment
+1. **Resolve scope**
+   - Path/file argument → audit just that
+   - `agents` → `AGENTS.md`, `CLAUDE.md`, every `.claude/**/*.md`
+   - No argument → all `git ls-files '*.md'`, prioritized: agent instructions → root README → package READMEs → other docs
 
-Before proceeding, verify:
-1. Is it a git repo? Check for `.git/` directory
-2. Do standard paths exist? (CLAUDE.md, AGENTS.md)
+2. **Read project conventions first** — `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `docs/STYLE_GUIDE.md` if present. Use them to interpret intent before flagging.
 
-If critical files don't exist, report clearly and continue with available files.
+3. **Detect drift per file** — extract every command, path, version, code example and internal link, then verify against the current repo (read the relevant source/config). Flag anything that no longer matches.
 
-### Phase 1: Discover Documentation Standards
+4. **Report findings**, grouped by severity:
+   - **Critical**: wrong commands or instructions that would break a user following them
+   - **High**: stale versions, broken paths, outdated install/setup steps
+   - **Medium**: outdated examples, drifted structure descriptions
+   - **Low**: minor wording drift, slightly out-of-date prose
 
-1. Read project documentation rules from: AGENTS.md, .claude/CLAUDE.md, CONTRIBUTING.md, docs/STYLE_GUIDE.md
-2. Reference global `~/.claude/CLAUDE.md` for markdown formatting rules, comment policy, language requirements
+   For each finding: `file:line`, what is stale, what the current state actually is, proposed fix.
 
-### Phase 2: Inventory Documentation Files
+5. **Apply fixes** — show the proposed diff per file and ask for confirmation before writing. Never auto-write content changes.
 
-1. Find all markdown files using `git ls-files '*.md'`
-2. Categorize by priority: Agent Instructions (critical) > Project README (high) > Package READMEs (high) > Changelogs (medium) > Other (low)
+## Out of scope
 
-### Phase 3: Validate Agent Instructions
-
-For AGENTS.md:
-- Structure: clear sections, proper formatting, no broken links
-- Content freshness: tech stack matches package.json, paths exist, commands valid
-- Optimization: concise, critical info at top, no redundancy
-
-For `.claude/` files:
-- Proper frontmatter, clear usage, valid commands
-- Referenced paths exist, no hardcoded outdated values
-
-### Phase 4: Validate General Documentation
-
-1. Check format: code blocks have language, H1 first line, no duplicate headings, proper tables
-2. Check content: links work, examples match API, instructions valid, versions current
-
-### Phase 5: Generate Report and Fix
-
-Compile findings into Critical, High, Medium priority categories.
-
-Auto-fix without confirmation:
-- Missing language in code blocks
-- Trailing whitespace
-- Heading structure
-- Obvious version mismatches
-
-Confirm before fixing:
-- Content changes
-- Removing documentation
-- Adding sections
-
-Report only (manual fix):
-- Broken external links
-- Major restructuring
-
-## Agent Instruction Best Practices
-
-Structure: Project name, quick start, tech stack, key conventions, file structure.
-
-Guidelines:
-- Be specific and actionable, not vague
-- Put critical info first
-- Use examples, don't over-explain
-- Keep under 500 lines
-- Update when code changes
-
-Freshness: Compare package.json deps with tech stack, actual files with documented structure, current commands with scripts section.
-
-## Dry-Run Mode
-
-Use `--dry-run` to preview changes without modifying files.
+Markdown style — trailing whitespace, missing code-fence language, heading hierarchy, table alignment, duplicate headings, line length. Don't audit, fix, or report on these. They are deterministic concerns and the project may already handle them with its own tooling (or deliberately not).
 
 ## Notes
 
-- Preserve user's intentional formatting
-- Don't add documentation where none existed (unless agent instructions)
-- For monorepos, check each package independently
-- When in doubt, report rather than auto-fix
+- Preserve the user's voice and intentional formatting
+- Do not invent docs where none existed (except agent instructions, with consent)
+- Monorepos: audit each package independently and report per-package
+- When unsure whether something is stale, report it instead of editing
+- For very large doc sets, delegate per-package audits to subagents in parallel

@@ -73,23 +73,22 @@ Fetches the PR diff and launches specialized agents in parallel to produce a str
 
 ### 📝 `/check-docs` — Documentation audit
 
-Audits markdown files for freshness, formatting issues, and consistency. Fixes what it can automatically; asks before touching content.
+Audits docs for **content drift** — versions, commands, paths, examples and instructions out of sync with the current code. Markdown style/formatting is left to a linter.
 
 ```bash
 /check-docs                  # full project audit
 /check-docs README.md        # single file
-/check-docs packages/        # specific directory
-/check-docs agents           # focus on AGENTS.md / CLAUDE.md only
-/check-docs --dry-run        # preview without writing
+/check-docs packages/foo     # single package
+/check-docs agents           # only AGENTS.md / CLAUDE.md / .claude/
 ```
 
 **What it does:**
-- 🔄 Validates agent instructions (`AGENTS.md`, `.claude/`) for freshness against `package.json`
-- 🧹 Checks formatting: code block languages, heading structure, duplicate headings, tables
-- 🤖 **Auto-fixes** minor issues (trailing whitespace, missing code fence language, obvious version mismatches)
-- 🙋 **Asks before** changing content, removing docs, or adding sections
-- 📊 **Reports only** broken external links and major restructuring needs
-- 🗂️ Monorepo-aware: checks each package independently
+- 🔄 Verifies versions, commands, paths, code examples and internal links against the current repo
+- 🧠 Validates agent instructions (`AGENTS.md`, `CLAUDE.md`, `.claude/`) reflect the actual conventions
+- 📊 Reports findings grouped by severity (Critical / High / Medium / Low) with proposed fixes
+- 🙋 Asks before writing any content change — never auto-edits
+- 🗂️ Monorepo-aware: audits each package independently
+- 🚫 Does **not** audit or fix markdown style/formatting — leave that to your linter of choice
 
 ---
 
