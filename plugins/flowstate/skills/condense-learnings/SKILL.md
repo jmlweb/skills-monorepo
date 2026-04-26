@@ -3,6 +3,7 @@ name: condense-learnings
 description: Condense the learnings backlog by removing unnecessary entries, resolving duplicates, and normalizing tags. Use when the user says "condense learnings", "clean up learnings", "deduplicate learnings", or "organize learnings".
 allowed-tools: [Bash]
 model: sonnet
+effort: medium
 ---
 
 # Condense Learnings

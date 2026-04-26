@@ -2,7 +2,8 @@
 name: next-task
 description: Analyze the backlog and recommend the best task to start next. Use when the user asks "what should I work on?", "next task", "what's the priority?", or needs help deciding between multiple pending items.
 allowed-tools: [Read, Bash, Glob, Grep]
-model: haiku
+model: sonnet
+effort: medium
 ---
 
 # Next Task

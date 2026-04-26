@@ -4,6 +4,7 @@ description: Execute multiple independent backlog tasks simultaneously using sub
 argument-hint: [task IDs separated by comma]
 allowed-tools: [Read, Write, Bash, Glob, Grep, Agent]
 model: sonnet
+effort: medium
 ---
 
 # Parallel Tasks

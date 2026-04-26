@@ -4,6 +4,7 @@ description: Generate a detailed implementation plan for a feature or change bef
 argument-hint: [feature description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
+effort: high
 ---
 
 # Generate Plan

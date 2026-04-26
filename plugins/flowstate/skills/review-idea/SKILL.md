@@ -4,6 +4,7 @@ description: Review a pending plan and decide — approve (convert to task), dis
 argument-hint: [plan ID]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
+effort: medium
 ---
 
 # Review Plan

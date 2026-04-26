@@ -3,7 +3,7 @@ name: report
 description: File a structured bug report, finding, or security issue. Use when the user discovers a bug, says "found a bug", "report issue", "file a finding", "security concern", or when something unexpected is observed.
 argument-hint: [report description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
-model: sonnet
+model: haiku
 ---
 
 # File Report

@@ -4,6 +4,7 @@ description: Verify that a task's declared status matches the actual codebase im
 argument-hint: [task ID or number]
 allowed-tools: [Read, Bash, Glob, Grep]
 model: sonnet
+effort: medium
 ---
 
 # Check Task

@@ -3,7 +3,7 @@ name: add-task
 description: Interactively groom and add a new task to the backlog. Use when the user wants to add work, create a ticket, file a TODO, track a feature request, or says "add task", "new task", "I need to do X".
 argument-hint: [task description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
-model: sonnet
+model: haiku
 ---
 
 # Add Task

@@ -4,6 +4,7 @@ description: Triage a pending report by converting it to a task, discarding it, 
 argument-hint: [report ID]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
+effort: medium
 ---
 
 # Triage Report
