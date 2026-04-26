@@ -47,13 +47,42 @@ Complexity: {{COMPLEXITY}} | Created: {{DATE}}
 ...
 ```
 
-### 3. Ask for Decision
+### 3. Audit the Plan
+
+Before recommending, audit the plan against the actual codebase. Skip steps that don't apply.
+
+- **Files exist & are accurate**: verify every path under "Files to Modify" exists. Check the relevant code matches what the plan assumes (function names, signatures, surrounding logic).
+- **Approach soundness**: read each step critically. Are there missing steps (tests, migrations, types, docs)? Steps that won't compile or contradict existing patterns?
+- **Risk gaps**: high/medium-complexity plans with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
+- **Conflicts with active work**: scan `.backlog/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
+- **Related learnings**: search `.backlog/learnings/` for prior insights that should shape the approach.
+
+Keep this internal — surface only the conclusions in the next step.
+
+### 4. Recommend
+
+Emit a single recommendation **before** offering the menu, in this shape:
+
+```
+**Recommendation:** {approve | discard | revise}
+**Why:** {1-2 lines tying the decision to evidence from step 3}
+**Proposed priority:** {P1-P4} (from complexity {{COMPLEXITY}} → {{P}})
+**Concerns:**
+- {concrete issue grounded in the code, if any}
+- {missing step or risk gap, if any}
+```
+
+If the recommendation is **revise**, list the specific changes you'd make so the user can accept them in one go.
+
+Then list the override options:
 
 1. **Approve** — Convert this plan into a backlog task
 2. **Discard** — This plan is not needed
 3. **Revise** — The plan needs changes
 
-### 4a. Approve
+Ask the user to confirm the recommendation or pick a different option.
+
+### 5a. Approve
 
 ```bash
 # Create task from plan
@@ -74,7 +103,7 @@ Plan PLN-{{ID}} approved → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 /flowstate:start-task TSK-{{NEW_ID}} to begin
 ```
 
-### 4b. Discard
+### 5b. Discard
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status discarded
@@ -82,7 +111,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status
 
 Confirm to the user.
 
-### 4c. Revise
+### 5c. Revise
 
 1. Discuss needed changes with the user
 2. Edit plan in-place (stays in `ideas/pending/`)

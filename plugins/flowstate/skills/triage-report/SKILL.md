@@ -39,13 +39,37 @@ Type: {{TYPE}} | Severity: {{SEVERITY}} | Created: {{DATE}}
 ...
 ```
 
-### 3. Ask for Decision
+### 3. Investigate
+
+Before recommending, gather evidence. Skip steps that don't apply to the report type.
+
+- **Reproduce / locate**: grep the codebase for symbols, error messages, or file paths mentioned in the report. Confirm the affected code still exists and the issue is plausible.
+- **Check for duplicates**: scan `.backlog/tasks/pending/` and `.backlog/tasks/active/` for tasks with overlapping title, tags, or source. Note any matches.
+- **Cross-reference learnings**: search `.backlog/learnings/` for related insights that explain the behavior or suggest a fix.
+- **Assess completeness**: does the report contain enough to act on (repro steps, expected vs actual, scope)? List what's missing if not.
+
+Keep this internal — surface only the conclusions in the next step.
+
+### 4. Recommend
+
+Emit a single recommendation **before** offering the menu, in this shape:
+
+```
+**Recommendation:** {convert to task | discard | needs more info}
+**Why:** {1-2 lines tying the decision to evidence from step 3}
+**Proposed priority:** {P1-P4} (from severity {{SEVERITY}} → {{P}})
+**Possible duplicate of:** {TSK-XXX}  ← only if found
+```
+
+Then list the override options:
 
 1. **Convert to task** — Create a backlog task from this report
 2. **Discard** — Not actionable
 3. **Needs more info** — Keep pending, note what's missing
 
-### 4a. Convert to Task
+Ask the user to confirm the recommendation or pick a different option.
+
+### 5a. Convert to Task
 
 ```bash
 # Create task from report
@@ -66,13 +90,13 @@ RPT-{{ID}} triaged → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 /flowstate:start-task TSK-{{NEW_ID}} to begin
 ```
 
-### 4b. Discard
+### 5b. Discard
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --status discarded
 ```
 
-### 4c. Needs More Info
+### 5c. Needs More Info
 
 1. Ask what's missing
 2. Add to the report:
