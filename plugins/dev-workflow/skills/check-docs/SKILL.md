@@ -4,6 +4,7 @@ argument-hint: [path or scope]
 description: Audit project docs (README, CLAUDE.md, AGENTS.md, package READMEs) for staleness and correctness — versions, commands, paths, examples, and instructions out of sync with the current code. Use when the user says "check docs", "are the docs up to date?", after significant code changes, or before a release. Reports content issues; defers markdown style/formatting to a linter. Monorepo-aware.
 allowed-tools: Read, Edit, Write, Grep, Glob, Task, Bash(git:*), Bash(test:*)
 model: sonnet
+effort: medium
 ---
 
 Audit documentation for content that no longer matches the codebase. Focus is **freshness and correctness** — markdown style belongs to a linter, not to this skill.

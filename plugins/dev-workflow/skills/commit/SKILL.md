@@ -4,6 +4,7 @@ argument-hint: [commit message]
 description: Create a git commit following Conventional Commits. Use when the user says "commit", "commit these changes", has finished a logical unit of work, or wants to save progress to git. Analyzes the staged diff to infer type/scope, scans for secrets and sensitive files, warns before committing to main/master, and never bypasses hooks without permission.
 allowed-tools: Read, Grep, Bash(git:*), Bash(test:*)
 model: sonnet
+effort: medium
 ---
 
 Automate git commits with Conventional Commits format and security validation.

@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
   "description": "Developer workflow tools for Claude Code: Conventional Commits, Changesets, PR reviews, and documentation audits.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": {
     "name": "jmlweb",
     "url": "https://github.com/jmlweb"

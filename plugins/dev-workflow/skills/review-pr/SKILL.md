@@ -4,6 +4,7 @@ argument-hint: [PR number or URL]
 description: Review a GitHub pull request with specialized agents running in parallel (code quality, security, QA, architecture as needed). Use when the user says "review PR", "review this pull request", "/review-pr", pastes a GitHub PR URL, or finishes a branch and wants feedback before merge. Fetches diff via `gh`, checks CI status, produces a structured report with risk matrix and merge recommendation. Requires GitHub CLI authenticated.
 allowed-tools: Read, Write, Grep, Task, Bash(gh:*), Bash(git:*), Bash(command:*)
 model: sonnet
+effort: medium
 ---
 
 Review a pull request by dispatching specialized agents in parallel and aggregating their findings into a single structured report.

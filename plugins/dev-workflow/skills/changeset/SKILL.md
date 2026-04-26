@@ -4,6 +4,7 @@ argument-hint: [commit message]
 description: Generate a Changesets entry and commit it, for Changesets-managed monorepos. Use when the user says "changeset", "add changeset", needs to record a package version bump, or finishes work that should ship in the next release. Detects modified packages from staged files, picks major/minor/patch from the diff, and leaves `changeset version` to CI. Do NOT use for single-package repos or repos without a `.changeset/` directory.
 allowed-tools: Read, Write, Grep, Bash(git:*), Bash(test:*)
 model: sonnet
+effort: medium
 ---
 
 Generate a Changesets entry for the modified packages and commit it. CI applies changesets and publishes — never run `changeset version` locally.
