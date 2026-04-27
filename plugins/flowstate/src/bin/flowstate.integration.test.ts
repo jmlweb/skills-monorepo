@@ -200,6 +200,149 @@ describe("CLI integration", () => {
     }
   });
 
+  it("learning-search --similar-to is an alias for --query (dedupe use case)", () => {
+    run("setup", "--project-name", "IntTest");
+    runJson("learning-create", "--title", "Redis quirk in docker", "--tags", "redis,docker", "--body", "Redis needs explicit image name.");
+    runJson("learning-create", "--title", "Postgres tuning", "--tags", "postgres", "--body", "Different topic.");
+
+    const viaQuery = runJson("learning-search", "--query", "redis quirk", "--limit", "5") as { id: string }[];
+    const viaSimilarTo = runJson("learning-search", "--similar-to", "redis quirk", "--limit", "5") as { id: string }[];
+
+    expect(viaSimilarTo).toEqual(viaQuery);
+    expect(viaSimilarTo).toHaveLength(1);
+    expect(viaSimilarTo[0]!.id).toBe("LRN-001");
+  });
+
+  it("idea-list lists pending ideas and supports --status filter", () => {
+    run("setup", "--project-name", "IntTest");
+    runJson("idea-create", "--title", "First idea", "--complexity", "low", "--body", "test");
+    runJson("idea-create", "--title", "Second idea", "--complexity", "medium", "--body", "test");
+    run("idea-move", "PLN-002", "--status", "approved", "--task-id", "TSK-001");
+
+    const pending = runJson("idea-list") as { id: string }[];
+    expect(pending).toHaveLength(1);
+    expect(pending[0]!.id).toBe("PLN-001");
+
+    const all = runJson("idea-list", "--status", "all") as unknown[];
+    expect(all).toHaveLength(2);
+
+    const complete = runJson("idea-list", "--status", "complete") as { id: string; status: string }[];
+    expect(complete).toHaveLength(1);
+    expect(complete[0]!.id).toBe("PLN-002");
+    expect(complete[0]!.status).toBe("approved");
+  });
+
+  it("learning-list filters archived by default and supports --status / --include-archived", async () => {
+    run("setup", "--project-name", "IntTest");
+    runJson("learning-create", "--title", "Active one", "--tags", "x", "--body", "active");
+    runJson("learning-create", "--title", "Old one", "--tags", "y", "--body", "old");
+    run("learning-move", "LRN-002", "--to", "archived");
+
+    const defaultList = runJson("learning-list") as unknown[];
+    expect(defaultList).toHaveLength(1);
+
+    const includeArchived = runJson("learning-list", "--include-archived", "true") as unknown[];
+    expect(includeArchived).toHaveLength(2);
+
+    const statusAll = runJson("learning-list", "--status", "all") as unknown[];
+    expect(statusAll).toHaveLength(2);
+
+    const statusArchived = runJson("learning-list", "--status", "archived") as { id: string }[];
+    expect(statusArchived).toHaveLength(1);
+    expect(statusArchived[0]!.id).toBe("LRN-002");
+
+    try {
+      execFileSync("node", [CLI, "learning-list", "--status", "bogus"], {
+        cwd: tmp,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect.unreachable("should have thrown");
+    } catch (err) {
+      const error = err as { status: number; stderr: string };
+      expect(error.status).toBe(1);
+      expect(error.stderr.toString()).toMatch(/Invalid --status/);
+    }
+  });
+
+  it("--help prints top-level usage and exits 0 without needing a backlog", async () => {
+    const isolated = await mkdtemp(join(tmpdir(), "flowstate-help-"));
+    try {
+      const out = execFileSync("node", [CLI, "--help"], {
+        cwd: isolated,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect(out).toMatch(/Usage: flowstate <command>/);
+      expect(out).toMatch(/task-create/);
+      expect(out).toMatch(/learning-search/);
+    } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
+  it("-h is an alias for --help", async () => {
+    const isolated = await mkdtemp(join(tmpdir(), "flowstate-help-"));
+    try {
+      const out = execFileSync("node", [CLI, "-h"], {
+        cwd: isolated,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect(out).toMatch(/Usage: flowstate <command>/);
+    } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
+  it("subcommand --help prints command usage and exits 0", async () => {
+    const isolated = await mkdtemp(join(tmpdir(), "flowstate-help-"));
+    try {
+      const out = execFileSync("node", [CLI, "task-create", "--help"], {
+        cwd: isolated,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect(out).toMatch(/Usage: flowstate task-create/);
+      expect(out).toMatch(/--priority/);
+    } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
+  it("subcommand -h is an alias for --help", async () => {
+    const isolated = await mkdtemp(join(tmpdir(), "flowstate-help-"));
+    try {
+      const out = execFileSync("node", [CLI, "task-list", "-h"], {
+        cwd: isolated,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect(out).toMatch(/Usage: flowstate task-list/);
+    } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
+  it("--help on unknown command exits 1 with a hint", async () => {
+    const isolated = await mkdtemp(join(tmpdir(), "flowstate-help-"));
+    try {
+      execFileSync("node", [CLI, "bogus", "--help"], {
+        cwd: isolated,
+        encoding: "utf-8",
+        timeout: 10000,
+      });
+      expect.unreachable("should have thrown");
+    } catch (err) {
+      const error = err as { status: number; stderr: string };
+      expect(error.status).toBe(1);
+      expect(error.stderr.toString()).toMatch(/Unknown command: bogus/);
+      expect(error.stderr.toString()).toMatch(/Usage: flowstate <command>/);
+    } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
   it("exits with error when no .backlog/ exists in any ancestor", async () => {
     const isolated = await mkdtemp(join(tmpdir(), "flowstate-no-backlog-"));
     try {

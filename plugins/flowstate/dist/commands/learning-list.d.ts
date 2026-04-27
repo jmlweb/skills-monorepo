@@ -1,5 +1,8 @@
+import type { LearningStatus } from "../core/types.js";
+export type LearningStatusFilter = LearningStatus | "all";
 export interface LearningListInput {
     readonly all?: boolean;
+    readonly status?: LearningStatusFilter;
 }
 export interface LearningListResult {
     readonly id: string;

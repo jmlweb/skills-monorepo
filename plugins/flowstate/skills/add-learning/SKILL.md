@@ -52,6 +52,36 @@ Ask only when context is missing:
 4. **Application** — What should you do (or avoid) in the future?
 5. **Tags** — Freeform labels (e.g., `database`, `testing`, `deployment`)
 
+### 2c. Dedupe Check (before creating)
+
+Before creating, search for similar existing learnings to avoid duplicates:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --json true
+```
+
+Decide based on top match score (`reasons` array explains why each result matched):
+
+- **Top score ≥ 5** → likely duplicate. Show the match and ask:
+  ```
+  Similar learning already exists:
+  LRN-{{ID}}: {{TITLE}} (score {{N}}, matched: {{REASONS}})
+
+  Options:
+    1. Open it (read full content)
+    2. Update it (`/flowstate:learnings` then edit)
+    3. Create a new one anyway
+    4. Cancel
+  ```
+  Wait for the user's choice before proceeding.
+
+- **Top score 2–4** → mention briefly and proceed unless the user objects:
+  ```
+  Note: similar learnings found — LRN-{{ID1}}, LRN-{{ID2}}. Creating a new one. Reply "stop" to cancel.
+  ```
+
+- **No matches or scores ≤ 1** → proceed silently.
+
 ### 3. Link to Active Task (no prompt unless ambiguous)
 
 Check `.backlog/tasks/active/`:

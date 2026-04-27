@@ -60,6 +60,36 @@ describe("learningList", () => {
     expect(results).toHaveLength(2);
   });
 
+  it("filters by status: archived only", async () => {
+    await learningCreate(tmp, { title: "Keep", tags: [], body: "active" });
+    await learningCreate(tmp, { title: "Stale", tags: [], body: "old" });
+    await learningMove(tmp, "LRN-002", "archived");
+
+    const results = await learningList(tmp, { status: "archived" });
+    expect(results).toHaveLength(1);
+    expect(results[0]!.id).toBe("LRN-002");
+    expect(results[0]!.status).toBe("archived");
+  });
+
+  it("filters by status: all returns active and archived", async () => {
+    await learningCreate(tmp, { title: "Keep", tags: [], body: "active" });
+    await learningCreate(tmp, { title: "Stale", tags: [], body: "old" });
+    await learningMove(tmp, "LRN-002", "archived");
+
+    const results = await learningList(tmp, { status: "all" });
+    expect(results).toHaveLength(2);
+  });
+
+  it("status flag takes precedence over all flag", async () => {
+    await learningCreate(tmp, { title: "Keep", tags: [], body: "active" });
+    await learningCreate(tmp, { title: "Stale", tags: [], body: "old" });
+    await learningMove(tmp, "LRN-002", "archived");
+
+    const results = await learningList(tmp, { status: "active", all: true });
+    expect(results).toHaveLength(1);
+    expect(results[0]!.id).toBe("LRN-001");
+  });
+
   it("returns results sorted by ID", async () => {
     await learningCreate(tmp, { title: "B", tags: [], body: "b" });
     await learningCreate(tmp, { title: "A", tags: [], body: "a" });

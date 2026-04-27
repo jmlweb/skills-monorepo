@@ -2,10 +2,13 @@ import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { learningsDir } from "../core/paths.js";
 import { readEntity } from "../core/fs.js";
-import type { LearningFrontmatter } from "../core/types.js";
+import type { LearningFrontmatter, LearningStatus } from "../core/types.js";
+
+export type LearningStatusFilter = LearningStatus | "all";
 
 export interface LearningListInput {
   readonly all?: boolean;
+  readonly status?: LearningStatusFilter;
 }
 
 export interface LearningListResult {
@@ -33,6 +36,9 @@ export async function learningList(
     return [];
   }
 
+  const filter: LearningStatusFilter =
+    input.status ?? (input.all ? "all" : "active");
+
   const results: LearningListResult[] = [];
 
   for (const entry of entries) {
@@ -42,7 +48,7 @@ export async function learningList(
       const fm = doc.frontmatter as unknown as LearningFrontmatter;
       const status = String(fm.status ?? "active");
 
-      if (!input.all && status !== "active") continue;
+      if (filter !== "all" && status !== filter) continue;
 
       results.push({
         id: String(fm.id),

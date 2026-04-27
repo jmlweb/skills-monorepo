@@ -81,3 +81,5 @@ When the user selects a learning ID (or when a single search result auto-opened)
 
 - Run `/flowstate:learnings` at the start of a work session to review recent insights
 - Search by tag to find relevant learnings for your current task
+- `learning-search` only returns active learnings — archived and superseded entries are excluded so stale insights don't surface as live context
+- To browse archived entries explicitly, run `learning-list --status archived` (or `--include-archived true` for active + archived + superseded)

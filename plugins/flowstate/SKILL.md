@@ -1,7 +1,7 @@
 ---
 name: flowstate
 description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
-version: 2.2.3
+version: 2.2.4
 ---
 
 # Flowstate - Backlog Management System

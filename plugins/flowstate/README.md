@@ -360,6 +360,20 @@ flowchart LR
     L & A & R --> SK["Skill proceeds<br/>with full awareness"]
 ```
 
+### CLI reference
+
+The skills shell out to a small CLI (`dist/bin/flowstate.js`). Run `flowstate --help` for the full command list, or `flowstate <command> --help` for per-command usage. A few flags worth knowing:
+
+| Command | Flag | Default | Notes |
+|---------|------|---------|-------|
+| `learning-list` | `--status <active\|archived\|superseded\|all>` | `active` | Filter by learning status. Active-only by default — archived and superseded entries stay out of the list unless asked for |
+| `learning-list` | `--include-archived true` | `false` | Alias for `--status all`. Surfaces archived and superseded entries alongside active ones |
+| `learning-list` | `--all true` | `false` | Legacy alias for `--include-archived` / `--status all` (kept for backwards compatibility) |
+| `learning-search` | `--tags t1,t2` | — | Comma-separated tag filter. Matches only active learnings |
+| `learning-search` | `--query <text>` | — | Keyword search across title and body, scored deterministically |
+
+The `learning-search` command always operates on active learnings — archived entries are excluded from skill auto-loads (used by `start-task`, `next-task`, `idea`, `parallel`) so stale insights don't surface as live context.
+
 ### Parallel execution flow
 
 ```mermaid

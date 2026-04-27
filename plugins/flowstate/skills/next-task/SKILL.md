@@ -23,6 +23,12 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status pending --
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true
 ```
 
+If pending tasks is empty, before falling back, also check pending ideas:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-list --status pending --json true
+```
+
 ### 2. Score Candidates
 
 For each pending non-blocked task:
@@ -78,5 +84,19 @@ Reply with a task ID/number to start it, or anything else to keep browsing.
 ## Edge Cases
 
 - **All blocked**: Show blockers, suggest resolving or `/flowstate:add-task`
-- **No pending**: Suggest `/flowstate:add-task`
+- **No pending tasks, but pending ideas exist**: Surface the top 3 pending ideas as candidates and offer to promote one. Present:
+
+  ```
+  ## No Pending Tasks
+
+  No pending tasks, but {{N}} pending idea(s) ready for review:
+
+  | ID | Title | Complexity | Created |
+  |----|-------|------------|---------|
+
+  Reply with an idea ID to review (`/flowstate:review-idea <ID>`) and promote it to a task, or run `/flowstate:add-task` to add a new task directly.
+  ```
+
+  If the user picks an idea, hand off to `/flowstate:review-idea` rather than auto-promoting — review keeps a human in the loop for scoping decisions.
+- **No pending tasks and no pending ideas**: Suggest `/flowstate:add-task` or `/flowstate:idea`
 - **Many same-priority**: Rank by secondary factors, explain reasoning

@@ -11,6 +11,7 @@ export async function learningList(cwd, input = {}) {
     catch {
         return [];
     }
+    const filter = input.status ?? (input.all ? "all" : "active");
     const results = [];
     for (const entry of entries) {
         const indexFile = join(lDir, entry, "index.md");
@@ -18,7 +19,7 @@ export async function learningList(cwd, input = {}) {
             const doc = await readEntity(indexFile);
             const fm = doc.frontmatter;
             const status = String(fm.status ?? "active");
-            if (!input.all && status !== "active")
+            if (filter !== "all" && status !== filter)
                 continue;
             results.push({
                 id: String(fm.id),

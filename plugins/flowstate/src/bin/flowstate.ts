@@ -11,6 +11,8 @@ import { taskUnblock } from "../commands/task-unblock.js";
 import { stats } from "../commands/stats.js";
 import { indexRebuild } from "../commands/index-rebuild.js";
 import { ideaCreate } from "../commands/idea-create.js";
+import { ideaList } from "../commands/idea-list.js";
+import type { IdeaListStatus } from "../commands/idea-list.js";
 import { ideaMove } from "../commands/idea-move.js";
 import { reportCreate } from "../commands/report-create.js";
 import { reportMove } from "../commands/report-move.js";
@@ -37,6 +39,83 @@ const VALID_TASK_STATUSES = new Set<TaskStatus>([
   "blocked",
   "complete",
 ]);
+
+const TOP_LEVEL_HELP = `Usage: flowstate <command> [args]
+
+Commands:
+  setup              Initialize .backlog structure
+  next-id            Get next ID for an entity type
+  task-create        Create a new task
+  task-list          List tasks (optionally filter by status)
+  task-move          Move task between statuses
+  task-block         Block a task with a reason
+  task-update        Update task fields and append progress log
+  task-unblock       Unblock a task
+  stats              Show backlog stats
+  index-rebuild      Rebuild index files from disk
+  idea-create        Create a new idea
+  idea-list          List ideas (pending by default)
+  idea-move          Approve or discard an idea
+  report-create      Create a new report
+  report-move        Triage or discard a report
+  learning-create    Create a new learning
+  learning-search    Search learnings by tags/query
+  learning-list      List learnings
+  learning-move      Archive a learning
+  learning-update    Update learning fields
+
+Global flags:
+  --json true        Emit JSON to stdout
+  --help, -h         Show help (top-level or per-command)
+
+Run 'flowstate <command> --help' for command-specific usage.`;
+
+const COMMAND_HELP: Record<string, string> = {
+  setup:
+    "Usage: flowstate setup [--project-name <name>]",
+  "next-id":
+    "Usage: flowstate next-id <task|idea|report|learning>",
+  "task-create":
+    "Usage: flowstate task-create --title <text> --priority <P0|P1|P2|P3> [--tags t1,t2] [--description <text> | --body <text|->] [--criteria <json-array>] [--source <ref>] [--depends-on id1,id2]",
+  "task-list":
+    "Usage: flowstate task-list [--status <pending|active|blocked|complete>] [--limit <n>]",
+  "task-move":
+    "Usage: flowstate task-move <id> --to <active|complete|pending>",
+  "task-block":
+    "Usage: flowstate task-block <id> --reason <text>",
+  "task-update":
+    "Usage: flowstate task-update <id> [--set key=value ...] [--log <message>]",
+  "task-unblock":
+    "Usage: flowstate task-unblock <id> [--resolution <text>]",
+  stats:
+    "Usage: flowstate stats",
+  "index-rebuild":
+    "Usage: flowstate index-rebuild [--type <tasks|learnings|all>]",
+  "idea-create":
+    "Usage: flowstate idea-create --title <text> --complexity <low|medium|high> [--body <text|->]",
+  "idea-list":
+    "Usage: flowstate idea-list [--status <pending|complete|all>] [--limit <n>]\n  Default: pending only.",
+  "idea-move":
+    "Usage: flowstate idea-move <id> --status <approved|discarded> [--task-id <id>]",
+  "report-create":
+    "Usage: flowstate report-create --title <text> --type <bug|finding|security> --severity <low|medium|high|critical> [--body <text|->]",
+  "report-move":
+    "Usage: flowstate report-move <id> --status <triaged|discarded> [--task-id <id>]",
+  "learning-create":
+    "Usage: flowstate learning-create --title <text> [--tags t1,t2] [--task <id>] [--body <text|->]",
+  "learning-search":
+    "Usage: flowstate learning-search [--tags t1,t2] [--query <text> | --similar-to <title>] [--limit <n>] [--body true]\n  --similar-to is an alias for --query, intended for dedupe / similarity checks before creating a learning.",
+  "learning-list":
+    "Usage: flowstate learning-list [--status <active|archived|superseded|all>] [--include-archived true] [--all true]\n  Default: active only. --include-archived and --all are aliases for --status all.",
+  "learning-move":
+    "Usage: flowstate learning-move <id> --to archived",
+  "learning-update":
+    "Usage: flowstate learning-update <id> [--title <text>] [--tags t1,t2] [--body <text|->]",
+};
+
+function wantsHelp(args: readonly string[]): boolean {
+  return args.includes("--help") || args.includes("-h");
+}
 
 function asEntityType(value: string): EntityType {
   if (!VALID_ENTITY_TYPES.has(value as EntityType)) {
@@ -113,9 +192,22 @@ async function main(): Promise<void> {
   const [command, ...rest] = process.argv.slice(2);
 
   if (!command) {
-    console.error(
-      "Usage: flowstate <command> [args]\n\nCommands: setup, next-id, task-create, task-list, task-move, task-block, task-update, task-unblock, stats, index-rebuild, idea-create, idea-move, report-create, report-move, learning-create, learning-search, learning-list, learning-move, learning-update",
-    );
+    console.error(TOP_LEVEL_HELP);
+    process.exit(1);
+  }
+
+  if (command === "--help" || command === "-h" || command === "help") {
+    console.log(TOP_LEVEL_HELP);
+    process.exit(0);
+  }
+
+  if (wantsHelp(rest)) {
+    const usage = COMMAND_HELP[command];
+    if (usage) {
+      console.log(usage);
+      process.exit(0);
+    }
+    console.error(`Unknown command: ${command}\n\n${TOP_LEVEL_HELP}`);
     process.exit(1);
   }
 
@@ -253,6 +345,28 @@ async function main(): Promise<void> {
         break;
       }
 
+      case "idea-list": {
+        const VALID_IDEA_STATUS = ["pending", "complete", "all"] as const;
+        const statusRaw = flags["status"];
+        let status: IdeaListStatus | undefined;
+        if (statusRaw !== undefined) {
+          if (!VALID_IDEA_STATUS.includes(statusRaw as IdeaListStatus)) {
+            console.error(
+              `Invalid --status value: "${statusRaw}". Must be one of: ${VALID_IDEA_STATUS.join(", ")}`,
+            );
+            process.exit(1);
+          }
+          status = statusRaw as IdeaListStatus;
+        }
+        const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+        const result = await ideaList(cwd, {
+          ...(status !== undefined ? { status } : {}),
+          ...(limit !== undefined ? { limit } : {}),
+        });
+        output(result, json);
+        break;
+      }
+
       case "idea-move": {
         const id = positional[0];
         if (!id) {
@@ -310,9 +424,10 @@ async function main(): Promise<void> {
       }
 
       case "learning-search": {
+        const query = flags["query"] ?? flags["similar-to"];
         const result = await learningSearch(cwd, {
           tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : undefined,
-          query: flags["query"],
+          query,
           limit: flags["limit"] ? parseInt(flags["limit"], 10) : undefined,
           includeBody: flags["body"] === "true",
         });
@@ -321,8 +436,25 @@ async function main(): Promise<void> {
       }
 
       case "learning-list": {
+        const VALID_STATUS_FILTER = ["active", "archived", "superseded", "all"] as const;
+        type StatusFilter = (typeof VALID_STATUS_FILTER)[number];
+        const includeArchived = flags["include-archived"] === "true";
+        const allFlag = flags["all"] === "true";
+        const statusRaw = flags["status"];
+        let status: StatusFilter | undefined;
+        if (statusRaw !== undefined) {
+          if (!VALID_STATUS_FILTER.includes(statusRaw as StatusFilter)) {
+            console.error(
+              `Invalid --status value: "${statusRaw}". Must be one of: ${VALID_STATUS_FILTER.join(", ")}`,
+            );
+            process.exit(1);
+          }
+          status = statusRaw as StatusFilter;
+        } else if (includeArchived || allFlag) {
+          status = "all";
+        }
         const result = await learningList(cwd, {
-          all: flags["all"] === "true",
+          ...(status !== undefined ? { status } : {}),
         });
         output(result, json);
         break;
@@ -362,7 +494,7 @@ async function main(): Promise<void> {
       }
 
       default:
-        console.error(`Unknown command: ${command}`);
+        console.error(`Unknown command: ${command}\n\nRun 'flowstate --help' for available commands.`);
         process.exit(1);
     }
   } catch (err) {
