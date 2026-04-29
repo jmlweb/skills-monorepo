@@ -1,7 +1,7 @@
 ---
 id: TSK-001
 title: Update README with marketplace installation
-status: pending
+status: complete
 priority: P2
 tags: [docs, distribution]
 created: 2026-04-05

@@ -9,6 +9,7 @@ source: manual
 depends-on: []
 started: 2026-04-27
 completed: 2026-04-27
+condensed: true
 ---
 
 # add-learning skill: dedupe check via learning-search before create
@@ -32,6 +33,5 @@ Auto-draft path in add-learning does not search existing learnings by title befo
 ## Progress Log
 
 - [2026-04-27] Created
-- [2026-04-27] Started
-- [2026-04-27] Added --similar-to alias for --query on learning-search (dedupe use case). Updated add-learning SKILL.md with new Step 2c dedupe check: search by title+tags before create, decide based on top match score (>=5 ask, 2-4 mention, <=1 silent). 1 new integration test. 192/192 passing.
 - [2026-04-27] Completed
+- [2026-04-29] Condensed

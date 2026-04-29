@@ -9,6 +9,7 @@ source: manual
 depends-on: []
 started: 2026-04-27
 completed: 2026-04-27
+condensed: true
 ---
 
 # Document --include-archived flag and status filters in flowstate CLI README
@@ -31,6 +32,5 @@ learning-search/learning-list behavior with archived entries unclear. Verify imp
 ## Progress Log
 
 - [2026-04-27] Created
-- [2026-04-27] Started
-- [2026-04-27] Added CLI reference table to README Technical Details section documenting --status, --include-archived, --all flags on learning-list and noting learning-search active-only behavior. Updated learnings SKILL.md with note about archived filter usage.
 - [2026-04-27] Completed
+- [2026-04-29] Condensed

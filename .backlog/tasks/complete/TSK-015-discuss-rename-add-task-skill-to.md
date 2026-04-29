@@ -9,6 +9,7 @@ source: manual
 depends-on: []
 started: 2026-04-27
 completed: 2026-04-27
+condensed: true
 ---
 
 # Discuss: rename add-task skill to reduce semantic collision with native TaskCreate
@@ -33,6 +34,5 @@ Reading flowstate SKILL.md fires Claude Code system-reminder about TaskCreate na
 ## Progress Log
 
 - [2026-04-27] Created
-- [2026-04-27] Started
-- [2026-04-27] Decision: keep add-task naming. Coherence with 6 *-task skills outweighs harness-side reminder noise. Documented rationale in LRN-002. Closing won't-fix.
 - [2026-04-27] Completed
+- [2026-04-29] Condensed

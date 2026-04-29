@@ -9,6 +9,7 @@ source: manual
 depends-on: []
 started: 2026-04-27
 completed: 2026-04-27
+condensed: true
 ---
 
 # Support --help/-h flag in flowstate CLI globally and per subcommand
@@ -32,6 +33,5 @@ flowstate.js --help returns 'Unknown command: --help'. POSIX-inconsistent. Add -
 ## Progress Log
 
 - [2026-04-27] Created
-- [2026-04-27] Started
-- [2026-04-27] Implemented --help/-h support: top-level prints command list, per-subcommand prints usage, both exit 0. Unknown command exits 1 with hint. Added 5 integration tests (178/178 passing).
 - [2026-04-27] Completed
+- [2026-04-29] Condensed
