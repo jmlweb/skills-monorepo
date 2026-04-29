@@ -9,6 +9,7 @@ import { taskBlock } from "../commands/task-block.js";
 import { taskUpdate } from "../commands/task-update.js";
 import { taskUnblock } from "../commands/task-unblock.js";
 import { taskCondense, taskCondenseAll } from "../commands/task-condense.js";
+import { taskCompress } from "../commands/task-compress.js";
 import { taskDoctor } from "../commands/task-doctor.js";
 import { stats } from "../commands/stats.js";
 import { indexRebuild } from "../commands/index-rebuild.js";
@@ -23,6 +24,7 @@ import { learningSearch } from "../commands/learning-search.js";
 import { learningList } from "../commands/learning-list.js";
 import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
+import { learningCompress } from "../commands/learning-compress.js";
 import type { EntityType, TaskStatus } from "../core/types.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
 import { findBacklogRoot } from "../core/paths.js";
@@ -54,6 +56,7 @@ Commands:
   task-update        Update task fields and append progress log
   task-unblock       Unblock a task
   task-condense      Condense a complete task (or --all)
+  task-compress      Replace a complete task body with a validated caveman-compressed version
   task-doctor        Reconcile task frontmatter status with folder location
   stats              Show backlog stats
   index-rebuild      Rebuild index files from disk
@@ -67,6 +70,7 @@ Commands:
   learning-list      List learnings
   learning-move      Archive a learning
   learning-update    Update learning fields
+  learning-compress  Replace a learning body with a validated caveman-compressed version
 
 Global flags:
   --json true        Emit JSON to stdout
@@ -93,6 +97,8 @@ const COMMAND_HELP: Record<string, string> = {
     "Usage: flowstate task-unblock <id> [--resolution <text>]",
   "task-condense":
     "Usage: flowstate task-condense <id> | flowstate task-condense --all\n  Trims Notes section and middle Progress Log entries from complete tasks. Idempotent (sets condensed: true).",
+  "task-compress":
+    "Usage: flowstate task-compress <id> --body -\n  Replace task body with caveman-compressed version piped on stdin. Validates that all code blocks, inline code, URLs, IDs, dates, version numbers, and headings are preserved, and that the Acceptance Criteria section is byte-exact. Rejects on invariant failure with JSON diagnostics. Sets compressed: true on success. Idempotent.",
   "task-doctor":
     "Usage: flowstate task-doctor [--dry-run true]\n  Reconciles frontmatter `status` field with folder location for every task in tasks/{pending,active,complete}/. Maps synonyms (done, completed, todo, wip, ...) to canonical values. Idempotent.",
   stats:
@@ -119,6 +125,8 @@ const COMMAND_HELP: Record<string, string> = {
     "Usage: flowstate learning-move <id> --to archived",
   "learning-update":
     "Usage: flowstate learning-update <id> [--title <text>] [--tags t1,t2] [--body <text|->]",
+  "learning-compress":
+    "Usage: flowstate learning-compress <id> --body -\n  Replace learning body with caveman-compressed version piped on stdin. Validates that all code blocks, inline code, URLs, IDs, dates, version numbers, and headings are preserved. Rejects on invariant failure with JSON diagnostics. Sets compressed: true on success. Idempotent.",
 };
 
 function wantsHelp(args: readonly string[]): boolean {
@@ -345,6 +353,23 @@ async function main(): Promise<void> {
         break;
       }
 
+      case "task-compress": {
+        const id = positional[0];
+        if (!id) {
+          console.error("Usage: flowstate task-compress <id> --body -");
+          process.exit(1);
+        }
+        const body = await getBody(flags);
+        if (!body) {
+          console.error("Missing --body (use --body - to read from stdin)");
+          process.exit(1);
+        }
+        const result = await taskCompress(cwd, id, body);
+        output(result, json);
+        if (!result.ok && !result.skippedReason) process.exit(2);
+        break;
+      }
+
       case "task-doctor": {
         const result = await taskDoctor(cwd, {
           dryRun: flags["dry-run"] === "true",
@@ -522,6 +547,23 @@ async function main(): Promise<void> {
         };
         const result = await learningUpdate(cwd, id, updateInput);
         output(result, json);
+        break;
+      }
+
+      case "learning-compress": {
+        const id = positional[0];
+        if (!id) {
+          console.error("Usage: flowstate learning-compress <id> --body -");
+          process.exit(1);
+        }
+        const body = await getBody(flags);
+        if (!body) {
+          console.error("Missing --body (use --body - to read from stdin)");
+          process.exit(1);
+        }
+        const result = await learningCompress(cwd, id, body);
+        output(result, json);
+        if (!result.ok && !result.skippedReason) process.exit(2);
         break;
       }
 
