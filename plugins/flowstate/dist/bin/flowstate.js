@@ -8,6 +8,7 @@ import { taskBlock } from "../commands/task-block.js";
 import { taskUpdate } from "../commands/task-update.js";
 import { taskUnblock } from "../commands/task-unblock.js";
 import { taskCondense, taskCondenseAll } from "../commands/task-condense.js";
+import { taskDoctor } from "../commands/task-doctor.js";
 import { stats } from "../commands/stats.js";
 import { indexRebuild } from "../commands/index-rebuild.js";
 import { ideaCreate } from "../commands/idea-create.js";
@@ -47,6 +48,7 @@ Commands:
   task-update        Update task fields and append progress log
   task-unblock       Unblock a task
   task-condense      Condense a complete task (or --all)
+  task-doctor        Reconcile task frontmatter status with folder location
   stats              Show backlog stats
   index-rebuild      Rebuild index files from disk
   idea-create        Create a new idea
@@ -75,6 +77,7 @@ const COMMAND_HELP = {
     "task-update": "Usage: flowstate task-update <id> [--set key=value ...] [--log <message>]",
     "task-unblock": "Usage: flowstate task-unblock <id> [--resolution <text>]",
     "task-condense": "Usage: flowstate task-condense <id> | flowstate task-condense --all\n  Trims Notes section and middle Progress Log entries from complete tasks. Idempotent (sets condensed: true).",
+    "task-doctor": "Usage: flowstate task-doctor [--dry-run true]\n  Reconciles frontmatter `status` field with folder location for every task in tasks/{pending,active,complete}/. Maps synonyms (done, completed, todo, wip, ...) to canonical values. Idempotent.",
     stats: "Usage: flowstate stats",
     "index-rebuild": "Usage: flowstate index-rebuild [--type <tasks|learnings|all>]",
     "idea-create": "Usage: flowstate idea-create --title <text> --complexity <low|medium|high> [--body <text|->]",
@@ -283,6 +286,13 @@ async function main() {
                     const result = await taskCondense(cwd, id);
                     output(result, json);
                 }
+                break;
+            }
+            case "task-doctor": {
+                const result = await taskDoctor(cwd, {
+                    dryRun: flags["dry-run"] === "true",
+                });
+                output(result, json);
                 break;
             }
             case "stats": {

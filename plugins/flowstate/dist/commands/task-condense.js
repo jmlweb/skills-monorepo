@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity, listFiles } from "../core/fs.js";
 import { today } from "../core/date.js";
-import { EntityNotFoundError, InvalidArgumentError } from "../core/errors.js";
+import { EntityNotFoundError } from "../core/errors.js";
 import { replaceSection, hasSection, appendToSection, appendToBody } from "../core/markdown.js";
 const MIN_PROGRESS_LOG_ENTRIES_TO_TRIM = 4;
 const MIN_NOTES_CONTENT_LENGTH = 1;
@@ -35,11 +35,18 @@ export async function taskCondenseAll(cwd) {
 async function condenseFile(filePath, id) {
     const doc = await readEntity(filePath);
     const fm = { ...doc.frontmatter };
-    if (fm["status"] !== "complete") {
-        throw new InvalidArgumentError(`Task ${id} is not complete (status: ${String(fm["status"])}). Only complete tasks can be condensed.`);
+    // Heal-on-read: file is in tasks/complete/, so status must be "complete".
+    // Normalize any drifted value (e.g. "completed", "done", "pending") so
+    // downstream tooling and indexes stay consistent.
+    const statusHealed = fm["status"] !== "complete";
+    if (statusHealed) {
+        fm["status"] = "complete";
     }
     const bytesBefore = Buffer.byteLength(doc.body, "utf-8");
     if (fm["condensed"] === true || fm["condensed"] === "true") {
+        if (statusHealed) {
+            await writeEntity(filePath, fm, doc.body);
+        }
         return {
             id,
             path: filePath,
@@ -70,6 +77,9 @@ async function condenseFile(filePath, id) {
         }
     }
     if (!changed) {
+        if (statusHealed) {
+            await writeEntity(filePath, fm, body);
+        }
         return {
             id,
             path: filePath,
