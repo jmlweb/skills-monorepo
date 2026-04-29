@@ -7,6 +7,7 @@ import { taskMove } from "../commands/task-move.js";
 import { taskBlock } from "../commands/task-block.js";
 import { taskUpdate } from "../commands/task-update.js";
 import { taskUnblock } from "../commands/task-unblock.js";
+import { taskCondense, taskCondenseAll } from "../commands/task-condense.js";
 import { stats } from "../commands/stats.js";
 import { indexRebuild } from "../commands/index-rebuild.js";
 import { ideaCreate } from "../commands/idea-create.js";
@@ -45,6 +46,7 @@ Commands:
   task-block         Block a task with a reason
   task-update        Update task fields and append progress log
   task-unblock       Unblock a task
+  task-condense      Condense a complete task (or --all)
   stats              Show backlog stats
   index-rebuild      Rebuild index files from disk
   idea-create        Create a new idea
@@ -72,6 +74,7 @@ const COMMAND_HELP = {
     "task-block": "Usage: flowstate task-block <id> --reason <text>",
     "task-update": "Usage: flowstate task-update <id> [--set key=value ...] [--log <message>]",
     "task-unblock": "Usage: flowstate task-unblock <id> [--resolution <text>]",
+    "task-condense": "Usage: flowstate task-condense <id> | flowstate task-condense --all\n  Trims Notes section and middle Progress Log entries from complete tasks. Idempotent (sets condensed: true).",
     stats: "Usage: flowstate stats",
     "index-rebuild": "Usage: flowstate index-rebuild [--type <tasks|learnings|all>]",
     "idea-create": "Usage: flowstate idea-create --title <text> --complexity <low|medium|high> [--body <text|->]",
@@ -264,6 +267,22 @@ async function main() {
                 }
                 const result = await taskUnblock(cwd, id, flags["resolution"]);
                 output(result, json);
+                break;
+            }
+            case "task-condense": {
+                if (flags["all"] === "true") {
+                    const results = await taskCondenseAll(cwd);
+                    output(results, json);
+                }
+                else {
+                    const id = positional[0];
+                    if (!id) {
+                        console.error("Usage: flowstate task-condense <id> | flowstate task-condense --all");
+                        process.exit(1);
+                    }
+                    const result = await taskCondense(cwd, id);
+                    output(result, json);
+                }
                 break;
             }
             case "stats": {

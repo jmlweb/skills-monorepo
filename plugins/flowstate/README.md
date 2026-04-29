@@ -139,6 +139,7 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:check-task` | Verify a task's status matches actual implementation in the codebase |
 | `/flowstate:next-task` | Smart recommendation based on priority, dependencies, and recent work |
 | `/flowstate:parallel` | Run multiple independent tasks simultaneously in isolated git worktrees |
+| `/flowstate:condense-tasks` | Trim Notes and middle Progress Log entries from completed tasks |
 
 ### 🗺️ Ideas
 
