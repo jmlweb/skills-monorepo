@@ -73,21 +73,32 @@ Fetches the PR diff and launches specialized agents in parallel to produce a str
 
 ### 📝 `/check-docs` — Documentation audit
 
-Audits docs for **content drift** — versions, commands, paths, examples and instructions out of sync with the current code. Markdown style/formatting is left to a linter.
+Audits docs on two axes: **content drift** (versions, commands, paths, examples, instructions out of sync with code) and **structural fit** (a 3-tier layout — rules stay terse, READMEs stay human, deep docs live under `docs/`). Markdown style/formatting is left to a linter.
 
 ```bash
-/check-docs                  # full project audit
+/check-docs                  # full audit (freshness + structure)
 /check-docs README.md        # single file
 /check-docs packages/foo     # single package
 /check-docs agents           # only AGENTS.md / CLAUDE.md / .claude/
+/check-docs structure        # only the structural pass
 ```
+
+**3-tier doc layout it enforces:**
+
+| Tier | Files | Cap | Voice |
+|------|-------|-----|-------|
+| 📏 Rules | `CLAUDE.md`, `AGENTS.md`, `.claude/**/*.md` | < 100 lines | terse, directive |
+| 📖 README | `README.md` (root + per-package) | no cap | human, bird's-eye |
+| 📚 Docs | `docs/**/*.md` (root or per-package) | < 300 lines | deep technical |
 
 **What it does:**
 - 🔄 Verifies versions, commands, paths, code examples and internal links against the current repo
-- 🧠 Validates agent instructions (`AGENTS.md`, `CLAUDE.md`, `.claude/`) reflect the actual conventions
+- 📐 Flags oversized rules/docs files and proposes extraction diffs into `docs/`
+- 🧠 Validates agent instructions reflect the actual conventions and stay terse
+- 🗂️ Detects missing `docs/` index when a docs folder has 3+ files; flags orphan docs
 - 📊 Reports findings grouped by severity (Critical / High / Medium / Low) with proposed fixes
 - 🙋 Asks before writing any content change — never auto-edits
-- 🗂️ Monorepo-aware: audits each package independently
+- 🏗️ Monorepo-aware: audits each package independently
 - 🚫 Does **not** audit or fix markdown style/formatting — leave that to your linter of choice
 
 ---
