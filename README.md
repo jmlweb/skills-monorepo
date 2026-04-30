@@ -18,10 +18,10 @@
 
 ## 📦 Plugin Catalog
 
-| Plugin | Description | Version | Status |
-|--------|-------------|:-------:|:------:|
-| 🌊 [**flowstate**](./plugins/flowstate/) | Backlog management — tasks, ideas, reports & learnings in plain markdown | `2.6.0` | ✅ Stable |
-| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, and doc audits | `1.1.0` | ✅ Stable |
+| Plugin | Description | Status |
+|--------|-------------|:------:|
+| 🌊 [**flowstate**](./plugins/flowstate/) | Backlog management — tasks, ideas, reports & learnings in plain markdown | ✅ Stable |
+| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, and doc audits | ✅ Stable |
 
 > 🔭 More plugins coming soon. Contributions welcome!
 
