@@ -257,7 +257,7 @@ stateDiagram-v2
 flowstate-skill/
 ├── .claude-plugin/
 │   └── plugin.json           # plugin manifest
-├── skills/                   # 16 slash commands (SKILL.md each)
+├── skills/                   # 17 slash commands (SKILL.md each)
 ├── hooks/
 │   ├── hooks.json            # event handlers
 │   ├── on-test-failure.sh    # suggests /flowstate:report

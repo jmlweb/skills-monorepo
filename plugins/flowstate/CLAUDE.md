@@ -64,7 +64,7 @@ Commands generate IDs via `nextId()`, write entities via `writeEntity()`, and up
 
 ### Skills (`skills/`)
 
-16 SKILL.md files define Claude Code skill prompts. Each specifies `allowed-tools`, `model` (haiku/sonnet), and step-by-step instructions. Skills invoke the CLI via Bash tool calls.
+17 SKILL.md files define Claude Code skill prompts. Each specifies `allowed-tools`, `model` (haiku/sonnet), and step-by-step instructions. Skills invoke the CLI via Bash tool calls.
 
 ### Hooks (`hooks/`)
 
