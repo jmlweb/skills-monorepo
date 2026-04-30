@@ -12,7 +12,7 @@ Flowstate is a Claude Code skill plugin that provides file-based backlog managem
 pnpm build          # Compile TypeScript → dist/
 pnpm test           # Run all tests once (vitest run, non-watch)
 pnpm test:watch     # Run tests in watch mode
-pnpm run typecheck  # Type-check without emitting
+pnpm typecheck      # Type-check without emitting
 
 # Run a single test file
 pnpm vitest run src/core/id.test.ts
@@ -51,6 +51,7 @@ IDs are zero-padded to 3 digits (e.g., `TSK-001`). The `id.ts` module handles pa
 - **`id.ts`** — `parseId`/`formatId`/`normalizeIdInput` — zero-padded IDs, case-insensitive input, bare number support.
 - **`date.ts`** — `today()` returns `YYYY-MM-DD` string.
 - **`slug.ts`** — `titleToSlug()` converts a title to a kebab-case slug (max 5 words).
+- **`compress-validate.ts`** — `validateCompression()` gates LLM-rewritten bodies against structural loss (dropped IDs, URLs, dates, code, headings, protected sections). Used by `task-compress` and `learning-compress`.
 
 ### Command Pattern
 

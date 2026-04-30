@@ -21,7 +21,7 @@
 | Plugin | Description | Version | Status |
 |--------|-------------|:-------:|:------:|
 | 🌊 [**flowstate**](./plugins/flowstate/) | Backlog management — tasks, ideas, reports & learnings in plain markdown | `2.6.0` | ✅ Stable |
-| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, and doc audits | `1.0.4` | ✅ Stable |
+| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, and doc audits | `1.1.0` | ✅ Stable |
 
 > 🔭 More plugins coming soon. Contributions welcome!
 
@@ -73,7 +73,8 @@ pnpm version:sync   # Sync plugin.json versions → marketplace.json
 .claude-plugin/           # Root marketplace definition
 plugins/
 ├── flowstate/            # Backlog management plugin
-│   ├── .claude-plugin/   # Plugin manifest (plugin.json) + hooks
+│   ├── .claude-plugin/   # Plugin manifest (plugin.json)
+│   ├── hooks/            # Event handlers (test failure, pre-commit reminders)
 │   ├── skills/           # Slash command definitions (*.md)
 │   ├── src/              # TypeScript source
 │   │   ├── commands/     # CLI command implementations
@@ -83,10 +84,15 @@ plugins/
 └── dev-workflow/         # Developer workflow plugin
     ├── .claude-plugin/   # Plugin manifest
     ├── skills/           # Slash command definitions (*.md)
+    ├── shared/           # Reusable instruction snippets shared across skills
+    ├── src/              # TypeScript source (commit/changeset CLI)
+    ├── dist/             # ⚠️ Pre-built — must be committed
     └── package.json
 packages/
 └── shared-config/        # Shared TypeScript base config
 scripts/
+├── bump-plugin.sh        # Bump a plugin's version (package.json + plugin.json + marketplace)
+├── pre-commit.mjs        # Pre-commit hook — rebuilds dist/ when src/ changes
 └── version-sync.js       # Version sync utility
 ```
 

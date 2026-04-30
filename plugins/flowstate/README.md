@@ -110,7 +110,7 @@ git submodule add https://github.com/jmlweb/skills-monorepo.git .claude/skills-m
 <summary><strong>🧪 Local development</strong></summary>
 
 ```bash
-claude --plugin-dir ./path/to/flowstate-skill
+claude --plugin-dir ./skills-monorepo/plugins/flowstate
 ```
 
 Use `/reload-plugins` after making changes.
@@ -254,7 +254,7 @@ stateDiagram-v2
 ### Architecture
 
 ```
-flowstate-skill/
+flowstate/
 ├── .claude-plugin/
 │   └── plugin.json           # plugin manifest
 ├── skills/                   # 17 slash commands (SKILL.md each)
