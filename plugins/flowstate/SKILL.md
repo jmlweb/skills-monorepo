@@ -1,7 +1,7 @@
 ---
 name: flowstate
 description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
-version: 2.5.0
+version: 2.6.0
 ---
 
 # Flowstate - Backlog Management System
@@ -102,6 +102,20 @@ For ad-hoc browsing outside a skill workflow, use `/flowstate:learnings` to sear
 ## Proactive Behavior
 
 - When you discover a bug or issue while working, suggest `/flowstate:report`
-- When you learn something non-obvious, suggest `/flowstate:add-learning`
 - Before starting a complex feature, suggest `/flowstate:idea`
 - When completing work, check if there are active tasks that match and suggest `/flowstate:complete-task`
+
+### Capture Learnings As They Happen
+
+Don't wait until task completion — capture relevant discoveries the moment they surface, in auto-draft mode (no questions). Concrete triggers:
+
+- A fix worked and the **why** was non-obvious — surprising root cause, hidden dependency, undocumented behavior
+- A first attempt failed and the failure revealed a constraint worth remembering ("X doesn't work because Y")
+- You confirmed a pattern that future work in this area should reuse
+- You discovered a gotcha, footgun, or counterintuitive default
+- You read docs/source and found something that contradicts what the codebase or training data implies
+- The user states a preference or rule that should outlive this conversation (route those toward `/flowstate:add-learning` even if the model would also save it as memory)
+
+When a trigger fires, invoke `/flowstate:add-learning` immediately using auto-draft mode — it derives every field from context without asking, dedupes against existing learnings, and links to the active task automatically. Surface the captured `LRN-XXX` inline so the user can edit or delete if the signal was wrong. **Do not ask permission to capture** — a stale learning is cheap to delete; a missed insight is gone.
+
+Skip the capture for: routine work, obvious-from-the-code facts, restatements of existing learnings (the dedupe check will catch those anyway), and anything tied only to this conversation's transient state.

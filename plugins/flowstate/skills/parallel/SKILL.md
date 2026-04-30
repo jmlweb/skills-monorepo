@@ -100,7 +100,19 @@ Complete Task TSK-{{ID}}: {{TITLE}}
 3. Read existing files before modifying
 4. Implement each acceptance criterion
 5. Verify changes work (build, lint, test as applicable)
-6. Create a commit referencing TSK-{{ID}}
+6. **Capture learnings as you go** — whenever you hit a non-obvious root cause, undocumented behavior, gotcha, or a pattern worth reusing, create a learning immediately using the CLI (do NOT wait for task completion):
+   ```bash
+   cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body -
+   ## Context
+   {{what you were doing}}
+   ## Insight
+   {{the non-obvious why}}
+   ## Application
+   {{what to do or avoid next time}}
+   BODY
+   ```
+   Skip routine work and anything obvious from the code.
+7. Create a commit referencing TSK-{{ID}}
 ```
 
 ### 7. Collect Results

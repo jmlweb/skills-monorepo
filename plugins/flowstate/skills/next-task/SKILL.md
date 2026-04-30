@@ -1,6 +1,6 @@
 ---
 name: next-task
-description: Analyze the backlog and recommend the best task to start next. Use when the user asks "what should I work on?", "next task", "what's the priority?", or needs help deciding between multiple pending items.
+description: Analyze the backlog and recommend the best task to start next, or up to 3 tasks if they can run in parallel. Use when the user asks "what should I work on?", "next task", "what's the priority?", or needs help deciding between multiple pending items.
 allowed-tools: [Read, Bash, Glob, Grep]
 model: sonnet
 effort: medium
@@ -8,7 +8,7 @@ effort: medium
 
 # Next Task
 
-Analyze the backlog and recommend the best task to start next.
+Analyze the backlog and recommend the best task to start next. When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group so the user can hand them off to `/flowstate:parallel`.
 
 ## Prerequisites
 
@@ -41,20 +41,61 @@ For each pending non-blocked task:
 | Tag affinity | Low | Shares tags with recently completed tasks |
 | Age | Low | Older tasks get slight preference |
 
-### 3. Load Context for Top Pick
+### 3. Detect Parallel Group
 
-Once the top candidate is identified:
+Take the top-scoring candidate plus the next 1–2 highest-scoring ones and check whether they can run together. The group is parallel-safe only if **all** of these hold:
 
-1. **Learnings**: Search for relevant learnings using the CLI. Pass the task's tags and its title + description for maximum keyword coverage:
-   ```bash
-   node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{TOP_PICK_TAGS}}" --query "{{TOP_PICK_TITLE}} {{TOP_PICK_DESCRIPTION_FIRST_LINE}}" --limit 3 --json true
-   ```
-   The CLI returns only active learnings, scored by tag match and keyword relevance. Use `title` and `reasons` to summarize relevance. Only read the full learning file if the user asks for details.
-2. **Pending reports**: Scan `.backlog/reports/pending/` for anything related to the top pick's scope.
+- No task in the group lists another task in the group via `depends-on`
+- No shared file references — parse each task's Description and Acceptance Criteria for path-like tokens (e.g. `src/foo.ts`, `packages/x/`, `*.json`) and require disjoint sets. When a task gives only directory hints, treat any overlap (same directory or ancestor) as a conflict
+- Tags and scope don't obviously collide on the same module (e.g. two tasks both tagged `auth` editing the same area is a conflict even if exact paths differ)
+
+Shrink the group from 3 → 2 → 1 until it satisfies the rules. If only the top pick survives, fall through to the single-pick presentation.
+
+### 4. Load Context
+
+Run a single learning search covering the whole group (top pick + any parallel companions) so context loading stays one CLI call:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL_GROUP_TAGS}}" --query "{{ALL_GROUP_TITLES_AND_FIRST_LINES}}" --limit 5 --json true
+```
+
+The CLI returns only active learnings, scored by tag match and keyword relevance. Use `title` and `reasons` to summarize relevance. Attribute each learning to the task(s) whose tags/title it overlaps with. Only read the full learning file if the user asks for details.
+
+Also scan `.backlog/reports/pending/` once for anything related to any task in the group.
 
 If no matches, skip silently.
 
-### 4. Present
+### 5. Present
+
+**If the parallel group has 2–3 tasks:**
+
+```
+## Next Task Recommendation
+
+### Parallel Group ({{N}} tasks)
+These are independent and can run together via `/flowstate:parallel`:
+
+| ID | Title | Priority | Tags |
+|----|-------|----------|------|
+| TSK-{{ID1}} | {{TITLE1}} | {{P1}} | {{TAGS1}} |
+| TSK-{{ID2}} | {{TITLE2}} | {{P2}} | {{TAGS2}} |
+
+Why this group: {{REASONING — priorities, no file overlap, unblocks others, etc.}}
+
+### Relevant Learnings          ← only if matches found
+- LRN-XXX (TSK-{{ID}}): {{TITLE}} — {{key insight}}
+
+### Alternatives (top 5)
+| ID | Title | Priority | Notes |
+|----|-------|----------|-------|
+
+Reply:
+- `parallel` / `all` / `yes` — start all {{N}} via `/flowstate:parallel`
+- a single ID/number — start just that one
+- anything else — keep browsing
+```
+
+**If only a single pick is viable (no parallel-safe companions):**
 
 ```
 ## Next Task Recommendation
@@ -70,14 +111,16 @@ Why: {{REASONING}}
 | ID | Title | Priority | Notes |
 |----|-------|----------|-------|
 
-Show up to 5 alternatives. If more pending tasks exist, note: "… and N more pending."
-
 Reply with a task ID/number to start it, or anything else to keep browsing.
 ```
 
-### 5. Handle Response
+In both forms, show up to 5 alternatives. If more pending tasks exist, note: "… and N more pending."
 
-- **ID or number** (top pick or any alternative): Move that task to active (same as `/flowstate:start-task`) and proceed implementing
+### 6. Handle Response
+
+- **`parallel` / `all` / `yes` (when a group was offered)**: Hand off to `/flowstate:parallel` with the group's task IDs as arguments
+- **Single ID or number** (top pick, group member, or any alternative): Move that task to active (same as `/flowstate:start-task`) and proceed implementing
+- **Comma-separated IDs**: Hand off to `/flowstate:parallel` with those IDs
 - **Question about a task**: Answer it without moving anything; the user can reply with an ID afterwards
 - **"no" / silence / unrelated**: Do nothing — user will re-invoke when ready
 
