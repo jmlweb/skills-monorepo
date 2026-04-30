@@ -1,6 +1,6 @@
 # Claude Code Plugin Documentation Reference
 
-Source: https://code.claude.com/docs/en/plugins
+Source: https://code.claude.com/docs/es/plugins
 
 ---
 
