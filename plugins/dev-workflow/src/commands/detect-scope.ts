@@ -59,7 +59,12 @@ export function detectScopeFromFiles(
 
     if (!(WORKSPACE_DIRS as readonly string[]).includes(top)) continue;
 
-    const scope = top === "apps" ? name : (readPackageName(top, name) ?? name);
+    // For plugins/ the directory name is the marketplace identity (install
+    // name, plugin.json, commit scope) — the package.json name may differ.
+    const scope =
+      top === "apps" || top === "plugins"
+        ? name
+        : (readPackageName(top, name) ?? name);
 
     if (!seen.has(scope)) {
       seen.add(scope);

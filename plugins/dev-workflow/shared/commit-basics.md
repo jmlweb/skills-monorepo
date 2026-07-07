@@ -65,8 +65,8 @@ Output:
 
 Rules the detector applies (for reference — no need to re-implement):
 
-- `apps/{X}/...` → `X`
-- `packages/{X}/...` and `plugins/{X}/...` → short name from that package's `package.json` (falls back to `X` if unreadable)
+- `apps/{X}/...` and `plugins/{X}/...` → `X` (for plugins the directory name is the marketplace identity; the package name may differ)
+- `packages/{X}/...` → short name from that package's `package.json` (falls back to `X` if unreadable)
 - 2 scopes → joined by `,`
 - 3+ scopes → `suggested` is `null` (omit scope)
 - No workspace files → falls back to the current branch: strips known prefixes (`feature/`, `fix/`, `chore/`, `task/`, …), preserves `PROJ-123`-style task IDs, otherwise takes the first hyphen-separated word. Excludes `main`/`master`/`develop`/`dev`/`trunk`.

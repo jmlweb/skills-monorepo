@@ -29,13 +29,13 @@ describe("detectScopeFromFiles", () => {
     ).toEqual(["foo-utils"]);
   });
 
-  it("maps plugins/X/... to the short name returned by the reader", () => {
+  it("maps plugins/X/... to X directly, even when the package name differs", () => {
     const reader = readerFromMap({
-      "plugins/dev-workflow": "dev-workflow",
+      "plugins/flowstate": "cli", // e.g. package.json name @flowstate/cli
     });
     expect(
-      detectScopeFromFiles(["plugins/dev-workflow/src/x.ts"], reader),
-    ).toEqual(["dev-workflow"]);
+      detectScopeFromFiles(["plugins/flowstate/src/x.ts"], reader),
+    ).toEqual(["flowstate"]);
   });
 
   it("falls back to dir name if package.json is missing or unreadable", () => {
