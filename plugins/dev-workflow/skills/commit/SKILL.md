@@ -9,7 +9,7 @@ effort: medium
 
 Automate git commits with Conventional Commits format and security validation.
 
-Shared rules (pre-commit analysis, staged validation, Conventional Commits format + type table, scope detection, security scan, error handling) live in `../../shared/commit-basics.md`. Read that file at the start of the run and follow it.
+Shared rules (pre-commit analysis, staged validation, Conventional Commits format + type table, scope detection, security scan, error handling) live in `${CLAUDE_PLUGIN_ROOT}/shared/commit-basics.md`. Read that file at the start of the run and follow it.
 
 ## Usage
 

@@ -74,7 +74,7 @@ Run 'flowstate <command> --help' for command-specific usage.`;
 const COMMAND_HELP = {
     setup: "Usage: flowstate setup [--project-name <name>]",
     "next-id": "Usage: flowstate next-id <task|idea|report|learning>",
-    "task-create": "Usage: flowstate task-create --title <text> --priority <P0|P1|P2|P3> [--tags t1,t2] [--description <text> | --body <text|->] [--criteria <json-array>] [--source <ref>] [--depends-on id1,id2]",
+    "task-create": "Usage: flowstate task-create --title <text> --priority <P1|P2|P3|P4> [--tags t1,t2] [--description <text> | --body <text|->] [--criteria <json-array>] [--source <ref>] [--depends-on id1,id2]",
     "task-list": "Usage: flowstate task-list [--status <pending|active|blocked|complete>] [--limit <n>]",
     "task-move": "Usage: flowstate task-move <id> --to <active|complete|pending>",
     "task-block": "Usage: flowstate task-block <id> --reason <text>",
@@ -88,7 +88,7 @@ const COMMAND_HELP = {
     "idea-create": "Usage: flowstate idea-create --title <text> --complexity <low|medium|high> [--body <text|->]",
     "idea-list": "Usage: flowstate idea-list [--status <pending|complete|all>] [--limit <n>]\n  Default: pending only.",
     "idea-move": "Usage: flowstate idea-move <id> --status <approved|discarded> [--task-id <id>]",
-    "report-create": "Usage: flowstate report-create --title <text> --type <bug|finding|security> --severity <low|medium|high|critical> [--body <text|->]",
+    "report-create": "Usage: flowstate report-create --title <text> --type <bug|finding|improvement|security> --severity <low|medium|high|critical> [--body <text|->]",
     "report-move": "Usage: flowstate report-move <id> --status <triaged|discarded> [--task-id <id>]",
     "learning-create": "Usage: flowstate learning-create --title <text> [--tags t1,t2] [--task <id>] [--body <text|->]",
     "learning-search": "Usage: flowstate learning-search [--tags t1,t2] [--query <text> | --similar-to <title>] [--limit <n>] [--body true]\n  --similar-to is an alias for --query, intended for dedupe / similarity checks before creating a learning.",

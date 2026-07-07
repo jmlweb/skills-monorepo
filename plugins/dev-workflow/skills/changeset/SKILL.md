@@ -9,7 +9,7 @@ effort: medium
 
 Generate a Changesets entry for the modified packages and commit it. CI applies changesets and publishes — never run `changeset version` locally.
 
-Read `../../shared/commit-basics.md` first; it owns the pre-commit analysis, staged validation, Conventional Commits format, scope detection, secret scan, and error handling. Don't re-implement those rules here.
+Read `${CLAUDE_PLUGIN_ROOT}/shared/commit-basics.md` first; it owns the pre-commit analysis, staged validation, Conventional Commits format, scope detection, secret scan, and error handling. Don't re-implement those rules here.
 
 ## Usage
 

@@ -47,10 +47,10 @@ Collect interactively:
 
 ### 3. Create Task via CLI
 
-Pipe the description via stdin:
+Pipe the description via stdin heredoc:
 
 ```bash
-echo "{{DESCRIPTION}}" | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create \
+cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create \
   --title "{{TITLE}}" \
   --priority {{PRIORITY}} \
   --tags "{{TAGS}}" \
@@ -58,7 +58,12 @@ echo "{{DESCRIPTION}}" | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task
   --source manual \
   --depends-on "{{DEPS}}" \
   --body -
+{{DESCRIPTION}}
+BODY
 ```
+
+- `{{CRITERIA_JSON}}` is a JSON array of strings, e.g. `'["criterion 1","criterion 2"]'`
+- `{{DEPS}}` is comma-separated task IDs, e.g. `TSK-001,TSK-002`. Omit the `--depends-on` flag entirely if there are no dependencies; omit `--criteria` if none were gathered.
 
 The CLI assigns the next ID, creates the task file, and updates `tasks/index.md` automatically.
 

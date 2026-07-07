@@ -44,18 +44,25 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `flowstate task-create --title <t> --priority <P> --tags <csv> --body -` | Create task |
 | `flowstate task-move <id> --to <active\|complete\|pending>` | Move task between states |
 | `flowstate task-update <id> --set <key=value> --log <msg>` | Update task fields |
+| `flowstate task-block <id> --reason <text>` | Block a task (never set `status: blocked` by hand) |
 | `flowstate task-unblock <id> --resolution <text>` | Unblock a task |
 | `flowstate task-list [--status <s>] [--json true]` | List tasks |
+| `flowstate task-condense <id\|--all>` | Trim Notes + middle Progress Log of complete tasks |
+| `flowstate task-compress <id> --body -` | Replace complete-task body with validated compressed version |
+| `flowstate task-doctor` | Reconcile task frontmatter status with folder location |
 | `flowstate stats [--json true]` | Get backlog stats |
 | `flowstate index-rebuild [--type <tasks\|learnings\|all>]` | Rebuild indexes |
 | `flowstate idea-create --title <t> --complexity <c> --body -` | Create idea |
+| `flowstate idea-list [--status <pending\|complete\|all>]` | List ideas (pending by default) |
 | `flowstate idea-move <id> --status <approved\|discarded> [--task-id <TSK-XXX>]` | Move idea |
 | `flowstate report-create --title <t> --type <t> --severity <s> --body -` | Create report |
 | `flowstate report-move <id> --status <triaged\|discarded> [--task-id <TSK-XXX>]` | Move report |
 | `flowstate learning-create --title <t> --tags <csv> --body - [--task <TSK-XXX>]` | Create learning |
+| `flowstate learning-search [--tags <csv>] [--query <text>] [--limit <n>]` | Search active learnings by tags/keywords |
 | `flowstate learning-list [--all true] [--json true]` | List learnings (active only by default) |
 | `flowstate learning-move <id> --to archived` | Archive a learning |
 | `flowstate learning-update <id> [--title <t>] [--tags <csv>] [--body -]` | Update learning fields |
+| `flowstate learning-compress <id> --body -` | Replace learning body with validated compressed version |
 | `flowstate next-id <task\|idea\|report\|learning>` | Get next sequential ID |
 
 ## Available Slash Commands

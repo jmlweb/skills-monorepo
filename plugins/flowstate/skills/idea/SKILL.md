@@ -59,6 +59,17 @@ cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-create --
 BODY
 ```
 
+`{{PLAN_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
+
+```markdown
+## Goal
+## Context
+## Approach        (numbered steps)
+## Files to Modify (one bullet per path — what changes)
+## Risks & Considerations
+## Open Questions  (omit if none)
+```
+
 The CLI handles ID assignment, file creation, and placement in `ideas/pending/`.
 
 **Complexity guidelines:**

@@ -22,7 +22,7 @@ Verify `.backlog/` exists.
 
 ### 1. Identify Task
 
-If `$ARGUMENTS` provided, find matching file in `.backlog/tasks/active/`.
+If `$ARGUMENTS` provided, find matching file in `.backlog/tasks/active/`. If not there, check `.backlog/tasks/pending/` (a task can be completed without having been started) — if found there, confirm with the user before proceeding. If found nowhere, say so and stop.
 
 If no argument, list active tasks and ask which to complete.
 

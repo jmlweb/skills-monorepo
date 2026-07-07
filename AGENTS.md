@@ -127,7 +127,9 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --json true`).
   Multi-line bodies via stdin: `--body -` with a heredoc. `${CLAUDE_PLUGIN_DATA}` is for
   persistent state surviving updates — currently unused; don't reach for it without need.
-- Shared prose between skills goes in the plugin's `shared/*.md`, referenced by relative path.
+- Shared prose between skills goes in the plugin's `shared/*.md`, referenced as
+  `${CLAUDE_PLUGIN_ROOT}/shared/<file>.md` — never by relative path (skills execute from the
+  user's cwd, so relative paths don't resolve).
 
 ### Additions (not previously written down — follow these too)
 

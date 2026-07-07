@@ -22,7 +22,7 @@ Verify `.backlog/` exists. If not, tell the user to run `/flowstate:setup` first
 
 ### 1. Identify Task
 
-If `$ARGUMENTS` provided, find the matching file in `.backlog/tasks/pending/`.
+If `$ARGUMENTS` provided, find the matching file in `.backlog/tasks/pending/`. If it is not there but exists in `.backlog/tasks/active/`, the task is already started — skip Step 4 (no move) and go to Step 5. If found nowhere, say so and stop.
 
 If no argument, list all pending non-blocked tasks and ask which to start.
 

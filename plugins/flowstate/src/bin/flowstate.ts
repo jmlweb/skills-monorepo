@@ -84,7 +84,7 @@ const COMMAND_HELP: Record<string, string> = {
   "next-id":
     "Usage: flowstate next-id <task|idea|report|learning>",
   "task-create":
-    "Usage: flowstate task-create --title <text> --priority <P0|P1|P2|P3> [--tags t1,t2] [--description <text> | --body <text|->] [--criteria <json-array>] [--source <ref>] [--depends-on id1,id2]",
+    "Usage: flowstate task-create --title <text> --priority <P1|P2|P3|P4> [--tags t1,t2] [--description <text> | --body <text|->] [--criteria <json-array>] [--source <ref>] [--depends-on id1,id2]",
   "task-list":
     "Usage: flowstate task-list [--status <pending|active|blocked|complete>] [--limit <n>]",
   "task-move":
@@ -112,7 +112,7 @@ const COMMAND_HELP: Record<string, string> = {
   "idea-move":
     "Usage: flowstate idea-move <id> --status <approved|discarded> [--task-id <id>]",
   "report-create":
-    "Usage: flowstate report-create --title <text> --type <bug|finding|security> --severity <low|medium|high|critical> [--body <text|->]",
+    "Usage: flowstate report-create --title <text> --type <bug|finding|improvement|security> --severity <low|medium|high|critical> [--body <text|->]",
   "report-move":
     "Usage: flowstate report-move <id> --status <triaged|discarded> [--task-id <id>]",
   "learning-create":

@@ -2,7 +2,7 @@
 name: review-pr
 argument-hint: [PR number or URL]
 description: Review a GitHub pull request with specialized agents running in parallel (code quality, security, QA, architecture as needed). Use when the user says "review PR", "review this pull request", "/review-pr", pastes a GitHub PR URL, or finishes a branch and wants feedback before merge. Fetches diff via `gh`, checks CI status, produces a structured report with risk matrix and merge recommendation. Requires GitHub CLI authenticated.
-allowed-tools: Read, Write, Grep, Task, Bash(gh:*), Bash(git:*), Bash(command:*)
+allowed-tools: Read, Write, Grep, Agent, Bash(gh:*), Bash(git:*), Bash(command:*)
 model: sonnet
 effort: medium
 ---
@@ -51,11 +51,11 @@ Conditionally add, based on the diff:
 - **frontend-architect** (sonnet) — new app structure or state-management migration.
 - **backend-architect** (sonnet) — new service architecture or schema overhaul.
 
-Each agent applies the relevant section of `assets/checklists.md`. If an agent fails, continue with the rest and note the gap.
+Each agent applies the relevant section of `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/checklists.md` — paste that section into the agent's prompt (subagents don't inherit this skill's context). If an agent fails, continue with the rest and note the gap.
 
 ## 5. Aggregate
 
-Fill `assets/report-template.md` with every agent's output, the CI check result, and the risk matrix. Keep agent outputs verbatim — do not re-summarize their findings.
+Fill `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/report-template.md` with every agent's output, the CI check result, and the risk matrix. Keep agent outputs verbatim — do not re-summarize their findings. Write the filled report to `review.md` in the current directory (the posting commands below read it; it is temporary — do not commit it).
 
 CI: ✅ all green → proceed. ⏳ pending → note. ❌ failed → flag as merge blocker.
 

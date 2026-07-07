@@ -119,7 +119,7 @@ In both forms, show up to 5 alternatives. If more pending tasks exist, note: "â€
 ### 6. Handle Response
 
 - **`parallel` / `all` / `yes` (when a group was offered)**: Hand off to `/flowstate:parallel` with the group's task IDs as arguments
-- **Single ID or number** (top pick, group member, or any alternative): Move that task to active (same as `/flowstate:start-task`) and proceed implementing
+- **Single ID or number** (top pick, group member, or any alternative): Move it to active via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active` (same as `/flowstate:start-task`) and proceed implementing
 - **Comma-separated IDs**: Hand off to `/flowstate:parallel` with those IDs
 - **Question about a task**: Answer it without moving anything; the user can reply with an ID afterwards
 - **"no" / silence / unrelated**: Do nothing â€” user will re-invoke when ready

@@ -97,10 +97,9 @@ Complete Task TSK-{{ID}}: {{TITLE}}
 ## Instructions
 1. Read project documentation (README, CLAUDE.md, etc.) first
 2. Apply the learnings above — they capture past mistakes and proven patterns
-3. Read existing files before modifying
-4. Implement each acceptance criterion
-5. Verify changes work (build, lint, test as applicable)
-6. **Capture learnings as you go** — whenever you hit a non-obvious root cause, undocumented behavior, gotcha, or a pattern worth reusing, create a learning immediately using the CLI (do NOT wait for task completion):
+3. Implement each acceptance criterion
+4. Verify changes work (build, lint, test as applicable)
+5. **Capture learnings as you go** — whenever you hit a non-obvious root cause, undocumented behavior, gotcha, or a pattern worth reusing, create a learning immediately using the CLI (do NOT wait for task completion):
    ```bash
    cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body -
    ## Context
@@ -112,7 +111,7 @@ Complete Task TSK-{{ID}}: {{TITLE}}
    BODY
    ```
    Skip routine work and anything obvious from the code.
-7. Create a commit referencing TSK-{{ID}}
+6. Create a commit referencing TSK-{{ID}}
 ```
 
 ### 7. Collect Results
@@ -131,5 +130,5 @@ Complete Task TSK-{{ID}}: {{TITLE}}
 
 ## Error Handling
 
-- Agent fails: mark task as blocked, continue others
+- Agent fails: block the task via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-block {{ID}} --reason "{{failure summary}}"`, continue others
 - All fail: summarize errors, suggest reviewing task definitions

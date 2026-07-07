@@ -40,7 +40,7 @@ Derive every field from `$ARGUMENTS` + recent conversation. Do NOT ask the user:
 - **Application** — what to do (or avoid) in the future
 - **Tags** — derive from content keywords; if a task is being linked (see Step 3), include its tags too
 
-Skip directly to Step 3.
+Then run the dedupe check (Step 2c) — do not skip it.
 
 ### 2b. Interactive Mode
 
@@ -62,7 +62,9 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to 
 
 Decide based on top match score (`reasons` array explains why each result matched):
 
-- **Top score ≥ 5** → likely duplicate. Show the match and ask:
+- **Top score ≥ 5** → likely duplicate.
+  - In **auto-draft mode**: do NOT create a new learning and do NOT ask. Say `Skipped — duplicate of LRN-{{ID}}: {{TITLE}}` and stop.
+  - In **interactive mode**: show the match and ask:
   ```
   Similar learning already exists:
   LRN-{{ID}}: {{TITLE}} (score {{N}}, matched: {{REASONS}})

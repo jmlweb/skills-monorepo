@@ -86,10 +86,12 @@ Ask the user to confirm the recommendation or pick a different option.
 ### 5a. Approve
 
 ```bash
-# Create task from plan
-node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P}} --source "plan/PLN-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
+# Create task from plan (--body - reads stdin: pipe the plan's Goal + Approach)
+cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P}} --source "plan/PLN-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
+{{PLAN_GOAL_AND_APPROACH}}
+BODY
 
-# Move plan to complete
+# Move plan to complete (TSK-{{NEW_ID}} comes from the task-create output above)
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status approved --task-id TSK-{{NEW_ID}}
 ```
 

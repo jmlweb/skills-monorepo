@@ -73,10 +73,12 @@ Ask the user to confirm the recommendation or pick a different option.
 ### 5a. Convert to Task
 
 ```bash
-# Create task from report
-node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "Fix: {{TITLE}}" --priority {{P}} --source "report/RPT-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
+# Create task from report (--body - reads stdin: pipe the report's summary + key details)
+cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "Fix: {{TITLE}}" --priority {{P}} --source "report/RPT-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
+{{REPORT_SUMMARY_AND_DETAILS}}
+BODY
 
-# Move report to complete
+# Move report to complete (TSK-{{NEW_ID}} comes from the task-create output above)
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --status triaged --task-id TSK-{{NEW_ID}}
 ```
 

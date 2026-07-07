@@ -81,7 +81,7 @@ WARNING: TSK-XXX active since YYYY-MM-DD (N days)
 NOTE: {{N}} high-priority tasks — consider reprioritizing
 ```
 
-**Index drift** (counts don't match disk): Offer to rewrite `tasks/index.md`.
+**Index drift** (counts don't match disk): Offer to rebuild the index via the CLI (Step 4). Never edit `tasks/index.md` by hand.
 
 ### 4. Rebuild Index (only if drift detected)
 

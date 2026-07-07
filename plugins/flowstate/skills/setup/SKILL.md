@@ -18,8 +18,8 @@ Project name (optional): $ARGUMENTS
 
 ### 1. Check Existing State
 
-- If `.backlog/` already exists, check which subdirectories/files are missing and only create those
-- If it doesn't exist, create everything from scratch
+- Note whether `.backlog/` already exists (affects only what you report in Step 4)
+- Either way, do NOT create directories or index files by hand — the CLI in Step 3 is idempotent and creates only what is missing
 
 ### 2. Project Name
 

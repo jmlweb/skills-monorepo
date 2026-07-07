@@ -2,7 +2,7 @@
 name: check-docs
 argument-hint: [path or scope]
 description: Audit project docs (README, CLAUDE.md, AGENTS.md, package READMEs, docs/) for content drift AND structural fit — versions, commands, paths, examples and instructions out of sync with the code, plus a 3-tier layout check (rules stay terse, READMEs stay human, deep docs live under docs/). Use when the user says "check docs", "are the docs up to date?", after significant code changes, or before a release. Reports content + structural issues; defers markdown style/formatting to a linter. Monorepo-aware.
-allowed-tools: Read, Edit, Write, Grep, Glob, Task, Bash(git:*), Bash(test:*), Bash(wc:*)
+allowed-tools: Read, Edit, Write, Grep, Glob, Agent, Bash(git:*), Bash(test:*), Bash(wc:*)
 model: sonnet
 effort: medium
 ---
