@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 0 |
+| Pending | 1 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 15 |
@@ -17,6 +17,7 @@ _No active tasks._
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
+| TSK-016 | Bump deprecated GitHub Actions to current majors | P3 | ci, maintenance | 2026-07-07 |
 
 ## Recently Completed
 
