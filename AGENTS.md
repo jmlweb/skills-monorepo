@@ -255,7 +255,7 @@ cd ../..
 git add -A
 git commit -m "chore: release <name> v<VERSION>"
 git tag plugins/<name>/v<VERSION>
-git push && git push --tags        # only after explicit user approval — this publishes
+git push && git push origin plugins/<name>/v<VERSION>   # only after explicit user approval — this publishes
 ```
 
 CI (`ci.yml`) gates every PR/push to main on: typecheck, build, test, dist-drift, version-sync.

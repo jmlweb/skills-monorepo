@@ -46,15 +46,42 @@ jobs:
           PREV_TAG=$(git tag --sort=-version:refname | grep "plugins/$PLUGIN/" | sed -n '2p')
           echo "prev_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
 
+      - name: Verify tag matches package.json
+        env:
+          PLUGIN: ${{ steps.tag.outputs.plugin }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          PKG_VERSION=$(node -p "require('./plugins/$PLUGIN/package.json').version")
+          if [ "v$PKG_VERSION" != "$VERSION" ]; then
+            echo "ERROR: tag says $VERSION but plugins/$PLUGIN/package.json says v$PKG_VERSION."
+            exit 1
+          fi
+
+      - name: Build plugin-scoped release notes
+        env:
+          PLUGIN: ${{ steps.tag.outputs.plugin }}
+          PREV_TAG: ${{ steps.tag.outputs.prev_tag }}
+        run: |
+          RANGE="$GITHUB_REF_NAME"
+          [ -n "$PREV_TAG" ] && RANGE="$PREV_TAG..$GITHUB_REF_NAME"
+          {
+            echo "## Changes"
+            echo ""
+            git log --no-merges --pretty='- %s (%h)' "$RANGE" -- "plugins/$PLUGIN" \
+              | grep -v '^- chore: release ' || echo "- No plugin changes"
+            if [ -n "$PREV_TAG" ]; then
+              echo ""
+              echo "**Full diff**: https://github.com/$GITHUB_REPOSITORY/compare/$PREV_TAG...$GITHUB_REF_NAME"
+            fi
+          } > notes.md
+          cat notes.md
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          PLUGIN: ${{ steps.tag.outputs.plugin }}
+          VERSION: ${{ steps.tag.outputs.version }}
         run: |
-          NOTES_FLAG=""
-          if [ -n "${{ steps.tag.outputs.prev_tag }}" ]; then
-            NOTES_FLAG="--notes-start-tag ${{ steps.tag.outputs.prev_tag }}"
-          fi
-          gh release create "${{ github.ref_name }}" \
-            --title "${{ steps.tag.outputs.plugin }} ${{ steps.tag.outputs.version }}" \
-            --generate-notes \
-            $NOTES_FLAG
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$PLUGIN $VERSION" \
+            --notes-file notes.md

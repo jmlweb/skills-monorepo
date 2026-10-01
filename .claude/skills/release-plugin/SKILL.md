@@ -82,11 +82,19 @@ version, tag name, and `git log --oneline <prev-tag>..HEAD -- plugins/<name>` as
 release content. Ask for an explicit go-ahead, then:
 
 ```bash
-git push && git push --tags
+git push && git push origin plugins/<name>/v<V>
 ```
 
 If the user declines, stop here and tell them commit + tag exist locally and how to undo
-(`git tag -d plugins/<name>/v<V>` + `git reset --hard HEAD~1`).
+(only the bump files are reverted; nothing else in the tree is touched):
+
+```bash
+git tag -d plugins/<name>/v<V>
+git reset --soft HEAD~1
+git restore --staged --worktree -- plugins/<name>/package.json \
+  plugins/<name>/.claude-plugin/plugin.json .claude-plugin/marketplace.json
+# flowstate also: plugins/flowstate/SKILL.md
+```
 
 ### 6. Post-release verification
 
