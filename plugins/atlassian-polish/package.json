@@ -1,0 +1,27 @@
+{
+  "name": "@jmlweb/atlassian-polish",
+  "version": "0.1.0",
+  "description": "Rewrite Jira issues and Confluence pages into scannable, human-friendly content",
+  "type": "module",
+  "scripts": {
+    "bump": "bash ../../scripts/bump-plugin.sh atlassian-polish"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "jira",
+    "confluence",
+    "atlassian"
+  ],
+  "author": "jmlweb (https://github.com/jmlweb)",
+  "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/atlassian-polish",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmlweb/skills-monorepo.git",
+    "directory": "plugins/atlassian-polish"
+  },
+  "bugs": {
+    "url": "https://github.com/jmlweb/skills-monorepo/issues"
+  },
+  "license": "MIT"
+}

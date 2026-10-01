@@ -1,0 +1,21 @@
+{
+  "name": "atlassian-polish",
+  "description": "Rewrite Jira issues and Confluence pages into scannable, consistent, human-friendly content without losing a single decision, number, name, date or link.",
+  "version": "0.1.0",
+  "author": {
+    "name": "jmlweb",
+    "url": "https://github.com/jmlweb"
+  },
+  "repository": "https://github.com/jmlweb/skills-monorepo",
+  "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/atlassian-polish",
+  "license": "MIT",
+  "keywords": [
+    "jira",
+    "confluence",
+    "atlassian",
+    "documentation",
+    "formatting",
+    "writing"
+  ],
+  "skills": "./skills/"
+}

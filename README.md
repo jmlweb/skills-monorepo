@@ -22,6 +22,7 @@
 |--------|-------------|:------:|
 | 🌊 [**flowstate**](./plugins/flowstate/) | Backlog management — tasks, ideas, reports & learnings in plain markdown | ✅ Stable |
 | 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, and doc audits | ✅ Stable |
+| ✨ [**atlassian-polish**](./plugins/atlassian-polish/) | Rewrite Jira issues and Confluence pages into scannable, human-friendly content | 🧪 New |
 
 > 🔭 More plugins coming soon. Contributions welcome!
 

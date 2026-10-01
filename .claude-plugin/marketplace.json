@@ -9,6 +9,20 @@
   },
   "plugins": [
     {
+      "name": "atlassian-polish",
+      "source": "./plugins/atlassian-polish",
+      "description": "Rewrite Jira issues and Confluence pages into scannable, human-friendly content without losing a fact.",
+      "version": "0.1.0",
+      "keywords": [
+        "jira",
+        "confluence",
+        "atlassian",
+        "documentation",
+        "formatting",
+        "writing"
+      ]
+    },
+    {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Developer workflow tools — documentation auditing, PR reviews, commits, and task orchestration.",

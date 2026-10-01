@@ -17,6 +17,8 @@ importers:
 
   packages/shared-config: {}
 
+  plugins/atlassian-polish: {}
+
   plugins/dev-workflow:
     devDependencies:
       '@types/node':
