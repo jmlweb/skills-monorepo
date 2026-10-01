@@ -34,7 +34,7 @@ Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrit
 - 🧭 Epics get a children table and a go-live checklist; Confluence pages keep their meaningful heading hierarchy
 - 💾 Backs up every original before writing and shows you a preview plus a list of what was removed and why
 - ✅ Re-fetches after writing and scans for leftover markup (`{{`, `h2.`, `||`, literal `**`…), broken images and mismatched issue links
-- 🖼️ Diagrams: rendered at 2× from SVG, visually self-checked, and the SVG source is attached beside the PNG; replaced images never break
+- 🖼️ Diagrams are always added for complex problems, ticket/element relationships and concepts; rendered at 2× from SVG, visually self-checked, and the SVG source is attached beside the PNG; replaced images never break
 - 🔗 Optionally cross-checks linked GitHub PRs and Slack threads (asks first, read-only)
 
 ## What it never does

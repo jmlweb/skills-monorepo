@@ -1,8 +1,43 @@
 # Diagrams
 
-Read when a diagram is needed. Only draw one when it explains something text can't (flow
-across systems, dependency order). Otherwise use a table or list. ASCII in a code block is
-first choice if it fits 70 columns. Otherwise: SVG → PNG → upload → embed.
+Read for every page before the rewrite is final.
+
+## 0. When a diagram is required
+
+Draw one whenever the content meets at least one trigger. Not optional, not "when there is
+time". Skip only when none applies; never add one as decoration. Borderline: would a reader
+have to sketch this on paper to follow it? Then draw it.
+
+1. **Complex problem:** a flow, architecture, state machine or cause chain that takes more
+   than a few sentences to follow (multiple systems, steps or branches).
+2. **Relationships:** how tickets or elements depend on, block or contain each other (epic
+   with ≥ 3 children linked by order or dependency, cross-team handoffs).
+3. **Concept:** an abstract idea the text only describes (model, boundary).
+4. **Sequence over time:** calls between systems or teams, rollout or migration phases.
+   Use a sequence or phase layout, not boxes and arrows.
+5. **Branching logic:** decision trees, error and retry paths, acceptance criteria with
+   if/else.
+6. **Current vs target state:** before/after architecture or flow, side by side.
+7. **Data model or contract:** entities and relations, API payload shape.
+8. **UI change with no screenshot:** a wireframe sketch; alt text says "sketch".
+
+A table or list is not a substitute when a trigger applies. Output form: ASCII in a code block
+if it fits 70 columns; otherwise SVG → PNG → upload → embed (§1-§6). Already has a diagram
+that covers the trigger → keep it. Tools unavailable (no renderer, REST declined) → keep the
+ASCII version or list the missing diagram in the report; never silently skip.
+
+### Do not draw
+
+- Flat lists with no relations, or a single step / plain A→B.
+- Numbers or statuses that go stale: use a table.
+- Existing screenshots or images: keep and re-embed with alt text, never redraw.
+- Photos or illustrations: never fabricate UI screenshots.
+
+### Integrity
+
+- Every box and arrow traces to the source text or a ticket link. No invented dependencies.
+- Inferred element: dashed line, label "(unverified)", and list it in UNVERIFIED.
+- At most 3 diagrams per page, one idea each.
 
 ## 1. SVG hygiene
 

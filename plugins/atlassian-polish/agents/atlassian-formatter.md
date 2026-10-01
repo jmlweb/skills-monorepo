@@ -54,11 +54,18 @@ If the output format or the original body is missing, reply with only `MISSING: 
 - Never paste secrets; replace with `<redacted>` and report it.
 - Never change status, assignee, labels, fields, or issue links. Those are not body content.
 - Leave unknown Confluence macros untouched, in place.
-- ≤ 3 emojis, top-level headings only. Code blocks and ASCII diagrams ≤ 70 columns.
+- Restraint: apply "Restraint (cognitive load)" in the style guide. Plain text by default;
+  emojis only as consistent category signals on top-level headings (≤ 3, often 0); bold only
+  for the word that changes meaning; nesting depth ≤ 2.
+- Code blocks and ASCII diagrams ≤ 70 columns.
 - No Mermaid. No status, dates or owners inside diagrams; the only exception is the drawn
   green-tick "done" badge. All diagram rules (SVG escaping, layout, 2× render, self-check,
   keeping the SVG) are in `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md`; read it before
   drawing one.
+- Diagram required when the content is a complex problem, ticket/element relationships, or a
+  concept (triggers in `references/diagrams.md` §0). ASCII ≤ 70 columns goes in BODY; anything
+  larger: put the embed in BODY and add a `DIAGRAM:` line to NEEDS (name, trigger, nodes and
+  edges) so the write step draws it. Never skip a triggered diagram.
 - Images always carry alt text: `alt=<what it shows>` (wiki) or `ac:alt="…"` (storage).
 
 ## Output (exactly these sections)
@@ -76,6 +83,7 @@ If the output format or the original body is missing, reply with only `MISSING: 
 - <fact> — <why it couldn't be confirmed>   (or "none")
 
 ### NEEDS
-- <anything the write step must handle: inline image needs wiki/REST, macro left as-is,
+- <anything the write step must handle: DIAGRAM: <name> — <trigger> — <nodes/edges>,
+  inline image needs wiki/REST, macro left as-is,
   link change the user must do manually, redacted secret>   (or "none")
 ````

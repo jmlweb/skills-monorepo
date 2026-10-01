@@ -11,7 +11,7 @@ carries information is lost.
 3. **Current state wins.** Comments often supersede the description. The newest dated source
    wins; the older claim is removed, not kept "for context".
 4. **Format to aid reading, not to decorate.** Each heading, table or panel must make
-   something faster to find. At most 2–3 emojis per page, only on top-level headings.
+   something faster to find. Follow "Restraint (cognitive load)" below.
 5. **Same language as the page.** Never translate unless asked. Mixed-language page: use the
    majority language for headings, keep quotes as written.
 6. **Never invent.** A fact that can't be verified stays, marked `(unverified)`.
@@ -44,6 +44,29 @@ Keep: IDs, test vectors, public links, real uncertainty ("not yet confirmed by L
 - **Ticket keys** bare: `PROJ-123`.
 - **Dates** ISO: `2026-10-01`.
 - **Status** sections are dated in the heading because they go stale.
+
+## Restraint (cognitive load)
+
+Every markup element must pay for itself: it either helps the reader find something or
+carries meaning. If removing it loses nothing, remove it.
+
+- **Plain by default.** Short sentences and paragraphs first; markup only where plain text
+  would be harder to scan.
+- **One emphasis style per purpose.** Bold = the word that flips the meaning. Monospace =
+  literals. Never bold whole sentences, never bold + italic, never ALL CAPS.
+- **Emoji = signal, not decoration.** At most 3 per page, only where they mark a category
+  the reader scans for (e.g. a risk or a blocker heading), always the same emoji for the same
+  meaning, never in body text, tables, lists or inside sentences. A page with no such
+  category gets zero.
+- **Structure depth ≤ 2.** No nested lists beyond two levels; no headings below h3; no table
+  inside a list; no list inside a table cell.
+- **Section size.** A heading earns its place with ≥ 2 lines of content. 3+ headings per
+  screen of text means over-structured: merge.
+- **Lists:** 3-7 items. One item or > 9: write a sentence or group them.
+- **Callouts** (panel, quote, blockquote): ≤ 2 per page, only for what blocks action.
+- **Horizontal rules, decorative separators, "TL;DR" banners:** none, unless the original
+  page's structure depends on them.
+- **Order for scanning:** what the reader must do or decide first, background last.
 
 ## Jira template (default)
 

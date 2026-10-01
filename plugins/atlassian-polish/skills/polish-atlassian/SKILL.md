@@ -86,12 +86,14 @@ Launch `Agent` with `subagent_type: "atlassian-polish:atlassian-formatter"`, one
 metadata, cross-check findings, today's date. If the agent type is unavailable, read
 `${CLAUDE_PLUGIN_ROOT}/agents/atlassian-formatter.md` and do the rewrite yourself following it.
 
-Check the result: every ticket key, link, number and date from the input appears in BODY or
+Check the result: if the content meets a diagram trigger (complex problem, ticket/element
+relationships, concept; `references/diagrams.md` §0) and BODY has no diagram and NEEDS has no
+`DIAGRAM:` line, send it back. Then every ticket key, link, number and date from the input appears in BODY or
 in REMOVED. Fix gaps before previewing.
 
 ### 7. Preview
 
-Per page show: title + link, the full BODY, REMOVED, UNVERIFIED, NEEDS. Then ask:
+Per page show: title + link, the full BODY, REMOVED, UNVERIFIED, NEEDS (incl. planned diagrams). Then ask:
 "Write N page(s)? (yes / edit / no)". `edit` → apply the change, preview again.
 `--dry-run` → stop here with "Dry run — nothing written. Backups: <folder>".
 
@@ -104,7 +106,7 @@ Write each approved page with the format chosen in step 6:
 - Inline Jira image, or any upload MCP can't do: ask REST consent now, listing the calls
   (`POST /rest/api/3/issue/{key}/attachments`, `PUT /rest/api/2/issue/{key}`, plus the
   replace calls below if an image exists). No → write without the embed and list it in the report.
-- Diagram needed: follow `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md` (SVG, 2× render,
+- Diagram in NEEDS (`DIAGRAM:` line): always draw it, per `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md` (SVG, 2× render,
   Read the PNG and fix until clean). Upload PNG and its SVG source with the same base name.
 - First image embed (Jira): upload, then `PUT /rest/api/2/issue/{key}` with
   `!name.png|width=1200,alt=<what it shows>!`. Confluence: `ac:width="1200" ac:alt="…"`.
