@@ -62,7 +62,7 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
 
 ## Invariants — never break these
 
-1. **`dist/` is committed and must match `src/`.** The pre-commit hook rebuilds and stages
+1. **`dist/` is committed and must match `src/`** (CLI plugins only). The pre-commit hook rebuilds and stages
    `dist/` when `src/` is staged. CI fails on `git diff --exit-code -- '*/dist/**'`.
    Never edit `dist/` by hand; never gitignore it.
 2. **Version sync.** `package.json`, `.claude-plugin/plugin.json`, and the plugin's entry in
@@ -127,10 +127,23 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
 - Bundled files via `${CLAUDE_PLUGIN_ROOT}` (e.g.
   `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --json true`).
   Multi-line bodies via stdin: `--body -` with a heredoc. `${CLAUDE_PLUGIN_DATA}` is for
-  persistent state surviving updates — currently unused; don't reach for it without need.
+  persistent state surviving updates — used only by atlassian-polish for backups; don't
+  reach for it without need.
 - Shared prose between skills goes in the plugin's `shared/*.md`, referenced as
   `${CLAUDE_PLUGIN_ROOT}/shared/<file>.md` — never by relative path (skills execute from the
   user's cwd, so relative paths don't resolve).
+
+### Agents and prompt-only plugins
+
+- Plugin agents live in `agents/<name>.md` (frontmatter: `name`, `description`, `tools`,
+  `model`, `effort`). Auto-discovered — omit the `agents` key in `plugin.json`; if set, it
+  must list `.md` files, a directory string fails `claude plugin validate`.
+- Skills invoke them via `Agent` with `subagent_type: "<plugin>:<agent>"`. Keep agents
+  side-effect-free (e.g. `tools: Read`); the skill owns writes and approvals.
+- Prompt-only plugins (atlassian-polish): no `src/`, `dist/`, tsconfig or devDeps;
+  `package.json` keeps only the `bump` script. Turbo skips them.
+- New plugin's marketplace entry: add it once at `0.0.0` (`version-sync.js` only updates
+  existing entries), then set the real version with `pnpm bump`.
 
 ### Additions (not previously written down — follow these too)
 
@@ -158,7 +171,8 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
    LRN-002: reminder is harness noise; naming consistency across six `*-task` skills wins.
    Won't-fix, decided.
 6. **Passes a plugin skill as `subagent_type`** to the Agent tool. → LRN-003: plugin skills
-   run via the `Skill` tool only; `subagent_type` accepts built-in agent personas only.
+   run via the `Skill` tool only. `subagent_type` accepts agent definitions — built-in
+   personas or plugin agents (`<plugin>:<agent>`) — never skills.
 7. **Runs the flowstate integration test against a stale build** and chases a phantom bug. →
    `pnpm build` first, always.
 8. **Hand-edits `.backlog/**/index.md` or entity frontmatter.** → CLI-owned. Use the flowstate
@@ -198,6 +212,7 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
 - [ ] Description contains ≥3 quoted trigger phrases and states when to use it
 - [ ] Body ≤150 lines, numbered workflow steps, prerequisites checked before mutating anything
 - [ ] All state mutation shells out to the plugin CLI — no hand-edited backlog/index files
+      (prompt-only plugins: external writes only after explicit user approval)
 - [ ] `claude plugin validate .` passes; plugin README command table updated
 
 **Release**
