@@ -7,7 +7,8 @@ is run by the user in their own terminal; placeholders in `<angle brackets>`.
 covers the current directory).
 
 Sources: Atlassian Rovo MCP guides (developer.atlassian.com/cloud/rovo-mcp), the
-`sooperset/mcp-atlassian` README, `claude mcp add --help`.
+`sooperset/mcp-atlassian` README, `claude mcp add --help`, Claude Code MCP docs
+(code.claude.com/docs/en/mcp).
 
 ---
 
@@ -25,7 +26,9 @@ claude mcp add -s user --transport http atlassian https://mcp.atlassian.com/v2/m
 Then in Claude Code: `/mcp` → `atlassian` → authenticate (browser consent). No token to
 manage. If you already use the claude.ai Atlassian connector, its tools work too — skip this.
 
-The old `https://mcp.atlassian.com/v1/sse` endpoint is retired; replace it if found in
+Healthy endpoints the setup skill recognises: `https://mcp.atlassian.com/v1/mcp` and
+`https://mcp.atlassian.com/v2/mcp`. A connected server on either is fine; don't tell the user to
+replace it. Only `https://mcp.atlassian.com/v1/sse` is retired; replace it if found in
 `claude mcp list`.
 
 ### MCP — API token instead of OAuth (headless, admin must allow it)
@@ -45,6 +48,25 @@ Use only if the org admin enabled API-token auth for the Rovo MCP server.
 3. Check: `curl -sI https://mcp.atlassian.com/v2/mcp -H "Authorization: Basic $B64"` → `200`.
 
 The header is stored in Claude Code's MCP config file in plain text. OAuth avoids that.
+
+### MCP — community `mcp-atlassian` with an API token (optional)
+
+The claude.ai / Rovo connector already covers Jira and Confluence on Cloud, so this server is
+optional. Use it only if you prefer the community server. It needs `uvx` and the REST token
+env vars from "Putting the REST token in the environment" below. Single quotes keep
+`${…}` literal, so the token is never written to the MCP config; Claude Code expands it from
+your environment at startup:
+
+```bash
+claude mcp add -s user atlassian \
+  -e 'JIRA_USERNAME=${ATLASSIAN_EMAIL}' -e 'JIRA_API_TOKEN=${ATLASSIAN_API_TOKEN}' \
+  -e 'CONFLUENCE_USERNAME=${ATLASSIAN_EMAIL}' -e 'CONFLUENCE_API_TOKEN=${ATLASSIAN_API_TOKEN}' \
+  -e JIRA_URL=<base> -e CONFLUENCE_URL=<base>/wiki \
+  -- uvx mcp-atlassian
+```
+
+Check with `claude mcp list`: an unset variable shows a missing-variable warning for the server.
+Docs: https://code.claude.com/docs/en/mcp (environment variable expansion).
 
 ### REST token (optional — attachments, inline images)
 

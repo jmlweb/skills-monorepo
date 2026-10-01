@@ -1,7 +1,7 @@
 {
   "name": "atlassian-polish",
   "description": "Rewrite Jira issues and Confluence pages into scannable, consistent, human-friendly content without losing a single decision, number, name, date or link.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "jmlweb",
     "url": "https://github.com/jmlweb"

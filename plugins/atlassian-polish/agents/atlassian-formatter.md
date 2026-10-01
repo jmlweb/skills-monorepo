@@ -55,7 +55,11 @@ If the output format or the original body is missing, reply with only `MISSING: 
 - Never change status, assignee, labels, fields, or issue links. Those are not body content.
 - Leave unknown Confluence macros untouched, in place.
 - ≤ 3 emojis, top-level headings only. Code blocks and ASCII diagrams ≤ 70 columns.
-- No Mermaid. No status inside diagrams.
+- No Mermaid. No status, dates or owners inside diagrams; the only exception is the drawn
+  green-tick "done" badge. All diagram rules (SVG escaping, layout, 2× render, self-check,
+  keeping the SVG) are in `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md`; read it before
+  drawing one.
+- Images always carry alt text: `alt=<what it shows>` (wiki) or `ac:alt="…"` (storage).
 
 ## Output (exactly these sections)
 

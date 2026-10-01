@@ -41,8 +41,13 @@ This is what Jira Cloud stores and what REST v3 returns.
 Legacy text syntax. `PUT /rest/api/2/issue/{key}` with `{"fields":{"description":"…"}}`
 accepts it and Jira converts it to ADF on save.
 
-- **Use:** only when an attachment must be embedded inline: `!diagram.png|width=1200!`.
-  Upload the attachment first (section 4).
+- **Use:** only when an attachment must be embedded inline:
+  `!diagram.png|width=1200,alt=<what it shows>!` (alt text: screen readers and broken-image
+  fallback). Upload the attachment first (section 4). First embed only: to swap an image
+  already embedded, follow "Replacing an image" in section 4. Wiki markup re-sent over an
+  existing image keeps the old media ID.
+- **Rewriting a page that already has an image** with wiki markup has the same problem. After
+  the write, re-check the media ID (section 6); if it changed or broke, apply replace steps 3–4.
 - **Syntax:** `h2. Title`, `* item`, `# item`, `||head||head||`, `|cell|cell|`,
   `{{monospace}}`, `[text|https://url]`, `{code:java}…{code}`, `{noformat}…{noformat}`,
   `{panel:title=Note}…{panel}`, `{info}…{info}`.
@@ -77,7 +82,7 @@ Storage snippets:
 ```xml
 <ac:structured-macro ac:name="info"><ac:rich-text-body><p>…</p></ac:rich-text-body></ac:structured-macro>
 <ac:structured-macro ac:name="toc"/>
-<ac:image ac:width="1200"><ri:attachment ri:filename="diagram.png"/></ac:image>
+<ac:image ac:width="1200" ac:alt="what it shows"><ri:attachment ri:filename="diagram.png"/></ac:image>
 <ac:link><ri:page ri:content-title="Other page"/></ac:link>
 <ac:task-list><ac:task><ac:task-status>incomplete</ac:task-status><ac:task-body>…</ac:task-body></ac:task></ac:task-list>
 ```
@@ -87,7 +92,7 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
 - **Update rule:** body must be sent with `version.number` = current + 1, and the current
   title. A stale number returns 409: re-fetch and retry once, never force.
 - **Images:** upload the attachment first, then reference it with
-  `<ac:image><ri:attachment ri:filename="…"/></ac:image>`.
+  `<ac:image ac:width="1200" ac:alt="…"><ri:attachment ri:filename="…"/></ac:image>`.
 - **Fails at:** Markdown conversion drops unknown macros (Jira issue macro, page properties,
   excerpts, includes). If the page has any, write storage, or leave those sections untouched.
 - XHTML must be well-formed: close every tag, escape `&` as `&amp;`, `<` as `&lt;`.
@@ -109,6 +114,21 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
   Without `X-Atlassian-Token: no-check` the request fails XSRF checks (403).
 - **Confluence:** some MCP servers have an upload tool (e.g. `confluence_upload_attachment`).
   Otherwise `POST /wiki/rest/api/content/{id}/child/attachment` with the same header.
+- **Replacing an image (Jira)** — exact order, never delete first:
+  1. Upload the new PNG (above).
+  2. `GET /rest/api/3/attachment/content/{attachmentId}` with `curl -sS -D - -o /dev/null`
+     (no `-L`): the `Location` header contains `/file/<mediaId>/binary`. Don't follow it.
+  3. `GET /rest/api/3/issue/{key}?fields=description` (ADF). Set the `media` node's
+     `attrs.id` to the new media ID and `attrs.width`/`attrs.height` to the PNG's real pixel
+     size. Change nothing else. `PUT /rest/api/3/issue/{key}`.
+  4. Re-fetch; confirm the `media` node holds the new ID.
+  5. Only then `DELETE /rest/api/3/attachment/{oldId}`.
+
+  Why: re-sending wiki markup makes Jira keep the old media ID, so deleting the old
+  attachment leaves a broken image.
+- **Replacing an image (Confluence):** upload a new version of the same attachment,
+  `POST /wiki/rest/api/content/{id}/child/attachment/{attachmentId}/data`, instead of a new
+  file. `ri:attachment ri:filename` keeps resolving and the page body needs no edit.
 - Never print or log the token. Read it from an env var the user already has set; if none
   exists, point them to `/atlassian-polish:atlassian-setup` — never ask them to paste it into chat.
 
@@ -125,15 +145,8 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
 
 ### Diagrams
 
-Only when a diagram explains something the text can't (flow across systems, dependency
-order). Otherwise a table or list.
-
-1. Prefer ASCII in a code block if it fits in 70 columns.
-2. Otherwise hand-write an SVG, then convert with whatever is installed:
-   `rsvg-convert -w 1600 in.svg -o out.png`, `magick in.svg out.png` or
-   `inkscape in.svg --export-filename=out.png`. Check with `command -v`.
-3. Upload the PNG (section 4) and embed it with the format that supports images.
-4. No statuses, dates or owners inside diagrams: they go stale and can't be edited as text.
+Rules (SVG hygiene, layout, 2× render, self-check, keeping the SVG source, done-only badge)
+live in `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md`. Mermaid/PlantUML never; render to PNG.
 
 ## 6. Leftover-markup scan (verify step)
 
@@ -150,3 +163,21 @@ After writing, re-fetch and search the stored text for markup that should have b
 | `\_` `\*` visible | escapes rendered literally |
 
 Any hit: fix the source, rewrite once, re-verify. Report what remains.
+
+### Image check
+
+Run after every write that touches a page with an image.
+
+- **Jira:** fetch the description as ADF. Every `media` node `attrs.id` must match the media
+  ID of an attachment currently on the issue (get each ID from the `Location` redirect of
+  `/rest/api/3/attachment/content/{id}`, as in section 4).
+- **Confluence:** every `ri:attachment ri:filename` in the body must exist in the page's
+  attachment list.
+- A broken or missing image is a failure: report it under "Not done" with the fix (section 4
+  replace steps 3–4).
+
+### Link check
+
+The issue links written or described must match what the issue actually has: no "blocks" left
+next to a "relates to" for the same pair. Link changes the tools can't make stay in the report
+as manual steps.

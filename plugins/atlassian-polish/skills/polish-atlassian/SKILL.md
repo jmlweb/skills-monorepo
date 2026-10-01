@@ -2,7 +2,7 @@
 name: polish-atlassian
 description: Rewrites a Jira issue, an epic and its children, or a Confluence page into scannable, consistent content, keeping every decision, number, name, date and link. Use when the user says "polish this ticket", "make this Jira ticket readable", "clean up the epic description", "rewrite this Confluence page", "remove the prose from PROJ-123", or "make the ticket more attractive". Not for changing status, assignee, labels or fields.
 argument-hint: <ISSUE-KEY | issue URL | Confluence page URL or ID> [--children] [--dry-run]
-allowed-tools: Read, Write, Agent, Bash(command:*), Bash(rsvg-convert:*), Bash(magick:*), Bash(inkscape:*), mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Atlassian__getConfluencePage, mcp__claude_ai_Atlassian__getConfluencePageDescendants, mcp__claude_ai_Atlassian__getConfluencePageFooterComments, mcp__claude_ai_Atlassian__getConfluencePageInlineComments, mcp__claude_ai_Atlassian__getContentFormatGuide, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__updateConfluencePage, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search, mcp__atlassian__jira_update_issue, mcp__atlassian__confluence_get_page, mcp__atlassian__confluence_get_page_children, mcp__atlassian__confluence_get_comments, mcp__atlassian__confluence_get_attachments, mcp__atlassian__confluence_update_page
+allowed-tools: Read, Write, Agent, Bash(command:*), Bash(rsvg-convert:*), Bash(magick:*), Bash(inkscape:*), Bash(curl -sS:*), mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Atlassian__getConfluencePage, mcp__claude_ai_Atlassian__getConfluencePageDescendants, mcp__claude_ai_Atlassian__getConfluencePageFooterComments, mcp__claude_ai_Atlassian__getConfluencePageInlineComments, mcp__claude_ai_Atlassian__getContentFormatGuide, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__updateConfluencePage, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search, mcp__atlassian__jira_update_issue, mcp__atlassian__confluence_get_page, mcp__atlassian__confluence_get_page_children, mcp__atlassian__confluence_get_comments, mcp__atlassian__confluence_get_attachments, mcp__atlassian__confluence_update_page
 model: sonnet
 effort: medium
 ---
@@ -102,15 +102,32 @@ Write each approved page with the format chosen in step 6:
 - MCP edit/update tool by default. Confluence: send current version + 1; on 409 re-fetch,
   re-check the body is unchanged since backup, retry once.
 - Inline Jira image, or any upload MCP can't do: ask REST consent now, listing the calls
-  (`POST /rest/api/3/issue/{key}/attachments`, `PUT /rest/api/2/issue/{key}`). No → write
-  without the embed and list it in the report.
-- Diagram PNG needed: `command -v rsvg-convert magick inkscape`, render, upload, embed.
+  (`POST /rest/api/3/issue/{key}/attachments`, `PUT /rest/api/2/issue/{key}`, plus the
+  replace calls below if an image exists). No → write without the embed and list it in the report.
+- Diagram needed: follow `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md` (SVG, 2× render,
+  Read the PNG and fix until clean). Upload PNG and its SVG source with the same base name.
+- First image embed (Jira): upload, then `PUT /rest/api/2/issue/{key}` with
+  `!name.png|width=1200,alt=<what it shows>!`. Confluence: `ac:width="1200" ac:alt="…"`.
+- Replacing an existing Jira image: never delete the old attachment first (wiki markup keeps
+  the old media ID, so the embed breaks). Follow the ADF media-ID steps in formats §4 in order.
+- Confluence replace: upload a new version of the same attachment (formats §4).
+- Any later wiki-markup rewrite of a page with an embedded image: re-check the media ID after
+  the write (step 9); if it changed or broke, redo the ADF fix above.
 
 ### 9. Verify
 
-Re-fetch every written page. Scan the stored text for leftover markup: `{{`, `h2.` (any
-`hN.` at line start), `||`, `[text|url`, literal `**`, escaped `&lt;ac:`. Hit → fix and rewrite
-once, then re-verify. Report what still remains.
+Re-fetch every written page and check:
+
+1. **Leftover markup:** scan the stored text for `{{`, `h2.` (any `hN.` at line start), `||`,
+   `[text|url`, literal `**`, escaped `&lt;ac:`. Hit → fix and rewrite once, then re-verify.
+2. **Images:** every ADF `media` node ID resolves to an attachment on the issue (compare with
+   the attachment list and their content redirects). Confluence: every `ri:attachment`
+   filename exists on the page. Broken or missing → "Not done" with the fix (ADF steps in 8).
+3. **Links:** issue links written or described match what the issue has (no "blocks" left
+   beside a "relates to" for the same pair). Changes the tools can't make → "Not done" as
+   manual steps.
+
+Report what still remains.
 
 ### 10. Report
 
@@ -126,6 +143,7 @@ Polished <N> page(s)            backups: <folder>
 Not done:
 - PROJ-123  inline diagram — REST declined (attachment needs manual embed)
 - PROJ-124  remove link to PROJ-9 — manual step
+- PROJ-125  image broken (media ID not on issue) — re-run ADF media fix
 ```
 
 One line per page. "Not done" lists every skipped action, unverified fact and manual step.

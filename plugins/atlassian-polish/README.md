@@ -33,7 +33,8 @@ Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrit
 - 📋 Lays tickets out the same way every time: Goal · What/Rules · Decisions table · Done when · dated Status · Open questions · Links
 - 🧭 Epics get a children table and a go-live checklist; Confluence pages keep their meaningful heading hierarchy
 - 💾 Backs up every original before writing and shows you a preview plus a list of what was removed and why
-- ✅ Re-fetches after writing and scans for leftover markup (`{{`, `h2.`, `||`, literal `**`…)
+- ✅ Re-fetches after writing and scans for leftover markup (`{{`, `h2.`, `||`, literal `**`…), broken images and mismatched issue links
+- 🖼️ Diagrams: rendered at 2× from SVG, visually self-checked, and the SVG source is attached beside the PNG; replaced images never break
 - 🔗 Optionally cross-checks linked GitHub PRs and Slack threads (asks first, read-only)
 
 ## What it never does
@@ -51,7 +52,8 @@ Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrit
 | `skills/polish-atlassian` | Orchestrates fetch → backup → rewrite → preview → write → verify |
 | `agents/atlassian-formatter` | Rewrites one page; knows ADF, Jira wiki markup, Confluence storage format and their traps |
 | `references/style-guide.md` | Keep/cut rules, templates, before/after examples |
-| `references/atlassian-formats.md` | Format decision table, pitfalls, rendering limits, attachment flow |
+| `references/atlassian-formats.md` | Format decision table, pitfalls, rendering limits, attachment and image-replace flow |
+| `references/diagrams.md` | SVG hygiene, layout defaults, 2× render, self-check |
 | `references/setup-auth.md` | Per-deployment auth commands, token pages, Keychain setup, troubleshooting |
 
 Prompt-only: no CLI, no build step, no dependencies.
