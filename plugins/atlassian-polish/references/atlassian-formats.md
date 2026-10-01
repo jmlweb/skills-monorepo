@@ -25,16 +25,36 @@ JSON tree (`doc` → `paragraph`, `heading`, `bulletList`, `table`, `codeBlock`,
 This is what Jira Cloud stores and what REST v3 returns.
 
 - **Use:** default for Jira. MCP tools usually accept Markdown and convert it to ADF.
-- **Conversion handles:** headings, bullet/numbered lists, task lists (sometimes), tables,
-  fenced code, inline code, links, bold/italic, strikethrough.
+- **Conversion handles:** headings, bullet/numbered lists, tables, fenced code, inline code,
+  links, bold/italic, strikethrough.
 - **Conversion fails at:**
   - Inline images: Markdown `![](file.png)` does not become an ADF `mediaSingle`. Needs wiki
     markup via REST v2 (section 2) or the Jira UI.
+  - Checklists: Markdown `- [ ] x` becomes a bullet with literal `\[ \]` text, not a Jira
+    checkbox. Use the ADF checklist recipe below.
   - Panels: Markdown has no panel syntax. Use a blockquote or a bold lead line instead.
   - Mentions: `@name` stays plain text. Keep the person's display name; don't fake a mention.
   - Nested tables and cell-level lists: flattened or dropped. Keep cells to one line.
 - **Reading:** MCP may return Markdown, ADF JSON or rendered HTML. Back up whatever arrives,
   verbatim.
+
+### ADF checklist (real Jira checkboxes)
+
+`editJiraIssue` with `contentFormat: "adf"` and `fields.description` as an ADF object stores
+real checkboxes (verified on Cloud; no REST token needed). The whole description must be sent as
+ADF, so convert the full body, not just the list. Build the JSON with a script, not by hand.
+
+```json
+{"type":"taskList","attrs":{"localId":"<uuid>"},"content":[
+  {"type":"taskItem","attrs":{"localId":"<uuid>","state":"TODO"},
+   "content":[{"type":"text","text":"Criterion"}]}]}
+```
+
+- `- [ ]` → `state: "TODO"`, `- [x]` → `"DONE"`. Every `localId` is a fresh UUID.
+- `taskItem` holds inline nodes directly (text, code-marked text), not a `paragraph`.
+- Tables: `tableHeader`/`tableCell` each wrap a `paragraph`. Links are a `link` mark.
+- Check: the tool's returned Markdown shows `- [ ] …` unescaped. `\[ \]` means it was stored as
+  literal text. Confluence uses `<ac:task-list>` (section 3); not affected.
 
 ## 2. Jira wiki markup (REST API v2)
 

@@ -106,6 +106,9 @@ Write each approved page with the format chosen in step 6:
 - Inline Jira image, or any upload MCP can't do: ask REST consent now, listing the calls
   (`POST /rest/api/3/issue/{key}/attachments`, `PUT /rest/api/2/issue/{key}`, plus the
   replace calls below if an image exists). No → write without the embed and list it in the report.
+- Jira body with `- [ ]` / `- [x]` items: write the whole description as ADF with a
+  `taskList` (formats §1 "ADF checklist"), never as Markdown. Never fall back to plain bullets
+  to hide a broken `[ ]`; fix the write.
 - Diagram in NEEDS (`DIAGRAM:` line): always draw it, per `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md` (SVG, 2× render,
   Read the PNG and fix until clean). Upload PNG and its SVG source with the same base name.
 - First image embed (Jira): upload, then `PUT /rest/api/2/issue/{key}` with
@@ -121,7 +124,8 @@ Write each approved page with the format chosen in step 6:
 
 Re-fetch every written page and check:
 
-1. **Leftover markup:** scan the stored text for `{{`, `h2.` (any `hN.` at line start), `||`,
+1. **Leftover markup:** scan the stored text for literal `\[ \]` / `\[x\]` (checkbox stored as
+   text → rewrite as ADF `taskList`), `{{`, `h2.` (any `hN.` at line start), `||`,
    `[text|url`, literal `**`, escaped `&lt;ac:`. Hit → fix and rewrite once, then re-verify.
 2. **Images:** every ADF `media` node ID resolves to an attachment on the issue (compare with
    the attachment list and their content redirects). Confluence: every `ri:attachment`
