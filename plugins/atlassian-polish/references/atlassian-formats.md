@@ -104,11 +104,13 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
     "https://<site>.atlassian.net/rest/api/3/issue/<KEY>/attachments"
   ```
 
+  Data Center: replace `-u …` with `-H "Authorization: Bearer $ATLASSIAN_API_TOKEN"` (PAT) and
+  use `/rest/api/2/issue/<KEY>/attachments`.
   Without `X-Atlassian-Token: no-check` the request fails XSRF checks (403).
 - **Confluence:** some MCP servers have an upload tool (e.g. `confluence_upload_attachment`).
   Otherwise `POST /wiki/rest/api/content/{id}/child/attachment` with the same header.
 - Never print or log the token. Read it from an env var the user already has set; if none
-  exists, ask the user to set one rather than pasting it into chat.
+  exists, point them to `/atlassian-polish:polish-setup` — never ask them to paste it into chat.
 
 ## 5. Rendering limits
 
