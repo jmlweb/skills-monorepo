@@ -55,6 +55,7 @@ Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrit
 | `references/style-guide.md` | Keep/cut rules, templates, before/after examples |
 | `references/atlassian-formats.md` | Format decision table, pitfalls, rendering limits, attachment and image-replace flow |
 | `references/diagrams.md` | SVG hygiene, layout defaults, 2× render, self-check |
+| `references/lossy-content.md` | What Jira reads lose (Markdown-only MCP), lossy-content markers, backup files |
 | `references/setup-auth.md` | Per-deployment auth commands, token pages, Keychain setup, troubleshooting |
 
 One tiny CLI (`md-to-adf`), zero runtime dependencies; `dist/` is committed, so there is no build step for users.

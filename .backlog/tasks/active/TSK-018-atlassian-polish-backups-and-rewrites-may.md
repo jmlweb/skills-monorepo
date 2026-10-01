@@ -1,12 +1,13 @@
 ---
 id: TSK-018
 title: atlassian-polish: backups and rewrites may lose rich Jira content
-status: pending
+status: active
 priority: P2
 tags: [atlassian-polish, adf, data-loss, backup]
 created: 2026-10-01
 source: manual
 depends-on: []
+started: 2026-10-01
 ---
 
 # atlassian-polish: backups and rewrites may lose rich Jira content
@@ -40,3 +41,4 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 ## Progress Log
 
 - [2026-10-01] Created
+- [2026-10-01] Started

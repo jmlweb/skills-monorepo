@@ -35,8 +35,8 @@ This is what Jira Cloud stores and what REST v3 returns.
   - Panels: Markdown has no panel syntax. Use a blockquote or a bold lead line instead.
   - Mentions: `@name` stays plain text. Keep the person's display name; don't fake a mention.
   - Nested tables and cell-level lists: flattened or dropped. Keep cells to one line.
-- **Reading:** MCP may return Markdown, ADF JSON or rendered HTML. Back up whatever arrives,
-  verbatim.
+- **Reading:** the Jira MCP returns Markdown even when ADF is requested; see
+  `lossy-content.md` for what is lost and how to back up. Back up whatever arrives, verbatim.
 
 ### ADF checklist (real Jira checkboxes)
 

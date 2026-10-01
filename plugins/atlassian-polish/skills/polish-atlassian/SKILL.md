@@ -54,8 +54,9 @@ upload attachment. Mark any need no MCP tool covers as "REST only" — don't ask
 
 ### 3. Fetch everything
 
-- Jira: description, comments (all, with author + date), issue links, remote links, status,
-  labels, attachments list.
+- Jira: description (with `expand: renderedFields`), comments (all, with author + date), issue
+  links, remote links, status, labels, attachments list. Then follow
+  `${CLAUDE_PLUGIN_ROOT}/references/lossy-content.md` (lossy check, backup files).
 - Epic + `--children`: search `parent = KEY`; if empty, retry `"Epic Link" = KEY`. Fetch each
   child the same way.
 - Confluence: body (storage or ADF as returned), version number, footer + inline comments,
