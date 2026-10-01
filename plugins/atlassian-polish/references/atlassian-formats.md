@@ -42,7 +42,20 @@ This is what Jira Cloud stores and what REST v3 returns.
 
 `editJiraIssue` with `contentFormat: "adf"` and `fields.description` as an ADF object stores
 real checkboxes (verified on Cloud; no REST token needed). The whole description must be sent as
-ADF, so convert the full body, not just the list. Build the JSON with a script, not by hand.
+ADF, so convert the full body, not just the list. Never hand-build the JSON: pipe the final
+Markdown through the bundled converter and pass its output as `fields.description`:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/atlassian-polish.js" md-to-adf <<'MD'
+## Acceptance criteria
+- [ ] Opening a PDF works on Chrome 116
+MD
+```
+
+It converts headings, paragraphs, bullet/numbered lists (nesting ≤ 2 levels), tables, fenced
+code, blockquotes, rules, inline code/bold/italic/strike, links and bare URLs. Exit 2 with a
+`line N:` message on input it can't convert (unclosed fence, content nested under a checklist
+item); fix the Markdown, don't drop the content. Node shape it emits, for reference:
 
 ```json
 {"type":"taskList","attrs":{"localId":"<uuid>"},"content":[
@@ -52,7 +65,8 @@ ADF, so convert the full body, not just the list. Build the JSON with a script, 
 
 - `- [ ]` → `state: "TODO"`, `- [x]` → `"DONE"`. Every `localId` is a fresh UUID.
 - `taskItem` holds inline nodes directly (text, code-marked text), not a `paragraph`.
-- Tables: `tableHeader`/`tableCell` each wrap a `paragraph`. Links are a `link` mark.
+- Tables: `tableHeader`/`tableCell` each wrap a `paragraph`. Links are a `link` mark. `code`
+  never combines with bold/italic; the converter drops the other marks there.
 - Check: the tool's returned Markdown shows `- [ ] …` unescaped. `\[ \]` means it was stored as
   literal text. Confluence uses `<ac:task-list>` (section 3); not affected.
 

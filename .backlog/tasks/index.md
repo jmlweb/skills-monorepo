@@ -7,7 +7,7 @@
 | Pending | 1 |
 | Active | 0 |
 | Blocked | 0 |
-| Complete | 15 |
+| Complete | 16 |
 
 ## Active Tasks
 
@@ -23,6 +23,7 @@ _No active tasks._
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-017 | atlassian-polish: Markdown to Jira ADF converter script | 2026-10-01 |
 | TSK-010 | Support --help/-h flag in flowstate CLI globally and per subcommand | 2026-04-27 |
 | TSK-011 | Document --include-archived flag and status filters in flowstate CLI README | 2026-04-27 |
 | TSK-012 | Filter archived learnings from learning-list by default | 2026-04-27 |
@@ -32,4 +33,3 @@ _No active tasks._
 | TSK-008 | Fix: CLI silently returns empty results when cwd is not the backlog root | 2026-04-10 |
 | TSK-009 | Fix: block-task skill uses task-update for status change instead of task-move | 2026-04-10 |
 | TSK-007 | Fix: Flowstate CLI empties index tables on rapid moves | 2026-04-09 |
-| TSK-005 | Fix FLOWSTATE_CLI variable expansion in zsh shells | 2026-04-06 |

@@ -37,7 +37,7 @@ plugins/
 ├── dev-workflow/                 # commit/changeset/check-docs/review-pr skills + CLI
 │   ├── shared/commit-basics.md   # prose shared by commit + changeset skills
 │   └── (same structure, no root SKILL.md, no hooks)
-└── atlassian-polish/             # prompt-only: 2 skills + 1 agent + references; no src/dist
+└── atlassian-polish/             # 2 skills + 1 agent + references + tiny CLI (md-to-adf); src/dist
 packages/shared-config/           # tsconfig.base.json all plugins extend
 scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh (+ node:test tests)
 .backlog/                         # flowstate dogfooded on this repo (tasks, learnings, reports)
@@ -140,8 +140,9 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   must list `.md` files, a directory string fails `claude plugin validate`.
 - Skills invoke them via `Agent` with `subagent_type: "<plugin>:<agent>"`. Keep agents
   side-effect-free (e.g. `tools: Read`); the skill owns writes and approvals.
-- Prompt-only plugins (atlassian-polish): no `src/`, `dist/`, tsconfig or devDeps;
-  `package.json` keeps only the `bump` script. Turbo skips them.
+- Prompt-only plugins (none today): no `src/`, `dist/`, tsconfig or devDeps; `package.json`
+  keeps only the `bump` script. Turbo skips them. atlassian-polish left this class when it
+  gained the `md-to-adf` CLI, so it follows the CLI rules (dist committed, zero deps).
 - New plugin's marketplace entry: add it once at `0.0.0` (`version-sync.js` only updates
   existing entries), then set the real version with `pnpm bump`.
 
@@ -212,7 +213,7 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
 - [ ] Description contains ≥3 quoted trigger phrases and states when to use it
 - [ ] Body ≤150 lines, numbered workflow steps, prerequisites checked before mutating anything
 - [ ] All state mutation shells out to the plugin CLI — no hand-edited backlog/index files
-      (prompt-only plugins: external writes only after explicit user approval)
+      (atlassian-polish: external Jira/Confluence writes only after explicit user approval)
 - [ ] `claude plugin validate .` passes; plugin README command table updated
 
 **Release**
