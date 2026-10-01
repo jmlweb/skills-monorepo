@@ -1,7 +1,7 @@
 ---
 id: TSK-018
 title: atlassian-polish: backups and rewrites may lose rich Jira content
-status: active
+status: pending
 priority: P2
 tags: [atlassian-polish, adf, data-loss, backup]
 created: 2026-10-01
@@ -42,3 +42,5 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 
 - [2026-10-01] Created
 - [2026-10-01] Started
+- [2026-10-01] Returned to pending
+- [2026-10-01] Paused 2026-10-01 (7d7c0b6: lossy-content.md, fetch with renderedFields, 3-file backup, LOSSY preview notice). Left: verify panel/mention/macro markers on a real ticket; test REST ADF backup (needs consent; a broad REST scan was blocked by the permission check, so name one ticket); enforce preserve-lossy-nodes rewrite; real-ticket test with panel+mention+screenshot; step 5 of SKILL.md still describes a single backup file.
