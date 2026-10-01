@@ -259,5 +259,5 @@ git push && git push origin plugins/<name>/v<VERSION>   # only after explicit us
 ```
 
 CI (`ci.yml`) gates every PR/push to main on: typecheck, build, test, dist-drift, version-sync.
-`release.yml` fires on the tag and creates the GitHub Release with generated notes since the
-plugin's previous tag.
+`release.yml` fires on the tag, fails if the tag version differs from `package.json`, and
+creates the GitHub Release with notes built from `plugins/<name>` commits since its previous tag.
