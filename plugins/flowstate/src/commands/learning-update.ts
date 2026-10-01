@@ -4,6 +4,7 @@ import { learningsDir } from "../core/paths.js";
 import { readEntity, writeEntity } from "../core/fs.js";
 import { normalizeIdInput } from "../core/id.js";
 import { EntityNotFoundError } from "../core/errors.js";
+import { indexRebuild } from "./index-rebuild.js";
 
 export interface LearningUpdateInput {
   readonly title?: string;
@@ -36,6 +37,7 @@ export async function learningUpdate(
   const body = input.body !== undefined ? `\n${input.body}` : doc.body;
 
   await writeEntity(filePath, fm, body);
+  await indexRebuild(cwd, "learnings");
 
   return { id: normalizedId, path: filePath };
 }

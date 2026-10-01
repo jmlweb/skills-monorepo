@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { learningMove } from "./learning-move.js";
@@ -45,5 +45,13 @@ describe("learningMove", () => {
 
   it("throws EntityNotFoundError for unknown ID", async () => {
     await expect(learningMove(tmp, "LRN-099", "archived")).rejects.toThrow("LRN-099");
+  });
+
+  it("refreshes the learnings index status after archiving", async () => {
+    await learningCreate(tmp, { title: "Old", tags: ["x"], body: "Content." });
+    await learningMove(tmp, "LRN-001", "archived");
+
+    const index = await readFile(join(tmp, ".backlog", "learnings", "index.md"), "utf-8");
+    expect(index).toMatch(/\| LRN-001 \| Old \| x \| archived \|/);
   });
 });

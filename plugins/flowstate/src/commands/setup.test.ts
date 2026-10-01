@@ -88,4 +88,21 @@ describe("setup", () => {
     expect(entries).toContain("plans");
     expect(entries).toContain("ideas");
   });
+
+  it("puts a .gitkeep in every entity directory so git keeps empty ones", async () => {
+    await setup(tmp, "Test");
+
+    for (const dir of ["tasks/pending", "tasks/active", "tasks/complete", "ideas/pending", "ideas/complete", "reports/pending", "reports/complete", "learnings"]) {
+      expect(await readdir(join(tmp, ".backlog", dir))).toContain(".gitkeep");
+    }
+  });
+
+  it("keeps existing .gitkeep content on re-run", async () => {
+    await setup(tmp, "Test");
+    const keep = join(tmp, ".backlog", "tasks", "active", ".gitkeep");
+    await writeFile(keep, "custom");
+    await setup(tmp, "Test");
+
+    expect(await readFile(keep, "utf-8")).toBe("custom");
+  });
 });

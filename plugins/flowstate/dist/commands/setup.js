@@ -54,6 +54,12 @@ export async function setup(cwd, projectName) {
         join(root, "learnings"),
     ];
     await Promise.all(dirs.map(ensureDir));
+    // Git drops empty dirs; without a placeholder a fresh clone lacks tasks/active/ and
+    // index-rebuild fails on the missing directory.
+    await Promise.all(dirs.map((dir) => writeFile(join(dir, ".gitkeep"), "", { flag: "wx" }).catch((err) => {
+        if (err.code !== "EEXIST")
+            throw err;
+    })));
     const taskIndexPath = join(root, "tasks", "index.md");
     const learningsIndexPath = join(root, "learnings", "index.md");
     await writeFile(taskIndexPath, TASK_INDEX_TEMPLATE(projectName), {

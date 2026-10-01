@@ -4,6 +4,7 @@ import { learningsDir } from "../core/paths.js";
 import { readEntity, writeEntity } from "../core/fs.js";
 import { normalizeIdInput } from "../core/id.js";
 import { EntityNotFoundError } from "../core/errors.js";
+import { indexRebuild } from "./index-rebuild.js";
 import type { LearningStatus } from "../core/types.js";
 
 export async function learningMove(
@@ -27,6 +28,7 @@ export async function learningMove(
   fm["status"] = status;
 
   await writeEntity(filePath, fm, doc.body);
+  await indexRebuild(cwd, "learnings");
 
   return { id: normalizedId, status, path: filePath };
 }
