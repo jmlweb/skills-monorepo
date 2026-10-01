@@ -37,7 +37,7 @@ plugins/
 ├── dev-workflow/                 # commit/changeset/check-docs/review-pr skills + CLI
 │   ├── shared/commit-basics.md   # prose shared by commit + changeset skills
 │   └── (same structure, no root SKILL.md, no hooks)
-└── atlassian-polish/             # prompt-only: 1 skill + 1 agent + references; no src/dist
+└── atlassian-polish/             # prompt-only: 2 skills + 1 agent + references; no src/dist
 packages/shared-config/           # tsconfig.base.json all plugins extend
 scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh (+ node:test tests)
 .backlog/                         # flowstate dogfooded on this repo (tasks, learnings, reports)
