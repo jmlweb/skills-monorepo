@@ -29,7 +29,7 @@ Source: https://code.claude.com/docs/es/plugins
 | Field          | Type                  | Default Location             |
 |----------------|-----------------------|------------------------------|
 | `commands`     | string\|array         | `commands/`                  |
-| `agents`       | string\|array         | `agents/`                    |
+| `agents`       | string\|array (`.md` file paths only; omit to auto-discover) | `agents/` |
 | `skills`       | string\|array         | `skills/`                    |
 | `hooks`        | string\|array\|object | `hooks/hooks.json`           |
 | `mcpServers`   | string\|array\|object | `.mcp.json`                  |
