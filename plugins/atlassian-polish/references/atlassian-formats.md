@@ -110,7 +110,7 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
 - **Confluence:** some MCP servers have an upload tool (e.g. `confluence_upload_attachment`).
   Otherwise `POST /wiki/rest/api/content/{id}/child/attachment` with the same header.
 - Never print or log the token. Read it from an env var the user already has set; if none
-  exists, point them to `/atlassian-polish:polish-setup` — never ask them to paste it into chat.
+  exists, point them to `/atlassian-polish:atlassian-setup` — never ask them to paste it into chat.
 
 ## 5. Rendering limits
 

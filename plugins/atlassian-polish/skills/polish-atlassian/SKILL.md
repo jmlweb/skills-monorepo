@@ -36,7 +36,7 @@ No target → ask for one. Never guess.
 ## Prerequisites
 
 1. Find Atlassian MCP tools in the session (Jira get/search/edit, Confluence get/update).
-   None → stop: "No Atlassian tools found. Run `/atlassian-polish:polish-setup` to connect
+   None → stop: "No Atlassian tools found. Run `/atlassian-polish:atlassian-setup` to connect
    your site, then rerun."
 2. If a format-guide tool exists (e.g. `getContentFormatGuide`), call it once and follow it.
 

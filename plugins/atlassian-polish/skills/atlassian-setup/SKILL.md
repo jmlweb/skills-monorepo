@@ -1,6 +1,6 @@
 ---
-name: polish-setup
-description: Guides connecting Claude Code to a Jira or Confluence site for atlassian-polish — detects Cloud vs Data Center from a URL, checks existing MCP servers and tokens, and links the exact page to create credentials. Use when the user says "set up atlassian-polish", "connect Jira", "configure Confluence access", "polish-setup", or when polish-atlassian finds no Atlassian tools. Never asks for or stores a token in chat.
+name: atlassian-setup
+description: Guides connecting Claude Code to a Jira or Confluence site for atlassian-polish — detects Cloud vs Data Center from a URL, checks existing MCP servers and tokens, and links the exact page to create credentials. Use when the user says "set up atlassian-polish", "connect Jira", "configure Confluence access", "atlassian-setup", or when polish-atlassian finds no Atlassian tools. Never asks for or stores a token in chat.
 argument-hint: [Jira or Confluence URL]
 allowed-tools: Read, Bash(claude mcp list:*), Bash(claude mcp get:*), Bash(command -v:*), Bash(test:*)
 model: haiku
@@ -69,7 +69,7 @@ for the detected deployment:
 
 Show the command with placeholders (`<PAT>`, `<email>`). Say: "Run this in a separate
 terminal, not here, so the token stays out of the transcript." Then: "Restart Claude Code
-(or run `/mcp` → reconnect) and run `/atlassian-polish:polish-setup` again to verify."
+(or run `/mcp` → reconnect) and run `/atlassian-polish:atlassian-setup` again to verify."
 
 ### 5. REST token (optional — for attachments and inline images)
 

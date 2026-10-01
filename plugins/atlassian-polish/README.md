@@ -15,7 +15,7 @@ claude plugin install atlassian-polish@jmlweb
 
 | Command | What it does |
 |---------|--------------|
-| `/atlassian-polish:polish-setup [url]` | Detects Cloud vs Data Center from any site URL, checks your MCP servers and tokens, and links the exact page to create credentials — run this first |
+| `/atlassian-polish:atlassian-setup [url]` | Detects Cloud vs Data Center from any site URL, checks your MCP servers and tokens, and links the exact page to create credentials — run this first |
 | `/atlassian-polish:polish-atlassian <target> [--children] [--dry-run]` | Fetches, backs up, rewrites, previews and (after your approval) writes a Jira issue, an epic and its children, or a Confluence page and its child pages |
 
 ```bash
@@ -47,7 +47,7 @@ Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrit
 
 | Piece | Role |
 |-------|------|
-| `skills/polish-setup` | Guided connection: deployment detection, MCP server, optional REST token |
+| `skills/atlassian-setup` | Guided connection: deployment detection, MCP server, optional REST token |
 | `skills/polish-atlassian` | Orchestrates fetch → backup → rewrite → preview → write → verify |
 | `agents/atlassian-formatter` | Rewrites one page; knows ADF, Jira wiki markup, Confluence storage format and their traps |
 | `references/style-guide.md` | Keep/cut rules, templates, before/after examples |
@@ -58,7 +58,7 @@ Prompt-only: no CLI, no build step, no dependencies.
 
 ## Requirements
 
-- An Atlassian MCP server connected in Claude Code (Jira and/or Confluence) — `/atlassian-polish:polish-setup` walks you through it for Cloud (Rovo MCP, OAuth) and Data Center (`mcp-atlassian`, Personal Access Token)
+- An Atlassian MCP server connected in Claude Code (Jira and/or Confluence) — `/atlassian-polish:atlassian-setup` walks you through it for Cloud (Rovo MCP, OAuth) and Data Center (`mcp-atlassian`, Personal Access Token)
 - Optional: `gh` or a GitHub/Slack MCP for cross-checks; `rsvg-convert`, `magick` or `inkscape` for diagram PNGs
 
 ## License

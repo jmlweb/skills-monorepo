@@ -1,6 +1,6 @@
 # Setup & Authentication
 
-Read by `polish-setup`. Give the user only the section for their deployment. Every command
+Read by `atlassian-setup`. Give the user only the section for their deployment. Every command
 is run by the user in their own terminal; placeholders in `<angle brackets>`.
 
 `-s user` makes the server available in every project (the default `local` scope only
