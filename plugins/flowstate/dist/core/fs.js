@@ -1,4 +1,5 @@
 import { readFile, writeFile, mkdir, readdir, rename } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter.js";
 export async function readEntity(path) {
     const content = await readFile(path, "utf-8");
@@ -6,7 +7,11 @@ export async function readEntity(path) {
 }
 export async function writeEntity(path, frontmatter, body) {
     const content = serializeFrontmatter(frontmatter, body);
-    await writeFile(path, content, "utf-8");
+    // Write-then-rename so concurrent readers never see a truncated file.
+    // The .tmp suffix keeps listFiles() (which filters on .md) from picking it up.
+    const tmp = `${path}.${process.pid}.${randomUUID()}.tmp`;
+    await writeFile(tmp, content, "utf-8");
+    await rename(tmp, path);
 }
 export async function moveFile(src, dst) {
     await rename(src, dst);

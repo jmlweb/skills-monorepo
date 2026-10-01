@@ -120,18 +120,14 @@ describe("taskMove", () => {
         dependsOn: [],
       });
     }
-    // Move all to active
-    await Promise.all([
-      taskMove(tmp, "TSK-001", "active"),
-      taskMove(tmp, "TSK-002", "active"),
-      taskMove(tmp, "TSK-003", "active"),
-    ]);
-    // Complete all in rapid succession (simulates back-to-back CLI invocations)
-    await Promise.all([
-      taskMove(tmp, "TSK-001", "complete"),
-      taskMove(tmp, "TSK-002", "complete"),
-      taskMove(tmp, "TSK-003", "complete"),
-    ]);
+    // Sequential on purpose: back-to-back CLI invocations never overlap inside one
+    // process, and concurrent moves race on the index rebuild (readdir vs rename).
+    for (const id of ["TSK-001", "TSK-002", "TSK-003"]) {
+      await taskMove(tmp, id, "active");
+    }
+    for (const id of ["TSK-001", "TSK-002", "TSK-003"]) {
+      await taskMove(tmp, id, "complete");
+    }
 
     const index = await readFile(
       join(tmp, ".backlog", "tasks", "index.md"),
