@@ -2,7 +2,7 @@
 name: polish-atlassian
 description: Rewrites a Jira issue, an epic and its children, or a Confluence page into scannable, consistent content, keeping every decision, number, name, date and link. Use when the user says "polish this ticket", "make this Jira ticket readable", "clean up the epic description", "rewrite this Confluence page", "remove the prose from PROJ-123", or "make the ticket more attractive". Not for changing status, assignee, labels or fields.
 argument-hint: <ISSUE-KEY | issue URL | Confluence page URL or ID> [--children] [--dry-run]
-allowed-tools: Read, Write, Agent, Bash(command:*), Bash(rsvg-convert:*), Bash(magick:*), Bash(inkscape:*), Bash(curl -sS:*), mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Atlassian__getConfluencePage, mcp__claude_ai_Atlassian__getConfluencePageDescendants, mcp__claude_ai_Atlassian__getConfluencePageFooterComments, mcp__claude_ai_Atlassian__getConfluencePageInlineComments, mcp__claude_ai_Atlassian__getContentFormatGuide, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__updateConfluencePage, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search, mcp__atlassian__jira_update_issue, mcp__atlassian__confluence_get_page, mcp__atlassian__confluence_get_page_children, mcp__atlassian__confluence_get_comments, mcp__atlassian__confluence_get_attachments, mcp__atlassian__confluence_update_page
+allowed-tools: Read, Write, Agent, Bash(command:*), Bash(rsvg-convert:*), Bash(magick:*), Bash(inkscape:*), Bash(curl -sS:*), Bash(jq:*), Bash(sips -g:*), mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Atlassian__getConfluencePage, mcp__claude_ai_Atlassian__getConfluencePageDescendants, mcp__claude_ai_Atlassian__getConfluencePageFooterComments, mcp__claude_ai_Atlassian__getConfluencePageInlineComments, mcp__claude_ai_Atlassian__getContentFormatGuide, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__updateConfluencePage, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search, mcp__atlassian__jira_update_issue, mcp__atlassian__confluence_get_page, mcp__atlassian__confluence_get_page_children, mcp__atlassian__confluence_get_comments, mcp__atlassian__confluence_get_attachments, mcp__atlassian__confluence_update_page
 model: sonnet
 effort: medium
 ---
@@ -110,6 +110,7 @@ Write each approved page with the format chosen in step 6:
   `!name.png|width=1200,alt=<what it shows>!`. Confluence: `ac:width="1200" ac:alt="…"`.
 - Replacing an existing Jira image: never delete the old attachment first (wiki markup keeps
   the old media ID, so the embed breaks). Follow the ADF media-ID steps in formats §4 in order.
+  Data Center: no media IDs; follow "Replacing an image (Data Center)" in formats §4.
 - Confluence replace: upload a new version of the same attachment (formats §4).
 - Any later wiki-markup rewrite of a page with an embedded image: re-check the media ID after
   the write (step 9); if it changed or broke, redo the ADF fix above.

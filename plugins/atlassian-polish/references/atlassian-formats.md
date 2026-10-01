@@ -118,14 +118,29 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
   1. Upload the new PNG (above).
   2. `GET /rest/api/3/attachment/content/{attachmentId}` with `curl -sS -D - -o /dev/null`
      (no `-L`): the `Location` header contains `/file/<mediaId>/binary`. Don't follow it.
-  3. `GET /rest/api/3/issue/{key}?fields=description` (ADF). Set the `media` node's
-     `attrs.id` to the new media ID and `attrs.width`/`attrs.height` to the PNG's real pixel
-     size. Change nothing else. `PUT /rest/api/3/issue/{key}`.
+  3. `GET /rest/api/3/issue/{key}?fields=description` (ADF) into `issue.json`. Get the old
+     media ID the same way as step 2 (old attachment ID), so only that `media` node changes
+     when the issue has several images. Pixel size: `sips -g pixelWidth -g pixelHeight
+     out.png` (macOS); elsewhere the SVG `width`/`height` × 2 (the 2× render). Then:
+
+     ```bash
+     jq --arg old "$OLD_MEDIA_ID" --arg id "$MEDIA_ID" --argjson w W --argjson h H \
+       '{fields:{description:(.fields.description | walk(if type=="object"
+         and .type=="media" and .attrs.id==$old then .attrs.id=$id
+         | .attrs.width=$w | .attrs.height=$h else . end))}}' issue.json > body.json
+     ```
+
+     `PUT /rest/api/3/issue/{key}` with `-H "Content-Type: application/json" -d @body.json`.
   4. Re-fetch; confirm the `media` node holds the new ID.
   5. Only then `DELETE /rest/api/3/attachment/{oldId}`.
 
   Why: re-sending wiki markup makes Jira keep the old media ID, so deleting the old
   attachment leaves a broken image.
+- **Replacing an image (Data Center):** descriptions are wiki text, resolved by filename, so
+  there is no media-ID indirection and deleting first is safe. `DELETE
+  /rest/api/2/attachment/{oldId}`, then upload the new PNG with the same filename to
+  `/rest/api/2/issue/{key}/attachments` (Bearer PAT, `X-Atlassian-Token: no-check`). Leave
+  `!name.png|…!` unchanged. New filename → update the markup with `PUT /rest/api/2/issue/{key}`.
 - **Replacing an image (Confluence):** upload a new version of the same attachment,
   `POST /wiki/rest/api/content/{id}/child/attachment/{attachmentId}/data`, instead of a new
   file. `ri:attachment ri:filename` keeps resolving and the page body needs no edit.
@@ -171,6 +186,8 @@ Run after every write that touches a page with an image.
 - **Jira:** fetch the description as ADF. Every `media` node `attrs.id` must match the media
   ID of an attachment currently on the issue (get each ID from the `Location` redirect of
   `/rest/api/3/attachment/content/{id}`, as in section 4).
+- **Jira Data Center:** every `!filename…!` in the wiki text must match the filename of an
+  attachment on the issue.
 - **Confluence:** every `ri:attachment ri:filename` in the body must exist in the page's
   attachment list.
 - A broken or missing image is a failure: report it under "Not done" with the fix (section 4
