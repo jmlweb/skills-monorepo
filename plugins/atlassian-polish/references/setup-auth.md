@@ -78,6 +78,12 @@ Token page: https://id.atlassian.com/manage-profile/security/api-tokens
   `https://api.atlassian.com/ex/jira/<cloudId>/rest/api/3/...` (cloudId from setup step 2).
   Not used by this plugin.
 
+If `ATLASSIAN_*` is missing or rejected and you use the community `mcp-atlassian` server
+with a literal token in its config, `polish-atlassian` can borrow that token for one run
+after you say yes. It is read from `~/.claude.json` at call time, never printed or stored
+elsewhere. Prefer one source of truth: the `${ATLASSIAN_*}` form above keeps MCP and REST on
+the same token.
+
 ---
 
 ## Data Center / Server (self-hosted)
@@ -125,7 +131,9 @@ Claude Code only sees env vars that exist when it starts. Pick one, then restart
 **macOS Keychain (recommended — no plaintext file):**
 
 ```bash
-security add-generic-password -a "$USER" -s atlassian-api-token -w   # prompts for the token
+# Copy the token first. The interactive `-w` prompt can silently truncate long input
+# (a ~192-char token came out as 128), so pass the clipboard instead:
+security add-generic-password -U -a "$USER" -s atlassian-api-token -w "$(pbpaste)"
 # ~/.zshrc
 export ATLASSIAN_API_TOKEN="$(security find-generic-password -a "$USER" -s atlassian-api-token -w)"
 export ATLASSIAN_EMAIL="<email>"      # Cloud only
@@ -142,6 +150,7 @@ Don't put tokens in a repo's `.env`, in `settings.json` `env`, or in chat.
 |---------|--------------|
 | `/mcp` sign-in fails, Cloud | Rovo MCP not enabled by org admin |
 | `401` on REST | wrong email, expired/revoked token, scoped token used on site URL |
+| `401` on REST, token ~128 chars or no `=` tail | token truncated (Keychain prompt); classic tokens are ~190 chars and end `=XXXXXXXX` — re-create and store with `pbpaste` |
 | `403` on REST, Data Center | basic auth disabled by SSO → use PAT with Bearer (already the default here) |
 | `404` on REST | wrong base URL or missing context path (`/jira`, `/confluence`) |
 | MCP tools missing after `claude mcp add` | restart Claude Code, or `/mcp` → reconnect |

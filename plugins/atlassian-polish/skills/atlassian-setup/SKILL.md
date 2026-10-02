@@ -75,7 +75,21 @@ terminal, not here, so the token stays out of the transcript." Then: "Restart Cl
 
 Ask: "Set up a REST token too? Only needed to upload attachments. (yes / skip)".
 On yes, give the REST section of the reference for the deployment, including the
-macOS Keychain variant. Remind: env vars must exist before Claude Code starts.
+macOS Keychain variant. Cloud: say which token to create — "Create API token" (classic,
+unscoped; ~190 chars, ends `=XXXXXXXX`), never "with scopes".
+
+Then have the user validate it **in their own terminal before restarting** (Keychain
+variant; for a profile export, use the variable instead):
+
+```bash
+curl -sS -o /dev/null -w "%{http_code}\n" \
+  -u "<email>:$(security find-generic-password -a "$USER" -s atlassian-api-token -w)" \
+  "<base>/rest/api/3/myself"
+```
+
+`200` → continue. `401` → token truncated or wrong type; re-create it (see Troubleshooting in
+the reference). Remind: env vars must exist before Claude Code starts; after the restart,
+re-run `/atlassian-polish:atlassian-setup` so step 6 verifies them.
 
 ### 6. Verify
 
