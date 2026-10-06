@@ -426,6 +426,17 @@ function parseInline(src: string, marks: readonly Mark[]): AdfNode[] {
 
     if (c === "[" && !hasLink) {
       const m = /^\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/.exec(src.slice(i));
+      if (m?.[2]!.startsWith("mention:")) {
+        // [@Name](mention:<accountId>) → real ADF mention; plain text can't notify.
+        flush();
+        const name = m[1]!.replace(/^@/, "");
+        out.push({
+          type: "mention",
+          attrs: { id: m[2]!.slice("mention:".length), text: `@${name}` },
+        });
+        i += m[0].length;
+        continue;
+      }
       if (m) {
         flush();
         out.push(

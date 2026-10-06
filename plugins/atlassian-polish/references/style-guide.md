@@ -52,8 +52,14 @@ carries meaning. If removing it loses nothing, remove it.
 
 - **Plain by default.** Short sentences and paragraphs first; markup only where plain text
   would be harder to scan.
-- **One emphasis style per purpose.** Bold = the word that flips the meaning. Monospace =
-  literals. Never bold whole sentences, never bold + italic, never ALL CAPS.
+- **One emphasis style per purpose.** Bold = what the eye should land on: the short lead
+  label of a `Label: value` bullet (`**Routes:**`, `**Current state:**`) and at most one key
+  fact per section. Monospace = literals. Never bold whole sentences, never bold + italic,
+  never ALL CAPS.
+- **Lists over commas.** ≥ 3 items of one kind in a sentence (people, files, routes,
+  tickets) → a native nested list, one item per bullet. Two items may stay inline.
+- **People as mentions.** Names of people go as `[@Name](mention:<accountId>)` when the
+  skill supplied a verified account ID; otherwise the plain display name.
 - **Emoji = signal, not decoration.** At most 3 per page, only where they mark a category
   the reader scans for (e.g. a risk or a blocker heading), always the same emoji for the same
   meaning, never in body text, tables, lists or inside sentences. A page with no such
@@ -125,7 +131,9 @@ One or two sentences: the outcome, not the activity.
 - Context: PROJ-45
 
 ## People
-- Owners / reviewers: Ana López, Dani Ruiz
+- **Owners / reviewers:**
+  - [@Ana López](mention:712020:…)
+  - [@Dani Ruiz](mention:712020:…)
 ```
 
 Order: TL;DR/blocker → Goal → Acceptance criteria → Scope → Dependencies & risks →

@@ -65,6 +65,16 @@ describe("markdownToAdf", () => {
     ]);
   });
 
+  it("turns [@Name](mention:<id>) into a mention node, in lists too", () => {
+    const [list] = convert("- Owners: [@Ana López](mention:712020:abc), [Bo](mention:42)");
+    expect(list?.content?.[0]?.content?.[0]?.content).toEqual([
+      { type: "text", text: "Owners: " },
+      { type: "mention", attrs: { id: "712020:abc", text: "@Ana López" } },
+      { type: "text", text: ", " },
+      { type: "mention", attrs: { id: "42", text: "@Bo" } },
+    ]);
+  });
+
   it("keeps only the link mark inside code (ADF forbids code + strong)", () => {
     const [p] = convert("**`x`**");
     expect(p?.content).toEqual([

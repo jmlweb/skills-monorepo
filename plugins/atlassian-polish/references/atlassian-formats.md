@@ -33,7 +33,8 @@ This is what Jira Cloud stores and what REST v3 returns.
   - Checklists: Markdown `- [ ] x` becomes a bullet with literal `\[ \]` text, not a Jira
     checkbox. Use the ADF checklist recipe below.
   - Panels: Markdown has no panel syntax. Use a blockquote or a bold lead line instead.
-  - Mentions: `@name` stays plain text. Keep the person's display name; don't fake a mention.
+  - Mentions: `@name` stays plain text. Use `[@Name](mention:<accountId>)` and the
+    `md-to-adf` path (below); without a verified account ID keep the plain display name.
   - Nested tables and cell-level lists: flattened or dropped. Keep cells to one line.
 - **Reading:** the Jira MCP returns Markdown even when ADF is requested; see
   `lossy-content.md` for what is lost and how to back up. Back up whatever arrives, verbatim.
@@ -53,7 +54,8 @@ MD
 ```
 
 It converts headings, paragraphs, bullet/numbered lists (nesting ≤ 2 levels), tables, fenced
-code, blockquotes, rules, inline code/bold/italic/strike, links and bare URLs. Exit 2 with a
+code, blockquotes, rules, inline code/bold/italic/strike, links, bare URLs and mentions
+(`[@Name](mention:<accountId>)` → ADF `mention` node; mentioned people get notified). Exit 2 with a
 `line N:` message on input it can't convert (unclosed fence, content nested under a checklist
 item); fix the Markdown, don't drop the content. Node shape it emits, for reference:
 
@@ -200,9 +202,11 @@ Use this to answer "Markdown? Emojis?" from the user.
   (via `md-to-adf`), risk/dependency tables, one ⚠️ for a blocker.
 - **Discouraged:** decorative emoji (🎯 📋 ✨ 🚀). Screen readers read each one aloud and they
   pollute Jira search. Headings carry the category already.
+- **People:** real @mentions via `md-to-adf` when the account ID is verified; one person
+  per bullet when there are ≥ 3.
 - **Not available via Markdown:** panels (use a blockquote), status lozenges (write the
-  status as text; bare ticket keys get live status anyway), @mentions (display name as text),
-  expand/collapse sections (keep the section short instead).
+  status as text; bare ticket keys get live status anyway), expand/collapse sections (keep
+  the section short instead).
 
 ### Diagrams
 

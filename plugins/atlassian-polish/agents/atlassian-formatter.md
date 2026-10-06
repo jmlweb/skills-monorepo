@@ -25,6 +25,7 @@ Read both references in full:
 - Output format: `markdown` (→ ADF), `wiki` (Jira wiki markup) or `storage` (Confluence XHTML)
 - Depth: `restructure` (default) or `light`
 - Opt-outs, if any (e.g. "no checkboxes")
+- People map, if any: display name → verified account ID (write those as mentions)
 - Original body, verbatim
 - Comments (newest last), with author and date
 - Links, status, labels, attachments, and children (epics / child pages) as metadata

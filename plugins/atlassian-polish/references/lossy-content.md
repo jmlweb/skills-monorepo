@@ -27,7 +27,8 @@ Verified on Cloud (CF-556, an issue with an inline screenshot):
    explanatory comment added. Long or noisy is not a reason. With REST consent, prefer
    `curl -sS … > <file>` so the bytes never pass through a rewrite. If a verbatim copy can't
    be written, stop before the write step and say so; never write over a body whose backup
-   is a summary.
+   is a summary. Never overwrite an existing backup file: if `<KEY>.md` exists (second run
+   the same day), save as `<KEY>.2.md`, `<KEY>.2.rendered.html`, and so on.
 4. Scan for content Markdown can't carry:
 
    | Marker | Meaning | Status |
