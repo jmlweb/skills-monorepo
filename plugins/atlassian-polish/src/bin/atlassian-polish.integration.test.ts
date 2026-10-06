@@ -30,6 +30,24 @@ describe("atlassian-polish CLI", () => {
     expect(r.stderr).toContain("unclosed code fence");
   });
 
+  it("md-to-adf links keys with --jira-base and --projects", () => {
+    const r = run(
+      ["md-to-adf", "--jira-base", "https://acme.atlassian.net", "--projects", "PROJ"],
+      "See PROJ-1\n",
+    );
+    expect(r.status).toBe(0);
+    expect(JSON.parse(r.stdout).content[0].content[1]).toEqual({
+      type: "inlineCard",
+      attrs: { url: "https://acme.atlassian.net/browse/PROJ-1" },
+    });
+  });
+
+  it("exits 2 when --jira-base comes without --projects", () => {
+    const r = run(["md-to-adf", "--jira-base", "https://acme.atlassian.net"], "x");
+    expect(r.status).toBe(2);
+    expect(r.stderr).toContain("must be used together");
+  });
+
   it("exits 2 on an unknown command", () => {
     expect(run(["nope"], "").status).toBe(2);
   });

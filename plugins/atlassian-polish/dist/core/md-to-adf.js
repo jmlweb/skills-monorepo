@@ -17,7 +17,50 @@ export function markdownToAdf(markdown, options = {}) {
     if (content.length === 0) {
         throw new MarkdownConversionError("input has no content", 1);
     }
+    const links = options.issueLinks;
+    if (links && links.projects.length > 0) {
+        const base = links.baseUrl.replace(/\/+$/, "");
+        const keyRe = new RegExp(`\\b(?:${links.projects.map(escapeRe).join("|")})-\\d+\\b`, "g");
+        return {
+            type: "doc",
+            version: 1,
+            content: content.map((n) => linkKeys(n, keyRe, base)),
+        };
+    }
     return { type: "doc", version: 1, content };
+}
+function escapeRe(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+/** Splits text nodes around issue keys; code and existing links stay as typed. */
+function linkKeys(node, keyRe, base) {
+    if (node.content) {
+        return {
+            ...node,
+            content: node.content.flatMap((c) => c.type === "text" ? splitKeys(c, keyRe, base) : [linkKeys(c, keyRe, base)]),
+        };
+    }
+    return node;
+}
+function splitKeys(node, keyRe, base) {
+    const text = node.text ?? "";
+    if (node.marks?.some((m) => m.type === "code" || m.type === "link")) {
+        return [node];
+    }
+    const out = [];
+    let last = 0;
+    for (const m of text.matchAll(keyRe)) {
+        const at = m.index ?? 0;
+        if (at > last)
+            out.push({ ...node, text: text.slice(last, at) });
+        out.push({ type: "inlineCard", attrs: { url: `${base}/browse/${m[0]}` } });
+        last = at + m[0].length;
+    }
+    if (out.length === 0)
+        return [node];
+    if (last < text.length)
+        out.push({ ...node, text: text.slice(last) });
+    return out;
 }
 function isBlank(line) {
     return line.text.trim() === "";

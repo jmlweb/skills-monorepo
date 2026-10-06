@@ -75,6 +75,41 @@ describe("markdownToAdf", () => {
     ]);
   });
 
+  it("links bare issue keys of the given projects as inlineCards", () => {
+    const opts = {
+      newId: ids(),
+      issueLinks: { baseUrl: "https://acme.atlassian.net/", projects: ["PROJ", "OPS"] },
+    };
+    const [p, t] = markdownToAdf(
+      "**Blocked by PROJ-12** and OPS-3; not SHA-256, `PROJ-9` or [PROJ-1](https://x.test)\n\n| Key |\n| --- |\n| PROJ-7 |",
+      opts,
+    ).content;
+    const card = (k: string) => ({
+      type: "inlineCard",
+      attrs: { url: `https://acme.atlassian.net/browse/${k}` },
+    });
+    expect(p?.content).toEqual([
+      { type: "text", text: "Blocked by ", marks: [{ type: "strong" }] },
+      card("PROJ-12"),
+      { type: "text", text: " and " },
+      card("OPS-3"),
+      { type: "text", text: "; not SHA-256, " },
+      { type: "text", text: "PROJ-9", marks: [{ type: "code" }] },
+      { type: "text", text: " or " },
+      {
+        type: "text",
+        text: "PROJ-1",
+        marks: [{ type: "link", attrs: { href: "https://x.test" } }],
+      },
+    ]);
+    expect(JSON.stringify(t)).toContain(JSON.stringify(card("PROJ-7")));
+  });
+
+  it("leaves keys as text without issueLinks", () => {
+    const [p] = convert("See PROJ-12");
+    expect(p?.content).toEqual([{ type: "text", text: "See PROJ-12" }]);
+  });
+
   it("keeps only the link mark inside code (ADF forbids code + strong)", () => {
     const [p] = convert("**`x`**");
     expect(p?.content).toEqual([

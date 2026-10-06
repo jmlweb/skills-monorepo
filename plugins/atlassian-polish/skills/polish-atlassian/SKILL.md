@@ -136,6 +136,9 @@ Write each approved page with the format chosen in step 6:
 - Jira body with `- [ ]` / `- [x]` items or `mention:` links: convert the whole body with
   `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/atlassian-polish.js" md-to-adf` (formats §1 "ADF
   checklist") and send the JSON via `editJiraIssue` `contentFormat: "adf"`, never as Markdown.
+  Always add `--jira-base <site URL> --projects <prefixes>`: site from the target, prefixes
+  from every `data-jira-key` in the fetched HTML plus the issue's own project. Without them
+  every ticket key is written as plain text.
   Never fall back to plain bullets to hide a broken `[ ]`; fix the write.
 - Diagram in NEEDS (`DIAGRAM:` line): always draw it, per `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md` (SVG, 2× render,
   Read the PNG and fix until clean). Upload PNG and its SVG source with the same base name.
@@ -187,9 +190,12 @@ Re-fetch every written page and check:
    Markdown readback always shows blank/whitespace lines around nested lists, even for clean
    ADF. Hit = empty `<li>`/`<p>` or a nested list split into separate `<ul>`s → rewrite via
    `md-to-adf` + `contentFormat: "adf"`, or report it.
-4. **Mentions:** every `mention:` in BODY came back as a mention (Markdown readback shows
+4. **Ticket keys:** count `inlineCard` nodes in the ADF you sent vs keys in BODY outside code;
+   any gap → re-convert with the missing prefix. Never use `renderedFields` for this: it
+   auto-links plain-text keys.
+5. **Mentions:** every `mention:` in BODY came back as a mention (Markdown readback shows
    it as a mention, not `[@Name](mention:…)` text).
-5. **Links:** issue links written or described match what the issue has (no "blocks" left
+6. **Links:** issue links written or described match what the issue has (no "blocks" left
    beside a "relates to" for the same pair). Changes the tools can't make → "Not done" as
    manual steps.
 

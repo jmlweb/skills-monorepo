@@ -13,6 +13,8 @@ const HELP = [
     "md-to-adf flags:",
     "  --file <path>   Read Markdown from a file (default: stdin)",
     "  --pretty true   Indent the JSON (default: compact, one line)",
+    "  --jira-base <url> --projects <A,B>",
+    "                  Link bare issue keys of those projects (e.g. https://acme.atlassian.net, PROJ,OPS)",
 ].join("\n");
 function parseFlags(args) {
     const flags = {};
@@ -48,7 +50,12 @@ function main() {
         const flags = parseFlags(rest);
         // fd 0 read keeps the CLI synchronous and dependency-free.
         const markdown = readFileSync(flags["file"] ?? 0, "utf-8");
-        const doc = markdownToAdf(markdown);
+        const base = flags["jira-base"];
+        const projects = flags["projects"]?.split(",").map((p) => p.trim()).filter(Boolean);
+        if ((base === undefined) !== (projects === undefined)) {
+            throw new InvalidArgumentError("--jira-base and --projects must be used together");
+        }
+        const doc = markdownToAdf(markdown, base && projects ? { issueLinks: { baseUrl: base, projects } } : {});
         console.log(flags["pretty"] === "true"
             ? JSON.stringify(doc, null, 2)
             : JSON.stringify(doc));

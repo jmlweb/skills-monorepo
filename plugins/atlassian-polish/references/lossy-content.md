@@ -39,8 +39,10 @@ Verified on Cloud (CF-556, an issue with an inline screenshot):
    | `data-macro` / `status-macro` / `aui-lozenge` in the HTML, **not** wrapping an issue key | macro or status lozenge | unverified |
 
    **Not lossy:** a `jira-issue-macro` (with its `aui-lozenge` status) whose text is an issue
-   key is the smart link Jira renders for a bare `PROJ-123`. Writing the key bare re-creates
-   it. Never raise `LOSSY:` for it.
+   key is a smart link. Never raise `LOSSY:` for it. A Markdown write re-creates it from a
+   bare key; an ADF write only if `md-to-adf` gets `--jira-base`/`--projects` (formats §1).
+   Note `renderedFields` auto-links bare keys even when the stored ADF is plain text, so it
+   can't prove a link survived.
 5. Any hit: put a `LOSSY:` line in the preview naming what was found. Then either rewrite
    only the plain parts and leave the lossy nodes out of the write (say so), or skip the
    description. Flattening needs the user's explicit yes.

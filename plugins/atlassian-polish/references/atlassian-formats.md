@@ -55,7 +55,10 @@ MD
 
 It converts headings, paragraphs, bullet/numbered lists (nesting ≤ 2 levels), tables, fenced
 code, blockquotes, rules, inline code/bold/italic/strike, links, bare URLs and mentions
-(`[@Name](mention:<accountId>)` → ADF `mention` node; mentioned people get notified). Exit 2 with a
+(`[@Name](mention:<accountId>)` → ADF `mention` node; mentioned people get notified).
+ADF does not auto-link bare issue keys: always pass `--jira-base <site URL> --projects
+<PREFIX,…>` so keys of those projects become `inlineCard` smart links (code spans and
+existing links are left alone). Exit 2 with a
 `line N:` message on input it can't convert (unclosed fence, content nested under a checklist
 item); fix the Markdown, don't drop the content. Node shape it emits, for reference:
 
@@ -192,7 +195,7 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
 | Tables | wide tables wrap badly on narrow screens | ≤ 5 columns, short cells |
 | Headings | Jira shows h1 huge | start at h2 in Jira |
 | Emoji | render everywhere, but noise fast | ≤ 3 per page, signals only (see below) |
-| Status lozenges / ticket keys | Jira auto-links bare keys with live status | write `PROJ-123` bare |
+| Status lozenges / ticket keys | Markdown writes auto-link bare keys; ADF writes need `md-to-adf --projects` | write `PROJ-123` bare |
 
 ### Making it engaging without noise
 
