@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 2 |
+| Pending | 3 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 16 |
@@ -19,6 +19,7 @@ _No active tasks._
 |----|-------|----------|------|---------|
 | TSK-016 | Bump deprecated GitHub Actions to current majors | P3 | ci, maintenance | 2026-07-07 |
 | TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | P2 | atlassian-polish, adf, data-loss, backup | 2026-10-01 |
+| TSK-019 | dev-workflow: ci-triage skill | P2 |  | 2026-10-06 |
 
 ## Recently Completed
 
