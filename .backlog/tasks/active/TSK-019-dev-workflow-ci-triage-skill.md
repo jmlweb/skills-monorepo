@@ -1,12 +1,13 @@
 ---
 id: TSK-019
 title: dev-workflow: ci-triage skill
-status: pending
+status: active
 priority: P2
 tags: []
 created: 2026-10-06
 source: plan/PLN-001
 depends-on: []
+started: 2026-10-06
 ---
 
 # dev-workflow: ci-triage skill
@@ -47,3 +48,4 @@ Files: `plugins/dev-workflow/skills/ci-triage/SKILL.md`, `plugins/dev-workflow/s
 
 - [2026-10-06] Created
 - [2026-10-06] Scope refinement: github-posting.md must stay <=25 lines, generic only (confirm-before-post, English + one-line tone, never add attribution on own; follow user/project settings, no push to base/no force-push without asking). Skill must say 'Read ${CLAUDE_PLUGIN_ROOT}/shared/github-posting.md first'. Do not change review-pr. Reused by PLN-002 pr-ready.
+- [2026-10-06] Started

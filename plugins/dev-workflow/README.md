@@ -71,6 +71,26 @@ Fetches the PR diff and launches specialized agents in parallel to produce a str
 
 ---
 
+### 🚦 `/ci-triage` — Explain a red CI run
+
+Classifies each failure of a failed GitHub Actions run as **real**, **flaky** or **infra**, with evidence, and recommends one action per failure.
+
+```bash
+/ci-triage        # latest failed run on the current branch
+/ci-triage 123    # by PR number
+/ci-triage <url>  # by run URL
+```
+
+**What it does:**
+- 📜 Fetches only the failing jobs and steps via `gh run view --log-failed`
+- 🧭 Real → points at `file:line` and the likely commit; flaky → compares with base-branch history; infra → matches runner/network/registry signatures
+- 🔁 Suggests `gh run rerun --failed` or one deduped issue per flaky test
+- 🙋 Read-only until you confirm any rerun or issue creation
+
+> **Requires:** [GitHub CLI](https://cli.github.com/) installed and authenticated (`gh auth login`)
+
+---
+
 ### 📝 `/check-docs` — Documentation audit
 
 Audits docs on two axes: **content drift** (versions, commands, paths, examples, instructions out of sync with code) and **structural fit** (a 3-tier layout — rules stay terse, READMEs stay human, deep docs live under `docs/`). Markdown style/formatting is left to a linter.
@@ -110,6 +130,7 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 | `/commit` | Git |
 | `/changeset` | Git + `.changeset/` directory |
 | `/review-pr` | Git + GitHub CLI (`gh`) |
+| `/ci-triage` | Git + GitHub CLI (`gh`) |
 | `/check-docs` | Git |
 
 ## License
