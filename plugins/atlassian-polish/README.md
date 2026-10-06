@@ -16,11 +16,12 @@ claude plugin install atlassian-polish@jmlweb
 | Command | What it does |
 |---------|--------------|
 | `/atlassian-polish:atlassian-setup [url]` | Detects Cloud vs Data Center from any site URL, checks your MCP servers and tokens, and links the exact page to create credentials — run this first |
-| `/atlassian-polish:polish-atlassian <target> [--children] [--dry-run]` | Fetches, backs up, rewrites, previews and (after your approval) writes a Jira issue, an epic and its children, or a Confluence page and its child pages |
+| `/atlassian-polish:polish-atlassian <target> [--children] [--dry-run] [--audit] [--light]` | Fetches, backs up, rewrites, previews and (after your approval) writes a Jira issue, an epic and its children, or a Confluence page and its child pages. Default restructures by reader priority and flags contradictions; `--light` only polishes wording; `--audit` prints a readability analysis and writes nothing |
 
 ```bash
 /atlassian-polish:polish-atlassian PROJ-123
 /atlassian-polish:polish-atlassian PROJ-100 --children            # epic + every child issue
+/atlassian-polish:polish-atlassian PROJ-123 --audit              # readability analysis, no write
 /atlassian-polish:polish-atlassian https://acme.atlassian.net/wiki/spaces/ENG/pages/98765/Runbook --dry-run
 ```
 

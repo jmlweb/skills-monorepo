@@ -189,8 +189,20 @@ Panel macro names: `info`, `note`, `warning`, `tip`.
 | Mermaid / PlantUML | not rendered without a marketplace app | don't use; render to PNG |
 | Tables | wide tables wrap badly on narrow screens | ≤ 5 columns, short cells |
 | Headings | Jira shows h1 huge | start at h2 in Jira |
-| Emoji | render everywhere, but noise fast | ≤ 3 per page, top-level headings only |
+| Emoji | render everywhere, but noise fast | ≤ 3 per page, signals only (see below) |
 | Status lozenges / ticket keys | Jira auto-links bare keys with live status | write `PROJ-123` bare |
+
+### Making it engaging without noise
+
+Use this to answer "Markdown? Emojis?" from the user.
+
+- **Allowed:** blockquote callouts (TL;DR, blocker), `- [ ]` checkbox acceptance criteria
+  (via `md-to-adf`), risk/dependency tables, one ⚠️ for a blocker.
+- **Discouraged:** decorative emoji (🎯 📋 ✨ 🚀). Screen readers read each one aloud and they
+  pollute Jira search. Headings carry the category already.
+- **Not available via Markdown:** panels (use a blockquote), status lozenges (write the
+  status as text; bare ticket keys get live status anyway), @mentions (display name as text),
+  expand/collapse sections (keep the section short instead).
 
 ### Diagrams
 

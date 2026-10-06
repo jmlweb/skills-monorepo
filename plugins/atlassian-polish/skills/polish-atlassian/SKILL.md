@@ -1,7 +1,7 @@
 ---
 name: polish-atlassian
-description: Rewrites a Jira issue, an epic and its children, or a Confluence page into scannable, consistent content, keeping every decision, number, name, date and link. Use when the user says "polish this ticket", "make this Jira ticket readable", "clean up the epic description", "rewrite this Confluence page", "remove the prose from PROJ-123", or "make the ticket more attractive". Not for changing status, assignee, labels or fields.
-argument-hint: <ISSUE-KEY | issue URL | Confluence page URL or ID> [--children] [--dry-run]
+description: Rewrites a Jira issue, an epic and its children, or a Confluence page into scannable, consistent content, keeping every decision, number, name, date and link. Use when the user says "polish this ticket", "make this Jira ticket readable", "clean up the epic description", "rewrite this Confluence page", "remove the prose from PROJ-123", or "make the ticket more attractive", or "audit this ticket's readability". Not for changing status, assignee, labels or fields.
+argument-hint: <ISSUE-KEY | issue URL | Confluence page URL or ID> [--children] [--dry-run] [--audit] [--light]
 allowed-tools: Read, Write, Agent, Bash(command:*), Bash(node:*), Bash(rsvg-convert:*), Bash(magick:*), Bash(inkscape:*), Bash(curl -sS:*), Bash(jq:*), Bash(sips -g:*), mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks, mcp__claude_ai_Atlassian__getConfluencePage, mcp__claude_ai_Atlassian__getConfluencePageDescendants, mcp__claude_ai_Atlassian__getConfluencePageFooterComments, mcp__claude_ai_Atlassian__getConfluencePageInlineComments, mcp__claude_ai_Atlassian__getContentFormatGuide, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__updateConfluencePage, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search, mcp__atlassian__jira_update_issue, mcp__atlassian__confluence_get_page, mcp__atlassian__confluence_get_page_children, mcp__atlassian__confluence_get_comments, mcp__atlassian__confluence_get_attachments, mcp__atlassian__confluence_update_page
 model: sonnet
 effort: medium
@@ -20,6 +20,10 @@ Nothing is written without the user's approval.
 - Confluence: page URL (`…/pages/<id>/…`) or numeric page ID
 - `--children` — epic: include its child issues. Page: include its child pages
 - `--dry-run` — stop after the preview
+- `--audit` — readability analysis only (step 3a); nothing is backed up or written
+- `--light` — light rewrite: keep section order, fix wording and format only. Default is
+  `restructure` (reader-priority order, TL;DR callout, split grab-bag sections, checkbox
+  acceptance criteria). Checkboxes are on by default; skip them only if the user opts out
 
 No target → ask for one. Never guess.
 
@@ -64,6 +68,15 @@ upload attachment. Mark any need no MCP tool covers as "REST only" — don't ask
 
 Comments often hold the current state; they outrank older description text.
 
+### 3a. Audit (`--audit` only, then stop)
+
+Read `${CLAUDE_PLUGIN_ROOT}/references/style-guide.md` and formats §5 "Making it engaging
+without noise". Per page print: what works; problems ranked by reader impact (buried
+headline, hidden blocker, contradictions, grab-bag sections, plain-bullet criteria);
+Markdown/ADF options that fit; emoji recommendation (usually none, ⚠️ for a blocker);
+proposed outline in reader-priority order. End with "Audit only — nothing written. Run
+without `--audit` to apply." No backup, no agent call, no write.
+
 ### 4. Cross-check (optional — ask first)
 
 If GitHub (`gh`, GitHub MCP) or Slack tools exist and the content links PRs or threads, ask:
@@ -76,6 +89,10 @@ Before any write, save each original body verbatim with Write to
 `${CLAUDE_PLUGIN_DATA}/backups/<YYYY-MM-DD>/<KEY-or-pageId>.<md|json|xml>` (extension = format
 received). Tell the user the folder. Recovery: Jira issue History, Confluence page history.
 
+Hard rule: verbatim means the exact string the tool returned (Markdown and
+`renderedFields.description`). Never summarize, truncate or condense it, however long or
+macro-heavy (lossy-content.md rule 3). Can't write it verbatim → stop before step 8 and say so.
+
 ### 6. Rewrite
 
 Choose the output format per page from the decision table in
@@ -84,7 +101,8 @@ storage for Confluence pages with macros).
 
 Launch `Agent` with `subagent_type: "atlassian-polish:atlassian-formatter"`, one call per page
 (parallel for batches). Pass: target, output format, original body verbatim, comments,
-metadata, cross-check findings, today's date. If the agent type is unavailable, read
+metadata, cross-check findings, today's date, depth (`restructure` | `light`) and any
+opt-out the user stated. Don't add format restrictions of your own (e.g. "no `- [ ]`"). If the agent type is unavailable, read
 `${CLAUDE_PLUGIN_ROOT}/agents/atlassian-formatter.md` and do the rewrite yourself following it.
 
 Check the result: if the content meets a diagram trigger (complex problem, ticket/element
@@ -94,7 +112,9 @@ in REMOVED. Fix gaps before previewing.
 
 ### 7. Preview
 
-Per page show: title + link, the full BODY, REMOVED, UNVERIFIED, NEEDS (incl. planned diagrams). Then ask:
+Header line per page: title + link + `depth: restructure|light`. Then the full BODY, REMOVED
+(incl. moves), CONFLICTS, UNVERIFIED, NEEDS (incl. planned diagrams). Any CONFLICTS → ask how
+to resolve each one (offer the suggested fix) before asking to write. Then ask:
 "Write N page(s)? (yes / edit / no)". `edit` → apply the change, preview again.
 `--dry-run` → stop here with "Dry run — nothing written. Backups: <folder>".
 
@@ -157,7 +177,10 @@ Re-fetch every written page and check:
 2. **Images:** every ADF `media` node ID resolves to an attachment on the issue (compare with
    the attachment list and their content redirects). Confluence: every `ri:attachment`
    filename exists on the page. Broken or missing → "Not done" with the fix (ADF steps in 8).
-3. **Links:** issue links written or described match what the issue has (no "blocks" left
+3. **List spacing:** nested lists stored with blank lines or whitespace-only lines between
+   items (Markdown round-trip artifact). Hit → rewrite via `md-to-adf` +
+   `contentFormat: "adf"` for exact list structure, or report it.
+4. **Links:** issue links written or described match what the issue has (no "blocks" left
    beside a "relates to" for the same pair). Changes the tools can't make → "Not done" as
    manual steps.
 

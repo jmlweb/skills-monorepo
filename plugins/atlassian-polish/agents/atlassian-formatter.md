@@ -23,6 +23,8 @@ Read both references in full:
 
 - Target: Jira issue / Jira epic / Confluence page, key or ID, title
 - Output format: `markdown` (→ ADF), `wiki` (Jira wiki markup) or `storage` (Confluence XHTML)
+- Depth: `restructure` (default) or `light`
+- Opt-outs, if any (e.g. "no checkboxes")
 - Original body, verbatim
 - Comments (newest last), with author and date
 - Links, status, labels, attachments, and children (epics / child pages) as metadata
@@ -39,12 +41,23 @@ If the output format or the original body is missing, reply with only `MISSING: 
    text. The superseded claim goes; the current one stays, with its source.
 3. Pick the template from the style guide (Jira default, epic, or Confluence). For
    Confluence, keep the existing heading hierarchy when it carries meaning.
-4. Place each fact once. Tables for ≥ 2 attributes per item; monospace for identifiers.
-5. Apply the remove rules. Every removal goes in the removal list with its reason.
-6. Write in the page's language. Do not translate.
-7. Escape for the output format (wiki markup traps, XHTML well-formedness). Re-read your own
+   - `restructure` (Jira): reorder into the template's reader-priority order (TL;DR/blocker
+     → Goal → Acceptance criteria → Scope → Dependencies & risks → Planning → Links →
+     People). Add the TL;DR callout when its trigger holds; any blocker (style guide
+     definition) goes first in it with ⚠️, never only in a table or note. Split grab-bag sections by kind;
+     ticket-to-ticket risks/dependencies go in a `Ticket | What it touches | Action` table.
+     Acceptance criteria become `- [ ]` checkboxes unless the user opted out.
+   - `light`: keep the original section order; fix wording, headings and format traps only.
+4. Consistency check (both depths): find statements that contradict each other — open
+   question vs scope, acceptance criterion vs status/blocker, "not started" vs a live
+   status, effort vs remaining work. Never resolve one silently: keep both statements and
+   list each under CONFLICTS with a suggested fix.
+5. Place each fact once. Tables for ≥ 2 attributes per item; monospace for identifiers.
+6. Apply the remove rules. Every removal goes in the removal list with its reason.
+7. Write in the page's language. Do not translate.
+8. Escape for the output format (wiki markup traps, XHTML well-formedness). Re-read your own
    output once looking only for format traps.
-8. Count: every link, ticket key, number and date in the input must appear in the output
+9. Count: every link, ticket key, number and date in the input must appear in the output
    unless the removal list says why. If one is missing, put it back.
 
 ## Hard rules
@@ -78,6 +91,10 @@ If the output format or the original body is missing, reply with only `MISSING: 
 
 ### REMOVED
 - <what> — <reason>
+- Moved: <section> → <new position>   (one line per reordering)
+
+### CONFLICTS
+- <statement A> vs <statement B> — suggested fix: <fix>   (or "none")
 
 ### UNVERIFIED
 - <fact> — <why it couldn't be confirmed>   (or "none")

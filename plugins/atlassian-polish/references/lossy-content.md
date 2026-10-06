@@ -22,18 +22,27 @@ Verified on Cloud (CF-556, an issue with an inline screenshot):
 2. Backup (step 5) saves **both** `<KEY>.md` (what the MCP returned) and `<KEY>.rendered.html`.
    With REST consent, also save `<KEY>.adf.json` from the GET above. Say in the report which
    of the three exist; without the ADF file the backup is lossy.
-3. Scan for content Markdown can't carry:
+3. **Backups are verbatim.** Write the tool's `description` and `renderedFields.description`
+   strings exactly as returned: no summary, no truncation, no "condensed" macro markup, no
+   explanatory comment added. Long or noisy is not a reason. With REST consent, prefer
+   `curl -sS … > <file>` so the bytes never pass through a rewrite. If a verbatim copy can't
+   be written, stop before the write step and say so; never write over a body whose backup
+   is a summary.
+4. Scan for content Markdown can't carry:
 
    | Marker | Meaning | Status |
    |--------|---------|--------|
    | `![](blob:` in the Markdown | inline image / media node | verified |
    | `class="panel` or `ak-editor-panel` in the HTML | panel | unverified |
    | `user-hover` or `data-user` in the HTML | @mention | unverified |
-   | `data-macro` / `status-macro` / `aui-lozenge` in the HTML | macro or status lozenge | unverified |
+   | `data-macro` / `status-macro` / `aui-lozenge` in the HTML, **not** wrapping an issue key | macro or status lozenge | unverified |
 
-4. Any hit: put a `LOSSY:` line in the preview naming what was found. Then either rewrite
+   **Not lossy:** a `jira-issue-macro` (with its `aui-lozenge` status) whose text is an issue
+   key is the smart link Jira renders for a bare `PROJ-123`. Writing the key bare re-creates
+   it. Never raise `LOSSY:` for it.
+5. Any hit: put a `LOSSY:` line in the preview naming what was found. Then either rewrite
    only the plain parts and leave the lossy nodes out of the write (say so), or skip the
    description. Flattening needs the user's explicit yes.
-5. No hit does not prove nothing was lost (the unverified markers may be wrong). Every Jira
+6. No hit does not prove nothing was lost (the unverified markers may be wrong). Every Jira
    preview ends with: "Read as Markdown; panels, mentions and media may be flattened.
    Recovery: the issue's History tab."

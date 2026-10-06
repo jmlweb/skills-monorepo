@@ -63,31 +63,55 @@ carries meaning. If removing it loses nothing, remove it.
 - **Section size.** A heading earns its place with ≥ 2 lines of content. 3+ headings per
   screen of text means over-structured: merge.
 - **Lists:** 3-7 items. One item or > 9: write a sentence or group them.
-- **Callouts** (panel, quote, blockquote): ≤ 2 per page, only for what blocks action.
-- **Horizontal rules, decorative separators, "TL;DR" banners:** none, unless the original
-  page's structure depends on them.
+- **Callouts** (panel, quote, blockquote): ≤ 2 per page, only for what blocks action or
+  for the TL;DR below.
+- **TL;DR callout (Jira):** only when the body holds a size/effort/remaining-work fact or a
+  blocker. Open the body with a 1–2 line blockquote: bold lead word (`**TL;DR:**`), or one
+  ⚠️ for a blocker only. Never a banner, never a restated goal.
+  Blocker = anything that stops an acceptance criterion being met now (design "To do",
+  empty plan/spec section, required ticket not started). A blocker always leads the
+  callout, ahead of size/effort facts.
+- **Horizontal rules, decorative separators:** none, unless the original page's structure
+  depends on them.
 - **Order for scanning:** what the reader must do or decide first, background last.
+- **Grab-bag sections** ("Additional context", "Notes", "Misc"): split by kind of
+  information into the template sections. Never keep the bucket.
+- **Long route/path lists:** one per bullet, or a 2-column table. Never comma-chained.
+- **Single-row tables:** cells hold values only; move explanations to a note under the table.
 
 ## Jira template (default)
 
-Drop any section that would be empty. Keep this order.
+Reader-priority order. Drop any section that would be empty. Moving original sections into
+this order is expected; list every move in REMOVED/CHANGED.
 
 ```markdown
-## 🎯 Goal
+> ⚠️ **Blocked:** design not started (status To do, plan section empty).
+
+## Goal
 One or two sentences: the outcome, not the activity.
 
-## What
+## Acceptance criteria
+- [ ] Observable criterion
+- [ ] Observable criterion
+
+## Scope
 - Rule or scope item
-- Rule or scope item
+- Out of scope: PROJ-140 (covered there)
+
+## Dependencies & risks
+| Ticket | What it touches | Action |
+|--------|-----------------|--------|
+| PROJ-131 | `src/api/client.ts` | merge-conflict risk: rebase after it lands |
+
+## Planning
+| Priority | Effort | Status |
+|----------|--------|--------|
+| High | 2 | To do |
 
 ## Decisions
 | Topic | Decision | Source |
 |-------|----------|--------|
 | Retry policy | 3 retries, exponential backoff | Ana López, 2026-09-12, [thread](https://…) |
-
-## ✅ Done when
-- [ ] Observable criterion
-- [ ] Observable criterion
 
 ## Status (2026-10-01)
 - PR [#412](https://…) merged: API endpoint
@@ -99,9 +123,15 @@ One or two sentences: the outcome, not the activity.
 ## Links
 - Design: [Figma](https://…)
 - Context: PROJ-45
+
+## People
+- Owners / reviewers: Ana López, Dani Ruiz
 ```
 
-Rename `What` to `Rules` when the content is constraints rather than scope.
+Order: TL;DR/blocker → Goal → Acceptance criteria → Scope → Dependencies & risks →
+Planning → Links → People. Decisions, Status and Open questions sit right after Planning.
+Rename `Scope` to `Rules` when the content is constraints rather than scope. Acceptance
+criteria are always `- [ ]` checkboxes unless the user opted out.
 
 ## Epic additions
 
@@ -150,7 +180,7 @@ It's worth noting that the field customer_id must be included. Done when export 
 After:
 
 ```markdown
-## 🎯 Goal
+## Goal
 Large accounts can export their data without timeouts.
 
 ## Rules
@@ -164,7 +194,7 @@ Large accounts can export their data without timeouts.
 | Formats | CSV + XLSX | Marta, 2026-09-28, Slack |
 | Row limit | 50k (was 10k) | Dani, 2026-09-30, perf test |
 
-## ✅ Done when
+## Acceptance criteria
 - [ ] 50k-row export completes in both formats
 - [ ] `customer_id` present in every row
 ```
