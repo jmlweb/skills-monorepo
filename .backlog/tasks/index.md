@@ -5,13 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 1 |
-| Active | 1 |
+| Active | 0 |
 | Blocked | 0 |
-| Complete | 18 |
+| Complete | 19 |
 
 ## Active Tasks
 
-- TSK-016: Bump deprecated GitHub Actions to current majors (P3)
+_No active tasks._
 
 ## Pending Tasks
 
@@ -23,6 +23,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-016 | Bump deprecated GitHub Actions to current majors | 2026-10-06 |
 | TSK-019 | dev-workflow: ci-triage skill | 2026-10-06 |
 | TSK-020 | dev-workflow: pr-ready skill | 2026-10-06 |
 | TSK-017 | atlassian-polish: Markdown to Jira ADF converter script | 2026-10-01 |
@@ -32,4 +33,3 @@
 | TSK-013 | next-task fallback: promote from ideas/pending when backlog has no pending tasks | 2026-04-27 |
 | TSK-014 | add-learning skill: dedupe check via learning-search before create | 2026-04-27 |
 | TSK-015 | Discuss: rename add-task skill to reduce semantic collision with native TaskCreate | 2026-04-27 |
-| TSK-008 | Fix: CLI silently returns empty results when cwd is not the backlog root | 2026-04-10 |

@@ -1,13 +1,14 @@
 ---
 id: TSK-016
 title: Bump deprecated GitHub Actions to current majors
-status: active
+status: complete
 priority: P3
 tags: [ci, maintenance]
 created: 2026-07-07
 source: manual
 depends-on: []
 started: 2026-10-06
+completed: 2026-10-06
 ---
 
 # Bump deprecated GitHub Actions to current majors
@@ -23,7 +24,7 @@ Upgrade the three actions to their current majors in both .github/workflows/ci.y
 
 - [x] ci.yml and release.yml reference current major versions of actions/checkout, actions/setup-node, and pnpm/action-setup
 - [x] A fresh workflow run shows no Node 20 deprecation annotations
-- [ ] Both workflows pass green after the bump
+- [x] Both workflows pass green after the bump
 
 ## Notes
 
@@ -33,3 +34,4 @@ Upgrade the three actions to their current majors in both .github/workflows/ci.y
 
 - [2026-07-07] Created
 - [2026-10-06] Started
+- [2026-10-06] Completed
