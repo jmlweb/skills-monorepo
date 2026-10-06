@@ -1,12 +1,14 @@
 ---
 id: TSK-020
 title: dev-workflow: pr-ready skill
-status: pending
+status: complete
 priority: P2
 tags: []
 created: 2026-10-06
 source: plan/PLN-002
 depends-on: [TSK-019]
+started: 2026-10-06
+completed: 2026-10-06
 ---
 
 # dev-workflow: pr-ready skill
@@ -34,17 +36,17 @@ Files: `plugins/dev-workflow/skills/pr-ready/SKILL.md` (sonnet, effort medium), 
 
 ## Acceptance Criteria
 
-- [ ] Resolves PR from arg or current branch via gh pr view; refuses on base branch
-- [ ] Updates branch against base; stops and asks on conflicts
-- [ ] On CI failure invokes ci-triage via the Skill tool (not subagent_type)
-- [ ] Fetches unresolved review threads via gh api graphql and classifies fixable vs needs-user
-- [ ] Fixes scoped to files in the branch diff; related tests run
-- [ ] Replies are one-line; posting and resolving threads only after explicit confirmation
-- [ ] PR body trimmed to what, why, how to test
-- [ ] Undraft and reviewer request only when asked; merge only with --merge flag (off by default)
-- [ ] Never pushes to base; never force-pushes without asking
-- [ ] SKILL.md reads ${CLAUDE_PLUGIN_ROOT}/shared/github-posting.md first and is 150 lines or fewer
-- [ ] README command table lists pr-ready; claude plugin validate . passes
+- [x] Resolves PR from arg or current branch via gh pr view; refuses on base branch
+- [x] Updates branch against base; stops and asks on conflicts
+- [x] On CI failure invokes ci-triage via the Skill tool (not subagent_type)
+- [x] Fetches unresolved review threads via gh api graphql and classifies fixable vs needs-user
+- [x] Fixes scoped to files in the branch diff; related tests run
+- [x] Replies are one-line; posting and resolving threads only after explicit confirmation
+- [x] PR body trimmed to what, why, how to test
+- [x] Undraft and reviewer request only when asked; merge only with --merge flag (off by default)
+- [x] Never pushes to base; never force-pushes without asking
+- [x] SKILL.md reads ${CLAUDE_PLUGIN_ROOT}/shared/github-posting.md first and is 150 lines or fewer
+- [x] README command table lists pr-ready; claude plugin validate . passes
 
 ## Notes
 
@@ -53,3 +55,5 @@ Files: `plugins/dev-workflow/skills/pr-ready/SKILL.md` (sonnet, effort medium), 
 ## Progress Log
 
 - [2026-10-06] Created
+- [2026-10-06] Started
+- [2026-10-06] Completed

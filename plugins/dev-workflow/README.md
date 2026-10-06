@@ -91,6 +91,28 @@ Classifies each failure of a failed GitHub Actions run as **real**, **flaky** or
 
 ---
 
+### ✅ `/pr-ready` — Get your PR mergeable
+
+Drives your own open PR to a mergeable state: updates the branch, triages red CI, handles unresolved review threads, trims the description, and requests reviewers.
+
+```bash
+/pr-ready          # PR of the current branch
+/pr-ready 123      # by PR number
+/pr-ready --merge  # also merge once CI is green
+```
+
+**What it does:**
+- 🔄 Merges the base branch in; stops and asks on conflicts
+- 🚦 On red CI, hands off to `/ci-triage`
+- 💬 Splits unresolved review threads into *fixable* and *needs you*, fixes the first group within your branch diff
+- 🙋 Posts one-line replies and resolves threads only after you confirm
+- ✂️ Trims the PR body to what, why, how to test
+- 🔒 Never merges without `--merge`, never pushes to the base branch, never force-pushes without asking
+
+> **Requires:** [GitHub CLI](https://cli.github.com/) installed and authenticated (`gh auth login`)
+
+---
+
 ### 📝 `/check-docs` — Documentation audit
 
 Audits docs on two axes: **content drift** (versions, commands, paths, examples, instructions out of sync with code) and **structural fit** (a 3-tier layout — rules stay terse, READMEs stay human, deep docs live under `docs/`). Markdown style/formatting is left to a linter.
@@ -131,6 +153,7 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 | `/changeset` | Git + `.changeset/` directory |
 | `/review-pr` | Git + GitHub CLI (`gh`) |
 | `/ci-triage` | Git + GitHub CLI (`gh`) |
+| `/pr-ready` | Git + GitHub CLI (`gh`) |
 | `/check-docs` | Git |
 
 ## License
