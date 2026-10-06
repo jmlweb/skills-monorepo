@@ -2,6 +2,7 @@
 
 import { readFileSync } from "node:fs";
 import { markdownToAdf } from "../core/md-to-adf.js";
+import { readbackToMarkdown } from "../core/readback.js";
 import { InvalidArgumentError } from "../core/errors.js";
 
 const EXIT_OK = 0;
@@ -11,13 +12,19 @@ const HELP = [
   "Usage: atlassian-polish <command> [flags]",
   "",
   "Commands:",
-  "  md-to-adf    Convert Markdown to a Jira ADF document (JSON on stdout)",
+  "  md-to-adf       Convert Markdown to a Jira ADF document (JSON on stdout)",
+  "  readback-to-md  Turn MCP <custom> smart-link/mention tags back into keys and",
+  "                  [@Name](mention:<id>) (Markdown on stdout)",
   "",
   "md-to-adf flags:",
   "  --file <path>   Read Markdown from a file (default: stdin)",
   "  --pretty true   Indent the JSON (default: compact, one line)",
   "  --jira-base <url> --projects <A,B>",
   "                  Link bare issue keys of those projects (e.g. https://acme.atlassian.net, PROJ,OPS)",
+  "",
+  "readback-to-md flags:",
+  "  --file <path>   Markdown as the MCP returned it (default: stdin)",
+  "  --html <path>   renderedFields.description from the same fetch (required)",
 ].join("\n");
 
 function parseFlags(args: readonly string[]): Record<string, string> {
@@ -49,12 +56,18 @@ function main(): number {
   }
 
   try {
-    if (command !== "md-to-adf") {
+    if (command !== "md-to-adf" && command !== "readback-to-md") {
       throw new InvalidArgumentError(`Unknown command: ${command}`);
     }
     const flags = parseFlags(rest);
     // fd 0 read keeps the CLI synchronous and dependency-free.
     const markdown = readFileSync(flags["file"] ?? 0, "utf-8");
+    if (command === "readback-to-md") {
+      const html = flags["html"];
+      if (!html) throw new InvalidArgumentError("readback-to-md needs --html <path>");
+      process.stdout.write(readbackToMarkdown(markdown, readFileSync(html, "utf-8")));
+      return EXIT_OK;
+    }
     const base = flags["jira-base"];
     const projects = flags["projects"]?.split(",").map((p) => p.trim()).filter(Boolean);
     if ((base === undefined) !== (projects === undefined)) {

@@ -26,6 +26,7 @@ Read both references in full:
 - Depth: `restructure` (default) or `light`
 - Opt-outs, if any (e.g. "no checkboxes")
 - People map, if any: display name → verified account ID (write those as mentions)
+- Blockers, if any: "is blocked by" links and "blocked by" lines from comments, with source
 - Original body, verbatim
 - Comments (newest last), with author and date
 - Links, status, labels, attachments, and children (epics / child pages) as metadata
@@ -45,7 +46,11 @@ If the output format or the original body is missing, reply with only `MISSING: 
    - `restructure` (Jira): reorder into the template's reader-priority order (TL;DR/blocker
      → Goal → Acceptance criteria → Scope → Dependencies & risks → Planning → Links →
      People). Add the TL;DR callout when its trigger holds; any blocker (style guide
-     definition) goes first in it with ⚠️, never only in a table or note. Split grab-bag sections by kind;
+     definition, or from the Blockers input) goes first in it with ⚠️, keys in bold, never
+     only in a table or note. Each blocker also gets a Dependencies & risks row.
+     A body line a newer comment supersedes (e.g. "none needed" vs a comment listing
+     components): update it, cite "(comment <date>)", and list it under CONFLICTS as
+     "resolved by newer comment" so the user can confirm. Never copy the rest of a comment. Split grab-bag sections by kind;
      ticket-to-ticket risks/dependencies go in a `Ticket | What it touches | Action` table.
      Acceptance criteria become `- [ ]` checkboxes unless the user opted out.
    - `light`: keep the original section order; fix wording, headings and format traps only.

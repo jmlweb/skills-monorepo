@@ -1,6 +1,6 @@
 {
   "name": "@jmlweb/atlassian-polish",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Rewrite Jira issues and Confluence pages into scannable, human-friendly content",
   "type": "module",
   "bin": {

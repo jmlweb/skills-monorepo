@@ -68,9 +68,20 @@ upload attachment. Mark any need no MCP tool covers as "REST only" — don't ask
 
 Comments often hold the current state; they outrank older description text.
 
-People (Jira): for each person named in the body, look up the account ID
-(`lookupJiraAccountId`). Exactly one active match → add to the people map; otherwise keep
-the plain name. No lookup tool → no mentions.
+Round-trip (Jira): if the Markdown holds `<custom data-type=…>` tags (smart links,
+mentions; the issue then reports `descriptionEditable: false`), save both strings to temp
+files and run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/atlassian-polish.js" readback-to-md
+--file <md> --html <rendered.html>`. Its output (bare keys, `[@Name](mention:<id>)`) is the
+body the formatter gets; existing mentions go into the people map as is. Exit 2 → stop and
+report the message; never hand-edit the tags.
+
+People (Jira): for each other person named in the body, look up the account ID
+(`lookupJiraAccountId`). Exactly one active match whose display name equals the name →
+people map. One match by email/handle only (display name differs) → ask the user to
+confirm before mapping. Otherwise keep the plain name. No lookup tool → no mentions.
+
+Blockers (Jira): collect "is blocked by" issue links and any "blocked by" in comments; pass
+them to the formatter as blockers.
 
 ### 3a. Audit (`--audit` only, then stop)
 
@@ -106,7 +117,8 @@ storage for Confluence pages with macros).
 
 Launch `Agent` with `subagent_type: "atlassian-polish:atlassian-formatter"`, one call per page
 (parallel for batches). Pass: target, output format, original body verbatim, comments,
-metadata, cross-check findings, today's date, people map, depth (`restructure` | `light`) and any
+metadata (incl. issue links, sub-tasks), blockers, cross-check findings, today's date,
+people map, depth (`restructure` | `light`) and any
 opt-out the user stated. Don't add format restrictions of your own (e.g. "no `- [ ]`"). If the agent type is unavailable, read
 `${CLAUDE_PLUGIN_ROOT}/agents/atlassian-formatter.md` and do the rewrite yourself following it.
 
@@ -133,13 +145,14 @@ Write each approved page with the format chosen in step 6:
 - Inline Jira image, or any upload MCP can't do: ask REST consent now, listing the calls
   (`POST /rest/api/3/issue/{key}/attachments`, `PUT /rest/api/2/issue/{key}`, plus the
   replace calls below if an image exists). No → write without the embed and list it in the report.
-- Jira body with `- [ ]` / `- [x]` items or `mention:` links: convert the whole body with
+- Jira body: always convert the whole body with
   `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/atlassian-polish.js" md-to-adf` (formats §1 "ADF
   checklist") and send the JSON via `editJiraIssue` `contentFormat: "adf"`, never as Markdown.
   Always add `--jira-base <site URL> --projects <prefixes>`: site from the target, prefixes
   from every `data-jira-key` in the fetched HTML plus the issue's own project. Without them
   every ticket key is written as plain text.
-  Never fall back to plain bullets to hide a broken `[ ]`; fix the write.
+  Never fall back to plain bullets to hide a broken `[ ]`; fix the write. Never send a
+  Jira description as Markdown: it drops smart links, mentions and checkboxes.
 - Diagram in NEEDS (`DIAGRAM:` line): always draw it, per `${CLAUDE_PLUGIN_ROOT}/references/diagrams.md` (SVG, 2× render,
   Read the PNG and fix until clean). Upload PNG and its SVG source with the same base name.
 - First image embed (Jira): upload, then `PUT /rest/api/2/issue/{key}` with
@@ -190,9 +203,9 @@ Re-fetch every written page and check:
    Markdown readback always shows blank/whitespace lines around nested lists, even for clean
    ADF. Hit = empty `<li>`/`<p>` or a nested list split into separate `<ul>`s → rewrite via
    `md-to-adf` + `contentFormat: "adf"`, or report it.
-4. **Ticket keys:** count `inlineCard` nodes in the ADF you sent vs keys in BODY outside code;
-   any gap → re-convert with the missing prefix. Never use `renderedFields` for this: it
-   auto-links plain-text keys.
+4. **Ticket keys:** count `<custom data-type="smartlink">` tags in the write's Markdown
+   readback vs keys in BODY outside code; any gap → re-convert with the missing prefix.
+   Never use `renderedFields` for this: it auto-links plain-text keys.
 5. **Mentions:** every `mention:` in BODY came back as a mention (Markdown readback shows
    it as a mention, not `[@Name](mention:…)` text).
 6. **Links:** issue links written or described match what the issue has (no "blocks" left
