@@ -21,8 +21,8 @@ Upgrade the three actions to their current majors in both .github/workflows/ci.y
 
 ## Acceptance Criteria
 
-- [ ] ci.yml and release.yml reference current major versions of actions/checkout, actions/setup-node, and pnpm/action-setup
-- [ ] A fresh workflow run shows no Node 20 deprecation annotations
+- [x] ci.yml and release.yml reference current major versions of actions/checkout, actions/setup-node, and pnpm/action-setup
+- [x] A fresh workflow run shows no Node 20 deprecation annotations
 - [ ] Both workflows pass green after the bump
 
 ## Notes
