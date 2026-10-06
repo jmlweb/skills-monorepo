@@ -1,9 +1,11 @@
 ---
 id: PLN-002
 title: dev-workflow: pr-ready skill
-status: pending
+status: approved
 created: 2026-10-01
 complexity: medium
+reviewed: 2026-10-06
+task-id: TSK-020
 ---
 
 ## Goal
