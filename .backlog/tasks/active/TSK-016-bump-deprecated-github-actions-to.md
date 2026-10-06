@@ -1,12 +1,13 @@
 ---
 id: TSK-016
 title: Bump deprecated GitHub Actions to current majors
-status: pending
+status: active
 priority: P3
 tags: [ci, maintenance]
 created: 2026-07-07
 source: manual
 depends-on: []
+started: 2026-10-06
 ---
 
 # Bump deprecated GitHub Actions to current majors
@@ -31,3 +32,4 @@ Upgrade the three actions to their current majors in both .github/workflows/ci.y
 ## Progress Log
 
 - [2026-07-07] Created
+- [2026-10-06] Started
