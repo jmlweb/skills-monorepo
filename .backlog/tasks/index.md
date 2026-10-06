@@ -5,13 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 3 |
-| Active | 1 |
+| Active | 0 |
 | Blocked | 0 |
-| Complete | 16 |
+| Complete | 17 |
 
 ## Active Tasks
 
-- TSK-019: dev-workflow: ci-triage skill (P2)
+_No active tasks._
 
 ## Pending Tasks
 
@@ -25,6 +25,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-019 | dev-workflow: ci-triage skill | 2026-10-06 |
 | TSK-017 | atlassian-polish: Markdown to Jira ADF converter script | 2026-10-01 |
 | TSK-010 | Support --help/-h flag in flowstate CLI globally and per subcommand | 2026-04-27 |
 | TSK-011 | Document --include-archived flag and status filters in flowstate CLI README | 2026-04-27 |
@@ -34,4 +35,3 @@
 | TSK-015 | Discuss: rename add-task skill to reduce semantic collision with native TaskCreate | 2026-04-27 |
 | TSK-008 | Fix: CLI silently returns empty results when cwd is not the backlog root | 2026-04-10 |
 | TSK-009 | Fix: block-task skill uses task-update for status change instead of task-move | 2026-04-10 |
-| TSK-007 | Fix: Flowstate CLI empties index tables on rapid moves | 2026-04-09 |

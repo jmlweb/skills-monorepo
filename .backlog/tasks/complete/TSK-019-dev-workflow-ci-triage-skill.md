@@ -1,13 +1,14 @@
 ---
 id: TSK-019
 title: dev-workflow: ci-triage skill
-status: active
+status: complete
 priority: P2
 tags: []
 created: 2026-10-06
 source: plan/PLN-001
 depends-on: []
 started: 2026-10-06
+completed: 2026-10-06
 ---
 
 # dev-workflow: ci-triage skill
@@ -32,13 +33,13 @@ Files: `plugins/dev-workflow/skills/ci-triage/SKILL.md`, `plugins/dev-workflow/s
 
 ## Acceptance Criteria
 
-- [ ] Skill accepts run URL, PR number, or defaults to current branch latest failed run
-- [ ] Failing job logs fetched via gh run view --log-failed and trimmed to failing steps
-- [ ] Each failure classified real/flaky/infra with stated evidence
-- [ ] One recommended action per failure: fix pointer, rerun failed, or one GitHub issue per flaky test (deduped against open issues)
-- [ ] Read-only until user confirms any rerun or issue creation
-- [ ] shared/github-posting.md created; README command table updated
-- [ ] claude plugin validate . passes
+- [x] Skill accepts run URL, PR number, or defaults to current branch latest failed run
+- [x] Failing job logs fetched via gh run view --log-failed and trimmed to failing steps
+- [x] Each failure classified real/flaky/infra with stated evidence
+- [x] One recommended action per failure: fix pointer, rerun failed, or one GitHub issue per flaky test (deduped against open issues)
+- [x] Read-only until user confirms any rerun or issue creation
+- [x] shared/github-posting.md created; README command table updated
+- [x] claude plugin validate . passes
 
 ## Notes
 
@@ -49,3 +50,4 @@ Files: `plugins/dev-workflow/skills/ci-triage/SKILL.md`, `plugins/dev-workflow/s
 - [2026-10-06] Created
 - [2026-10-06] Scope refinement: github-posting.md must stay <=25 lines, generic only (confirm-before-post, English + one-line tone, never add attribution on own; follow user/project settings, no push to base/no force-push without asking). Skill must say 'Read ${CLAUDE_PLUGIN_ROOT}/shared/github-posting.md first'. Do not change review-pr. Reused by PLN-002 pr-ready.
 - [2026-10-06] Started
+- [2026-10-06] Completed
