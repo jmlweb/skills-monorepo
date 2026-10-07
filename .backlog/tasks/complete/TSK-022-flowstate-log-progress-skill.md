@@ -1,12 +1,14 @@
 ---
 id: TSK-022
 title: flowstate: log-progress skill
-status: pending
+status: complete
 priority: P2
 tags: [flowstate, cli, skill, progress-log]
 created: 2026-10-07
 source: plan/PLN-006
 depends-on: []
+started: 2026-10-07
+completed: 2026-10-07
 ---
 
 # flowstate: log-progress skill
@@ -45,14 +47,14 @@ Give users a one-step way to record session progress on a task, including tickin
 
 ## Acceptance Criteria
 
-- [ ] task-update --log inserts into ## Progress Log via hasSection/appendToSection; missing section throws a typed error
-- [ ] task-update --check <n,...> ticks acceptance criteria by 1-based index via tickCriteria; out-of-range rejected; idempotent
-- [ ] --log - reads stdin in bin/flowstate.ts; each non-empty line becomes a dated bullet
-- [ ] markdown.test.ts and task-update.test.ts cover the new behavior on real temp dirs
-- [ ] skills/log-progress/SKILL.md (haiku): resolves task, re-reads it, drafts 1-3 lines, confirms, calls the CLI, offers add-learning
-- [ ] complete-task unchecked-criteria warning points to /flowstate:log-progress
-- [ ] SKILL.md CLI table, task-update help text and README command table updated
-- [ ] pnpm typecheck, pnpm test and claude plugin validate . pass
+- [x] task-update --log inserts into ## Progress Log via hasSection/appendToSection; missing section throws a typed error
+- [x] task-update --check <n,...> ticks acceptance criteria by 1-based index via tickCriteria; out-of-range rejected; idempotent
+- [x] --log - reads stdin in bin/flowstate.ts; each non-empty line becomes a dated bullet
+- [x] markdown.test.ts and task-update.test.ts cover the new behavior on real temp dirs
+- [x] skills/log-progress/SKILL.md (haiku): resolves task, re-reads it, drafts 1-3 lines, confirms, calls the CLI, offers add-learning
+- [x] complete-task unchecked-criteria warning points to /flowstate:log-progress
+- [x] SKILL.md CLI table, task-update help text and README command table updated
+- [x] pnpm typecheck, pnpm test and claude plugin validate . pass
 
 ## Notes
 
@@ -61,3 +63,8 @@ Give users a one-step way to record session progress on a task, including tickin
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-07] Started
+- [2026-10-07] task-update: --log is section-aware (SectionNotFoundError), --check ticks criteria via tickCriteria, --log - reads stdin one bullet per line
+- [2026-10-07] log-progress skill (haiku) added; complete-task points to it; SKILL.md, README, AGENTS.md skill count updated
+- [2026-10-07] typecheck, 335 tests and claude plugin validate green
+- [2026-10-07] Completed
