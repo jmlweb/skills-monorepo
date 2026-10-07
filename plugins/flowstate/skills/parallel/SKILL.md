@@ -58,6 +58,12 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active
 
 The CLI handles frontmatter updates, file moves, and index updates.
 
+Then commit the moves. Worktrees branch from `HEAD`, so uncommitted moves leave subagents seeing stale `pending/` copies and cause merge conflicts later. The pathspec keeps unrelated staged work out of this commit:
+
+```bash
+git add .backlog && git commit -m "chore(backlog): start {{IDS}}" -- .backlog
+```
+
 ### 5. Load Context for Subagents
 
 Run a single combined search using all unique tags and titles from the selected tasks:
@@ -75,6 +81,8 @@ Also scan `.backlog/reports/pending/` once for any reports related to the select
 Use the Agent tool to launch ALL subagents in a **single message** for true parallel execution.
 
 Each subagent gets `isolation: "worktree"`.
+
+If several tasks will each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt — otherwise they all pick the same next number.
 
 **Subagent prompt:**
 
@@ -94,27 +102,35 @@ Complete Task TSK-{{ID}}: {{TITLE}}
 ## Known Issues                    ← only if related reports found
 - RPT-XXX: {{TITLE}} ({{SEVERITY}})
 
+## Reserved Numbers                ← only if numbers were reserved
+- Use {{e.g. ADR 0007}} — other parallel tasks hold the neighbouring numbers
+
 ## Instructions
 1. Read project documentation (README, CLAUDE.md, etc.) first
 2. Apply the learnings above — they capture past mistakes and proven patterns
 3. Implement each acceptance criterion
 4. Verify changes work (build, lint, test as applicable)
-5. **Capture learnings as you go** — whenever you hit a non-obvious root cause, undocumented behavior, gotcha, or a pattern worth reusing, create a learning immediately using the CLI (do NOT wait for task completion):
-   ```bash
-   cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body -
-   ## Context
-   {{what you were doing}}
-   ## Insight
-   {{the non-obvious why}}
-   ## Application
-   {{what to do or avoid next time}}
-   BODY
-   ```
-   Skip routine work and anything obvious from the code.
+5. Do NOT modify anything under `.backlog/` and do NOT run flowstate CLI commands — other agents run in parallel, and the coordinator owns backlog state
 6. Create a commit referencing TSK-{{ID}}
+7. End your final report with a `## Learnings` section: one entry per non-obvious root cause, undocumented behavior, gotcha, or reusable pattern you hit, each with Title, Tags, Context, Insight, Application. Skip routine work and anything obvious from the code. Write "None" if there are none.
 ```
 
 ### 7. Collect Results
+
+Create each learning from the subagents' `## Learnings` sections here, in the main tree, one at a time — sequential creation is what keeps `LRN-NNN` IDs unique and the index conflict-free:
+
+```bash
+cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body -
+## Context
+{{context}}
+## Insight
+{{insight}}
+## Application
+{{application}}
+BODY
+```
+
+Then report:
 
 ```
 ## Parallel Execution Complete
