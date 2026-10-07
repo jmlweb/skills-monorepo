@@ -100,9 +100,11 @@ finding with its date. Never post anything.
 
 ### 5. Back up
 
-Before any write, save each original body verbatim with Write to
-`${CLAUDE_PLUGIN_DATA}/backups/<YYYY-MM-DD>/<KEY-or-pageId>.<md|json|xml>` (extension = format
-received). Tell the user the folder. Recovery: Jira issue History, Confluence page history.
+Before any write, save each original body verbatim with Write under
+`${CLAUDE_PLUGIN_DATA}/backups/<YYYY-MM-DD>/`. Confluence: `<pageId>.<json|xml>` (extension =
+format received). Jira: `<KEY>.md` plus `<KEY>.rendered.html`, and `<KEY>.adf.json` with REST
+consent (lossy-content.md rule 2); report which exist. Tell the user the folder. Recovery: Jira
+issue History, Confluence page history.
 
 Hard rule: verbatim means the exact string the tool returned (Markdown and
 `renderedFields.description`). Never summarize, truncate or condense it, however long or

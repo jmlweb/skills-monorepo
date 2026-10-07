@@ -27,12 +27,12 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 
 ## Acceptance Criteria
 
-- [ ] Confirm whether getJiraIssue can return real ADF (the markdown read path flattened content even with responseContentFormat adf); document what works per tool, or use REST v3 as the read path when consent exists
+- [x] Confirm whether getJiraIssue can return real ADF (the markdown read path flattened content even with responseContentFormat adf); document what works per tool, or use REST v3 as the read path when consent exists
 - [ ] Backup stores the original in the richest format available (ADF JSON when obtainable), not the Markdown the rewrite starts from
 - [ ] Polish detects panels, @mentions, inline images/media and other nodes Markdown cannot express, and warns before rewriting
 - [ ] Tickets with such nodes either keep those nodes intact (rewrite only the plain parts) or require explicit user approval to flatten them
 - [ ] Test with a real ticket containing a panel, a mention and a screenshot; verify nothing is dropped after the write
-- [ ] Docs state the History tab is the only full-fidelity recovery until this is fixed
+- [x] Docs state the History tab is the only full-fidelity recovery until this is fixed
 
 ## Notes
 
@@ -45,3 +45,5 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 - [2026-10-01] Returned to pending
 - [2026-10-01] Paused 2026-10-01 (7d7c0b6: lossy-content.md, fetch with renderedFields, 3-file backup, LOSSY preview notice). Left: verify panel/mention/macro markers on a real ticket; test REST ADF backup (needs consent; a broad REST scan was blocked by the permission check, so name one ticket); enforce preserve-lossy-nodes rewrite; real-ticket test with panel+mention+screenshot; step 5 of SKILL.md still describes a single backup file.
 - [2026-10-07] Backlog review: since pause, b7a6041/9b15aa4/b8105f1/1185135 made backups verbatim and non-overwriting, stopped flagging issue-key smart links as LOSSY, and preserve mentions/smart links via readback-to-md + ADF writes. Criteria 1 (MCP returns Markdown, documented in lossy-content.md) and 6 (History tab in docs) look met; 3-4 are documented as rules but panel/mention markers are unverified. Left: one real ticket with panel+mention+screenshot (criterion 5, also verifies markers); first REST v3 ADF backup with consent (criterion 2); SKILL.md step 5 path still shows one <KEY>.<md|json|xml> file instead of .md + .rendered.html + .adf.json.
+- [2026-10-07] SKILL.md step 5 now names the Jira backup set (.md + .rendered.html + .adf.json with consent) instead of a single file.
+- [2026-10-07] Ticked 1 (lossy-content.md documents MCP returns Markdown, REST v3 for ADF) and 6 (History tab in lossy-content.md rule 6 and SKILL.md step 5).

@@ -78,3 +78,4 @@ Turn a finished branch into a pull request whose description is written for huma
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-07] Backlog review gap: ${CLAUDE_PLUGIN_DATA} is substituted into skill text, not exported to the CLI environment. find-pr-template must take the user template dir as an argument (e.g. --user-dir "${CLAUDE_PLUGIN_DATA}") instead of reading the env var; missing or empty --user-dir means no user template.
