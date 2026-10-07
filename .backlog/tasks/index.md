@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 3 |
+| Pending | 4 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 20 |
@@ -20,6 +20,7 @@ _No active tasks._
 | TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | P2 | atlassian-polish, adf, data-loss, backup | 2026-10-01 |
 | TSK-021 | dev-workflow: open-pr skill | P2 | dev-workflow, pr, skill, agent, cli | 2026-10-07 |
 | TSK-023 | atlassian-polish: verify md-to-adf with a real Jira write | P2 | atlassian-polish, adf, jira, verification | 2026-10-07 |
+| TSK-024 | dev-workflow: agent-handoff skill | P2 |  | 2026-10-07 |
 
 ## Recently Completed
 
