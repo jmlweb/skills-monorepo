@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 1 |
+| Pending | 3 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 19 |
@@ -18,6 +18,8 @@ _No active tasks._
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | P2 | atlassian-polish, adf, data-loss, backup | 2026-10-01 |
+| TSK-021 | dev-workflow: open-pr skill | P2 | dev-workflow, pr, skill, agent, cli | 2026-10-07 |
+| TSK-022 | flowstate: log-progress skill | P2 | flowstate, cli, skill, progress-log | 2026-10-07 |
 
 ## Recently Completed
 
