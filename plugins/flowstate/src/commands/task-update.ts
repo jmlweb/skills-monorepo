@@ -3,8 +3,12 @@ import type { TaskStatus } from "../core/types.js";
 import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity } from "../core/fs.js";
 import { today } from "../core/date.js";
-import { EntityNotFoundError, InvalidArgumentError } from "../core/errors.js";
-import { appendToBody } from "../core/markdown.js";
+import {
+  EntityNotFoundError,
+  InvalidArgumentError,
+  SectionNotFoundError,
+} from "../core/errors.js";
+import { appendToSection, hasSection, tickCriteria } from "../core/markdown.js";
 
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active", "complete"];
 
@@ -13,6 +17,7 @@ export async function taskUpdate(
   id: string,
   updates: Record<string, string>,
   log?: string,
+  checkCriteria: readonly number[] = [],
 ): Promise<{ path: string }> {
   let filePath: string | undefined;
 
@@ -46,9 +51,25 @@ export async function taskUpdate(
   }
 
   let body = doc.body;
-  if (log) {
+  if (checkCriteria.length > 0) {
+    if (!hasSection(body, "Acceptance Criteria")) {
+      throw new SectionNotFoundError(id, "Acceptance Criteria");
+    }
+    body = tickCriteria(body, checkCriteria);
+  }
+
+  const logLines = (log ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+  if (logLines.length > 0) {
+    if (!hasSection(body, "Progress Log")) {
+      throw new SectionNotFoundError(id, "Progress Log");
+    }
     const date = today();
-    body = appendToBody(body, `- [${date}] ${log}`);
+    for (const line of logLines) {
+      body = appendToSection(body, "Progress Log", `- [${date}] ${line}`);
+    }
   }
 
   await writeEntity(filePath, fm, body);

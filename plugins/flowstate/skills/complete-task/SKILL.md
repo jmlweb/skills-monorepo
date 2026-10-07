@@ -41,6 +41,8 @@ Options:
 1. Mark as complete anyway (criteria no longer relevant)
 2. Continue working (abort completion)
 3. Update criteria (remove/modify items)
+
+Already done but not ticked? Run /flowstate:log-progress {{ID}} to tick them.
 ```
 
 ### 3. Extract Learnings

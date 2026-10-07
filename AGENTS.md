@@ -26,7 +26,7 @@ invariants below.
 ```
 .claude-plugin/marketplace.json   # marketplace definition; versions mirrored from plugins
 plugins/
-├── flowstate/                    # backlog manager: 17 skills + zero-dep TS CLI
+├── flowstate/                    # backlog manager: 18 skills + zero-dep TS CLI
 │   ├── .claude-plugin/plugin.json
 │   ├── SKILL.md                  # always-on context skill — carries a version: field
 │   ├── skills/<name>/SKILL.md    # one dir per slash command

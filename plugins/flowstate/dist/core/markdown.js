@@ -1,3 +1,4 @@
+import { InvalidArgumentError } from "./errors.js";
 /**
  * Find the line range [start, end) of a markdown section's content.
  * start = first content line after the heading
@@ -43,6 +44,24 @@ export function appendToSection(content, heading, text) {
 export function hasSection(content, heading) {
     const headingPattern = new RegExp(`^##\\s+${escapeRegex(heading)}\\s*$`);
     return content.split("\n").some((line) => headingPattern.test(line));
+}
+const CRITERION_PATTERN = /^- \[[ xX]\] /;
+export function tickCriteria(body, indexes) {
+    const lines = body.split("\n");
+    const { start, end } = findSection(lines, "Acceptance Criteria");
+    const criterionLines = [];
+    for (let i = start; i < end; i++) {
+        if (CRITERION_PATTERN.test(lines[i]))
+            criterionLines.push(i);
+    }
+    for (const index of indexes) {
+        const lineIndex = Number.isInteger(index) ? criterionLines[index - 1] : undefined;
+        if (lineIndex === undefined) {
+            throw new InvalidArgumentError(`Criterion ${index} is out of range: task has ${criterionLines.length} criteria (use 1-${criterionLines.length}).`);
+        }
+        lines[lineIndex] = lines[lineIndex].replace(/^- \[ \] /, "- [x] ");
+    }
+    return lines.join("\n");
 }
 export function appendToBody(body, entry) {
     const lines = body.split("\n");

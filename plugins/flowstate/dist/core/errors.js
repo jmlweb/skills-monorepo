@@ -16,3 +16,9 @@ export class InvalidArgumentError extends Error {
         this.name = "InvalidArgumentError";
     }
 }
+export class SectionNotFoundError extends Error {
+    constructor(id, heading) {
+        super(`${id} has no "## ${heading}" section. Restore the heading in the task file, then retry.`);
+        this.name = "SectionNotFoundError";
+    }
+}

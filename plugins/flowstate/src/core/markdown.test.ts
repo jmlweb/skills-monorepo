@@ -7,6 +7,7 @@ import {
   updateStatsTable,
   appendToBody,
   hasSection,
+  tickCriteria,
 } from "./markdown.js";
 
 describe("appendToSection", () => {
@@ -29,6 +30,25 @@ Some notes`;
   it("appends to last section", () => {
     const result = appendToSection(doc, "Notes", "More notes");
     expect(result).toContain("Some notes\nMore notes");
+  });
+
+  it("inserts before a stray ## heading inside the section", () => {
+    const withStray = `## Progress Log
+
+- [2026-04-01] Created
+
+## Stray
+
+- [2026-04-02] Note`;
+    const result = appendToSection(withStray, "Progress Log", "- [2026-04-05] Started");
+    expect(result).toBe(`## Progress Log
+
+- [2026-04-01] Created
+- [2026-04-05] Started
+
+## Stray
+
+- [2026-04-02] Note`);
   });
 
   it("throws if section not found", () => {
@@ -173,5 +193,44 @@ describe("appendToBody", () => {
     const body = "## Heading\n\nParagraph\n\n- item";
     const result = appendToBody(body, "- another");
     expect(result).toBe("## Heading\n\nParagraph\n\n- item\n- another");
+  });
+});
+
+describe("tickCriteria", () => {
+  const body = `## Acceptance Criteria
+
+- [ ] First
+- [x] Second
+- [ ] Third
+
+## Notes
+
+- [ ] Not a criterion`;
+
+  it("ticks criteria by 1-based index", () => {
+    const result = tickCriteria(body, [1, 3]);
+    expect(result).toContain("- [x] First\n- [x] Second\n- [x] Third");
+  });
+
+  it("is idempotent for already-ticked criteria", () => {
+    expect(tickCriteria(body, [2])).toBe(body);
+  });
+
+  it("leaves checkboxes in other sections untouched", () => {
+    const result = tickCriteria(body, [1, 2, 3]);
+    expect(result).toContain("## Notes\n\n- [ ] Not a criterion");
+  });
+
+  it("rejects an out-of-range index", () => {
+    expect(() => tickCriteria(body, [4])).toThrow(/Criterion 4 is out of range: task has 3 criteria/);
+  });
+
+  it("rejects zero and non-integer indexes", () => {
+    expect(() => tickCriteria(body, [0])).toThrow(/out of range/);
+    expect(() => tickCriteria(body, [1.5])).toThrow(/out of range/);
+  });
+
+  it("throws when the section is missing", () => {
+    expect(() => tickCriteria("## Notes\n\ntext", [1])).toThrow(/Acceptance Criteria/);
   });
 });

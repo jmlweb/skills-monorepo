@@ -7,3 +7,6 @@ export declare class EntityNotFoundError extends Error {
 export declare class InvalidArgumentError extends Error {
     constructor(message: string);
 }
+export declare class SectionNotFoundError extends Error {
+    constructor(id: string, heading: string);
+}

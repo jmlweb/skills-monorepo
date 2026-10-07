@@ -53,7 +53,7 @@ Commands:
   task-list          List tasks (optionally filter by status)
   task-move          Move task between statuses
   task-block         Block a task with a reason
-  task-update        Update task fields and append progress log
+  task-update        Update task fields, log progress, tick criteria
   task-unblock       Unblock a task
   task-condense      Condense a complete task (or --all)
   task-compress      Replace a complete task body with a validated caveman-compressed version
@@ -92,7 +92,7 @@ const COMMAND_HELP: Record<string, string> = {
   "task-block":
     "Usage: flowstate task-block <id> --reason <text>",
   "task-update":
-    "Usage: flowstate task-update <id> [--set key=value ...] [--log <message>]",
+    "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>]\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)",
   "task-unblock":
     "Usage: flowstate task-unblock <id> [--resolution <text>]",
   "task-condense":
@@ -196,6 +196,19 @@ async function readStdin(): Promise<string> {
     chunks.push(chunk as Buffer);
   }
   return Buffer.concat(chunks).toString("utf-8");
+}
+
+function parseCriteriaIndexes(value: string | undefined): number[] {
+  if (value === undefined) return [];
+  return value.split(",").map((part) => {
+    const trimmed = part.trim();
+    if (!/^\d+$/.test(trimmed)) {
+      throw new InvalidArgumentError(
+        `Invalid --check value "${value}". Use comma-separated 1-based criterion numbers, e.g. --check 1,3.`,
+      );
+    }
+    return Number(trimmed);
+  });
 }
 
 async function getBody(flags: Record<string, string>): Promise<string> {
@@ -310,7 +323,7 @@ async function main(): Promise<void> {
       case "task-update": {
         const id = positional[0];
         if (!id) {
-          console.error("Usage: flowstate task-update <id> --set key=value [--log msg]");
+          console.error("Usage: flowstate task-update <id> [--set key=value] [--log msg|-] [--check n,...]");
           process.exit(1);
         }
         const updates: Record<string, string> = {};
@@ -321,7 +334,9 @@ async function main(): Promise<void> {
             updates[pair.slice(0, eqIdx).trim()] = pair.slice(eqIdx + 1).trim();
           }
         }
-        const result = await taskUpdate(cwd, id, updates, flags["log"]);
+        const log = flags["log"] === "-" ? await readStdin() : flags["log"];
+        const checkCriteria = parseCriteriaIndexes(flags["check"]);
+        const result = await taskUpdate(cwd, id, updates, log, checkCriteria);
         output(result, json);
         break;
       }

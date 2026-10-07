@@ -136,6 +136,7 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:start-task` | Move a task from pending to active. Loads relevant learnings and context |
 | `/flowstate:complete-task` | Mark a task done. Verifies acceptance criteria and extracts learnings |
 | `/flowstate:block-task` | Block a task with a documented reason. Suggests alternatives |
+| `/flowstate:log-progress` | Log session progress and tick met acceptance criteria via the CLI. Handy before `/clear` |
 | `/flowstate:check-task` | Verify a task's status matches actual implementation in the codebase |
 | `/flowstate:next-task` | Smart recommendation based on priority, dependencies, and recent work |
 | `/flowstate:parallel` | Run multiple independent tasks simultaneously in isolated git worktrees |

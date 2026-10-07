@@ -43,7 +43,7 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `flowstate setup --project-name <name>` | Create .backlog/ structure |
 | `flowstate task-create --title <t> --priority <P> --tags <csv> --body -` | Create task |
 | `flowstate task-move <id> --to <active\|complete\|pending>` | Move task between states |
-| `flowstate task-update <id> --set <key=value> --log <msg>` | Update task fields |
+| `flowstate task-update <id> [--set <key=value>] [--log <msg\|->] [--check <n,...>]` | Update task fields, append Progress Log bullets (`-` = stdin, one per line), tick criteria by 1-based index |
 | `flowstate task-block <id> --reason <text>` | Block a task (never set `status: blocked` by hand) |
 | `flowstate task-unblock <id> --resolution <text>` | Unblock a task |
 | `flowstate task-list [--status <s>] [--json true]` | List tasks |
@@ -75,6 +75,7 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `/flowstate:start-task` | Start working on a task |
 | `/flowstate:complete-task` | Mark a task as complete |
 | `/flowstate:block-task` | Block a task with a reason |
+| `/flowstate:log-progress` | Log session progress and tick met criteria |
 | `/flowstate:check-task` | Verify task status vs implementation |
 | `/flowstate:next-task` | Get a recommendation for what to work on next |
 | `/flowstate:idea` | Generate an implementation plan |

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { taskUpdate } from "./task-update.js";
@@ -17,7 +17,7 @@ beforeEach(async () => {
     priority: "P2",
     tags: [],
     description: "Desc",
-    criteria: [],
+    criteria: ["Reproduce", "Fix", "Add test"],
     source: "manual",
     dependsOn: [],
   });
@@ -66,5 +66,57 @@ describe("taskUpdate", () => {
     await expect(
       taskUpdate(tmp, "TSK-999", { priority: "P1" }),
     ).rejects.toThrow("not found");
+  });
+
+  const taskPath = async (): Promise<string> =>
+    (await taskUpdate(tmp, "TSK-001", {})).path;
+
+  it("inserts the log entry into ## Progress Log, not at the end of the body", async () => {
+    const path = await taskPath();
+    const original = await readFile(path, "utf-8");
+    await writeFile(path, `${original.trimEnd()}\n\n## Appendix\n\nTrailing section\n`);
+
+    await taskUpdate(tmp, "TSK-001", {}, "Investigated");
+
+    const doc = await readEntity(path);
+    const logEntry = doc.body.indexOf("Investigated");
+    expect(logEntry).toBeGreaterThan(doc.body.indexOf("## Progress Log"));
+    expect(logEntry).toBeLessThan(doc.body.indexOf("## Appendix"));
+  });
+
+  it("writes one dated bullet per non-empty line of a multi-line log", async () => {
+    const result = await taskUpdate(tmp, "TSK-001", {}, "Fixed parser\n\nNext: add tests\n");
+
+    const doc = await readEntity(result.path);
+    expect(doc.body).toMatch(
+      /- \[\d{4}-\d{2}-\d{2}\] Fixed parser\n- \[\d{4}-\d{2}-\d{2}\] Next: add tests/,
+    );
+  });
+
+  it("throws a typed error when ## Progress Log is missing", async () => {
+    const path = await taskPath();
+    const original = await readFile(path, "utf-8");
+    await writeFile(path, original.replace("## Progress Log", "## Log"));
+
+    await expect(taskUpdate(tmp, "TSK-001", {}, "Investigated")).rejects.toMatchObject({
+      name: "SectionNotFoundError",
+      message: expect.stringContaining('"## Progress Log"'),
+    });
+  });
+
+  it("ticks acceptance criteria by index", async () => {
+    const result = await taskUpdate(tmp, "TSK-001", {}, undefined, [1, 3]);
+
+    const doc = await readEntity(result.path);
+    expect(doc.body).toContain("- [x] Reproduce\n- [ ] Fix\n- [x] Add test");
+  });
+
+  it("rejects an out-of-range criterion index without writing", async () => {
+    const path = await taskPath();
+    const before = await readFile(path, "utf-8");
+
+    await expect(taskUpdate(tmp, "TSK-001", {}, "Log", [9])).rejects.toThrow(/out of range/);
+
+    expect(await readFile(path, "utf-8")).toBe(before);
   });
 });

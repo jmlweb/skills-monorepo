@@ -65,6 +65,34 @@ describe("CLI integration", () => {
     expect(afterComplete).toEqual({ pending: 0, active: 0, blocked: 0, complete: 1, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
   });
 
+  it("task-update --log - reads stdin and --check ticks criteria", async () => {
+    run("setup", "--project-name", "IntTest");
+    const created = runJson(
+      "task-create",
+      "--title", "Log me",
+      "--priority", "P2",
+      "--description", "d",
+      "--criteria", '["One","Two"]',
+    ) as { path: string };
+
+    execFileSync("node", [CLI, "task-update", "TSK-001", "--log", "-", "--check", "2"], {
+      cwd: tmp,
+      input: "Wired the parser\nNext: docs\n",
+      encoding: "utf-8",
+      timeout: 10000,
+    });
+
+    const content = await readFile(created.path, "utf-8");
+    expect(content).toContain("- [ ] One\n- [x] Two");
+    expect(content).toMatch(/\] Wired the parser\n- \[\d{4}-\d{2}-\d{2}\] Next: docs/);
+  });
+
+  it("task-update --check rejects a non-numeric value", () => {
+    run("setup", "--project-name", "IntTest");
+    run("task-create", "--title", "A", "--priority", "P1", "--description", "test");
+    expect(() => run("task-update", "TSK-001", "--check", "one")).toThrow(/Invalid --check value/);
+  });
+
   it("task-list returns items", () => {
     run("setup", "--project-name", "IntTest");
     run("task-create", "--title", "A", "--priority", "P1", "--description", "test");

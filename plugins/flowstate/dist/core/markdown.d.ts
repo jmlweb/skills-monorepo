@@ -1,5 +1,6 @@
 export declare function appendToSection(content: string, heading: string, text: string): string;
 export declare function hasSection(content: string, heading: string): boolean;
+export declare function tickCriteria(body: string, indexes: readonly number[]): string;
 export declare function appendToBody(body: string, entry: string): string;
 export declare function addTableRow(content: string, heading: string, row: string): string;
 export declare function removeTableRow(content: string, heading: string, predicate: (row: string) => boolean): string;

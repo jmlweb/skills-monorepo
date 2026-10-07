@@ -47,7 +47,7 @@ Commands:
   task-list          List tasks (optionally filter by status)
   task-move          Move task between statuses
   task-block         Block a task with a reason
-  task-update        Update task fields and append progress log
+  task-update        Update task fields, log progress, tick criteria
   task-unblock       Unblock a task
   task-condense      Condense a complete task (or --all)
   task-compress      Replace a complete task body with a validated caveman-compressed version
@@ -78,7 +78,7 @@ const COMMAND_HELP = {
     "task-list": "Usage: flowstate task-list [--status <pending|active|blocked|complete>] [--limit <n>]",
     "task-move": "Usage: flowstate task-move <id> --to <active|complete|pending>",
     "task-block": "Usage: flowstate task-block <id> --reason <text>",
-    "task-update": "Usage: flowstate task-update <id> [--set key=value ...] [--log <message>]",
+    "task-update": "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>]\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)",
     "task-unblock": "Usage: flowstate task-unblock <id> [--resolution <text>]",
     "task-condense": "Usage: flowstate task-condense <id> | flowstate task-condense --all\n  Trims Notes section and middle Progress Log entries from complete tasks. Idempotent (sets condensed: true).",
     "task-compress": "Usage: flowstate task-compress <id> --body -\n  Replace task body with caveman-compressed version piped on stdin. Validates that all code blocks, inline code, URLs, IDs, dates, version numbers, and headings are preserved, and that the Acceptance Criteria section is byte-exact. Rejects on invariant failure with JSON diagnostics. Sets compressed: true on success. Idempotent.",
@@ -151,6 +151,17 @@ async function readStdin() {
         chunks.push(chunk);
     }
     return Buffer.concat(chunks).toString("utf-8");
+}
+function parseCriteriaIndexes(value) {
+    if (value === undefined)
+        return [];
+    return value.split(",").map((part) => {
+        const trimmed = part.trim();
+        if (!/^\d+$/.test(trimmed)) {
+            throw new InvalidArgumentError(`Invalid --check value "${value}". Use comma-separated 1-based criterion numbers, e.g. --check 1,3.`);
+        }
+        return Number(trimmed);
+    });
 }
 async function getBody(flags) {
     const body = flags["body"];
@@ -253,7 +264,7 @@ async function main() {
             case "task-update": {
                 const id = positional[0];
                 if (!id) {
-                    console.error("Usage: flowstate task-update <id> --set key=value [--log msg]");
+                    console.error("Usage: flowstate task-update <id> [--set key=value] [--log msg|-] [--check n,...]");
                     process.exit(1);
                 }
                 const updates = {};
@@ -264,7 +275,9 @@ async function main() {
                         updates[pair.slice(0, eqIdx).trim()] = pair.slice(eqIdx + 1).trim();
                     }
                 }
-                const result = await taskUpdate(cwd, id, updates, flags["log"]);
+                const log = flags["log"] === "-" ? await readStdin() : flags["log"];
+                const checkCriteria = parseCriteriaIndexes(flags["check"]);
+                const result = await taskUpdate(cwd, id, updates, log, checkCriteria);
                 output(result, json);
                 break;
             }
