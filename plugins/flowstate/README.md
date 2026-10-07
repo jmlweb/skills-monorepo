@@ -374,6 +374,10 @@ The skills shell out to a small CLI (`dist/bin/flowstate.js`). Run `flowstate --
 | `learning-search` | `--tags t1,t2` | — | Comma-separated tag filter. Matches only active learnings |
 | `learning-search` | `--query <text>` | — | Keyword search across title and body, scored deterministically |
 
+```bash
+node dist/bin/flowstate.js learning-list --include-archived true   # active + archived + superseded
+```
+
 The `learning-search` command always operates on active learnings — archived entries are excluded from skill auto-loads (used by `start-task`, `next-task`, `idea`, `parallel`) so stale insights don't surface as live context.
 
 ### Parallel execution flow
