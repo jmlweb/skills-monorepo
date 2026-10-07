@@ -19,9 +19,9 @@ All 15 skill templates define FLOWSTATE_CLI as a variable and then invoke it via
 
 ## Acceptance Criteria
 
-- [ ] All skill templates use direct command invocation instead of variable expansion
-- [ ] Skills work correctly in zsh (the default macOS and common Linux shell)
-- [ ] Existing tests pass
+- [x] All skill templates use direct command invocation instead of variable expansion
+- [x] Skills work correctly in zsh (the default macOS and common Linux shell)
+- [x] Existing tests pass
 
 ## Notes
 
@@ -32,3 +32,4 @@ All 15 skill templates define FLOWSTATE_CLI as a variable and then invoke it via
 - [2026-04-06] Created
 - [2026-04-06] Started
 - [2026-04-06] Completed
+- [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met.

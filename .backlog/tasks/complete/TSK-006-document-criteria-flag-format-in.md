@@ -19,10 +19,10 @@ The --criteria flag in task-create expects a JSON array but the skill templates 
 
 ## Acceptance Criteria
 
-- [ ] triage-report/SKILL.md documents that --criteria expects a JSON array
-- [ ] review-plan/SKILL.md documents that --criteria expects a JSON array
-- [ ] add-task/SKILL.md already shows JSON format (verify consistency)
-- [ ] Existing tests pass
+- [x] triage-report/SKILL.md documents that --criteria expects a JSON array
+- [x] review-plan/SKILL.md documents that --criteria expects a JSON array
+- [x] add-task/SKILL.md already shows JSON format (verify consistency)
+- [x] Existing tests pass
 
 ## Notes
 
@@ -33,3 +33,4 @@ The --criteria flag in task-create expects a JSON array but the skill templates 
 - [2026-04-06] Created
 - [2026-04-06] Started
 - [2026-04-06] Completed
+- [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met (review-plan is now review-idea).

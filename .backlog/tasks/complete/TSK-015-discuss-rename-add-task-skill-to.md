@@ -20,11 +20,11 @@ Reading flowstate SKILL.md fires Claude Code system-reminder about TaskCreate na
 
 ## Acceptance Criteria
 
-- [ ] Decision documented: rename / keep / alias
-- [ ] If rename: new name chosen and migration path defined
-- [ ] Backwards-compat alias for at least one minor version
-- [ ] All cross-skill references updated
-- [ ] CHANGELOG entry
+- [x] Decision documented: rename / keep / alias
+- [x] If rename: new name chosen and migration path defined
+- [x] Backwards-compat alias for at least one minor version
+- [x] All cross-skill references updated
+- [x] CHANGELOG entry
 
 ## Notes
 
@@ -36,3 +36,4 @@ Reading flowstate SKILL.md fires Claude Code system-reminder about TaskCreate na
 - [2026-04-27] Created
 - [2026-04-27] Completed
 - [2026-04-29] Condensed
+- [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met: decision to keep the name is recorded in LRN-002 and AGENTS.md.

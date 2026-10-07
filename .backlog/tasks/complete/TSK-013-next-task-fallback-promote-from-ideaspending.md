@@ -20,10 +20,10 @@ When pending/ empty, next-task output not actionable. Skill (or new CLI command 
 
 ## Acceptance Criteria
 
-- [ ] next-task skill detects empty pending and inspects ideas/pending
-- [ ] Suggests top idea(s) with promote command
+- [x] next-task skill detects empty pending and inspects ideas/pending
+- [x] Suggests top idea(s) with promote command
 - [ ] Optional flag --include-ideas surfaces ideas alongside tasks
-- [ ] No regression when pending tasks exist
+- [x] No regression when pending tasks exist
 
 ## Notes
 
@@ -34,3 +34,4 @@ When pending/ empty, next-task output not actionable. Skill (or new CLI command 
 - [2026-04-27] Created
 - [2026-04-27] Completed
 - [2026-04-29] Condensed
+- [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. 3 not met: no --include-ideas flag exists; next-task only surfaces ideas when no tasks are pending.

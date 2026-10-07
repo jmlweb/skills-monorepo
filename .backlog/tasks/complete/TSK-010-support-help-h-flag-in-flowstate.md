@@ -20,11 +20,11 @@ flowstate.js --help returns 'Unknown command: --help'. POSIX-inconsistent. Add -
 
 ## Acceptance Criteria
 
-- [ ] flowstate --help prints command list and exits 0
-- [ ] flowstate -h equivalent
-- [ ] flowstate task-create --help prints flags and exits 0
-- [ ] All subcommands accept --help
-- [ ] Unknown command still exits 1 with hint to run --help
+- [x] flowstate --help prints command list and exits 0
+- [x] flowstate -h equivalent
+- [x] flowstate task-create --help prints flags and exits 0
+- [x] All subcommands accept --help
+- [x] Unknown command still exits 1 with hint to run --help
 
 ## Notes
 
@@ -35,3 +35,4 @@ flowstate.js --help returns 'Unknown command: --help'. POSIX-inconsistent. Add -
 - [2026-04-27] Created
 - [2026-04-27] Completed
 - [2026-04-29] Condensed
+- [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met.

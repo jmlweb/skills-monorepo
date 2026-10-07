@@ -44,9 +44,9 @@ RPT-002
 
 ## Acceptance Criteria
 
-- [ ] Completing multiple tasks back-to-back no longer empties phase tables in tasks/index.md
-- [ ] Index counts in /flowstate:status match actual task files after batch completions
-- [ ] No manual index regeneration required after rapid CLI invocations
+- [x] Completing multiple tasks back-to-back no longer empties phase tables in tasks/index.md
+- [x] Index counts in /flowstate:status match actual task files after batch completions
+- [x] No manual index regeneration required after rapid CLI invocations
 
 ## Notes
 
@@ -57,3 +57,4 @@ RPT-002
 - [2026-04-09] Created
 - [2026-04-09] Started
 - [2026-04-09] Completed
+- [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met (/flowstate:status is now overview).

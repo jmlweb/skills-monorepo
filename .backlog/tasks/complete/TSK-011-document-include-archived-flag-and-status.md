@@ -20,10 +20,10 @@ learning-search/learning-list behavior with archived entries unclear. Verify imp
 
 ## Acceptance Criteria
 
-- [ ] README documents archived filter default for learning-list and learning-search
-- [ ] --include-archived flag documented with example
+- [x] README documents archived filter default for learning-list and learning-search
+- [x] --include-archived flag documented with example
 - [ ] Status filter behavior consistent across both commands
-- [ ] Add example: list including archived
+- [x] Add example: list including archived
 
 ## Notes
 
@@ -34,3 +34,4 @@ learning-search/learning-list behavior with archived entries unclear. Verify imp
 - [2026-04-27] Created
 - [2026-04-27] Completed
 - [2026-04-29] Condensed
+- [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. 4 met after adding a learning-list --include-archived example to the README. 3 not met by design: learning-search stays active-only, documented in the README CLI reference.
