@@ -639,6 +639,11 @@ async function main(): Promise<void> {
   }
 }
 
+// Plain rows are one line per entity; escape characters that would split a row or column.
+function toPlainCell(value: unknown): string {
+  return String(value).replace(/\r?\n|\r/g, "\\n").replace(/\t/g, "\\t");
+}
+
 function output(data: unknown, json: boolean): void {
   if (json) {
     console.log(JSON.stringify(data, null, 2));
@@ -650,6 +655,7 @@ function output(data: unknown, json: boolean): void {
           console.log(
             Object.values(record)
               .filter((v) => v !== undefined)
+              .map(toPlainCell)
               .join("\t"),
           );
         }
