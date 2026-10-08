@@ -4,8 +4,10 @@ import { readFileSync } from "node:fs";
 import { markdownToAdf } from "../core/md-to-adf.js";
 import { readbackToMarkdown } from "../core/readback.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import { blocking, scanLossy } from "../core/lossy-scan.js";
 
 const EXIT_OK = 0;
+const EXIT_FINDINGS = 1;
 const EXIT_ERROR = 2;
 
 const HELP = [
@@ -15,6 +17,8 @@ const HELP = [
   "  md-to-adf       Convert Markdown to a Jira ADF document (JSON on stdout)",
   "  readback-to-md  Turn MCP <custom> smart-link/mention tags back into keys and",
   "                  [@Name](mention:<id>) (Markdown on stdout)",
+  "  lossy-scan      List Jira nodes a Markdown rewrite would drop (JSON on stdout).",
+  "                  Exit 1 if any is not re-created by readback-to-md, else 0",
   "",
   "md-to-adf flags:",
   "  --file <path>   Read Markdown from a file (default: stdin)",
@@ -25,6 +29,11 @@ const HELP = [
   "readback-to-md flags:",
   "  --file <path>   Markdown as the MCP returned it (default: stdin)",
   "  --html <path>   renderedFields.description from the same fetch (required)",
+  "",
+  "lossy-scan flags (at least one):",
+  "  --file <path>   Markdown as the MCP returned it",
+  "  --html <path>   renderedFields.description",
+  "  --adf <path>    ADF JSON from REST v3 (the most reliable source)",
 ].join("\n");
 
 function parseFlags(args: readonly string[]): Record<string, string> {
@@ -56,10 +65,27 @@ function main(): number {
   }
 
   try {
-    if (command !== "md-to-adf" && command !== "readback-to-md") {
+    if (command !== "md-to-adf" && command !== "readback-to-md" && command !== "lossy-scan") {
       throw new InvalidArgumentError(`Unknown command: ${command}`);
     }
     const flags = parseFlags(rest);
+    if (command === "lossy-scan") {
+      const read = (flag: string): string | undefined => {
+        const path = flags[flag];
+        return path === undefined ? undefined : readFileSync(path, "utf-8");
+      };
+      const markdown = read("file");
+      const html = read("html");
+      const adf = read("adf");
+      const findings = scanLossy({
+        ...(markdown !== undefined && { markdown }),
+        ...(html !== undefined && { html }),
+        ...(adf !== undefined && { adf }),
+      });
+      const open = blocking(findings);
+      console.log(JSON.stringify({ findings, blocking: open.length }, null, 2));
+      return open.length > 0 ? EXIT_FINDINGS : EXIT_OK;
+    }
     // fd 0 read keeps the CLI synchronous and dependency-free.
     const markdown = readFileSync(flags["file"] ?? 0, "utf-8");
     if (command === "readback-to-md") {

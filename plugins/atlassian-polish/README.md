@@ -52,7 +52,7 @@ Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrit
 | `skills/atlassian-setup` | Guided connection: deployment detection, MCP server, optional REST token |
 | `skills/polish-atlassian` | Orchestrates fetch → backup → rewrite → preview → write → verify |
 | `agents/atlassian-formatter` | Rewrites one page; knows ADF, Jira wiki markup, Confluence storage format and their traps |
-| `src/` → `dist/bin/atlassian-polish.js` | CLI: `md-to-adf` (Markdown → Jira ADF with real checkboxes, mentions and ticket smart links) and `readback-to-md` (keeps smart links and mentions on re-polish) |
+| `src/` → `dist/bin/atlassian-polish.js` | CLI: `md-to-adf` (Markdown → Jira ADF with real checkboxes, mentions and ticket smart links), `readback-to-md` (keeps smart links and mentions on re-polish) and `lossy-scan` (finds panels, media and macros a Markdown rewrite would drop) |
 | `references/style-guide.md` | Keep/cut rules, templates, before/after examples |
 | `references/atlassian-formats.md` | Format decision table, pitfalls, rendering limits, attachment and image-replace flow |
 | `references/diagrams.md` | SVG hygiene, layout defaults, 2× render, self-check |

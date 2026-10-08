@@ -66,6 +66,11 @@ upload attachment. Mark any need no MCP tool covers as "REST only" — don't ask
 - Confluence: body (storage or ADF as returned), version number, footer + inline comments,
   attachments, labels. `--children` → descendants, each fetched the same way.
 
+Lossy scan (Jira): run `lossy-scan` as in lossy-content.md rule 4 on every fetched issue,
+after the round-trip below and again with `--adf` once the step 5 ADF backup exists. Exit 1
+→ carry the findings into the preview as `LOSSY:` and apply rule 5 (preserve, skip, or
+flatten with an explicit named yes). Never pass lossy nodes to the formatter as plain text.
+
 Comments often hold the current state; they outrank older description text.
 
 Round-trip (Jira): if the Markdown holds `<custom data-type=…>` tags (smart links,
@@ -103,7 +108,7 @@ finding with its date. Never post anything.
 Before any write, save each original body verbatim with Write under
 `${CLAUDE_PLUGIN_DATA}/backups/<YYYY-MM-DD>/`. Confluence: `<pageId>.<json|xml>` (extension =
 format received). Jira: `<KEY>.md` plus `<KEY>.rendered.html`, and `<KEY>.adf.json` with REST
-consent (lossy-content.md rule 2); report which exist. Tell the user the folder. Recovery: Jira
+consent (lossy-content.md rule 2: ask for it here, naming the GET); report which exist. Tell the user the folder. Recovery: Jira
 issue History, Confluence page history.
 
 Hard rule: verbatim means the exact string the tool returned (Markdown and
@@ -131,7 +136,9 @@ in REMOVED. Fix gaps before previewing.
 
 ### 7. Preview
 
-Header line per page: title + link + `depth: restructure|light`. Then the full BODY, REMOVED
+Header line per page: title + link + `depth: restructure|light`. Any `LOSSY:` line comes
+first, with the chosen option (preserve / skip / flatten) and, for flatten, the question
+that needs a yes before the write question. Then the full BODY, REMOVED
 (incl. moves), CONFLICTS, UNVERIFIED, NEEDS (incl. planned diagrams), and "Will notify:
 <names>" when BODY has mentions (writing them notifies those people). Any CONFLICTS → ask how
 to resolve each one (offer the suggested fix) before asking to write. Then ask:
