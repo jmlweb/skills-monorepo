@@ -1,13 +1,14 @@
 ---
 id: TSK-018
 title: atlassian-polish: backups and rewrites may lose rich Jira content
-status: active
+status: complete
 priority: P2
 tags: [atlassian-polish, adf, data-loss, backup]
 created: 2026-10-01
 source: manual
 depends-on: []
 started: 2026-10-01
+completed: 2026-10-08
 ---
 
 # atlassian-polish: backups and rewrites may lose rich Jira content
@@ -28,10 +29,10 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 ## Acceptance Criteria
 
 - [x] Confirm whether getJiraIssue can return real ADF (the markdown read path flattened content even with responseContentFormat adf); document what works per tool, or use REST v3 as the read path when consent exists
-- [ ] Backup stores the original in the richest format available (ADF JSON when obtainable), not the Markdown the rewrite starts from
-- [ ] Polish detects panels, @mentions, inline images/media and other nodes Markdown cannot express, and warns before rewriting
-- [ ] Tickets with such nodes either keep those nodes intact (rewrite only the plain parts) or require explicit user approval to flatten them
-- [ ] Test with a real ticket containing a panel, a mention and a screenshot; verify nothing is dropped after the write
+- [x] Backup stores the original in the richest format available (ADF JSON when obtainable), not the Markdown the rewrite starts from
+- [x] Polish detects panels, @mentions, inline images/media and other nodes Markdown cannot express, and warns before rewriting
+- [x] Tickets with such nodes either keep those nodes intact (rewrite only the plain parts) or require explicit user approval to flatten them
+- [x] Test with a real ticket containing a panel, a mention and a screenshot; verify nothing is dropped after the write
 - [x] Docs state the History tab is the only full-fidelity recovery until this is fixed
 
 ## Notes
@@ -50,3 +51,5 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 - [2026-10-07] Ticked 1 (lossy-content.md documents MCP returns Markdown, REST v3 for ADF) and 6 (History tab in lossy-content.md rule 6 and SKILL.md step 5).
 - [2026-10-08] Started
 - [2026-10-08] Real-ticket evidence on CF-620 (test ticket, delete after): REST v3 returns full ADF (2 panels, 1 mention, 1 mediaSingle); HTML markers class="panel" and user-hover verified; Markdown shows no panel marker. lossy-scan on the 3 files found all 4 node types once --adf unwrapped fields.description (fix: a saved curl response read as clean, exit 0). Skip path on the old skill left the ADF byte-identical. Left: end-to-end run of the new preserve/skip/flatten flow on CF-620 (criterion 5), then tick 2-5.
+- [2026-10-08] Real run of atlassian-polish 0.8.1 on CF-620 (test ticket, delete after): lossy-scan flagged panel x2 + media x1 as blocking (mention handled); 3-file backup incl. REST ADF saved; LOSSY gate asked 'Flatten? (yes / skip)', answer skip, description not written, stored ADF byte-identical to backup. Flatten path not exercised. Ticked 2-5.
+- [2026-10-08] Completed

@@ -5,13 +5,12 @@
 | Status | Count |
 |--------|-------|
 | Pending | 4 |
-| Active | 2 |
+| Active | 1 |
 | Blocked | 0 |
-| Complete | 21 |
+| Complete | 22 |
 
 ## Active Tasks
 
-- TSK-018: atlassian-polish: backups and rewrites may lose rich Jira content (P2)
 - TSK-027: flowstate: configurable backlog directory for private backlogs (P2)
 
 ## Pending Tasks
@@ -27,6 +26,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | 2026-10-08 |
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
 | TSK-022 | flowstate: log-progress skill | 2026-10-07 |
 | TSK-016 | Bump deprecated GitHub Actions to current majors | 2026-10-06 |
@@ -36,4 +36,3 @@
 | TSK-010 | Support --help/-h flag in flowstate CLI globally and per subcommand | 2026-04-27 |
 | TSK-011 | Document --include-archived flag and status filters in flowstate CLI README | 2026-04-27 |
 | TSK-012 | Filter archived learnings from learning-list by default | 2026-04-27 |
-| TSK-013 | next-task fallback: promote from ideas/pending when backlog has no pending tasks | 2026-04-27 |
