@@ -2,7 +2,7 @@
 name: check-task
 description: Verify that a task's declared status matches the actual codebase implementation. Use when the user says "check task status", "verify implementation", or during backlog health checks. Supports single-task and batch mode.
 argument-hint: [task ID or number]
-allowed-tools: [Read, Edit, Bash, Glob, Grep]
+allowed-tools: [Read, Bash, Glob, Grep]
 model: sonnet
 effort: medium
 ---
@@ -92,5 +92,9 @@ Summary: {{N}} tasks need attention
 ### 6. Offer Fixes
 
 - `/flowstate:complete-task` if fully implemented
-- Update checkboxes if partially complete — edit only the `- [ ]`/`- [x]` lines in the task file body with the Edit tool; never hand-edit frontmatter or `index.md` (CLI-owned)
+- Tick criteria that are met in code through the CLI, naming the file or test that proves each one; never hand-edit checkboxes, frontmatter or `index.md` (CLI-owned):
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --check {{N1,N2}} --evidence '{"{{N1}}":"{{FILE_OR_TEST}} → {{WHAT_IT_SHOWS}}"}'
+```
 - Suggest reopening if marked complete but broken

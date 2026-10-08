@@ -12,12 +12,35 @@ import { appendToSection, hasSection, tickCriteria } from "../core/markdown.js";
 
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active", "complete"];
 
+export function parseEvidence(value: string | undefined): Record<number, string> {
+  if (value === undefined) return {};
+  const usage = `Invalid --evidence value. Use a JSON object keyed by criterion number, e.g. --evidence '{"2":"pnpm test → exit 0"}'.`;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new InvalidArgumentError(usage);
+  }
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new InvalidArgumentError(usage);
+  }
+  const result: Record<number, string> = {};
+  for (const [key, proof] of Object.entries(parsed)) {
+    if (!/^\d+$/.test(key) || typeof proof !== "string" || proof.trim() === "") {
+      throw new InvalidArgumentError(usage);
+    }
+    result[Number(key)] = proof;
+  }
+  return result;
+}
+
 export async function taskUpdate(
   root: string,
   id: string,
   updates: Record<string, string>,
   log?: string,
   checkCriteria: readonly number[] = [],
+  evidence: Readonly<Record<number, string>> = {},
 ): Promise<{ path: string }> {
   let filePath: string | undefined;
 
@@ -43,6 +66,14 @@ export async function taskUpdate(
     }
   }
 
+  for (const key of Object.keys(evidence)) {
+    if (!checkCriteria.includes(Number(key))) {
+      throw new InvalidArgumentError(
+        `--evidence key "${key}" is not in --check. Evidence can only be attached to criteria ticked in the same call.`,
+      );
+    }
+  }
+
   const doc = await readEntity(filePath);
   const fm = { ...(doc.frontmatter as Record<string, unknown>) };
 
@@ -55,7 +86,7 @@ export async function taskUpdate(
     if (!hasSection(body, "Acceptance Criteria")) {
       throw new SectionNotFoundError(id, "Acceptance Criteria");
     }
-    body = tickCriteria(body, checkCriteria);
+    body = tickCriteria(body, checkCriteria, evidence, today());
   }
 
   const logLines = (log ?? "")

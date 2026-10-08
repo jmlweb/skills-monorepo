@@ -3,6 +3,7 @@ import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { taskMove } from "./task-move.js";
+import { taskUpdate } from "./task-update.js";
 import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
@@ -136,5 +137,38 @@ describe("taskMove", () => {
     expect(index).toContain("| Active | 0 |");
     expect(index).toContain("| Complete | 3 |");
     expect(index).toContain("| Pending | 0 |");
+  });
+
+  it("reports ticked criteria without evidence when completing", async () => {
+    await taskCreate(tmp, {
+      title: "Fix bug",
+      priority: "P2",
+      tags: [],
+      description: "",
+      criteria: ["One", "Two", "Three"],
+      source: "manual",
+      dependsOn: [],
+    });
+    await taskUpdate(tmp, "TSK-001", {}, undefined, [1, 2], { 2: "pnpm test → exit 0" });
+
+    const result = await taskMove(tmp, "TSK-001", "complete");
+
+    expect(result.unverifiedCriteria).toEqual([1]);
+    const doc = await readEntity(result.path);
+    expect(doc.body).toContain("- [x] Two — evidence: pnpm test → exit 0");
+  });
+
+  it("omits unverifiedCriteria for non-complete moves", async () => {
+    await taskCreate(tmp, {
+      title: "Fix bug",
+      priority: "P2",
+      tags: [],
+      description: "",
+      criteria: ["One"],
+      source: "manual",
+      dependsOn: [],
+    });
+    const result = await taskMove(tmp, "TSK-001", "active");
+    expect(result.unverifiedCriteria).toBeUndefined();
   });
 });

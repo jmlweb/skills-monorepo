@@ -65,7 +65,14 @@ export function hasSection(content: string, heading: string): boolean {
 
 const CRITERION_PATTERN = /^- \[[ xX]\] /;
 
-export function tickCriteria(body: string, indexes: readonly number[]): string {
+const EVIDENCE_MARKER = " — evidence: ";
+
+export function tickCriteria(
+  body: string,
+  indexes: readonly number[],
+  evidence: Readonly<Record<number, string>> = {},
+  date: string = "",
+): string {
   const lines = body.split("\n");
   const { start, end } = findSection(lines, "Acceptance Criteria");
 
@@ -81,10 +88,36 @@ export function tickCriteria(body: string, indexes: readonly number[]): string {
         `Criterion ${index} is out of range: task has ${criterionLines.length} criteria (use 1-${criterionLines.length}).`,
       );
     }
-    lines[lineIndex] = lines[lineIndex]!.replace(/^- \[ \] /, "- [x] ");
+    let line = lines[lineIndex]!.replace(/^- \[ \] /, "- [x] ");
+    const proof = evidence[index];
+    if (proof !== undefined) {
+      const markerAt = line.indexOf(EVIDENCE_MARKER);
+      const base = markerAt === -1 ? line : line.slice(0, markerAt);
+      const flat = proof.replace(/\s*\n\s*/g, " ").trim();
+      line = `${base}${EVIDENCE_MARKER}${flat}${date ? ` (${date})` : ""}`;
+    }
+    lines[lineIndex] = line;
   }
 
   return lines.join("\n");
+}
+
+/** 1-based numbers of ticked criteria that carry no evidence suffix. */
+export function unverifiedCriteria(body: string): number[] {
+  if (!hasSection(body, "Acceptance Criteria")) return [];
+  const lines = body.split("\n");
+  const { start, end } = findSection(lines, "Acceptance Criteria");
+  const unverified: number[] = [];
+  let position = 0;
+  for (let i = start; i < end; i++) {
+    const line = lines[i]!;
+    if (!CRITERION_PATTERN.test(line)) continue;
+    position++;
+    if (/^- \[[xX]\] /.test(line) && !line.includes(EVIDENCE_MARKER)) {
+      unverified.push(position);
+    }
+  }
+  return unverified;
 }
 
 export function appendToBody(body: string, entry: string): string {

@@ -4,7 +4,7 @@ import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity, moveFile } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
-import { appendToBody } from "../core/markdown.js";
+import { appendToBody, unverifiedCriteria } from "../core/markdown.js";
 import { indexRebuild } from "./index-rebuild.js";
 
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active", "complete"];
@@ -13,7 +13,7 @@ export async function taskMove(
   root: string,
   id: string,
   to: "active" | "complete" | "pending",
-): Promise<{ path: string }> {
+): Promise<{ path: string; unverifiedCriteria?: number[] }> {
   // Find the task in any directory
   let sourcePath: string | undefined;
   let sourceDir: string | undefined;
@@ -67,5 +67,7 @@ export async function taskMove(
 
   await indexRebuild(root, "tasks");
 
-  return { path: destPath };
+  return to === "complete"
+    ? { path: destPath, unverifiedCriteria: unverifiedCriteria(doc.body) }
+    : { path: destPath };
 }

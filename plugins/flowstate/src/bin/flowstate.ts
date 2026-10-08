@@ -6,7 +6,7 @@ import { taskCreate } from "../commands/task-create.js";
 import { taskList } from "../commands/task-list.js";
 import { taskMove } from "../commands/task-move.js";
 import { taskBlock } from "../commands/task-block.js";
-import { taskUpdate } from "../commands/task-update.js";
+import { taskUpdate, parseEvidence } from "../commands/task-update.js";
 import { taskUnblock } from "../commands/task-unblock.js";
 import { taskCondense, taskCondenseAll } from "../commands/task-condense.js";
 import { taskCompress } from "../commands/task-compress.js";
@@ -99,7 +99,7 @@ const COMMAND_HELP: Record<string, string> = {
   "task-block":
     "Usage: flowstate task-block <id> --reason <text>",
   "task-update":
-    "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>]\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)",
+    "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>] [--evidence <json>]\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)\n  --evidence '{\"2\":\"pnpm test → exit 0\"}'  attach proof to criteria ticked in the same call; keys must be in --check",
   "task-unblock":
     "Usage: flowstate task-unblock <id> [--resolution <text>]",
   "task-condense":
@@ -331,7 +331,16 @@ async function main(): Promise<void> {
         }
         const to = toRaw as "active" | "complete" | "pending";
         const result = await taskMove(root, id, to);
-        output(result, json);
+        if (json) {
+          output(result, true);
+        } else {
+          console.log(`path: ${result.path}`);
+          if (result.unverifiedCriteria && result.unverifiedCriteria.length > 0) {
+            console.log(
+              `warning: ticked criteria without evidence: ${result.unverifiedCriteria.join(",")}`,
+            );
+          }
+        }
         break;
       }
 
@@ -349,7 +358,7 @@ async function main(): Promise<void> {
       case "task-update": {
         const id = positional[0];
         if (!id) {
-          console.error("Usage: flowstate task-update <id> [--set key=value] [--log msg|-] [--check n,...]");
+          console.error("Usage: flowstate task-update <id> [--set key=value] [--log msg|-] [--check n,...] [--evidence json]");
           process.exit(1);
         }
         const updates: Record<string, string> = {};
@@ -362,7 +371,14 @@ async function main(): Promise<void> {
         }
         const log = flags["log"] === "-" ? await readStdin() : flags["log"];
         const checkCriteria = parseCriteriaIndexes(flags["check"]);
-        const result = await taskUpdate(root, id, updates, log, checkCriteria);
+        const result = await taskUpdate(
+          root,
+          id,
+          updates,
+          log,
+          checkCriteria,
+          parseEvidence(flags["evidence"]),
+        );
         output(result, json);
         break;
       }
