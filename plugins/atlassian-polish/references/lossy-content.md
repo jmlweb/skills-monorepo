@@ -20,8 +20,11 @@ Verified on Cloud (CF-556, an issue with an inline screenshot):
 
 1. Fetch Jira issues with `expand: renderedFields`.
 2. Backup (step 5) saves **both** `<KEY>.md` (what the MCP returned) and `<KEY>.rendered.html`.
-   With REST consent, also save `<KEY>.adf.json` from the GET above. Say in the report which
-   of the three exist; without the ADF file the backup is lossy.
+   The richest format is ADF JSON, so ask for REST consent at backup time (once per run,
+   naming the call: `GET /rest/api/3/issue/KEY?fields=description`) whenever the scan finds
+   anything, and offer it for plain tickets too. With consent save `<KEY>.adf.json` before the
+   write. Say in the report which of the three exist; without the ADF file the backup is
+   lossy, and with a blocking finding and no ADF file, say so in the `LOSSY:` line.
 3. **Backups are verbatim.** Write the tool's `description` and `renderedFields.description`
    strings exactly as returned: no summary, no truncation, no "condensed" macro markup, no
    explanatory comment added. Long or noisy is not a reason. With REST consent, prefer
@@ -45,9 +48,23 @@ Verified on Cloud (CF-556, an issue with an inline screenshot):
    can't prove a link survived. On a re-read, the MCP Markdown shows smart links and
    mentions as `<custom data-type=…>` tags: convert them with `readback-to-md` (SKILL step 3),
    never write them back as Markdown.
-5. Any hit: put a `LOSSY:` line in the preview naming what was found. Then either rewrite
-   only the plain parts and leave the lossy nodes out of the write (say so), or skip the
-   description. Flattening needs the user's explicit yes.
+   Run the scan, don't eyeball it: save the strings to temp files and run
+   `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/atlassian-polish.js" lossy-scan --file <md> --html <rendered.html> [--adf <KEY>.adf.json]`.
+   It prints the findings as JSON (kind, source, count, `handledBy`); exit 1 = at least one
+   finding no later step re-creates (`blocking` above 0), exit 0 = none, exit 2 = bad input.
+   Mentions report `handledBy: readback-to-md` and don't block. With the ADF file the scan
+   is authoritative: it flags every node type `md-to-adf` can't produce (panel, media,
+   expand, status, date, emoji, extension, layout...).
+5. Any blocking finding: put a `LOSSY:` line in the preview naming each kind and count.
+   Then pick exactly one, and say which in the preview:
+   - **Preserve (default):** only possible when the write can keep the lossy nodes. Jira's
+     description write replaces the whole body, so this holds only if the node is re-created
+     (mentions, issue-key smart links, via the ADF path). Panels, media and macros can't be
+     re-created from Markdown: for those, preserve is not available; choose skip or flatten.
+   - **Skip** the description and report it under "Not done".
+   - **Flatten**, only after the user answers yes to a question naming what will be lost
+     ("Panel x1, media x2 will be flattened or dropped. Flatten? (yes / skip)").
+   No answer, or "write it" without naming the loss, is not a yes.
 6. No hit does not prove nothing was lost (the unverified markers may be wrong). Every Jira
    preview ends with: "Read as Markdown; panels, mentions and media may be flattened.
    Recovery: the issue's History tab."

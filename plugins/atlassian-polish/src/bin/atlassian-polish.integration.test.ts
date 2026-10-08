@@ -71,6 +71,25 @@ describe("atlassian-polish CLI", () => {
     expect(run(["readback-to-md"], "x").status).toBe(2);
   });
 
+  it("lossy-scan exits 1 and lists a panel found in ADF, 0 for plain ADF", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ap-"));
+    try {
+      const adf = join(dir, "a.json");
+      writeFileSync(adf, JSON.stringify({ type: "doc", content: [{ type: "panel" }] }));
+      const r = run(["lossy-scan", "--adf", adf], "");
+      expect(r.status).toBe(1);
+      expect(JSON.parse(r.stdout).findings[0].kind).toBe("panel");
+      writeFileSync(adf, JSON.stringify({ type: "doc", content: [{ type: "paragraph" }] }));
+      expect(run(["lossy-scan", "--adf", adf], "").status).toBe(0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("lossy-scan exits 2 without any input flag", () => {
+    expect(run(["lossy-scan"], "").status).toBe(2);
+  });
+
   it("exits 2 on an unknown command", () => {
     expect(run(["nope"], "").status).toBe(2);
   });
