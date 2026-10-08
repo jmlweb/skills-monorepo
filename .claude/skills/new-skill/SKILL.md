@@ -120,10 +120,11 @@ Done when: a second read finds nothing more to delete and the body is ≤150 lin
 ### 6. Validate
 
 ```bash
+pnpm lint:skills
 claude plugin validate .
 ```
 
-Must pass. Then self-check against the AGENTS.md "New or edited skill" quality bar and list
+Both must pass; `pnpm lint:skills` reports no error and no warning for the new skill. Then self-check against the AGENTS.md "New or edited skill" quality bar and list
 each checkbox with its status.
 
 ### 7. Version note
@@ -137,6 +138,6 @@ user in the confirmation.
 Created /<plugin>:<name>
 Tier:     <model>[/<effort>] — <reason>
 Files:    skills/<name>/SKILL.md, README.md row[, root SKILL.md row]
-Validate: claude plugin validate . ✓
+Validate: pnpm lint:skills ✓, claude plugin validate . ✓
 Release:  pending — needs minor bump (pnpm bump minor) when you next release <plugin>
 ```

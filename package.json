@@ -8,6 +8,7 @@
     "postinstall": "simple-git-hooks",
     "build": "turbo run build",
     "test": "turbo run test test:scripts",
+    "lint:skills": "node scripts/lint-skills.mjs",
     "test:scripts": "node --test scripts/*.test.mjs",
     "typecheck": "turbo run typecheck",
     "version:sync": "node scripts/version-sync.js"
