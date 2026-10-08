@@ -25,7 +25,7 @@ Review a pull request by dispatching specialized agents in parallel and aggregat
 Resolve the PR from argument, current branch (`gh pr view`), or ask. Then:
 
 ```bash
-gh pr view <id> --json number,title,author,headRefName,baseRefName,state,isDraft,mergeable,url,additions,deletions,files
+gh pr view <id> --json number,title,author,headRefName,baseRefName,state,isDraft,mergeable,url,additions,deletions,files,body,commits
 gh pr diff <id>
 gh pr checks <id>
 ```
@@ -52,13 +52,26 @@ Conditionally add, based on the diff:
 - **frontend-architect** (sonnet) — new app structure or state-management migration.
 - **backend-architect** (sonnet) — new service architecture or schema overhaul.
 
+The code-reviewer also gets the full `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/smells.md` pasted after its checklist section, so its findings cover the Standards axis (repo rules plus the smell baseline).
+
 Each agent applies the relevant section of `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/checklists.md` and returns findings in its `Finding format` — paste both into the agent's prompt (subagents don't inherit this skill's context). Format: one line per finding, `path:line: <severity>: <finding>`, severity one of Critical, Must Fix, Should Fix, Nice to Have, Info. If an agent fails, continue with the rest and note the gap.
+
+### Spec axis (general-purpose agent)
+
+Judge whether the diff does what the originating task asked, separately from Standards. Find the spec in this order and stop at the first hit:
+
+1. **Task/report ID** (`TSK-\d+` or `RPT-\d+`) in the branch name, PR title, PR body, or commit messages (`body` and `commits` from step 2).
+2. **Local task file** `.backlog/tasks/{pending,active,complete}/<ID>*.md`, only when `.backlog/` exists. The PR branch may not be checked out, so a missing file falls through to the next source.
+3. **PR body or linked GitHub issue** (`gh issue view <n> --json title,body`): the acceptance criteria or requirements section.
+4. **Nothing found** → skip the Spec axis and write "no spec available" in the report.
+
+Dispatch a `general-purpose` Agent (plugin skills cannot be a `subagent_type`) with the spec text, the diff, and `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/spec-brief.md` pasted into the prompt. It returns lines in the same `path:line: <severity>: <finding>` format, each quoting the criterion. If it fails, note the gap. The spec source works without flowstate installed.
 
 ## 5. Aggregate
 
-1. Collect every agent's finding lines and number them globally in order, `#1`, `#2`, … (numbers stay stable across agents and filters).
+1. Collect every agent's finding lines. Standards findings (code-reviewer, security, QA, architects) and Spec findings stay in separate axes. Number them globally in order across both axes, `#1`, `#2`, … (numbers stay stable across agents, axes and filters).
 2. Fill `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/report-template.md` with all findings, the CI check result, and the risk matrix. Keep finding text verbatim. Write the full, unfiltered report to `review.md` in the current directory (temporary — do not commit it).
-3. Show the user the findings filtered to Critical, Must Fix and Should Fix; with `--all`, include Nice to Have and Info. Tell the user the full report is in `review.md`.
+3. Show the user each axis filtered to Critical, Must Fix and Should Fix; with `--all`, include Nice to Have and Info. Each axis keeps its own summary naming its worst finding; the axes are never merged or re-ranked against each other. Tell the user the full report is in `review.md`.
 
 CI: ✅ all green → proceed. ⏳ pending → note. ❌ failed → flag as merge blocker.
 

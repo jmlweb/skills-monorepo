@@ -65,9 +65,13 @@ Fetches the PR diff and launches specialized agents in parallel to produce a str
 - 🧑‍💻 Always runs a **code-reviewer** for quality and conventions
 - 🔒 Conditionally adds a **security-reviewer** (auth, payments, env vars, DB queries)
 - 🧪 Conditionally adds a **qa-engineer** (critical user flows, new API endpoints)
+- 📏 **Standards axis**: repo rules plus a code-smell baseline (Fowler smells, judgement calls, repo standards win)
+- 🎯 **Spec axis**: a general-purpose agent checks the diff against the originating task's acceptance criteria (missing or partial, scope creep, wrongly implemented), quoting each criterion
+- 🔗 Spec is found via a task/report ID (`TSK-`/`RPT-`) in branch, title, body or commits, then a local `.backlog/` task file, then the PR body or linked issue; with none, the Spec axis is skipped ("no spec available"). Works without flowstate
 - ✅ Checks CI status via `gh pr checks`
 - 📋 Produces a full report with risk matrix and merge recommendation
-- 🔢 Numbers findings (`#1`, `#2`, …) across all agents as `path:line: severity: finding`
+- ⚖️ The two axes are reported in separate sections, each with its own worst finding, never merged or re-ranked
+- 🔢 Numbers findings (`#1`, `#2`, …) across all agents and both axes as `path:line: severity: finding`
 - 🎯 Shows only **Critical, Must Fix and Should Fix** by default; `--all` adds Nice to Have and Info
 - 📄 The full unfiltered report is always written to `review.md`
 - 💬 Posts only the findings you pick, as one review with inline comments, after you confirm the exact text (lines outside the diff go into the review body)
