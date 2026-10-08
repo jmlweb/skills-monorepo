@@ -16,3 +16,6 @@ node_modules/
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Tier-2 routing eval run output
+plugins/*/evals/results/

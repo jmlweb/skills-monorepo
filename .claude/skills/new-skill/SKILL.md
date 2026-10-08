@@ -119,6 +119,16 @@ Done when: a second read finds nothing more to delete and the body is ≤150 lin
    emoji/format of that table).
 2. If the plugin has a root `SKILL.md` listing slash commands (flowstate does), add it there too.
 
+### 5b. Add routing cases
+
+Add the skill to `plugins/<plugin>/evals/routing.json`: ≥3 positive prompts and ≥2 near-miss
+negatives (each with the neighbouring `owner` skill). Run `node scripts/routing-eval.mjs`;
+raise the ratchet with `--update-ratchet` when the rank-1 rate improved. For descriptions that
+overlap a neighbour, add a `evals/<case>/case.yaml` and run it with
+`claude plugin eval plugins/<plugin> --case '<glob>'` before and after any later description edit.
+
+Done when: the script exits 0.
+
 ### 6. Validate
 
 ```bash

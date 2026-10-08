@@ -1,0 +1,311 @@
+{
+  "rank1Ratchet": 0.925,
+  "skills": {
+    "add-learning": {
+      "positive": [
+        "TIL that vitest needs the .js extension in relative imports, note this",
+        "remember this for next time: the build must run before the integration test",
+        "I learned something non-obvious about the pre-commit hook, document it"
+      ],
+      "negative": [
+        {
+          "prompt": "found a bug where the index rebuild drops rows, file a finding",
+          "owner": "report"
+        },
+        {
+          "prompt": "what did we learn about hooks earlier, search knowledge",
+          "owner": "learnings"
+        }
+      ]
+    },
+    "add-task": {
+      "positive": [
+        "add task: support dark mode in the settings page",
+        "I need to do a migration of the user table, create a ticket",
+        "new task for the feature request about CSV export, add work to the backlog"
+      ],
+      "negative": [
+        {
+          "prompt": "how should we implement the caching layer, design approach before coding",
+          "owner": "idea"
+        },
+        {
+          "prompt": "start task TSK-012, begin working on it",
+          "owner": "start-task"
+        }
+      ]
+    },
+    "block-task": {
+      "positive": [
+        "TSK-014 is blocked by the API team, record the blocker",
+        "I can't proceed, waiting for the design review",
+        "stuck on a dependency, mark this task as blocked with a reason"
+      ],
+      "negative": [
+        {
+          "prompt": "mark TSK-014 as done, all acceptance criteria are met",
+          "owner": "complete-task"
+        },
+        {
+          "prompt": "log progress on TSK-014, save where I am",
+          "owner": "log-progress"
+        }
+      ]
+    },
+    "check-task": {
+      "positive": [
+        "check task status for TSK-020 against the code",
+        "verify implementation of TSK-018, does the codebase match what it declares",
+        "run a backlog health check and verify implementation of every task"
+      ],
+      "negative": [
+        {
+          "prompt": "show backlog status and project overview with stats",
+          "owner": "overview"
+        },
+        {
+          "prompt": "mark TSK-020 as done and move it to complete",
+          "owner": "complete-task"
+        }
+      ]
+    },
+    "complete-task": {
+      "positive": [
+        "done with task TSK-009, mark as done",
+        "complete task TSK-015, all acceptance criteria are met",
+        "I finished the work, move the task to done"
+      ],
+      "negative": [
+        {
+          "prompt": "verify the implementation matches the declared status of TSK-015",
+          "owner": "check-task"
+        },
+        {
+          "prompt": "tick criterion 2 and log progress on TSK-015",
+          "owner": "log-progress"
+        }
+      ]
+    },
+    "condense-learnings": {
+      "positive": [
+        "condense learnings",
+        "clean up learnings and deduplicate similar entries",
+        "organize learnings, normalize tags and archive stale ones"
+      ],
+      "negative": [
+        {
+          "prompt": "condense tasks that are completed, trim the done backlog",
+          "owner": "condense-tasks"
+        },
+        {
+          "prompt": "search the learnings index for hooks insights",
+          "owner": "learnings"
+        }
+      ]
+    },
+    "condense-tasks": {
+      "positive": [
+        "condense tasks",
+        "clean up done tasks to shrink the completed files",
+        "trim completed backlog entries, drop the notes scratchpad"
+      ],
+      "negative": [
+        {
+          "prompt": "condense learnings and deduplicate tags",
+          "owner": "condense-learnings"
+        },
+        {
+          "prompt": "show the backlog overview with stats",
+          "owner": "overview"
+        }
+      ]
+    },
+    "idea": {
+      "positive": [
+        "plan this feature before we write any code",
+        "how should we implement the sync engine, I want a design approach",
+        "this task needs architectural thinking, generate an implementation plan"
+      ],
+      "negative": [
+        {
+          "prompt": "add task for the sync engine feature request",
+          "owner": "add-task"
+        },
+        {
+          "prompt": "approve the pending plan and convert it to a task",
+          "owner": "review-idea"
+        }
+      ]
+    },
+    "learnings": {
+      "positive": [
+        "check learnings before I start",
+        "what did we learn about worktrees",
+        "search knowledge for past insights on testing"
+      ],
+      "negative": [
+        {
+          "prompt": "TIL the lockfile must be regenerated, document this learning",
+          "owner": "add-learning"
+        },
+        {
+          "prompt": "condense learnings and archive stale entries",
+          "owner": "condense-learnings"
+        }
+      ]
+    },
+    "log-progress": {
+      "positive": [
+        "log progress on TSK-021",
+        "tick criterion 2 on the active task, mark criteria done",
+        "save where I am before /clear, update the task with a progress entry"
+      ],
+      "negative": [
+        {
+          "prompt": "complete task TSK-021, it is finished",
+          "owner": "complete-task"
+        },
+        {
+          "prompt": "block the task, it is waiting for an external review",
+          "owner": "block-task"
+        }
+      ]
+    },
+    "next-task": {
+      "positive": [
+        "what should I work on next?",
+        "next task please, what's the priority",
+        "help me decide between these pending items and recommend the best one"
+      ],
+      "negative": [
+        {
+          "prompt": "run these three tasks in parallel with worktree isolation",
+          "owner": "parallel"
+        },
+        {
+          "prompt": "start task TSK-030 and pick up the work",
+          "owner": "start-task"
+        }
+      ]
+    },
+    "overview": {
+      "positive": [
+        "backlog status",
+        "what's going on, show tasks and project overview",
+        "I want to see the current state of all work with health warnings"
+      ],
+      "negative": [
+        {
+          "prompt": "check task status and verify the implementation against the code",
+          "owner": "check-task"
+        },
+        {
+          "prompt": "what should I work on next, recommend a task",
+          "owner": "next-task"
+        }
+      ]
+    },
+    "parallel": {
+      "positive": [
+        "run tasks in parallel",
+        "do these backlog tasks at the same time with subagents",
+        "multiple non-overlapping tasks can be worked on concurrently, execute them simultaneously"
+      ],
+      "negative": [
+        {
+          "prompt": "which task should I do next, recommend one or up to three that can run together",
+          "owner": "next-task"
+        },
+        {
+          "prompt": "start task TSK-040 and move it to active",
+          "owner": "start-task"
+        }
+      ]
+    },
+    "report": {
+      "positive": [
+        "found a bug in the index rebuild",
+        "report issue: the CLI exits 0 on invalid input",
+        "file a finding, I have a security concern about the hook script"
+      ],
+      "negative": [
+        {
+          "prompt": "triage the pending report and convert it to a task",
+          "owner": "triage-report"
+        },
+        {
+          "prompt": "TIL the build order matters, note this learning",
+          "owner": "add-learning"
+        }
+      ]
+    },
+    "review-idea": {
+      "positive": [
+        "review plan PLN-004",
+        "approve the plan and convert it to a task",
+        "check the plan that /flowstate:idea just generated, revise or discard"
+      ],
+      "negative": [
+        {
+          "prompt": "generate a plan for the caching feature",
+          "owner": "idea"
+        },
+        {
+          "prompt": "triage this pending report, discard or convert",
+          "owner": "triage-report"
+        }
+      ]
+    },
+    "setup": {
+      "positive": [
+        "set up flowstate in this project",
+        "create backlog directory structure for tracking",
+        "initialize tracking as a private backlog"
+      ],
+      "negative": [
+        {
+          "prompt": "add task to the backlog for the new feature",
+          "owner": "add-task"
+        },
+        {
+          "prompt": "show backlog overview with stats",
+          "owner": "overview"
+        }
+      ]
+    },
+    "start-task": {
+      "positive": [
+        "start task TSK-007",
+        "begin working on the CSV export task",
+        "pick up task TSK-011 from the backlog and move it to active"
+      ],
+      "negative": [
+        {
+          "prompt": "what should I work on next, recommend the best pending task",
+          "owner": "next-task"
+        },
+        {
+          "prompt": "add task for the CSV export feature",
+          "owner": "add-task"
+        }
+      ]
+    },
+    "triage-report": {
+      "positive": [
+        "triage report RPT-003",
+        "handle this bug report that is pending",
+        "convert the pending report to a task or discard it"
+      ],
+      "negative": [
+        {
+          "prompt": "found a bug, file a report about the crash",
+          "owner": "report"
+        },
+        {
+          "prompt": "review the pending plan and approve it",
+          "owner": "review-idea"
+        }
+      ]
+    }
+  }
+}

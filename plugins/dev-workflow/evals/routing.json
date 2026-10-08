@@ -1,0 +1,141 @@
+{
+  "rank1Ratchet": 0.958,
+  "skills": {
+    "agent-handoff": {
+      "positive": [
+        "write a handoff prompt for each target repo",
+        "hand this off to another agent",
+        "reconcile the agent report against the original handoff, what did the agent actually do"
+      ],
+      "negative": [
+        {
+          "prompt": "review this pull request with parallel agents",
+          "owner": "review-pr"
+        },
+        {
+          "prompt": "explain why the CI run is red",
+          "owner": "ci-triage"
+        }
+      ]
+    },
+    "changeset": {
+      "positive": [
+        "add changeset for this change",
+        "record a package version bump in a changeset entry",
+        "generate a changeset, I finished work that should ship in the next release"
+      ],
+      "negative": [
+        {
+          "prompt": "commit these changes with a conventional message",
+          "owner": "commit"
+        },
+        {
+          "prompt": "open a PR for this branch",
+          "owner": "open-pr"
+        }
+      ]
+    },
+    "check-docs": {
+      "positive": [
+        "check docs",
+        "are the docs up to date with the code?",
+        "audit the README and AGENTS.md for drift before a release"
+      ],
+      "negative": [
+        {
+          "prompt": "review this pull request for security and quality",
+          "owner": "review-pr"
+        },
+        {
+          "prompt": "commit the README changes",
+          "owner": "commit"
+        }
+      ]
+    },
+    "ci-triage": {
+      "positive": [
+        "why is CI red",
+        "CI failed, is this test flaky or real",
+        "triage CI for this GitHub Actions run URL"
+      ],
+      "negative": [
+        {
+          "prompt": "get this PR ready, resolve the review threads and fix the red CI",
+          "owner": "pr-ready"
+        },
+        {
+          "prompt": "review PR 42 for code quality",
+          "owner": "review-pr"
+        }
+      ]
+    },
+    "commit": {
+      "positive": [
+        "commit these changes",
+        "commit",
+        "I finished a logical unit of work, save progress to git with a conventional commit"
+      ],
+      "negative": [
+        {
+          "prompt": "add a changeset for the version bump",
+          "owner": "changeset"
+        },
+        {
+          "prompt": "open a pull request from the current branch",
+          "owner": "open-pr"
+        }
+      ]
+    },
+    "open-pr": {
+      "positive": [
+        "open a PR",
+        "create a pull request for this branch",
+        "make a PR for this branch, submit this branch"
+      ],
+      "negative": [
+        {
+          "prompt": "make my PR mergeable, address review comments",
+          "owner": "pr-ready"
+        },
+        {
+          "prompt": "commit my staged changes",
+          "owner": "commit"
+        }
+      ]
+    },
+    "pr-ready": {
+      "positive": [
+        "get this PR ready",
+        "make my PR mergeable and address review comments",
+        "fix my PR, resolve the review threads"
+      ],
+      "negative": [
+        {
+          "prompt": "create a pull request for this branch",
+          "owner": "open-pr"
+        },
+        {
+          "prompt": "review this pull request from a teammate",
+          "owner": "review-pr"
+        }
+      ]
+    },
+    "review-pr": {
+      "positive": [
+        "review PR 128",
+        "review this pull request",
+        "I finished the branch and want feedback from specialized agents before merge"
+      ],
+      "negative": [
+        {
+          "prompt": "address review comments on my PR and make it mergeable",
+          "owner": "pr-ready"
+        },
+        {
+          "prompt": "why is CI red on this PR",
+          "owner": "ci-triage"
+        }
+      ]
+    }
+  }
+}

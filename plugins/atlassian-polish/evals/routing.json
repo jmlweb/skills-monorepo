@@ -1,0 +1,39 @@
+{
+  "rank1Ratchet": 1,
+  "skills": {
+    "atlassian-setup": {
+      "positive": [
+        "set up atlassian-polish",
+        "connect Jira to Claude Code",
+        "configure Confluence access, I need credentials for the site"
+      ],
+      "negative": [
+        {
+          "prompt": "polish this Jira ticket and make it readable",
+          "owner": "polish-atlassian"
+        },
+        {
+          "prompt": "rewrite this Confluence page into scannable content",
+          "owner": "polish-atlassian"
+        }
+      ]
+    },
+    "polish-atlassian": {
+      "positive": [
+        "polish this ticket",
+        "make this Jira ticket readable",
+        "clean up the epic description and rewrite this Confluence page"
+      ],
+      "negative": [
+        {
+          "prompt": "connect Jira and configure Confluence access",
+          "owner": "atlassian-setup"
+        },
+        {
+          "prompt": "set up atlassian-polish with a token",
+          "owner": "atlassian-setup"
+        }
+      ]
+    }
+  }
+}
