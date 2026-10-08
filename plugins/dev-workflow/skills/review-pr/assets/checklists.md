@@ -2,6 +2,13 @@
 
 Reference checklists that specialized agents should apply during review.
 
+## Finding format
+Return one line per finding, nothing else per finding:
+
+`path:line: <severity>: <finding>`
+
+Severity is one of: Critical, Must Fix, Should Fix, Nice to Have, Info. `line` is the line in the new file version (RIGHT side of the diff). Keep the finding to one sentence including the fix.
+
 ## Code Quality
 - Project conventions (AGENTS.md, CLAUDE.md), named exports, functional approach
 - TypeScript strict, no `any`, proper error handling, no console.log in prod

@@ -26,7 +26,7 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Developer workflow tools — documentation auditing, PR reviews, commits, and task orchestration.",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "keywords": [
         "documentation",
         "workflow",
