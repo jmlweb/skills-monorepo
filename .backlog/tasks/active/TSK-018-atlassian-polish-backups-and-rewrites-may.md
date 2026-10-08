@@ -38,6 +38,7 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 
 ## Learnings
 
+- LRN-006: Jira Markdown reads drop panels; a saved REST response is not a bare ADF doc
 ## Progress Log
 
 - [2026-10-01] Created
@@ -48,3 +49,4 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 - [2026-10-07] SKILL.md step 5 now names the Jira backup set (.md + .rendered.html + .adf.json with consent) instead of a single file.
 - [2026-10-07] Ticked 1 (lossy-content.md documents MCP returns Markdown, REST v3 for ADF) and 6 (History tab in lossy-content.md rule 6 and SKILL.md step 5).
 - [2026-10-08] Started
+- [2026-10-08] Real-ticket evidence on CF-620 (test ticket, delete after): REST v3 returns full ADF (2 panels, 1 mention, 1 mediaSingle); HTML markers class="panel" and user-hover verified; Markdown shows no panel marker. lossy-scan on the 3 files found all 4 node types once --adf unwrapped fields.description (fix: a saved curl response read as clean, exit 0). Skip path on the old skill left the ADF byte-identical. Left: end-to-end run of the new preserve/skip/flatten flow on CF-620 (criterion 5), then tick 2-5.
