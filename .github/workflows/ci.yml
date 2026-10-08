@@ -57,3 +57,6 @@ jobs:
             echo "Run 'pnpm version:sync' locally and commit the result."
             exit 1
           fi
+
+      - name: Check versions are consistent
+        run: pnpm version:check
