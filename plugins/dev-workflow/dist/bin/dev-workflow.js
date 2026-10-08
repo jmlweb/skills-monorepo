@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { getCurrentBranch, getStagedDiff, getStagedFiles, } from "../core/git.js";
+import { getCurrentBranch, getRangeDiff, getRangeFiles, getStagedDiff, getStagedFiles, } from "../core/git.js";
+import { findPrTemplate } from "../commands/find-pr-template.js";
 import { scanSecrets } from "../commands/scan-secrets.js";
 import { detectScope, readPackageNameFromDisk, } from "../commands/detect-scope.js";
 import { detectPackages } from "../commands/detect-packages.js";
@@ -26,12 +27,12 @@ function parseFlags(args) {
     }
     return flags;
 }
-function printHuman(findings) {
+function printHuman(findings, scope) {
     if (findings.length === 0) {
-        console.log("No secrets detected in staged changes.");
+        console.log(`No secrets detected in ${scope}.`);
         return;
     }
-    console.log(`Found ${findings.length} potential secret(s) in staged changes:\n`);
+    console.log(`Found ${findings.length} potential secret(s) in ${scope}:\n`);
     for (const f of findings) {
         const location = f.line !== undefined ? `${f.file}:${f.line}` : f.file;
         const preview = f.preview ? `  ${f.preview}` : "";
@@ -39,7 +40,7 @@ function printHuman(findings) {
         if (preview)
             console.log(preview);
     }
-    console.log("\nReview each finding. Unstage or redact before committing if confirmed.");
+    console.log("\nReview each finding. Remove or redact the secret before it leaves your machine if confirmed.");
 }
 async function main() {
     const [command, ...rest] = process.argv.slice(2);
@@ -48,10 +49,11 @@ async function main() {
             "Usage: dev-workflow <command> [flags]",
             "",
             "Commands:",
-            "  scan-secrets     Scan staged changes for secrets and sensitive files",
-            "  detect-scope     Suggest a Conventional Commits scope from staged files and branch",
+            "  scan-secrets     Scan staged changes (or --range <base>...HEAD) for secrets and sensitive files",
+            "  detect-scope     Suggest a Conventional Commits scope from staged files (or --range <base>...HEAD) and branch",
             "  detect-packages  List workspace packages touched by staged files",
             "  changeset-name   Generate an unused adjective-noun-verb name for .changeset/",
+            "  find-pr-template Resolve the PR template: repo, then --user-dir, then built-in",
         ].join("\n"));
         return command ? EXIT_CLEAN : EXIT_ERROR;
     }
@@ -61,12 +63,15 @@ async function main() {
     try {
         switch (command) {
             case "scan-secrets": {
-                const result = scanSecrets(getStagedFiles(cwd), getStagedDiff(cwd));
+                const range = flags["range"];
+                const result = range
+                    ? scanSecrets(getRangeFiles(cwd, range), getRangeDiff(cwd, range))
+                    : scanSecrets(getStagedFiles(cwd), getStagedDiff(cwd));
                 if (json) {
                     console.log(JSON.stringify(result, null, 2));
                 }
                 else {
-                    printHuman(result.findings);
+                    printHuman(result.findings, range ?? "staged changes");
                 }
                 return result.findings.length > 0 ? EXIT_FINDINGS : EXIT_CLEAN;
             }
@@ -76,7 +81,9 @@ async function main() {
                         .split(",")
                         .map((f) => f.trim())
                         .filter(Boolean)
-                    : getStagedFiles(cwd);
+                    : flags["range"]
+                        ? getRangeFiles(cwd, flags["range"])
+                        : getStagedFiles(cwd);
                 const branch = flags["branch"] ?? getCurrentBranch(cwd);
                 const result = detectScope(files, branch, (ws, dir) => readPackageNameFromDisk(cwd, ws, dir));
                 if (json) {
@@ -116,6 +123,22 @@ async function main() {
                 }
                 else {
                     console.log(path);
+                }
+                return EXIT_CLEAN;
+            }
+            case "find-pr-template": {
+                const userDir = flags["user-dir"];
+                const result = findPrTemplate({
+                    cwd,
+                    ...(userDir && userDir !== "true" ? { userDir } : {}),
+                });
+                if (json) {
+                    console.log(JSON.stringify(result, null, 2));
+                }
+                else {
+                    for (const c of result.candidates) {
+                        console.log(`${result.source}\t${c}`);
+                    }
                 }
                 return EXIT_CLEAN;
             }

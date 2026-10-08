@@ -2,9 +2,12 @@
 
 import {
   getCurrentBranch,
+  getRangeDiff,
+  getRangeFiles,
   getStagedDiff,
   getStagedFiles,
 } from "../core/git.js";
+import { findPrTemplate } from "../commands/find-pr-template.js";
 import { scanSecrets, type Finding } from "../commands/scan-secrets.js";
 import {
   detectScope,
@@ -38,12 +41,12 @@ function parseFlags(args: readonly string[]): Record<string, string> {
   return flags;
 }
 
-function printHuman(findings: readonly Finding[]): void {
+function printHuman(findings: readonly Finding[], scope: string): void {
   if (findings.length === 0) {
-    console.log("No secrets detected in staged changes.");
+    console.log(`No secrets detected in ${scope}.`);
     return;
   }
-  console.log(`Found ${findings.length} potential secret(s) in staged changes:\n`);
+  console.log(`Found ${findings.length} potential secret(s) in ${scope}:\n`);
   for (const f of findings) {
     const location = f.line !== undefined ? `${f.file}:${f.line}` : f.file;
     const preview = f.preview ? `  ${f.preview}` : "";
@@ -51,7 +54,7 @@ function printHuman(findings: readonly Finding[]): void {
     if (preview) console.log(preview);
   }
   console.log(
-    "\nReview each finding. Unstage or redact before committing if confirmed.",
+    "\nReview each finding. Remove or redact the secret before it leaves your machine if confirmed.",
   );
 }
 
@@ -64,10 +67,11 @@ async function main(): Promise<number> {
         "Usage: dev-workflow <command> [flags]",
         "",
         "Commands:",
-        "  scan-secrets     Scan staged changes for secrets and sensitive files",
-        "  detect-scope     Suggest a Conventional Commits scope from staged files and branch",
+        "  scan-secrets     Scan staged changes (or --range <base>...HEAD) for secrets and sensitive files",
+        "  detect-scope     Suggest a Conventional Commits scope from staged files (or --range <base>...HEAD) and branch",
         "  detect-packages  List workspace packages touched by staged files",
         "  changeset-name   Generate an unused adjective-noun-verb name for .changeset/",
+        "  find-pr-template Resolve the PR template: repo, then --user-dir, then built-in",
       ].join("\n"),
     );
     return command ? EXIT_CLEAN : EXIT_ERROR;
@@ -80,11 +84,14 @@ async function main(): Promise<number> {
   try {
     switch (command) {
       case "scan-secrets": {
-        const result = scanSecrets(getStagedFiles(cwd), getStagedDiff(cwd));
+        const range = flags["range"];
+        const result = range
+          ? scanSecrets(getRangeFiles(cwd, range), getRangeDiff(cwd, range))
+          : scanSecrets(getStagedFiles(cwd), getStagedDiff(cwd));
         if (json) {
           console.log(JSON.stringify(result, null, 2));
         } else {
-          printHuman(result.findings);
+          printHuman(result.findings, range ?? "staged changes");
         }
         return result.findings.length > 0 ? EXIT_FINDINGS : EXIT_CLEAN;
       }
@@ -94,8 +101,10 @@ async function main(): Promise<number> {
               .split(",")
               .map((f) => f.trim())
               .filter(Boolean)
-          : getStagedFiles(cwd);
-        const branch = flags["branch"] ?? getCurrentBranch(cwd);
+          : flags["range"]
+            ? getRangeFiles(cwd, flags["range"])
+            : getStagedFiles(cwd);
+        const branch =flags["branch"] ?? getCurrentBranch(cwd);
         const result = detectScope(files, branch, (ws, dir) =>
           readPackageNameFromDisk(cwd, ws, dir),
         );
@@ -137,6 +146,21 @@ async function main(): Promise<number> {
           console.log(JSON.stringify({ name, path }, null, 2));
         } else {
           console.log(path);
+        }
+        return EXIT_CLEAN;
+      }
+      case "find-pr-template": {
+        const userDir = flags["user-dir"];
+        const result = findPrTemplate({
+          cwd,
+          ...(userDir && userDir !== "true" ? { userDir } : {}),
+        });
+        if (json) {
+          console.log(JSON.stringify(result, null, 2));
+        } else {
+          for (const c of result.candidates) {
+            console.log(`${result.source}\t${c}`);
+          }
         }
         return EXIT_CLEAN;
       }

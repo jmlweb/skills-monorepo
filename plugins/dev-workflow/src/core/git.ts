@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { GitError } from "./errors.js";
+import { GitError, InvalidArgumentError } from "./errors.js";
 
 const MAX_BUFFER = 64 * 1024 * 1024;
 
@@ -34,6 +34,40 @@ export function getStagedDiff(cwd: string): string {
     "--unified=0",
     "--no-color",
     "--diff-filter=AM",
+  ]);
+}
+
+// A range is passed straight to git, so reject anything that could be read as
+// an option and require the explicit three-dot form the skills document.
+export function assertRange(range: string): void {
+  if (!/^[^\s-]\S*\.\.\.\S+$/.test(range)) {
+    throw new InvalidArgumentError(
+      `Invalid --range "${range}". Expected <base>...HEAD (for example origin/main...HEAD).`,
+    );
+  }
+}
+
+export function getRangeFiles(cwd: string, range: string): string[] {
+  assertRange(range);
+  const out = runGit(cwd, [
+    "diff",
+    "--name-only",
+    "--diff-filter=AM",
+    range,
+    "--",
+  ]);
+  return out.split("\n").filter((line) => line.length > 0);
+}
+
+export function getRangeDiff(cwd: string, range: string): string {
+  assertRange(range);
+  return runGit(cwd, [
+    "diff",
+    "--unified=0",
+    "--no-color",
+    "--diff-filter=AM",
+    range,
+    "--",
   ]);
 }
 
