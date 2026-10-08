@@ -22,3 +22,4 @@
 | LRN-016 | CLI --help goes to stderr for dev-workflow and atlassian-polish, stdout for flowstate | cli, testing, skill-lint | active | 2026-10-08 |
 | LRN-017 | Worktree agents' git calls are refused when the guard cannot prove the command is not git | worktree, rtk, git, tooling | active | 2026-10-08 |
 | LRN-018 | Flipping skills to user-invoked shifts the routing rank-1 ratchet | routing, testing, skills, invocation | active | 2026-10-08 |
+| LRN-019 | Worktree agents need /usr/bin/git, an install, and may start from a stale base | worktree, parallel, tooling, rtk | active | 2026-10-08 |

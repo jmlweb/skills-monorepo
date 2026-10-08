@@ -5,16 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 11 |
-| Active | 3 |
+| Active | 0 |
 | Blocked | 1 |
-| Complete | 33 |
+| Complete | 36 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
-- TSK-026: dev-workflow: review-pr blocking-only mode (P3)
-- TSK-043: Fix: learning-list plain output breaks one-row-per-entity format with multiline body (P3)
-- TSK-046: CI gate for partially bumped versions (P3)
 
 ## Pending Tasks
 
@@ -39,10 +36,10 @@
 | TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | 2026-10-08 |
 | TSK-021 | dev-workflow: open-pr skill | 2026-10-08 |
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
+| TSK-026 | dev-workflow: review-pr blocking-only mode | 2026-10-08 |
 | TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
 | TSK-028 | Split skills into user-invoked and model-invoked | 2026-10-08 |
 | TSK-030 | Add retro skill that turns session mistakes into checks | 2026-10-08 |
 | TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | 2026-10-08 |
 | TSK-038 | Add skill lint test enforcing the skill quality bar | 2026-10-08 |
 | TSK-039 | Add routing evals for skill descriptions | 2026-10-08 |
-| TSK-040 | Require evidence for ticked acceptance criteria | 2026-10-08 |

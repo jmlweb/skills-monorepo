@@ -1,13 +1,14 @@
 ---
 id: TSK-046
 title: CI gate for partially bumped versions
-status: active
+status: complete
 priority: P3
 tags: [ci, versions, guardrail]
 created: 2026-10-08
 source: TSK-030
 depends-on: []
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # CI gate for partially bumped versions
@@ -29,3 +30,4 @@ From AGENTS.md mistakes 2 and 9. Extend the version:sync gate: when a version fi
 
 - [2026-10-08] Created
 - [2026-10-08] Started
+- [2026-10-08] Completed

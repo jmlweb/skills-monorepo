@@ -1,13 +1,14 @@
 ---
 id: TSK-043
 title: Fix: learning-list plain output breaks one-row-per-entity format with multiline body
-status: active
+status: complete
 priority: P3
 tags: [flowstate, cli, learnings, output]
 created: 2026-10-08
 source: report/RPT-007
 depends-on: []
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # Fix: learning-list plain output breaks one-row-per-entity format with multiline body
@@ -35,7 +36,9 @@ Line-oriented consumers (`cut`, `grep`, `wc -l`, skills parsing rows) misread bo
 
 ## Learnings
 
+- LRN-019: Worktree agents need /usr/bin/git, an install, and may start from a stale base
 ## Progress Log
 
 - [2026-10-08] Created
 - [2026-10-08] Started
+- [2026-10-08] Completed
