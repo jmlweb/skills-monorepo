@@ -118,9 +118,10 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
 - **Model tiering:** deterministic CRUD skills → `model: haiku`, no `effort`. Judgment skills
   (planning, triage, review, compression) → `model: sonnet` + `effort: medium` (or `high` for
   the heaviest, e.g. flowstate `idea`).
-- **Description is the router.** Third person, states what the skill does, then concrete
-  triggers with quoted user phrases ("add task", "new task"), and when-NOT-to-use if
-  ambiguity is likely. A vague description means the skill never fires.
+- **Description is the router.** Third person: one clause on the outcome (never steps or
+  tools), then ≥3 quoted user phrases ("add task", "new task"), then "Not for X (use Y)"
+  when a sibling could be confused. Shape and examples: `docs/writing-skills.md` §6.
+  A vague description means the skill never fires.
 - Body shape: `# Title` → `## Arguments` (`$ARGUMENTS`) → `## Prerequisites` → `## Workflow`
   with numbered `### N. Step` sections → confirmation output block. Length: as short as the
   behaviour allows; ceiling 150 lines.

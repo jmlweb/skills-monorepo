@@ -41,10 +41,12 @@ State the choice and why in one line.
 
 Requirements, all checkable:
 
-- Third person, starts with what the skill does.
+- Third person, one clause on the outcome; no steps, tools or validation mechanics.
 - ≥3 quoted trigger phrases a user would actually type ("add task", "new task").
-- A "Use when…" sentence; a "Do NOT use for…" sentence if a sibling skill or native command
-  is confusable.
+- Ask which neighbouring skill or native command is confusable; add "Not for X (use Y)"
+  for each. Shape: `docs/writing-skills.md` §6.
+- For a discipline skill (value is resisting a shortcut), offer a `## Rationalizations`
+  section per `docs/writing-skills.md` §7.
 
 ### 3. Write `plugins/<plugin>/skills/<name>/SKILL.md`
 
