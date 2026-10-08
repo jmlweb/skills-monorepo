@@ -2,11 +2,11 @@
 id: TSK-035
 title: Audit atlassian-polish skills against writing rules
 status: pending
-priority: P2
-tags: []
+priority: P3
+tags: [writing-rules, audit, atlassian-polish]
 created: 2026-10-08
 source: plan/PLN-013
-depends-on: []
+depends-on: [TSK-028, TSK-032, TSK-041]
 ---
 
 # Audit atlassian-polish skills against writing rules
@@ -36,3 +36,4 @@ Also: bring polish-atlassian/SKILL.md (243 lines) under 150 by disclosing detail
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Backlog grooming: priority P2 -> P3 to match sibling audits TSK-033/034; depends-on set to TSK-028, TSK-032, TSK-041.

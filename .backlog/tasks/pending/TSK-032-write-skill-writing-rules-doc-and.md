@@ -3,7 +3,7 @@ id: TSK-032
 title: Write skill-writing rules doc and wire into AGENTS.md and new-skill
 status: pending
 priority: P2
-tags: []
+tags: [skills, writing-rules, docs]
 created: 2026-10-08
 source: plan/PLN-013
 depends-on: []

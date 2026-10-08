@@ -3,7 +3,7 @@ id: TSK-038
 title: Add skill lint test enforcing the skill quality bar
 status: pending
 priority: P2
-tags: []
+tags: [skills, lint, ci]
 created: 2026-10-08
 source: plan/PLN-020
 depends-on: []

@@ -3,7 +3,7 @@ id: TSK-036
 title: Add GLOSSARY.md and fix entity-name drift
 status: pending
 priority: P3
-tags: []
+tags: [docs, naming, flowstate]
 created: 2026-10-08
 source: plan/PLN-015
 depends-on: []

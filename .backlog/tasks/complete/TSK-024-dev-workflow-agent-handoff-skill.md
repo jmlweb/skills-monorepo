@@ -37,15 +37,15 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 
 ## Acceptance Criteria
 
-- [ ] out mode produces one self-contained prompt per target repo with fixed sections: goal, links, constraints, decisions made, done-criteria, short report-back block
-- [ ] in mode takes the pasted original handoff plus agent report and lists done / open / contradicted (stateless, survives /clear)
-- [ ] Next handoffs are printed when work remains
-- [ ] Skill is read-only (Read/Grep/Glob) and states that in mode compares text claims only
-- [ ] SKILL.md frontmatter: sonnet, effort medium, argument-hint [out|in], 3+ quoted triggers, when-NOT line (flowstate:parallel, /ci-triage)
-- [ ] Prompts never include secrets or machine-local absolute paths
-- [ ] dev-workflow README has a per-skill section and requirements table row
-- [ ] claude plugin validate . passes
-- [ ] Released as a minor bump of dev-workflow
+- [x] out mode produces one self-contained prompt per target repo with fixed sections: goal, links, constraints, decisions made, done-criteria, short report-back block
+- [x] in mode takes the pasted original handoff plus agent report and lists done / open / contradicted (stateless, survives /clear)
+- [x] Next handoffs are printed when work remains
+- [x] Skill is read-only (Read/Grep/Glob) and states that in mode compares text claims only
+- [x] SKILL.md frontmatter: sonnet, effort medium, argument-hint [out|in], 3+ quoted triggers, when-NOT line (flowstate:parallel, /ci-triage)
+- [x] Prompts never include secrets or machine-local absolute paths
+- [x] dev-workflow README has a per-skill section and requirements table row
+- [x] claude plugin validate . passes
+- [x] Released as a minor bump of dev-workflow
 
 ## Notes
 
@@ -57,3 +57,4 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 - [2026-10-07] Created
 - [2026-10-08] Started
 - [2026-10-08] Completed
+- [2026-10-08] Backlog check 2026-10-08: criteria ticked retroactively after verification. SKILL.md has out sections Goal/Links/Constraints/Decisions/Done when/Report back, in mode Done/Open/Contradicted + next handoffs, allowed-tools Read/Grep/Glob, text-claims-only limit stated, safety check for secrets and absolute paths, required frontmatter and when-NOT line; README section + Requirements row; claude plugin validate . passes; shipped in dev-workflow v1.3.0 (1f80493 not in v1.2.0).

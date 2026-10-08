@@ -38,15 +38,15 @@ Today the backlog is hard-wired to `<project>/.backlog`. `findBacklogRoot` (`src
 
 ## Acceptance Criteria
 
-- [ ] Step 0 verified: settings env reaches Bash tool calls and hooks; result recorded as a learning
-- [ ] FLOWSTATE_BACKLOG_DIR resolved once at entry point (absolute, or relative to CLAUDE_PROJECT_DIR), falling back to .backlog walk-up; missing configured dir throws a typed error
-- [ ] cwd→root rename landed as a separate mechanical commit with no behavior change
-- [ ] setup --dir creates structure at custom location and prints the settings.local.json snippet; default private location <git-common-dir>/flowstate is worktree-safe
-- [ ] New flowstate path command (plain and --json true)
-- [ ] Skills no longer hardcode .backlog paths; parallel skill skips git add for out-of-repo backlogs
-- [ ] pre-commit-reminder.sh uses the same resolution rule as the CLI
-- [ ] Tests cover env absolute/relative/unset/missing, setup --dir, path command, and integration with env set
-- [ ] README private-backlog section, architecture.md and SKILL.md updated; dist rebuilt; claude plugin validate passes; minor bump
+- [x] Step 0 verified: settings env reaches Bash tool calls and hooks; result recorded as a learning
+- [x] FLOWSTATE_BACKLOG_DIR resolved once at entry point (absolute, or relative to CLAUDE_PROJECT_DIR), falling back to .backlog walk-up; missing configured dir throws a typed error
+- [x] cwd→root rename landed as a separate mechanical commit with no behavior change
+- [x] setup --dir creates structure at custom location and prints the settings.local.json snippet; default private location <git-common-dir>/flowstate is worktree-safe
+- [x] New flowstate path command (plain and --json true)
+- [x] Skills no longer hardcode .backlog paths; parallel skill skips git add for out-of-repo backlogs
+- [x] pre-commit-reminder.sh uses the same resolution rule as the CLI
+- [x] Tests cover env absolute/relative/unset/missing, setup --dir, path command, and integration with env set
+- [x] README private-backlog section, architecture.md and SKILL.md updated; dist rebuilt; claude plugin validate passes; minor bump
 
 ## Notes
 
@@ -59,3 +59,5 @@ Today the backlog is hard-wired to `<project>/.backlog`. `findBacklogRoot` (`src
 - [2026-10-08] Created
 - [2026-10-08] Started
 - [2026-10-08] Completed
+- [2026-10-08] Backlog check 2026-10-08: criteria ticked retroactively after verification. LRN-007 records step 0; resolveBacklog in paths.ts + BacklogDirMissingError; d8e3798 is the mechanical cwd->root rename; setup --dir/--private + path command; parallel skips the commit for private backlogs; hook mirrors the rule; paths.test.ts + integration tests cover env abs/rel/unset/missing, setup --dir, path; README/architecture/SKILL.md updated; released v2.7.0.
+- [2026-10-08] Deviation on criterion 2: a relative FLOWSTATE_BACKLOG_DIR resolves against the project root, not CLAUDE_PROJECT_DIR, because LRN-007 shows CLAUDE_PROJECT_DIR is hook-only and absent from Bash tool calls.

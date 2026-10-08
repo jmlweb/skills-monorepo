@@ -3,10 +3,10 @@ id: TSK-028
 title: Split skills into user-invoked and model-invoked
 status: pending
 priority: P2
-tags: []
+tags: [skills, invocation, context]
 created: 2026-10-08
 source: plan/PLN-009
-depends-on: []
+depends-on: [TSK-039]
 ---
 
 # Split skills into user-invoked and model-invoked
@@ -49,3 +49,4 @@ README grouping by invocation dropped from scope (review decision).
 
 - [2026-10-08] Created
 - [2026-10-08] Scope added from discarded PLN-018: next-task SKILL.md lines ~121/123 hand off to /flowstate:parallel operatively. If parallel stays model-invoked, rewrite as 'Call the Skill tool with flowstate:parallel'; if flipped to user-invoked, change to 'tell the user to run /flowstate:parallel <IDs>'.
+- [2026-10-08] Backlog check: criterion 7 and step 8 (one-line description test for user-invoked skills) are absorbed by TSK-038 lint rule 3. If TSK-038 lands first, satisfy criterion 7 by pointing at the lint rule instead of adding a separate test.

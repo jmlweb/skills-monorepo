@@ -3,7 +3,7 @@ id: TSK-026
 title: dev-workflow: review-pr blocking-only mode
 status: pending
 priority: P3
-tags: []
+tags: [dev-workflow, review-pr]
 created: 2026-10-08
 source: plan/PLN-005
 depends-on: []

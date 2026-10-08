@@ -42,3 +42,4 @@ The plugin is currently prompt-only (no src/dist). Decide between a CLI under th
 - [2026-10-01] Completed
 - [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. 5 not met: no record of a real Jira write test. 6 not met: no design note on the CLI vs bundled-script choice.
 - [2026-10-07] Follow-up for criterion 5 filed as TSK-023.
+- [2026-10-08] Backlog check 2026-10-08: criterion 6 (design note on CLI vs bundled script) dropped as won't-do. The decision is visible in the code: atlassian-polish ships a src/dist CLI under the repo's CLI rules (see AGENTS.md 'Agents and prompt-only plugins').

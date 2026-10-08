@@ -3,10 +3,10 @@ id: TSK-034
 title: Audit dev-workflow skills against writing rules
 status: pending
 priority: P3
-tags: []
+tags: [writing-rules, audit, dev-workflow]
 created: 2026-10-08
 source: plan/PLN-013
-depends-on: []
+depends-on: [TSK-028, TSK-032, TSK-041]
 ---
 
 # Audit dev-workflow skills against writing rules

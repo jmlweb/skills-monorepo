@@ -3,10 +3,10 @@ id: TSK-031
 title: Add flowstate guide skill mapping the flows
 status: pending
 priority: P3
-tags: []
+tags: [flowstate, skill, docs]
 created: 2026-10-08
 source: plan/PLN-010
-depends-on: []
+depends-on: [TSK-030]
 ---
 
 # Add flowstate guide skill mapping the flows

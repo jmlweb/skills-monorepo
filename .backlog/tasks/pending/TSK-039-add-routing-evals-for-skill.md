@@ -3,7 +3,7 @@ id: TSK-039
 title: Add routing evals for skill descriptions
 status: pending
 priority: P2
-tags: []
+tags: [skills, evals, routing]
 created: 2026-10-08
 source: plan/PLN-021
 depends-on: []

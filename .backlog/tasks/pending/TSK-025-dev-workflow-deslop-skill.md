@@ -3,7 +3,7 @@ id: TSK-025
 title: dev-workflow: deslop skill
 status: pending
 priority: P3
-tags: []
+tags: [dev-workflow, skill, comments]
 created: 2026-10-07
 source: plan/PLN-003
 depends-on: []

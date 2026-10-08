@@ -1,7 +1,7 @@
 ---
 id: LRN-005
 title: Settings env delivery to Bash/hooks unverified; CLAUDE_PROJECT_DIR absent in Bash
-status: active
+status: archived
 tags: [claude-code, settings, env, hooks, flowstate]
 task: TSK-027
 created: 2026-10-08

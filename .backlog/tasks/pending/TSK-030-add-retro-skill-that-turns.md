@@ -3,7 +3,7 @@ id: TSK-030
 title: Add retro skill that turns session mistakes into checks
 status: pending
 priority: P2
-tags: []
+tags: [flowstate, skill, retro]
 created: 2026-10-08
 source: plan/PLN-012
 depends-on: []

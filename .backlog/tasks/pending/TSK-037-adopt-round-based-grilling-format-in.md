@@ -3,7 +3,7 @@ id: TSK-037
 title: Adopt round-based grilling format in idea and add-task
 status: pending
 priority: P3
-tags: []
+tags: [flowstate, skill, grilling]
 created: 2026-10-08
 source: plan/PLN-016
 depends-on: []

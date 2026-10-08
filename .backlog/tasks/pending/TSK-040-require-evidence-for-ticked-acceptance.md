@@ -3,7 +3,7 @@ id: TSK-040
 title: Require evidence for ticked acceptance criteria
 status: pending
 priority: P2
-tags: []
+tags: [flowstate, cli, acceptance-criteria]
 created: 2026-10-08
 source: plan/PLN-022
 depends-on: []
