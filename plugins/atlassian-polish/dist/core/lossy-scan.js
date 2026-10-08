@@ -65,7 +65,14 @@ function scanAdf(raw) {
     catch {
         throw new InvalidArgumentError("--adf is not valid JSON");
     }
-    return [...tally(collectAdfTypes(doc))].map(([kind, n]) => ({
+    // `curl … > KEY.adf.json` saves the whole REST response, not the bare document.
+    const wrapped = doc?.fields?.description;
+    const body = wrapped === undefined ? doc : wrapped;
+    // An empty scan of a non-ADF file would read as "nothing lossy" (LRN-001).
+    if (body?.type !== "doc") {
+        throw new InvalidArgumentError("--adf must be an ADF document (type: doc) or a REST issue response with fields.description");
+    }
+    return [...tally(collectAdfTypes(body))].map(([kind, n]) => ({
         kind,
         source: "adf",
         count: n,

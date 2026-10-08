@@ -37,8 +37,8 @@ Verified on Cloud (CF-556, an issue with an inline screenshot):
    | Marker | Meaning | Status |
    |--------|---------|--------|
    | `![](blob:` in the Markdown | inline image / media node | verified |
-   | `class="panel` or `ak-editor-panel` in the HTML | panel | unverified |
-   | `user-hover` or `data-user` in the HTML | @mention | unverified |
+   | `class="panel` or `ak-editor-panel` in the HTML | panel | verified (CF-620) |
+   | `user-hover` or `data-user` in the HTML | @mention | verified (CF-620) |
    | `data-macro` / `status-macro` / `aui-lozenge` in the HTML, **not** wrapping an issue key | macro or status lozenge | unverified |
 
    **Not lossy:** a `jira-issue-macro` (with its `aui-lozenge` status) whose text is an issue
