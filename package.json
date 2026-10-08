@@ -12,7 +12,8 @@
     "test:scripts": "node --test scripts/*.test.mjs",
     "typecheck": "turbo run typecheck",
     "version:sync": "node scripts/version-sync.js",
-    "version:check": "node scripts/check-version-consistency.mjs"
+    "version:check": "node scripts/check-version-consistency.mjs",
+    "backlog:check": "node scripts/check-backlog-integrity.mjs"
   },
   "devDependencies": {
     "simple-git-hooks": "^2.11.1",
