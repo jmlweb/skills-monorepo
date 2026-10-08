@@ -16,3 +16,6 @@
 | LRN-010 | Worktree agents: use /usr/bin/git, pnpm install first, hooks don't run | worktree, git, rtk, pnpm, tooling | active | 2026-10-08 |
 | LRN-011 | claude plugin eval cases are prompt.md plus graders, not case.yaml | evals, claude-code, routing | active | 2026-10-08 |
 | LRN-012 | Top-3 routing test fixtures need more than 3 skills | testing, routing, tf-idf | active | 2026-10-08 |
+| LRN-013 | Worktree agents cannot run git through the rtk hook | tooling, worktree, rtk, git | active | 2026-10-08 |
+| LRN-014 | Fresh worktrees lack node_modules | tooling, worktree, testing | active | 2026-10-08 |
+| LRN-015 | Test not-on-main by checking out the tagged commit | testing, release, node-test | active | 2026-10-08 |

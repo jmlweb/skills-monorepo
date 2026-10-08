@@ -5,14 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 17 |
-| Active | 2 |
+| Active | 0 |
 | Blocked | 0 |
-| Complete | 29 |
+| Complete | 31 |
 
 ## Active Tasks
 
-- TSK-044: Guard release tags: tag must match package.json and sit on main (P2)
-- TSK-045: Test enforcing zero runtime dependencies in plugins (P2)
+_No active tasks._
 
 ## Pending Tasks
 
@@ -49,4 +48,4 @@
 | TSK-039 | Add routing evals for skill descriptions | 2026-10-08 |
 | TSK-040 | Require evidence for ticked acceptance criteria | 2026-10-08 |
 | TSK-041 | Extend writing rules with description shape and rationalization tables | 2026-10-08 |
-| TSK-022 | flowstate: log-progress skill | 2026-10-07 |
+| TSK-044 | Guard release tags: tag must match package.json and sit on main | 2026-10-08 |
