@@ -4,14 +4,15 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 19 |
-| Active | 0 |
+| Pending | 17 |
+| Active | 2 |
 | Blocked | 0 |
 | Complete | 29 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-044: Guard release tags: tag must match package.json and sit on main (P2)
+- TSK-045: Test enforcing zero runtime dependencies in plugins (P2)
 
 ## Pending Tasks
 
@@ -31,8 +32,6 @@ _No active tasks._
 | TSK-038 | Add skill lint test enforcing the skill quality bar | P2 | skills, lint, ci | 2026-10-08 |
 | TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | P4 | flowstate, cli, review-idea, templates | 2026-10-08 |
 | TSK-043 | Fix: learning-list plain output breaks one-row-per-entity format with multiline body | P3 | flowstate, cli, learnings, output | 2026-10-08 |
-| TSK-044 | Guard release tags: tag must match package.json and sit on main | P2 | ci, release, guardrail | 2026-10-08 |
-| TSK-045 | Test enforcing zero runtime dependencies in plugins | P2 | ci, test, guardrail | 2026-10-08 |
 | TSK-046 | CI gate for partially bumped versions | P3 | ci, versions, guardrail | 2026-10-08 |
 | TSK-047 | Guard against hand-edited backlog index and status/folder drift | P3 | ci, backlog, guardrail | 2026-10-08 |
 | TSK-048 | Banned-names and stale dist file check | P3 | ci, test, guardrail | 2026-10-08 |

@@ -1,12 +1,13 @@
 ---
 id: TSK-044
 title: Guard release tags: tag must match package.json and sit on main
-status: pending
+status: active
 priority: P2
 tags: [ci, release, guardrail]
 created: 2026-10-08
 source: TSK-030
 depends-on: []
+started: 2026-10-08
 ---
 
 # Guard release tags: tag must match package.json and sit on main
@@ -28,3 +29,4 @@ From AGENTS.md mistake 10. Add a pre-push step or CI check failing when a pushed
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started
