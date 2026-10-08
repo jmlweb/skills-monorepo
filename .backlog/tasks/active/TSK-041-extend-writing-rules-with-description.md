@@ -1,12 +1,13 @@
 ---
 id: TSK-041
 title: Extend writing rules with description shape and rationalization tables
-status: pending
+status: active
 priority: P2
 tags: [skills, writing-rules, docs]
 created: 2026-10-08
 source: plan/PLN-023
 depends-on: [TSK-032]
+started: 2026-10-08
 ---
 
 # Extend writing rules with description shape and rationalization tables
@@ -71,3 +72,4 @@ PLN-013 → TSK-032..035 define the doc and the audits. This idea adds scope to 
 
 - [2026-10-08] Created
 - [2026-10-08] Backlog grooming: priority P3 -> P2 because it blocks audits TSK-033..035; depends-on TSK-032.
+- [2026-10-08] Started

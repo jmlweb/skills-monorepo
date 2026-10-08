@@ -1,12 +1,13 @@
 ---
 id: TSK-039
 title: Add routing evals for skill descriptions
-status: pending
+status: active
 priority: P2
 tags: [skills, evals, routing]
 created: 2026-10-08
 source: plan/PLN-021
 depends-on: []
+started: 2026-10-08
 ---
 
 # Add routing evals for skill descriptions
@@ -57,3 +58,4 @@ Why we need it: flowstate has 18 skills with overlapping vocabulary (`idea`/`add
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started

@@ -1,12 +1,13 @@
 ---
 id: TSK-030
 title: Add retro skill that turns session mistakes into checks
-status: pending
+status: active
 priority: P2
 tags: [flowstate, skill, retro]
 created: 2026-10-08
 source: plan/PLN-012
 depends-on: []
+started: 2026-10-08
 ---
 
 # Add retro skill that turns session mistakes into checks
@@ -55,3 +56,4 @@ Idea from mattpocock/skills `retro`. Our `add-learning` records lessons but neve
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started
