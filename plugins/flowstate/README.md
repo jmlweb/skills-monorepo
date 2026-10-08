@@ -373,6 +373,8 @@ The skills shell out to a small CLI (`dist/bin/flowstate.js`). Run `flowstate --
 | `learning-list` | `--all true` | `false` | Legacy alias for `--include-archived` / `--status all` (kept for backwards compatibility) |
 | `learning-search` | `--tags t1,t2` | — | Comma-separated tag filter. Matches only active learnings |
 | `learning-search` | `--query <text>` | — | Keyword search across title and body, scored deterministically |
+| `task-update` | `--evidence '{"2":"pnpm test → exit 0"}'` | — | JSON object keyed by criterion number; written as an inline `— evidence: … (date)` suffix. Every key must also be in `--check` |
+| `task-move` | `--to complete` | — | Reports ticked criteria without evidence (`unverifiedCriteria` in `--json true`). Warning only; exit code stays 0 |
 
 ```bash
 node dist/bin/flowstate.js learning-list --include-archived true   # active + archived + superseded

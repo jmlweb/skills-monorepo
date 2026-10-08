@@ -3,7 +3,7 @@ import { taskDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity, moveFile } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
-import { appendToBody } from "../core/markdown.js";
+import { appendToBody, unverifiedCriteria } from "../core/markdown.js";
 import { indexRebuild } from "./index-rebuild.js";
 const SEARCH_DIRS = ["pending", "active", "complete"];
 export async function taskMove(root, id, to) {
@@ -50,5 +50,7 @@ export async function taskMove(root, id, to) {
         await moveFile(sourcePath, destPath);
     }
     await indexRebuild(root, "tasks");
-    return { path: destPath };
+    return to === "complete"
+        ? { path: destPath, unverifiedCriteria: unverifiedCriteria(doc.body) }
+        : { path: destPath };
 }

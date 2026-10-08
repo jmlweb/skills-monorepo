@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { taskUpdate } from "./task-update.js";
+import { taskUpdate, parseEvidence } from "./task-update.js";
 import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
@@ -118,5 +118,37 @@ describe("taskUpdate", () => {
     await expect(taskUpdate(tmp, "TSK-001", {}, "Log", [9])).rejects.toThrow(/out of range/);
 
     expect(await readFile(path, "utf-8")).toBe(before);
+  });
+
+  it("writes an inline evidence suffix on ticked criteria", async () => {
+    const result = await taskUpdate(tmp, "TSK-001", {}, undefined, [1, 3], {
+      3: "pnpm test → exit 0",
+    });
+
+    const doc = await readEntity(result.path);
+    expect(doc.body).toMatch(
+      /- \[x\] Reproduce\n- \[ \] Fix\n- \[x\] Add test — evidence: pnpm test → exit 0 \(\d{4}-\d{2}-\d{2}\)/,
+    );
+  });
+
+  it("rejects an evidence key outside --check without writing", async () => {
+    const path = await taskPath();
+    const before = await readFile(path, "utf-8");
+
+    await expect(
+      taskUpdate(tmp, "TSK-001", {}, undefined, [1], { 2: "proof" }),
+    ).rejects.toMatchObject({ name: "InvalidArgumentError" });
+
+    expect(await readFile(path, "utf-8")).toBe(before);
+  });
+
+  it("parseEvidence rejects bad JSON and non-object payloads with typed errors", () => {
+    expect(parseEvidence(undefined)).toEqual({});
+    expect(parseEvidence('{"2":"ok"}')).toEqual({ 2: "ok" });
+    for (const bad of ["{nope", "[1]", '{"a":"x"}', '{"1":5}', '{"1":" "}']) {
+      expect(() => parseEvidence(bad)).toThrowError(
+        expect.objectContaining({ name: "InvalidArgumentError" }),
+      );
+    }
   });
 });

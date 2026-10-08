@@ -39,6 +39,7 @@ Read the task file right before drafting, even if it was read earlier in the ses
 
 - **Log lines:** the note from `$ARGUMENTS` if given; otherwise draft 1–3 short lines from this session — what changed, then what's next. Facts only, no filler.
 - **Criteria:** propose ticking only unticked criteria the session clearly satisfied (code written, tests green, docs updated). When in doubt, leave it unticked.
+- **Evidence:** for every criterion you propose to tick, name the proof: a command run this session plus its result (`pnpm test → exit 0`), or `manual: <what was checked>`. A criterion with no evidence available stays unticked.
 
 ### 4. Confirm
 
@@ -53,6 +54,7 @@ Log:
 
 Tick:
 - [x] 2. {{CRITERION_2}}
+      evidence: {{COMMAND_OR_CHECK}} → {{RESULT}}
 
 Apply? (yes / edit / cancel)
 ```
@@ -61,10 +63,10 @@ On edit, apply the user's changes and show the draft again. On cancel, stop with
 
 ### 5. Apply via CLI
 
-Each non-empty stdin line becomes its own dated bullet. Drop `--check` when nothing is ticked.
+Each non-empty stdin line becomes its own dated bullet. Drop `--check` and `--evidence` when nothing is ticked. `--evidence` is a JSON object keyed by criterion number; every key must also be in `--check`.
 
 ```bash
-cat <<'LOG' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --log - --check {{N1,N2}}
+cat <<'LOG' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --log - --check {{N1,N2}} --evidence '{"{{N1}}":"{{COMMAND}} → {{RESULT}}"}'
 {{LINE_1}}
 {{LINE_2}}
 LOG

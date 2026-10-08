@@ -53,6 +53,26 @@ const ORIG_BODY = [
 ].join("\n");
 
 describe("taskCompress", () => {
+  it("keeps evidence suffixes on acceptance criteria", async () => {
+    const withEvidence = ORIG_BODY.replace(
+      "- Crit one",
+      "- [x] Crit one — evidence: pnpm test → exit 0 (2026-04-29)",
+    );
+    const filePath = await makeCompleteTaskWithBody("TSK-001", withEvidence);
+    const compressed = withEvidence.replace("We absolutely need to make sure that we really fix", "Fix");
+
+    const result = await taskCompress(tmp, "TSK-001", compressed);
+    expect(result.errors).toEqual([]);
+    expect(result.ok).toBe(true);
+    expect((await readEntity(filePath)).body).toContain(
+      "- [x] Crit one — evidence: pnpm test → exit 0 (2026-04-29)",
+    );
+
+    const stripped = withEvidence.replace(" — evidence: pnpm test → exit 0 (2026-04-29)", "");
+    const rejected = await taskCompress(tmp, "TSK-001", stripped);
+    expect(rejected.ok).toBe(false);
+  });
+
   it("writes valid compressed body and sets compressed:true", async () => {
     const filePath = await makeCompleteTaskWithBody("TSK-001", ORIG_BODY);
 
