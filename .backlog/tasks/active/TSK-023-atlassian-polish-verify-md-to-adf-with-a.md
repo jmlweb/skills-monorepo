@@ -1,12 +1,13 @@
 ---
 id: TSK-023
 title: atlassian-polish: verify md-to-adf with a real Jira write
-status: pending
+status: active
 priority: P2
 tags: [atlassian-polish, adf, jira, verification]
 created: 2026-10-07
 source: TSK-017
 depends-on: []
+started: 2026-10-08
 ---
 
 # atlassian-polish: verify md-to-adf with a real Jira write
@@ -37,3 +38,4 @@ Before writing:
 
 - [2026-10-07] Created
 - [2026-10-08] Backlog grooming: TSK-018 is complete, so the shared-ticket note no longer applies. Test ticket CF-620 (panels, mention, media) already exists; add a checklist, table and code marks there and reuse it for this write.
+- [2026-10-08] Started

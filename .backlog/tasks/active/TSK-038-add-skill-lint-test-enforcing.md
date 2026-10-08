@@ -1,12 +1,13 @@
 ---
 id: TSK-038
 title: Add skill lint test enforcing the skill quality bar
-status: pending
+status: active
 priority: P2
 tags: [skills, lint, ci]
 created: 2026-10-08
 source: plan/PLN-020
 depends-on: []
+started: 2026-10-08
 ---
 
 # Add skill lint test enforcing the skill quality bar
@@ -68,3 +69,4 @@ The skills call the CLIs: about 25 distinct `flowstate.js` subcommands, plus `de
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started

@@ -4,20 +4,20 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 17 |
-| Active | 0 |
+| Pending | 15 |
+| Active | 2 |
 | Blocked | 0 |
 | Complete | 31 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2)
+- TSK-038: Add skill lint test enforcing the skill quality bar (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-023 | atlassian-polish: verify md-to-adf with a real Jira write | P2 | atlassian-polish, adf, jira, verification | 2026-10-07 |
 | TSK-025 | dev-workflow: deslop skill | P3 | dev-workflow, skill, comments | 2026-10-07 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | P3 | dev-workflow, review-pr | 2026-10-08 |
 | TSK-028 | Split skills into user-invoked and model-invoked | P2 | skills, invocation, context | 2026-10-08 |
@@ -28,7 +28,6 @@ _No active tasks._
 | TSK-035 | Audit atlassian-polish skills against writing rules | P3 | writing-rules, audit, atlassian-polish | 2026-10-08 |
 | TSK-036 | Add GLOSSARY.md and fix entity-name drift | P3 | docs, naming, flowstate | 2026-10-08 |
 | TSK-037 | Adopt round-based grilling format in idea and add-task | P3 | flowstate, skill, grilling | 2026-10-08 |
-| TSK-038 | Add skill lint test enforcing the skill quality bar | P2 | skills, lint, ci | 2026-10-08 |
 | TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | P4 | flowstate, cli, review-idea, templates | 2026-10-08 |
 | TSK-043 | Fix: learning-list plain output breaks one-row-per-entity format with multiline body | P3 | flowstate, cli, learnings, output | 2026-10-08 |
 | TSK-046 | CI gate for partially bumped versions | P3 | ci, versions, guardrail | 2026-10-08 |
