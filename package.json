@@ -11,7 +11,8 @@
     "lint:skills": "node scripts/lint-skills.mjs",
     "test:scripts": "node --test scripts/*.test.mjs",
     "typecheck": "turbo run typecheck",
-    "version:sync": "node scripts/version-sync.js"
+    "version:sync": "node scripts/version-sync.js",
+    "version:check": "node scripts/check-version-consistency.mjs"
   },
   "devDependencies": {
     "simple-git-hooks": "^2.11.1",
