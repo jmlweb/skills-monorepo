@@ -154,7 +154,8 @@ export function evaluatePlugin(skills, cases, options = {}) {
     if (positive.length < MIN_POSITIVE) {
       failures.push(`${name}: needs >=${MIN_POSITIVE} positive prompts, has ${positive.length}`);
     }
-    if (negative.length < MIN_NEGATIVE) {
+    // A lone routable skill has no sibling to own a negative prompt.
+    if (routable.length > 1 && negative.length < MIN_NEGATIVE) {
       failures.push(`${name}: needs >=${MIN_NEGATIVE} negative prompts, has ${negative.length}`);
     }
 

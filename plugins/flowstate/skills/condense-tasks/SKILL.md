@@ -1,6 +1,7 @@
 ---
 name: condense-tasks
-description: Condense completed tasks: structural trim (drop Notes scratchpad, prune middle Progress Log) plus caveman-style prose compression (drop articles, filler, hedging) on remaining body. Validated against load-bearing invariants. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or wants to shrink the size of complete task files.
+description: Shrinks completed task files so the done backlog stays cheap to read.
+disable-model-invocation: true
 allowed-tools: [Bash, Read]
 model: sonnet
 effort: medium

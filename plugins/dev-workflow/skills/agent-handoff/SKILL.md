@@ -1,7 +1,8 @@
 ---
 name: agent-handoff
 argument-hint: [out|in]
-description: Standardize multi-repo work run by parallel agents — writes one self-contained handoff prompt per target repo (out) and reconciles the reports that come back against the original handoff (in). Use when the user says "handoff prompt", "hand this off to another agent", "write prompts for each repo", "reconcile the agent report", "what did the agent actually do", or "/agent-handoff". Stateless and read-only, so it works after /clear. Not for parallel tasks inside one repo (use flowstate:parallel) or for explaining failing CI (use ci-triage).
+description: Writes per-repo handoff prompts for parallel agents and reconciles their reports.
+disable-model-invocation: true
 allowed-tools: Read, Grep, Glob
 model: sonnet
 effort: medium

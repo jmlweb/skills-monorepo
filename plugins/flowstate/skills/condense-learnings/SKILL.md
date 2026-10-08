@@ -1,6 +1,7 @@
 ---
 name: condense-learnings
-description: Condense the learnings backlog: dedupe, normalize tags, archive stale entries, then caveman-compress the body of every remaining active learning. Validated against load-bearing invariants. Use when the user says "condense learnings", "clean up learnings", "deduplicate learnings", or "organize learnings".
+description: Dedupes, retags and compresses the learnings backlog.
+disable-model-invocation: true
 allowed-tools: [Bash, Read]
 model: sonnet
 effort: medium

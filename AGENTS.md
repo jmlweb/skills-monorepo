@@ -123,6 +123,10 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   tools), then ≥3 quoted user phrases ("add task", "new task"), then "Not for X (use Y)"
   when a sibling could be confused. Shape and examples: `docs/writing-skills.md` §6.
   A vague description means the skill never fires.
+- **Invocation mode.** Skills the model or another skill must reach on its own stay
+  model-invoked. Skills only a user fires by hand carry `disable-model-invocation: true` and a
+  one-line human-facing description (no trigger list); the trigger-phrase rule above applies to
+  model-invoked skills only. No skill calls a user-invoked skill via the Skill tool.
 - Body shape: `# Title` → `## Arguments` (`$ARGUMENTS`) → `## Prerequisites` → `## Workflow`
   with numbered `### N. Step` sections → confirmation output block. Length: as short as the
   behaviour allows; ceiling 150 lines.
@@ -187,7 +191,7 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
    (or the bump script that calls it) writes versions there.
 10. **Pushes a tag as routine housekeeping.** → A `plugins/*/v*` tag push *publishes a
     release*. Never create or push tags unless the user explicitly asked for a release.
-11. **Writes a skill description without trigger phrases** ("Manages tasks."). → Description
+11. **Writes a model-invoked skill description without trigger phrases** ("Manages tasks."). → Description
     is the invocation router; include quoted user phrases or the skill is dead weight.
 12. **Silently swallows fs errors** (`catch { return [] }`). → LRN-001. Distinguish
     empty-result from lookup-failure.
@@ -216,6 +220,7 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
       key allowlist, description ≤1024 chars / one line / ≥3 quoted triggers, body ≤150 lines,
       haiku-no-effort / sonnet+effort tiering, `${CLAUDE_PLUGIN_ROOT}` paths, CLI subcommands
       exist, README lists the skill). Exemptions live in the script, never in frontmatter
+- [ ] Invocation mode chosen: user-invoked (`disable-model-invocation: true`, one-line description) or model-invoked (router description)
 - [ ] `allowed-tools` is the minimal scoped set; numbered workflow steps, prerequisites checked before mutating anything
 - [ ] All state mutation shells out to the plugin CLI — no hand-edited backlog/index files
       (atlassian-polish: external Jira/Confluence writes only after explicit user approval)

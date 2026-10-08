@@ -1,7 +1,7 @@
 ---
 name: flowstate
 description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
-version: 2.9.0
+version: 2.10.0
 ---
 
 # Flowstate - Backlog Management System
@@ -70,7 +70,7 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:setup` | Initialize `.backlog/` in the current project (uses CLI) |
+| `/flowstate:setup` | User-only: initialize `.backlog/` in the current project (uses CLI) |
 | `/flowstate:overview` | Show backlog overview and health |
 | `/flowstate:add-task` | Add a new task to the backlog |
 | `/flowstate:start-task` | Start working on a task |
@@ -80,14 +80,14 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `/flowstate:check-task` | Verify task status vs implementation |
 | `/flowstate:next-task` | Get a recommendation for what to work on next |
 | `/flowstate:idea` | Generate an implementation plan |
-| `/flowstate:review-idea` | Review and decide on a pending plan |
+| `/flowstate:review-idea` | User-only: review and decide on a pending plan |
 | `/flowstate:report` | File a bug report or finding |
-| `/flowstate:triage-report` | Triage a pending report |
-| `/flowstate:parallel` | Run multiple tasks in parallel |
-| `/flowstate:condense-tasks` | Trim Notes and middle Progress Log entries from completed tasks |
+| `/flowstate:triage-report` | User-only: triage a pending report |
+| `/flowstate:parallel` | User-only: run multiple tasks in parallel |
+| `/flowstate:condense-tasks` | User-only: trim Notes and middle Progress Log entries from completed tasks |
 | `/flowstate:add-learning` | Document an insight or lesson learned |
 | `/flowstate:learnings` | Browse the learnings index |
-| `/flowstate:condense-learnings` | Deduplicate, archive stale entries, and normalize tags |
+| `/flowstate:condense-learnings` | User-only: deduplicate, archive stale entries, and normalize tags |
 | `/flowstate:retro` | User-only: review a session and file its mistakes as check tasks, AGENTS.md proposals, or learnings |
 
 ## ID Format

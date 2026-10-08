@@ -1,23 +1,6 @@
 {
-  "rank1Ratchet": 0.958,
+  "rank1Ratchet": 1,
   "skills": {
-    "agent-handoff": {
-      "positive": [
-        "write a handoff prompt for each target repo",
-        "hand this off to another agent",
-        "reconcile the agent report against the original handoff, what did the agent actually do"
-      ],
-      "negative": [
-        {
-          "prompt": "review this pull request with parallel agents",
-          "owner": "review-pr"
-        },
-        {
-          "prompt": "explain why the CI run is red",
-          "owner": "ci-triage"
-        }
-      ]
-    },
     "changeset": {
       "positive": [
         "add changeset for this change",
@@ -60,11 +43,11 @@
       ],
       "negative": [
         {
-          "prompt": "get this PR ready, resolve the review threads and fix the red CI",
-          "owner": "pr-ready"
+          "prompt": "review PR 42 for code quality",
+          "owner": "review-pr"
         },
         {
-          "prompt": "review PR 42 for code quality",
+          "prompt": "review this pull request and give me a merge recommendation",
           "owner": "review-pr"
         }
       ]
@@ -94,29 +77,12 @@
       ],
       "negative": [
         {
-          "prompt": "make my PR mergeable, address review comments",
-          "owner": "pr-ready"
-        },
-        {
           "prompt": "commit my staged changes",
           "owner": "commit"
-        }
-      ]
-    },
-    "pr-ready": {
-      "positive": [
-        "get this PR ready",
-        "make my PR mergeable and address review comments",
-        "fix my PR, resolve the review threads"
-      ],
-      "negative": [
-        {
-          "prompt": "create a pull request for this branch",
-          "owner": "open-pr"
         },
         {
-          "prompt": "review this pull request from a teammate",
-          "owner": "review-pr"
+          "prompt": "commit these changes with a conventional message",
+          "owner": "commit"
         }
       ]
     },
@@ -128,11 +94,11 @@
       ],
       "negative": [
         {
-          "prompt": "address review comments on my PR and make it mergeable",
-          "owner": "pr-ready"
+          "prompt": "why is CI red on this PR",
+          "owner": "ci-triage"
         },
         {
-          "prompt": "why is CI red on this PR",
+          "prompt": "why is CI red on my branch",
           "owner": "ci-triage"
         }
       ]

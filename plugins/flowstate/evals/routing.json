@@ -1,5 +1,5 @@
 {
-  "rank1Ratchet": 0.925,
+  "rank1Ratchet": 0.916,
   "skills": {
     "add-learning": {
       "positive": [
@@ -86,40 +86,6 @@
         }
       ]
     },
-    "condense-learnings": {
-      "positive": [
-        "condense learnings",
-        "clean up learnings and deduplicate similar entries",
-        "organize learnings, normalize tags and archive stale ones"
-      ],
-      "negative": [
-        {
-          "prompt": "condense tasks that are completed, trim the done backlog",
-          "owner": "condense-tasks"
-        },
-        {
-          "prompt": "search the learnings index for hooks insights",
-          "owner": "learnings"
-        }
-      ]
-    },
-    "condense-tasks": {
-      "positive": [
-        "condense tasks",
-        "clean up done tasks to shrink the completed files",
-        "trim completed backlog entries, drop the notes scratchpad"
-      ],
-      "negative": [
-        {
-          "prompt": "condense learnings and deduplicate tags",
-          "owner": "condense-learnings"
-        },
-        {
-          "prompt": "show the backlog overview with stats",
-          "owner": "overview"
-        }
-      ]
-    },
     "idea": {
       "positive": [
         "plan this feature before we write any code",
@@ -132,8 +98,8 @@
           "owner": "add-task"
         },
         {
-          "prompt": "approve the pending plan and convert it to a task",
-          "owner": "review-idea"
+          "prompt": "check my backlog and tell me which task to pick up next",
+          "owner": "next-task"
         }
       ]
     },
@@ -149,8 +115,8 @@
           "owner": "add-learning"
         },
         {
-          "prompt": "condense learnings and archive stale entries",
-          "owner": "condense-learnings"
+          "prompt": "TIL the cache key needs the locale, remember this for next time",
+          "owner": "add-learning"
         }
       ]
     },
@@ -179,12 +145,12 @@
       ],
       "negative": [
         {
-          "prompt": "run these three tasks in parallel with worktree isolation",
-          "owner": "parallel"
-        },
-        {
           "prompt": "start task TSK-030 and pick up the work",
           "owner": "start-task"
+        },
+        {
+          "prompt": "mark task TSK-012 as complete",
+          "owner": "complete-task"
         }
       ]
     },
@@ -205,23 +171,6 @@
         }
       ]
     },
-    "parallel": {
-      "positive": [
-        "run tasks in parallel",
-        "do these backlog tasks at the same time with subagents",
-        "multiple non-overlapping tasks can be worked on concurrently, execute them simultaneously"
-      ],
-      "negative": [
-        {
-          "prompt": "which task should I do next, recommend one or up to three that can run together",
-          "owner": "next-task"
-        },
-        {
-          "prompt": "start task TSK-040 and move it to active",
-          "owner": "start-task"
-        }
-      ]
-    },
     "report": {
       "positive": [
         "found a bug in the index rebuild",
@@ -230,45 +179,11 @@
       ],
       "negative": [
         {
-          "prompt": "triage the pending report and convert it to a task",
-          "owner": "triage-report"
-        },
-        {
           "prompt": "TIL the build order matters, note this learning",
           "owner": "add-learning"
-        }
-      ]
-    },
-    "review-idea": {
-      "positive": [
-        "review plan PLN-004",
-        "approve the plan and convert it to a task",
-        "check the plan that /flowstate:idea just generated, revise or discard"
-      ],
-      "negative": [
-        {
-          "prompt": "generate a plan for the caching feature",
-          "owner": "idea"
         },
         {
-          "prompt": "triage this pending report, discard or convert",
-          "owner": "triage-report"
-        }
-      ]
-    },
-    "setup": {
-      "positive": [
-        "set up flowstate in this project",
-        "create backlog directory structure for tracking",
-        "initialize tracking as a private backlog"
-      ],
-      "negative": [
-        {
-          "prompt": "add task to the backlog for the new feature",
-          "owner": "add-task"
-        },
-        {
-          "prompt": "show backlog overview with stats",
+          "prompt": "show backlog status and project overview",
           "owner": "overview"
         }
       ]
@@ -287,23 +202,6 @@
         {
           "prompt": "add task for the CSV export feature",
           "owner": "add-task"
-        }
-      ]
-    },
-    "triage-report": {
-      "positive": [
-        "triage report RPT-003",
-        "handle this bug report that is pending",
-        "convert the pending report to a task or discard it"
-      ],
-      "negative": [
-        {
-          "prompt": "found a bug, file a report about the crash",
-          "owner": "report"
-        },
-        {
-          "prompt": "review the pending plan and approve it",
-          "owner": "review-idea"
         }
       ]
     }

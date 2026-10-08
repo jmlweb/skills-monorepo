@@ -1,6 +1,7 @@
 ---
 name: review-idea
-description: Review a pending plan and decide — approve (convert to task), discard, or revise. Use when the user says "review plan", "approve plan", "check the plan", or after generating a plan with /flowstate:idea.
+description: Reviews a pending idea and approves, discards or revises it.
+disable-model-invocation: true
 argument-hint: [plan ID]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet

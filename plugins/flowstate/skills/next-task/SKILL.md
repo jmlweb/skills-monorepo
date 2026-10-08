@@ -8,7 +8,7 @@ effort: medium
 
 # Next Task
 
-Analyze the backlog and recommend the best task to start next. When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group so the user can hand them off to `/flowstate:parallel`.
+Analyze the backlog and recommend the best task to start next. When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group so the user can run them with `/flowstate:parallel`.
 
 ## Prerequisites
 
@@ -118,9 +118,9 @@ In both forms, show up to 5 alternatives. If more pending tasks exist, note: "â€
 
 ### 6. Handle Response
 
-- **`parallel` / `all` / `yes` (when a group was offered)**: Hand off to `/flowstate:parallel` with the group's task IDs as arguments
+- **`parallel` / `all` / `yes` (when a group was offered)**: Tell the user to run `/flowstate:parallel {{IDs}}` with the group's task IDs (the command is user-invoked)
 - **Single ID or number** (top pick, group member, or any alternative): Move it to active via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active` (same as `/flowstate:start-task`) and proceed implementing
-- **Comma-separated IDs**: Hand off to `/flowstate:parallel` with those IDs
+- **Comma-separated IDs**: Tell the user to run `/flowstate:parallel {{IDs}}` with those IDs
 - **Question about a task**: Answer it without moving anything; the user can reply with an ID afterwards
 - **"no" / silence / unrelated**: Do nothing â€” user will re-invoke when ready
 
@@ -140,6 +140,6 @@ In both forms, show up to 5 alternatives. If more pending tasks exist, note: "â€
   Reply with an idea ID to review (`/flowstate:review-idea <ID>`) and promote it to a task, or run `/flowstate:add-task` to add a new task directly.
   ```
 
-  If the user picks an idea, hand off to `/flowstate:review-idea` rather than auto-promoting â€” review keeps a human in the loop for scoping decisions.
+  If the user picks an idea, tell the user to run `/flowstate:review-idea <ID>` rather than auto-promoting â€” review keeps a human in the loop for scoping decisions.
 - **No pending tasks and no pending ideas**: Suggest `/flowstate:add-task` or `/flowstate:idea`
 - **Many same-priority**: Rank by secondary factors, explain reasoning

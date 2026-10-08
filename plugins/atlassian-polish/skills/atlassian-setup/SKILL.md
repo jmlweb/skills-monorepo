@@ -1,6 +1,7 @@
 ---
 name: atlassian-setup
-description: Guides connecting Claude Code to a Jira or Confluence site for atlassian-polish — detects Cloud vs Data Center from a URL, checks existing MCP servers and tokens, and links the exact page to create credentials. Use when the user says "set up atlassian-polish", "connect Jira", "configure Confluence access", "atlassian-setup", or when polish-atlassian finds no Atlassian tools. Never asks for or stores a token in chat.
+description: Guides connecting Claude Code to a Jira or Confluence site.
+disable-model-invocation: true
 argument-hint: [Jira or Confluence URL]
 allowed-tools: Read, Bash(claude mcp list:*), Bash(claude mcp get:*), Bash(command -v:*), Bash(test:*), Bash(curl -sS:*)
 model: haiku
