@@ -248,6 +248,26 @@ describe("CLI integration", () => {
     expect(viaSimilarTo[0]!.id).toBe("LRN-001");
   });
 
+  it("list commands print exactly one line per entity in plain mode", () => {
+    run("setup", "--project-name", "IntTest");
+    for (const n of ["One", "Two", "Three"]) {
+      run("task-create", "--title", `Task ${n}`, "--priority", "P2", "--description", "line a\nline b");
+      run("idea-create", "--title", `Idea ${n}`, "--complexity", "low", "--body", "line a\n\nline b\tTabbed");
+      run("learning-create", "--title", `Learning ${n} redis`, "--tags", "redis", "--body", "line a\n\nline b\tTabbed");
+    }
+    const lines = (...args: string[]): string[] => run(...args).split("\n");
+
+    expect(lines("task-list")).toHaveLength(3);
+    expect(lines("idea-list")).toHaveLength(3);
+    const learnings = lines("learning-list");
+    expect(learnings).toHaveLength(3);
+    expect(learnings[0]).toContain("line a\\n\\nline b\\tTabbed");
+    expect(lines("learning-search", "--query", "redis")).toHaveLength(3);
+
+    const json = runJson("learning-list") as { body: string }[];
+    expect(json[0]!.body).toContain("line a\n\nline b");
+  });
+
   it("idea-list lists pending ideas and supports --status filter", () => {
     run("setup", "--project-name", "IntTest");
     runJson("idea-create", "--title", "First idea", "--complexity", "low", "--body", "test");
