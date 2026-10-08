@@ -163,6 +163,7 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:add-learning` | Document an insight or lesson discovered during development |
 | `/flowstate:learnings` | Browse and search the learnings index |
 | `/flowstate:condense-learnings` | Deduplicate, archive stale entries, and normalize tags |
+| `/flowstate:retro` | 🔁 User-only. Review a session, rank its mistakes, and file approved ones as check tasks, AGENTS.md proposals, or learnings |
 
 ---
 

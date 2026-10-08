@@ -1,7 +1,7 @@
 ---
 name: flowstate
 description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
-version: 2.8.0
+version: 2.9.0
 ---
 
 # Flowstate - Backlog Management System
@@ -88,6 +88,7 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `/flowstate:add-learning` | Document an insight or lesson learned |
 | `/flowstate:learnings` | Browse the learnings index |
 | `/flowstate:condense-learnings` | Deduplicate, archive stale entries, and normalize tags |
+| `/flowstate:retro` | User-only: review a session and file its mistakes as check tasks, AGENTS.md proposals, or learnings |
 
 ## ID Format
 
