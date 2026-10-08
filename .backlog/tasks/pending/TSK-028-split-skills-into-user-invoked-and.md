@@ -51,3 +51,4 @@ README grouping by invocation dropped from scope (review decision).
 - [2026-10-08] Scope added from discarded PLN-018: next-task SKILL.md lines ~121/123 hand off to /flowstate:parallel operatively. If parallel stays model-invoked, rewrite as 'Call the Skill tool with flowstate:parallel'; if flipped to user-invoked, change to 'tell the user to run /flowstate:parallel <IDs>'.
 - [2026-10-08] Backlog check: criterion 7 and step 8 (one-line description test for user-invoked skills) are absorbed by TSK-038 lint rule 3. If TSK-038 lands first, satisfy criterion 7 by pointing at the lint rule instead of adding a separate test.
 - [2026-10-08] TSK-041: model-invoked skill descriptions follow docs/writing-skills.md section 6 (what clause, 3+ quoted triggers, Not for X). User-invoked ones stay one-line human-facing.
+- [2026-10-08] TSK-038 lint absorbs step 8 (one-line description guard for user-invoked skills); implement it as a lint rule, not a plugin test.

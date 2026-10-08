@@ -66,7 +66,10 @@ The skills call the CLIs: about 25 distinct `flowstate.js` subcommands, plus `de
 
 ## Learnings
 
+- LRN-016: CLI --help goes to stderr for dev-workflow and atlassian-polish, stdout for flowstate
+- LRN-017: Worktree agents' git calls are refused when the guard cannot prove the command is not git
 ## Progress Log
 
 - [2026-10-08] Created
 - [2026-10-08] Started
+- [2026-10-08] Implemented on branch worktree-agent-a85a46fcd92cdb2ae (6068285, ec2c919); awaiting merge. Annotations on TSK-028/033-035 done. Lint: 0 errors, 1 warning (polish-atlassian length, TSK-035).

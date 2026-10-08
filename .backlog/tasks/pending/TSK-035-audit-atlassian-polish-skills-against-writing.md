@@ -38,3 +38,4 @@ Also: bring polish-atlassian/SKILL.md (243 lines) under 150 by disclosing detail
 - [2026-10-08] Created
 - [2026-10-08] Backlog grooming: priority P2 -> P3 to match sibling audits TSK-033/034; depends-on set to TSK-028, TSK-032, TSK-041.
 - [2026-10-08] TSK-041: audit also rewrites workflow-summary descriptions to the docs/writing-skills.md section 6 shape and considers a section 7 Rationalizations table for discipline skills.
+- [2026-10-08] Audit ends by clearing its plugin's pnpm lint:skills warnings (TSK-038); a follow-up flips CI to --strict.
