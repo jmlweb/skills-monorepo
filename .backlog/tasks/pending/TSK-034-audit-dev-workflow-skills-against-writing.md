@@ -36,3 +36,4 @@ Steps 4-7 of PLN-013. Depends on the rules task and TSK-028.
 
 - [2026-10-08] Created
 - [2026-10-08] Scope added from discarded PLN-019 (agent-handoff): add a rule that Goal/Constraints must not restate what the Links section already covers; add an optional, conditional 'Suggested skills' section to the out template (e.g. 'if flowstate is installed, /flowstate:start-task <ID>').
+- [2026-10-08] TSK-041: audit also rewrites workflow-summary descriptions to the docs/writing-skills.md section 6 shape and considers a section 7 Rationalizations table for discipline skills.

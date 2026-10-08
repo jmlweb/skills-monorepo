@@ -55,7 +55,10 @@ Why we need it: flowstate has 18 skills with overlapping vocabulary (`idea`/`add
 
 ## Learnings
 
+- LRN-011: claude plugin eval cases are prompt.md plus graders, not case.yaml
+- LRN-012: Top-3 routing test fixtures need more than 3 skills
 ## Progress Log
 
 - [2026-10-08] Created
 - [2026-10-08] Started
+- [2026-10-08] Merged d189a65; tier-2 run 10/10 pass (1 run each, check-task/next-task hit max_turns 4); claude plugin details token-cost check not run

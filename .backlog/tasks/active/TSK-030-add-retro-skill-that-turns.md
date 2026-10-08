@@ -53,7 +53,9 @@ Idea from mattpocock/skills `retro`. Our `add-learning` records lessons but neve
 
 ## Learnings
 
+- LRN-010: Worktree agents: use /usr/bin/git, pnpm install first, hooks don't run
 ## Progress Log
 
 - [2026-10-08] Created
 - [2026-10-08] Started
+- [2026-10-08] Merged 8aefeb7; dogfood filed TSK-044..048

@@ -73,3 +73,4 @@ PLN-013 → TSK-032..035 define the doc and the audits. This idea adds scope to 
 - [2026-10-08] Created
 - [2026-10-08] Backlog grooming: priority P3 -> P2 because it blocks audits TSK-033..035; depends-on TSK-032.
 - [2026-10-08] Started
+- [2026-10-08] Merged 7633d37

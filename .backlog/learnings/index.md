@@ -13,3 +13,6 @@
 | LRN-007 | Verified: settings env reaches Bash and hooks; CLAUDE_PROJECT_DIR is hook-only | claude-code, settings, env, hooks, flowstate | active | 2026-10-08 |
 | LRN-008 | Worktree agents must call /usr/bin/git; RTK rewrite trips the isolation guard | worktree, parallel, rtk, git, tooling | active | 2026-10-08 |
 | LRN-009 | Root plugin validate only checks marketplace; validate the plugin dir for agents/skills | claude-code, plugin-validation, agents | active | 2026-10-08 |
+| LRN-010 | Worktree agents: use /usr/bin/git, pnpm install first, hooks don't run | worktree, git, rtk, pnpm, tooling | active | 2026-10-08 |
+| LRN-011 | claude plugin eval cases are prompt.md plus graders, not case.yaml | evals, claude-code, routing | active | 2026-10-08 |
+| LRN-012 | Top-3 routing test fixtures need more than 3 skills | testing, routing, tf-idf | active | 2026-10-08 |
