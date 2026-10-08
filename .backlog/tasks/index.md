@@ -5,13 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 4 |
-| Active | 1 |
+| Active | 0 |
 | Blocked | 0 |
-| Complete | 22 |
+| Complete | 23 |
 
 ## Active Tasks
 
-- TSK-027: flowstate: configurable backlog directory for private backlogs (P2)
+_No active tasks._
 
 ## Pending Tasks
 
@@ -28,6 +28,7 @@
 |----|-------|-----------|
 | TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | 2026-10-08 |
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
+| TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
 | TSK-022 | flowstate: log-progress skill | 2026-10-07 |
 | TSK-016 | Bump deprecated GitHub Actions to current majors | 2026-10-06 |
 | TSK-019 | dev-workflow: ci-triage skill | 2026-10-06 |
@@ -35,4 +36,3 @@
 | TSK-017 | atlassian-polish: Markdown to Jira ADF converter script | 2026-10-01 |
 | TSK-010 | Support --help/-h flag in flowstate CLI globally and per subcommand | 2026-04-27 |
 | TSK-011 | Document --include-archived flag and status filters in flowstate CLI README | 2026-04-27 |
-| TSK-012 | Filter archived learnings from learning-list by default | 2026-04-27 |
