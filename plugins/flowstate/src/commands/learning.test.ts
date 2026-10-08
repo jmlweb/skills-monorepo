@@ -42,7 +42,7 @@ describe("learningCreate", () => {
     });
 
     const index = await readFile(
-      join(tmp, ".backlog", "learnings", "index.md"),
+      join(tmp, "learnings", "index.md"),
       "utf-8",
     );
     expect(index).toContain("| LRN-001 | Always test edge cases |");
@@ -63,7 +63,6 @@ describe("learningCreate", () => {
     const { writeFile } = await import("node:fs/promises");
     const taskFile = join(
       tmp,
-      ".backlog",
       "tasks",
       "pending",
       "TSK-001-legacy-task.md",
@@ -105,7 +104,6 @@ describe("learningCreate", () => {
 
     const taskFile = join(
       tmp,
-      ".backlog",
       "tasks",
       "pending",
       "TSK-001-fix-bug.md",

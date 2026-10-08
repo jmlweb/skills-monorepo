@@ -78,7 +78,7 @@ describe("taskCreate", () => {
     });
 
     const index = await readFile(
-      join(tmp, ".backlog", "tasks", "index.md"),
+      join(tmp, "tasks", "index.md"),
       "utf-8",
     );
     expect(index).toContain("| TSK-001 | Fix bug | P2 |");

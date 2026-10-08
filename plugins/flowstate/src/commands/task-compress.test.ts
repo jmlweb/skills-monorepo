@@ -31,7 +31,7 @@ async function makeCompleteTaskWithBody(id: string, body: string): Promise<strin
   });
   await taskMove(tmp, id, "active");
   await taskMove(tmp, id, "complete");
-  const filePath = join(tmp, ".backlog", "tasks", "complete", `${id}-fix.md`);
+  const filePath = join(tmp, "tasks", "complete", `${id}-fix.md`);
   const doc = await readEntity(filePath);
   await writeEntity(filePath, doc.frontmatter as Record<string, unknown>, body);
   return filePath;

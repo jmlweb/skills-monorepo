@@ -2,7 +2,6 @@ import { existsSync } from "node:fs";
 import { rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ensureDir } from "../core/fs.js";
-import { backlogRoot } from "../core/paths.js";
 const TASK_INDEX_TEMPLATE = (name) => `# ${name} - Task Index
 
 ## Stats
@@ -36,22 +35,21 @@ const LEARNINGS_INDEX_TEMPLATE = (name) => `# ${name} - Learnings Index
 |----|-------|------|--------|------|
 `;
 export async function setup(root, projectName) {
-    const backlogDir = backlogRoot(root);
     // Migration: rename plans/ -> ideas/
-    const oldPlansDir = join(backlogDir, "plans");
-    const newIdeasDir = join(backlogDir, "ideas");
+    const oldPlansDir = join(root, "plans");
+    const newIdeasDir = join(root, "ideas");
     if (existsSync(oldPlansDir) && !existsSync(newIdeasDir)) {
         await rename(oldPlansDir, newIdeasDir);
     }
     const dirs = [
-        join(backlogDir, "tasks", "pending"),
-        join(backlogDir, "tasks", "active"),
-        join(backlogDir, "tasks", "complete"),
-        join(backlogDir, "ideas", "pending"),
-        join(backlogDir, "ideas", "complete"),
-        join(backlogDir, "reports", "pending"),
-        join(backlogDir, "reports", "complete"),
-        join(backlogDir, "learnings"),
+        join(root, "tasks", "pending"),
+        join(root, "tasks", "active"),
+        join(root, "tasks", "complete"),
+        join(root, "ideas", "pending"),
+        join(root, "ideas", "complete"),
+        join(root, "reports", "pending"),
+        join(root, "reports", "complete"),
+        join(root, "learnings"),
     ];
     await Promise.all(dirs.map(ensureDir));
     // Git drops empty dirs; without a placeholder a fresh clone lacks tasks/active/ and
@@ -60,8 +58,8 @@ export async function setup(root, projectName) {
         if (err.code !== "EEXIST")
             throw err;
     })));
-    const taskIndexPath = join(backlogDir, "tasks", "index.md");
-    const learningsIndexPath = join(backlogDir, "learnings", "index.md");
+    const taskIndexPath = join(root, "tasks", "index.md");
+    const learningsIndexPath = join(root, "learnings", "index.md");
     await writeFile(taskIndexPath, TASK_INDEX_TEMPLATE(projectName), {
         flag: "wx",
     }).catch(() => {
@@ -72,5 +70,5 @@ export async function setup(root, projectName) {
     }).catch(() => {
         // File already exists — idempotent
     });
-    return backlogDir;
+    return root;
 }

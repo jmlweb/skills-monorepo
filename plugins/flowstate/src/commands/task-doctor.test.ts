@@ -37,7 +37,7 @@ async function injectStatus(
   fileName: string,
   status: string,
 ): Promise<string> {
-  const path = join(tmp, ".backlog", "tasks", folder, fileName);
+  const path = join(tmp, "tasks", folder, fileName);
   const doc = await readEntity(path);
   const fm = { ...(doc.frontmatter as Record<string, unknown>) };
   fm["status"] = status;

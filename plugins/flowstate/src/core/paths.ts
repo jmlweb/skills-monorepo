@@ -1,54 +1,96 @@
+import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import type { EntityType, TaskStatus } from "./types.js";
-import { BacklogNotFoundError } from "./errors.js";
+import {
+  BacklogDirMissingError,
+  BacklogNotFoundError,
+  InvalidArgumentError,
+} from "./errors.js";
 
-export function findBacklogRoot(start: string): string {
+export const BACKLOG_DIR_ENV = "FLOWSTATE_BACKLOG_DIR";
+
+export type BacklogSource = "env" | "walk-up";
+
+export interface ResolvedBacklog {
+  readonly dir: string;
+  readonly source: BacklogSource;
+}
+
+type Env = Readonly<Record<string, string | undefined>>;
+
+// Nearest ancestor holding .git (dir or worktree file) or .backlog. Deliberately
+// independent of CLAUDE_PROJECT_DIR, which Bash tool calls do not receive.
+export function findProjectRoot(start: string): string {
   let dir = start;
   for (;;) {
-    if (existsSync(join(dir, ".backlog"))) return dir;
-    const parent = dirname(dir);
-    if (parent === dir) {
-      throw new BacklogNotFoundError(start);
+    if (existsSync(join(dir, ".git")) || existsSync(join(dir, ".backlog"))) {
+      return dir;
     }
+    const parent = dirname(dir);
+    if (parent === dir) return start;
     dir = parent;
   }
 }
 
-export function backlogRoot(root: string): string {
-  return join(root, ".backlog");
+// FLOWSTATE_BACKLOG_DIR first (absolute; a relative value is resolved against the
+// project root), then the nearest ancestor's .backlog. A configured directory that
+// does not exist throws instead of silently yielding an empty backlog (LRN-001).
+export function resolveBacklog(
+  start: string,
+  env: Env = process.env,
+): ResolvedBacklog {
+  const configured = env[BACKLOG_DIR_ENV];
+  if (configured !== undefined && configured !== "") {
+    const dir = resolve(findProjectRoot(start), configured);
+    if (!existsSync(dir)) throw new BacklogDirMissingError(dir);
+    return { dir, source: "env" };
+  }
+
+  let dir = start;
+  for (;;) {
+    const candidate = join(dir, ".backlog");
+    if (existsSync(candidate)) return { dir: candidate, source: "walk-up" };
+    const parent = dirname(dir);
+    if (parent === dir) throw new BacklogNotFoundError(start);
+    dir = parent;
+  }
+}
+
+export function findBacklogRoot(start: string, env: Env = process.env): string {
+  return resolveBacklog(start, env).dir;
 }
 
 export function taskDir(root: string, status: TaskStatus | "all"): string {
   if (status === "blocked") return taskDir(root, "active");
-  if (status === "all") return join(backlogRoot(root), "tasks");
-  return join(backlogRoot(root), "tasks", status);
+  if (status === "all") return join(root, "tasks");
+  return join(root, "tasks", status);
 }
 
 export function ideaDir(
   root: string,
   status: "pending" | "complete",
 ): string {
-  return join(backlogRoot(root), "ideas", status);
+  return join(root, "ideas", status);
 }
 
 export function reportDir(
   root: string,
   status: "pending" | "complete",
 ): string {
-  return join(backlogRoot(root), "reports", status);
+  return join(root, "reports", status);
 }
 
 export function learningsDir(root: string): string {
-  return join(backlogRoot(root), "learnings");
+  return join(root, "learnings");
 }
 
 export function taskIndexPath(root: string): string {
-  return join(backlogRoot(root), "tasks", "index.md");
+  return join(root, "tasks", "index.md");
 }
 
 export function learningsIndexPath(root: string): string {
-  return join(backlogRoot(root), "learnings", "index.md");
+  return join(root, "learnings", "index.md");
 }
 
 export const ENTITY_DIRS: Record<
@@ -70,3 +112,56 @@ export const ENTITY_DIRS: Record<
   ],
   learning: [{ dir: "learnings", status: "" }],
 };
+
+// Shared by all worktrees and never tracked, so a backlog here stays private.
+export function privateBacklogDir(start: string): string {
+  let out: string;
+  try {
+    out = execFileSync("git", ["rev-parse", "--git-common-dir"], {
+      cwd: start,
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    throw new InvalidArgumentError(
+      "--private needs a repository checkout. Use --dir <path> instead.",
+    );
+  }
+  return join(resolve(start, out), "flowstate");
+}
+
+export interface SetupTargetInput {
+  readonly dir?: string;
+  readonly isPrivate?: boolean;
+}
+
+export interface SetupTarget {
+  readonly dir: string;
+  readonly isCustom: boolean;
+}
+
+// Unlike resolveBacklog, the target may not exist yet: setup is what creates it.
+export function resolveSetupTarget(
+  start: string,
+  input: SetupTargetInput,
+  env: Env = process.env,
+): SetupTarget {
+  if (input.dir !== undefined && input.isPrivate === true) {
+    throw new InvalidArgumentError("Use either --dir or --private, not both.");
+  }
+  if (input.dir !== undefined) {
+    return { dir: resolve(findProjectRoot(start), input.dir), isCustom: true };
+  }
+  if (input.isPrivate === true) {
+    return { dir: privateBacklogDir(start), isCustom: true };
+  }
+  const configured = env[BACKLOG_DIR_ENV];
+  if (configured !== undefined && configured !== "") {
+    return { dir: resolve(findProjectRoot(start), configured), isCustom: false };
+  }
+  return { dir: join(start, ".backlog"), isCustom: false };
+}
+
+export function settingsSnippet(dir: string): string {
+  return JSON.stringify({ env: { [BACKLOG_DIR_ENV]: dir } });
+}

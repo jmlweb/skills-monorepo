@@ -1,6 +1,5 @@
 import { join } from "node:path";
 import type { TaskStatus } from "../core/types.js";
-import { backlogRoot } from "../core/paths.js";
 import { listFiles, readEntity, writeEntity } from "../core/fs.js";
 
 export interface TaskDoctorFix {
@@ -55,12 +54,11 @@ export async function taskDoctor(
   options: { readonly dryRun?: boolean } = {},
 ): Promise<TaskDoctorResult> {
   const dryRun = options.dryRun === true;
-  const backlogDir = backlogRoot(root);
   const fixes: TaskDoctorFix[] = [];
   let scanned = 0;
 
   for (const folder of FOLDERS) {
-    const dir = join(backlogDir, "tasks", folder);
+    const dir = join(root, "tasks", folder);
     let files;
     try {
       files = await listFiles(dir);

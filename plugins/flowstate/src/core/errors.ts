@@ -1,9 +1,18 @@
 export class BacklogNotFoundError extends Error {
   constructor(root: string) {
     super(
-      `No .backlog/ directory found in ${root} or any parent directory. Run "flowstate setup" to create one.`,
+      `No .backlog/ directory found in ${root} or any parent directory, and FLOWSTATE_BACKLOG_DIR is not set. Run "flowstate setup" to create one (or "flowstate setup --dir <path>" for a private backlog).`,
     );
     this.name = "BacklogNotFoundError";
+  }
+}
+
+export class BacklogDirMissingError extends Error {
+  constructor(dir: string) {
+    super(
+      `FLOWSTATE_BACKLOG_DIR points to "${dir}", which does not exist. Run "flowstate setup --dir ${dir}" to create it, or fix/unset the variable.`,
+    );
+    this.name = "BacklogDirMissingError";
   }
 }
 

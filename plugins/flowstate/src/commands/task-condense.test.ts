@@ -33,14 +33,14 @@ async function createCompleteTask(id: string, title: string): Promise<string> {
   });
   await taskMove(tmp, id, "active");
   await taskMove(tmp, id, "complete");
-  return join(tmp, ".backlog", "tasks", "complete");
+  return join(tmp, "tasks", "complete");
 }
 
 describe("taskCondense", () => {
   it("trims Notes content from a complete task", async () => {
     await createCompleteTask("TSK-001", "Fix");
     // Inject Notes content
-    const filePath = join(tmp, ".backlog", "tasks", "complete", "TSK-001-fix.md");
+    const filePath = join(tmp, "tasks", "complete", "TSK-001-fix.md");
     const doc = await readEntity(filePath);
     const body = replaceSection(doc.body, "Notes", "Some scratchpad notes\nMore intermediate thoughts");
     await writeEntity(filePath, doc.frontmatter as Record<string, unknown>, body);
@@ -58,7 +58,7 @@ describe("taskCondense", () => {
 
   it("trims middle Progress Log entries, keeping first and last", async () => {
     await createCompleteTask("TSK-001", "Fix");
-    const filePath = join(tmp, ".backlog", "tasks", "complete", "TSK-001-fix.md");
+    const filePath = join(tmp, "tasks", "complete", "TSK-001-fix.md");
 
     // Inject middle progress log entries
     await taskUpdate(tmp, "TSK-001", {}, "Working on it");
@@ -90,7 +90,7 @@ describe("taskCondense", () => {
 
   it("is idempotent (skips if condensed: true)", async () => {
     await createCompleteTask("TSK-001", "Fix");
-    const filePath = join(tmp, ".backlog", "tasks", "complete", "TSK-001-fix.md");
+    const filePath = join(tmp, "tasks", "complete", "TSK-001-fix.md");
     const doc = await readEntity(filePath);
     const body = replaceSection(doc.body, "Notes", "stuff to drop");
     await writeEntity(filePath, doc.frontmatter as Record<string, unknown>, body);
@@ -127,7 +127,7 @@ describe("taskCondenseAll", () => {
     await createCompleteTask("TSK-002", "Second");
 
     // Inject Notes into TSK-001 only
-    const path1 = join(tmp, ".backlog", "tasks", "complete", "TSK-001-first.md");
+    const path1 = join(tmp, "tasks", "complete", "TSK-001-first.md");
     const doc1 = await readEntity(path1);
     const body1 = replaceSection(doc1.body, "Notes", "noise");
     await writeEntity(path1, doc1.frontmatter as Record<string, unknown>, body1);

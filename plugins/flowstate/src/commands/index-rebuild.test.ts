@@ -28,7 +28,7 @@ describe("indexRebuild", () => {
     await indexRebuild(tmp, "tasks");
 
     const index = await readFile(
-      join(tmp, ".backlog", "tasks", "index.md"),
+      join(tmp, "tasks", "index.md"),
       "utf-8",
     );
     expect(index).toContain("| Pending | 1 |");
@@ -40,7 +40,7 @@ describe("indexRebuild", () => {
     await indexRebuild(tmp, "tasks");
 
     const index = await readFile(
-      join(tmp, ".backlog", "tasks", "index.md"),
+      join(tmp, "tasks", "index.md"),
       "utf-8",
     );
     expect(index).toContain("| Pending | 0 |");
@@ -55,7 +55,7 @@ describe("indexRebuild", () => {
     });
 
     // Append content after the table
-    const indexPath = join(tmp, ".backlog", "learnings", "index.md");
+    const indexPath = join(tmp, "learnings", "index.md");
     const original = await readFile(indexPath, "utf-8");
     const withTrailing = original + "\n> Consult a learning's full document for details.\n";
     await writeFile(indexPath, withTrailing, "utf-8");

@@ -74,7 +74,7 @@ describe("taskMove", () => {
     await taskMove(tmp, "TSK-001", "active");
 
     const index = await readFile(
-      join(tmp, ".backlog", "tasks", "index.md"),
+      join(tmp, "tasks", "index.md"),
       "utf-8",
     );
     expect(index).toContain("| Pending | 0 |");
@@ -95,7 +95,7 @@ describe("taskMove", () => {
     await taskMove(tmp, "TSK-001", "complete");
 
     const index = await readFile(
-      join(tmp, ".backlog", "tasks", "index.md"),
+      join(tmp, "tasks", "index.md"),
       "utf-8",
     );
     expect(index).toContain("| TSK-001 | Fix bug |");
@@ -130,7 +130,7 @@ describe("taskMove", () => {
     }
 
     const index = await readFile(
-      join(tmp, ".backlog", "tasks", "index.md"),
+      join(tmp, "tasks", "index.md"),
       "utf-8",
     );
     expect(index).toContain("| Active | 0 |");

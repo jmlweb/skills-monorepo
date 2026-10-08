@@ -18,7 +18,7 @@ describe("setup", () => {
   it("creates .backlog directory structure", async () => {
     await setup(tmp, "Test Project");
 
-    const backlog = join(tmp, ".backlog");
+    const backlog = tmp;
     const entries = await readdir(backlog);
     expect(entries.sort()).toEqual(["ideas", "learnings", "reports", "tasks"]);
 
@@ -36,14 +36,14 @@ describe("setup", () => {
     await setup(tmp, "My Cool Project");
 
     const taskIndex = await readFile(
-      join(tmp, ".backlog", "tasks", "index.md"),
+      join(tmp, "tasks", "index.md"),
       "utf-8",
     );
     expect(taskIndex).toContain("# My Cool Project - Task Index");
     expect(taskIndex).toContain("| Pending | 0 |");
 
     const learningsIndex = await readFile(
-      join(tmp, ".backlog", "learnings", "index.md"),
+      join(tmp, "learnings", "index.md"),
       "utf-8",
     );
     expect(learningsIndex).toContain("# My Cool Project - Learnings Index");
@@ -53,12 +53,12 @@ describe("setup", () => {
     await setup(tmp, "Project");
     await setup(tmp, "Project");
 
-    const entries = await readdir(join(tmp, ".backlog", "tasks"));
+    const entries = await readdir(join(tmp, "tasks"));
     expect(entries).toContain("index.md");
   });
 
   it("migrates plans/ to ideas/", async () => {
-    const backlog = join(tmp, ".backlog");
+    const backlog = tmp;
     const oldPending = join(backlog, "plans", "pending");
     const oldComplete = join(backlog, "plans", "complete");
     await mkdir(oldPending, { recursive: true });
@@ -76,7 +76,7 @@ describe("setup", () => {
   });
 
   it("skips migration when both plans/ and ideas/ exist", async () => {
-    const backlog = join(tmp, ".backlog");
+    const backlog = tmp;
     await mkdir(join(backlog, "plans", "pending"), { recursive: true });
     await mkdir(join(backlog, "ideas", "pending"), { recursive: true });
     await writeFile(join(backlog, "plans", "pending", "PLN-001-old.md"), "old");
@@ -93,13 +93,13 @@ describe("setup", () => {
     await setup(tmp, "Test");
 
     for (const dir of ["tasks/pending", "tasks/active", "tasks/complete", "ideas/pending", "ideas/complete", "reports/pending", "reports/complete", "learnings"]) {
-      expect(await readdir(join(tmp, ".backlog", dir))).toContain(".gitkeep");
+      expect(await readdir(join(tmp, dir))).toContain(".gitkeep");
     }
   });
 
   it("keeps existing .gitkeep content on re-run", async () => {
     await setup(tmp, "Test");
-    const keep = join(tmp, ".backlog", "tasks", "active", ".gitkeep");
+    const keep = join(tmp, "tasks", "active", ".gitkeep");
     await writeFile(keep, "custom");
     await setup(tmp, "Test");
 

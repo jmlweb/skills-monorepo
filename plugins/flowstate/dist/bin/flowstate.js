@@ -24,7 +24,7 @@ import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { learningCompress } from "../commands/learning-compress.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
-import { findBacklogRoot } from "../core/paths.js";
+import { resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
 const VALID_ENTITY_TYPES = new Set([
     "task",
@@ -41,7 +41,8 @@ const VALID_TASK_STATUSES = new Set([
 const TOP_LEVEL_HELP = `Usage: flowstate <command> [args]
 
 Commands:
-  setup              Initialize .backlog structure
+  setup              Initialize the backlog structure (.backlog, or a custom/private dir)
+  path               Print the resolved backlog directory
   next-id            Get next ID for an entity type
   task-create        Create a new task
   task-list          List tasks (optionally filter by status)
@@ -72,7 +73,8 @@ Global flags:
 
 Run 'flowstate <command> --help' for command-specific usage.`;
 const COMMAND_HELP = {
-    setup: "Usage: flowstate setup [--project-name <name>]",
+    setup: "Usage: flowstate setup [--project-name <name>] [--dir <path> | --private]\n  --dir <path>  create the backlog at a custom directory (absolute, or relative to the project root) and print the .claude/settings.local.json snippet that points flowstate at it\n  --private     shorthand for --dir <common-git-dir>/flowstate (untracked, shared across worktrees)\n  Runtime resolution: FLOWSTATE_BACKLOG_DIR if set (absolute; a relative value resolves against the project root), else the nearest .backlog/ walking up from cwd.",
+    path: 'Usage: flowstate path [--json true]\n  Prints the resolved backlog directory. With --json true: {"path": ..., "source": "env"|"walk-up"}.',
     "next-id": "Usage: flowstate next-id <task|idea|report|learning>",
     "task-create": "Usage: flowstate task-create --title <text> --priority <P1|P2|P3|P4> [--tags t1,t2] [--description <text> | --body <text|->] [--criteria <json-array>] [--source <ref>] [--depends-on id1,id2]",
     "task-list": "Usage: flowstate task-list [--status <pending|active|blocked|complete>] [--limit <n>]",
@@ -190,15 +192,32 @@ async function main() {
     }
     const { flags, flagArrays, positional } = parseArgs(rest);
     const json = flags["json"] === "true";
-    const root = command === "setup"
-        ? process.cwd()
-        : findBacklogRoot(process.cwd());
     try {
+        // Resolved once here; commands only ever see the final backlog directory.
+        if (command === "setup") {
+            const name = flags["project-name"] ?? "Project";
+            const target = resolveSetupTarget(process.cwd(), {
+                ...(flags["dir"] !== undefined ? { dir: flags["dir"] } : {}),
+                isPrivate: flags["private"] === "true",
+            });
+            const created = await setup(target.dir, name);
+            output(target.isCustom
+                ? {
+                    root: created,
+                    settingsFile: ".claude/settings.local.json",
+                    settingsSnippet: settingsSnippet(created),
+                }
+                : { root: created }, json);
+            return;
+        }
+        const resolved = resolveBacklog(process.cwd());
+        const root = resolved.dir;
         switch (command) {
-            case "setup": {
-                const name = flags["project-name"] ?? "Project";
-                const created = await setup(root, name);
-                output({ root: created }, json);
+            case "path": {
+                if (json)
+                    output({ path: root, source: resolved.source }, true);
+                else
+                    console.log(root);
                 break;
             }
             case "next-id": {

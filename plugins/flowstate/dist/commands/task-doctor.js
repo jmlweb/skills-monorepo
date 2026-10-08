@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { backlogRoot } from "../core/paths.js";
 import { listFiles, readEntity, writeEntity } from "../core/fs.js";
 // Folders that hold task files. Note: "blocked" is not a folder — blocked
 // tasks live in active/ with a `blocked-by` field.
@@ -35,11 +34,10 @@ const SYNONYMS = {
 };
 export async function taskDoctor(root, options = {}) {
     const dryRun = options.dryRun === true;
-    const backlogDir = backlogRoot(root);
     const fixes = [];
     let scanned = 0;
     for (const folder of FOLDERS) {
-        const dir = join(backlogDir, "tasks", folder);
+        const dir = join(root, "tasks", folder);
         let files;
         try {
             files = await listFiles(dir);

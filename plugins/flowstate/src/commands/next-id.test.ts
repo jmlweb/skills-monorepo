@@ -26,7 +26,7 @@ describe("nextId", () => {
   });
 
   it("returns next sequential ID", async () => {
-    const pending = join(tmp, ".backlog", "tasks", "pending");
+    const pending = join(tmp, "tasks", "pending");
     await writeFile(join(pending, "TSK-001-fix-bug.md"), "---\nid: TSK-001\n---\n");
     await writeFile(join(pending, "TSK-003-add-feat.md"), "---\nid: TSK-003\n---\n");
 
@@ -34,9 +34,9 @@ describe("nextId", () => {
   });
 
   it("scans all subdirectories for tasks", async () => {
-    const pending = join(tmp, ".backlog", "tasks", "pending");
-    const active = join(tmp, ".backlog", "tasks", "active");
-    const complete = join(tmp, ".backlog", "tasks", "complete");
+    const pending = join(tmp, "tasks", "pending");
+    const active = join(tmp, "tasks", "active");
+    const complete = join(tmp, "tasks", "complete");
 
     await writeFile(join(pending, "TSK-001-a.md"), "");
     await writeFile(join(active, "TSK-005-b.md"), "");
@@ -46,7 +46,7 @@ describe("nextId", () => {
   });
 
   it("scans learning directories", async () => {
-    const learnings = join(tmp, ".backlog", "learnings");
+    const learnings = join(tmp, "learnings");
     await ensureDir(join(learnings, "LRN-002-some-insight"));
 
     expect(await nextId(tmp, "learning")).toBe("LRN-003");

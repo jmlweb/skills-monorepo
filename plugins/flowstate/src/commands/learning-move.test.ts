@@ -51,7 +51,7 @@ describe("learningMove", () => {
     await learningCreate(tmp, { title: "Old", tags: ["x"], body: "Content." });
     await learningMove(tmp, "LRN-001", "archived");
 
-    const index = await readFile(join(tmp, ".backlog", "learnings", "index.md"), "utf-8");
+    const index = await readFile(join(tmp, "learnings", "index.md"), "utf-8");
     expect(index).toMatch(/\| LRN-001 \| Old \| x \| archived \|/);
   });
 });

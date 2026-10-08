@@ -14,7 +14,14 @@ function run(
     cwd: tmp,
     encoding: "utf-8",
     timeout: 10000,
+    env: cleanEnv(),
   }).trim();
+}
+
+// A developer's own FLOWSTATE_BACKLOG_DIR must not leak into these tests.
+function cleanEnv(extra: Record<string, string> = {}): NodeJS.ProcessEnv {
+  const { FLOWSTATE_BACKLOG_DIR: _ignored, ...rest } = process.env;
+  return { ...rest, ...extra };
 }
 
 function runJson(...args: string[]): unknown {
@@ -369,6 +376,90 @@ describe("CLI integration", () => {
     } finally {
       await rm(isolated, { recursive: true, force: true });
     }
+  });
+
+  describe("private backlog (FLOWSTATE_BACKLOG_DIR)", () => {
+    function runWithEnv(env: Record<string, string>, ...args: string[]): string {
+      return execFileSync("node", [CLI, ...args], {
+        cwd: tmp,
+        encoding: "utf-8",
+        timeout: 10000,
+        env: cleanEnv(env),
+      }).trim();
+    }
+
+    it("setup --dir creates the structure there and prints the settings snippet", async () => {
+      const priv = join(tmp, "priv");
+      const out = JSON.parse(
+        run("setup", "--dir", priv, "--json", "true"),
+      ) as { root: string; settingsFile: string; settingsSnippet: string };
+
+      expect(out.root).toBe(priv);
+      expect(out.settingsFile).toBe(".claude/settings.local.json");
+      expect(JSON.parse(out.settingsSnippet)).toEqual({
+        env: { FLOWSTATE_BACKLOG_DIR: priv },
+      });
+      expect((await readdir(join(priv, "tasks"))).sort()).toEqual([
+        "active",
+        "complete",
+        "index.md",
+        "pending",
+      ]);
+      await expect(readdir(join(tmp, ".backlog"))).rejects.toThrow();
+    });
+
+    it("commands use the env dir instead of .backlog", async () => {
+      const priv = join(tmp, "priv");
+      run("setup", "--dir", priv);
+      runWithEnv(
+        { FLOWSTATE_BACKLOG_DIR: priv },
+        "task-create", "--title", "Private", "--priority", "P2", "--description", "x",
+      );
+      const files = await readdir(join(priv, "tasks", "pending"));
+      expect(files.some((f) => f.startsWith("TSK-001"))).toBe(true);
+      await expect(readdir(join(tmp, ".backlog"))).rejects.toThrow();
+    });
+
+    it("path prints the resolved dir (plain and json) with its source", async () => {
+      const priv = join(tmp, "priv");
+      run("setup", "--dir", priv);
+      const env = { FLOWSTATE_BACKLOG_DIR: priv };
+      expect(runWithEnv(env, "path")).toBe(priv);
+      expect(JSON.parse(runWithEnv(env, "path", "--json", "true"))).toEqual({
+        path: priv,
+        source: "env",
+      });
+
+      run("setup");
+      const walk = JSON.parse(run("path", "--json", "true")) as { path: string; source: string };
+      expect(walk.source).toBe("walk-up");
+      expect(walk.path.endsWith(".backlog")).toBe(true);
+    });
+
+    it("a configured but missing dir fails with an actionable error", () => {
+      try {
+        runWithEnv({ FLOWSTATE_BACKLOG_DIR: join(tmp, "missing") }, "task-list");
+        expect.unreachable("should have thrown");
+      } catch (err) {
+        const error = err as { status: number; stderr: string };
+        expect(error.status).toBe(1);
+        expect(error.stderr.toString()).toMatch(/does not exist/);
+      }
+    });
+
+    it("setup --private uses <common-git-dir>/flowstate", async () => {
+      execFileSync("git", ["init", "-q"], { cwd: tmp });
+      const out = JSON.parse(run("setup", "--private", "--json", "true")) as {
+        root: string;
+      };
+      expect(out.root.endsWith(join(".git", "flowstate"))).toBe(true);
+      expect((await readdir(out.root)).sort()).toEqual([
+        "ideas",
+        "learnings",
+        "reports",
+        "tasks",
+      ]);
+    });
   });
 
   it("exits with error when no .backlog/ exists in any ancestor", async () => {

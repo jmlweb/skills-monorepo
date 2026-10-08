@@ -1,6 +1,9 @@
 export declare class BacklogNotFoundError extends Error {
     constructor(root: string);
 }
+export declare class BacklogDirMissingError extends Error {
+    constructor(dir: string);
+}
 export declare class EntityNotFoundError extends Error {
     constructor(id: string, searched: string);
 }

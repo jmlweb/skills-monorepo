@@ -2,17 +2,16 @@ import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { EntityType } from "../core/types.js";
 import { ENTITY_PREFIXES } from "../core/types.js";
-import { ENTITY_DIRS, backlogRoot } from "../core/paths.js";
+import { ENTITY_DIRS } from "../core/paths.js";
 import { formatId } from "../core/id.js";
 
 export async function nextId(root: string, type: EntityType): Promise<string> {
   const prefix = ENTITY_PREFIXES[type];
-  const backlogDir = backlogRoot(root);
   const dirs = ENTITY_DIRS[type];
   let maxNum = 0;
 
   for (const { dir } of dirs) {
-    const fullPath = join(backlogDir, dir);
+    const fullPath = join(root, dir);
     try {
       const entries = await readdir(fullPath);
       for (const entry of entries) {
