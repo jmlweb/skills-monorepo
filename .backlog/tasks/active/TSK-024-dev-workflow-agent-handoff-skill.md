@@ -1,12 +1,13 @@
 ---
 id: TSK-024
 title: dev-workflow: agent-handoff skill
-status: pending
+status: active
 priority: P2
 tags: []
 created: 2026-10-07
 source: plan/PLN-004
 depends-on: []
+started: 2026-10-08
 ---
 
 # dev-workflow: agent-handoff skill
@@ -52,3 +53,4 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-08] Started

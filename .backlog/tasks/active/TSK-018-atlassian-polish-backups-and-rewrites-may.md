@@ -1,7 +1,7 @@
 ---
 id: TSK-018
 title: atlassian-polish: backups and rewrites may lose rich Jira content
-status: pending
+status: active
 priority: P2
 tags: [atlassian-polish, adf, data-loss, backup]
 created: 2026-10-01
@@ -47,3 +47,4 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 - [2026-10-07] Backlog review: since pause, b7a6041/9b15aa4/b8105f1/1185135 made backups verbatim and non-overwriting, stopped flagging issue-key smart links as LOSSY, and preserve mentions/smart links via readback-to-md + ADF writes. Criteria 1 (MCP returns Markdown, documented in lossy-content.md) and 6 (History tab in docs) look met; 3-4 are documented as rules but panel/mention markers are unverified. Left: one real ticket with panel+mention+screenshot (criterion 5, also verifies markers); first REST v3 ADF backup with consent (criterion 2); SKILL.md step 5 path still shows one <KEY>.<md|json|xml> file instead of .md + .rendered.html + .adf.json.
 - [2026-10-07] SKILL.md step 5 now names the Jira backup set (.md + .rendered.html + .adf.json with consent) instead of a single file.
 - [2026-10-07] Ticked 1 (lossy-content.md documents MCP returns Markdown, REST v3 for ADF) and 6 (History tab in lossy-content.md rule 6 and SKILL.md step 5).
+- [2026-10-08] Started

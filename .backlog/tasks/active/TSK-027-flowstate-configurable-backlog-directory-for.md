@@ -1,12 +1,13 @@
 ---
 id: TSK-027
 title: flowstate: configurable backlog directory for private backlogs
-status: pending
+status: active
 priority: P2
 tags: []
 created: 2026-10-08
 source: plan/PLN-008
 depends-on: []
+started: 2026-10-08
 ---
 
 # flowstate: configurable backlog directory for private backlogs
@@ -53,3 +54,4 @@ Today the backlog is hard-wired to `<project>/.backlog`. `findBacklogRoot` (`src
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started

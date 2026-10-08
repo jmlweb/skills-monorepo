@@ -4,26 +4,25 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 7 |
-| Active | 0 |
+| Pending | 4 |
+| Active | 3 |
 | Blocked | 0 |
 | Complete | 20 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-018: atlassian-polish: backups and rewrites may lose rich Jira content (P2)
+- TSK-024: dev-workflow: agent-handoff skill (P2)
+- TSK-027: flowstate: configurable backlog directory for private backlogs (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | P2 | atlassian-polish, adf, data-loss, backup | 2026-10-01 |
 | TSK-021 | dev-workflow: open-pr skill | P2 | dev-workflow, pr, skill, agent, cli | 2026-10-07 |
 | TSK-023 | atlassian-polish: verify md-to-adf with a real Jira write | P2 | atlassian-polish, adf, jira, verification | 2026-10-07 |
-| TSK-024 | dev-workflow: agent-handoff skill | P2 |  | 2026-10-07 |
 | TSK-025 | dev-workflow: deslop skill | P3 |  | 2026-10-07 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | P3 |  | 2026-10-08 |
-| TSK-027 | flowstate: configurable backlog directory for private backlogs | P2 |  | 2026-10-08 |
 
 ## Recently Completed
 
