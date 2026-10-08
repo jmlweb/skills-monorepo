@@ -113,6 +113,25 @@ Drives your own open PR to a mergeable state: updates the branch, triages red CI
 
 ---
 
+### 🤝 `/agent-handoff` — Multi-repo agent handoffs
+
+Standardizes work split across repos and run by parallel agents: writes one self-contained prompt per target repo, then reconciles the reports that come back.
+
+```bash
+/agent-handoff out   # one prompt per target repo, from the current context
+/agent-handoff in    # paste the original handoff + the agent report to reconcile
+```
+
+**What it does:**
+- 📨 `out`: fixed sections per prompt: goal, links, constraints, decisions made, done-criteria, and a short report-back block
+- 🌿 Names a branch (never a worktree or local path) and keeps secrets and machine-local paths out of prompts
+- 🔍 `in`: lists what is **done**, **open** and **contradicted**, then prints follow-up handoffs if work remains
+- 🧼 Stateless — both inputs are pasted, so it works after `/clear`
+- 🔒 Read-only: writes no files and touches no tracker
+- ⚠️ `in` compares text claims only; it cannot verify state in other repos, so it tells you how to check each claim
+
+---
+
 ### 📝 `/check-docs` — Documentation audit
 
 Audits docs on two axes: **content drift** (versions, commands, paths, examples, instructions out of sync with code) and **structural fit** (a 3-tier layout — rules stay terse, READMEs stay human, deep docs live under `docs/`). Markdown style/formatting is left to a linter.
@@ -154,6 +173,7 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 | `/review-pr` | Git + GitHub CLI (`gh`) |
 | `/ci-triage` | Git + GitHub CLI (`gh`) |
 | `/pr-ready` | Git + GitHub CLI (`gh`) |
+| `/agent-handoff` | None (no external CLI) |
 | `/check-docs` | Git |
 
 ## License
