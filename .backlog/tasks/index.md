@@ -5,14 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 15 |
-| Active | 2 |
-| Blocked | 0 |
-| Complete | 31 |
+| Active | 0 |
+| Blocked | 1 |
+| Complete | 32 |
 
 ## Active Tasks
 
-- TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2)
-- TSK-038: Add skill lint test enforcing the skill quality bar (P2)
+- TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
 
 ## Pending Tasks
 
@@ -44,7 +43,7 @@
 | TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
 | TSK-030 | Add retro skill that turns session mistakes into checks | 2026-10-08 |
 | TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | 2026-10-08 |
+| TSK-038 | Add skill lint test enforcing the skill quality bar | 2026-10-08 |
 | TSK-039 | Add routing evals for skill descriptions | 2026-10-08 |
 | TSK-040 | Require evidence for ticked acceptance criteria | 2026-10-08 |
 | TSK-041 | Extend writing rules with description shape and rationalization tables | 2026-10-08 |
-| TSK-044 | Guard release tags: tag must match package.json and sit on main | 2026-10-08 |

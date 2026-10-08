@@ -1,13 +1,14 @@
 ---
 id: TSK-038
 title: Add skill lint test enforcing the skill quality bar
-status: active
+status: complete
 priority: P2
 tags: [skills, lint, ci]
 created: 2026-10-08
 source: plan/PLN-020
 depends-on: []
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # Add skill lint test enforcing the skill quality bar
@@ -55,12 +56,12 @@ The skills call the CLIs: about 25 distinct `flowstate.js` subcommands, plus `de
 
 ## Acceptance Criteria
 
-- [ ] scripts/lint-skills.mjs implements rules 1-8 (name, key allowlist, description, length, model tier, plugin-root paths, CLI contract via --help, README mentions) with warn/error severity and --strict
-- [ ] scripts/lint-skills.test.mjs has a pass and a fail fixture per rule plus a zero-error run on the real repo; pnpm test passes
-- [ ] pnpm lint:skills script and CI step added
-- [ ] AGENTS.md quality bar and .claude/skills/new-skill point to the lint
-- [ ] Trigger-count warnings fixed in check-task, parallel, commit, changeset, check-docs with patch bumps via pnpm bump
-- [ ] TSK-028 and TSK-033..035 annotated via task-update --log (lint absorbs TSK-028 step 8, audits end by clearing warnings)
+- [x] scripts/lint-skills.mjs implements rules 1-8 (name, key allowlist, description, length, model tier, plugin-root paths, CLI contract via --help, README mentions) with warn/error severity and --strict
+- [x] scripts/lint-skills.test.mjs has a pass and a fail fixture per rule plus a zero-error run on the real repo; pnpm test passes
+- [x] pnpm lint:skills script and CI step added
+- [x] AGENTS.md quality bar and .claude/skills/new-skill point to the lint
+- [x] Trigger-count warnings fixed in check-task, parallel, commit, changeset, check-docs with patch bumps via pnpm bump
+- [x] TSK-028 and TSK-033..035 annotated via task-update --log (lint absorbs TSK-028 step 8, audits end by clearing warnings)
 
 ## Notes
 
@@ -73,3 +74,5 @@ The skills call the CLIs: about 25 distinct `flowstate.js` subcommands, plus `de
 - [2026-10-08] Created
 - [2026-10-08] Started
 - [2026-10-08] Implemented on branch worktree-agent-a85a46fcd92cdb2ae (6068285, ec2c919); awaiting merge. Annotations on TSK-028/033-035 done. Lint: 0 errors, 1 warning (polish-atlassian length, TSK-035).
+- [2026-10-08] Merged as dd424cc. Post-merge: pnpm build/typecheck/test green, pnpm lint:skills 0 errors / 1 warning (polish-atlassian length, TSK-035). Flowstate stays 2.9.0 (main already past 2.8.1).
+- [2026-10-08] Completed
