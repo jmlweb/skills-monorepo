@@ -5,15 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 9 |
-| Active | 2 |
+| Active | 0 |
 | Blocked | 1 |
-| Complete | 36 |
+| Complete | 38 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
-- TSK-029: Add Spec axis to review-pr against task acceptance criteria (P2)
-- TSK-047: Guard against hand-edited backlog index and status/folder drift (P3)
 
 ## Pending Tasks
 
@@ -39,7 +37,7 @@
 | TSK-026 | dev-workflow: review-pr blocking-only mode | 2026-10-08 |
 | TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
 | TSK-028 | Split skills into user-invoked and model-invoked | 2026-10-08 |
+| TSK-029 | Add Spec axis to review-pr against task acceptance criteria | 2026-10-08 |
 | TSK-030 | Add retro skill that turns session mistakes into checks | 2026-10-08 |
 | TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | 2026-10-08 |
 | TSK-038 | Add skill lint test enforcing the skill quality bar | 2026-10-08 |
-| TSK-039 | Add routing evals for skill descriptions | 2026-10-08 |
