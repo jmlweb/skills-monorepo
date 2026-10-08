@@ -21,3 +21,4 @@
 | LRN-015 | Test not-on-main by checking out the tagged commit | testing, release, node-test | active | 2026-10-08 |
 | LRN-016 | CLI --help goes to stderr for dev-workflow and atlassian-polish, stdout for flowstate | cli, testing, skill-lint | active | 2026-10-08 |
 | LRN-017 | Worktree agents' git calls are refused when the guard cannot prove the command is not git | worktree, rtk, git, tooling | active | 2026-10-08 |
+| LRN-018 | Flipping skills to user-invoked shifts the routing rank-1 ratchet | routing, testing, skills, invocation | active | 2026-10-08 |

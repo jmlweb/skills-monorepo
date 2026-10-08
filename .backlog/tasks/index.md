@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 15 |
+| Pending | 14 |
 | Active | 0 |
 | Blocked | 1 |
-| Complete | 32 |
+| Complete | 33 |
 
 ## Active Tasks
 
@@ -19,7 +19,6 @@
 |----|-------|----------|------|---------|
 | TSK-025 | dev-workflow: deslop skill | P3 | dev-workflow, skill, comments | 2026-10-07 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | P3 | dev-workflow, review-pr | 2026-10-08 |
-| TSK-028 | Split skills into user-invoked and model-invoked | P2 | skills, invocation, context | 2026-10-08 |
 | TSK-029 | Add Spec axis to review-pr against task acceptance criteria | P2 | dev-workflow, review-pr, spec | 2026-10-08 |
 | TSK-031 | Add flowstate guide skill mapping the flows | P3 | flowstate, skill, docs | 2026-10-08 |
 | TSK-033 | Audit flowstate and repo-local skills against writing rules | P3 | writing-rules, audit, flowstate | 2026-10-08 |
@@ -41,9 +40,9 @@
 | TSK-021 | dev-workflow: open-pr skill | 2026-10-08 |
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
 | TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
+| TSK-028 | Split skills into user-invoked and model-invoked | 2026-10-08 |
 | TSK-030 | Add retro skill that turns session mistakes into checks | 2026-10-08 |
 | TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | 2026-10-08 |
 | TSK-038 | Add skill lint test enforcing the skill quality bar | 2026-10-08 |
 | TSK-039 | Add routing evals for skill descriptions | 2026-10-08 |
 | TSK-040 | Require evidence for ticked acceptance criteria | 2026-10-08 |
-| TSK-041 | Extend writing rules with description shape and rationalization tables | 2026-10-08 |
