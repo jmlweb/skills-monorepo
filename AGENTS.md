@@ -122,8 +122,10 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   triggers with quoted user phrases ("add task", "new task"), and when-NOT-to-use if
   ambiguity is likely. A vague description means the skill never fires.
 - Body shape: `# Title` → `## Arguments` (`$ARGUMENTS`) → `## Prerequisites` → `## Workflow`
-  with numbered `### N. Step` sections → confirmation output block. House range is 60–150
-  lines; hard ceiling 500.
+  with numbered `### N. Step` sections → confirmation output block. Length: as short as the
+  behaviour allows; ceiling 150 lines.
+- **Before creating or editing any SKILL.md, read `docs/writing-skills.md`** — no-op pass,
+  positive phrasing, leading words, a completion criterion per step, progressive disclosure.
 - Bundled files via `${CLAUDE_PLUGIN_ROOT}` (e.g.
   `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --json true`).
   Multi-line bodies via stdin: `--body -` with a heredoc. `${CLAUDE_PLUGIN_DATA}` is for
