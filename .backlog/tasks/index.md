@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 7 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 20 |
@@ -23,6 +23,7 @@ _No active tasks._
 | TSK-024 | dev-workflow: agent-handoff skill | P2 |  | 2026-10-07 |
 | TSK-025 | dev-workflow: deslop skill | P3 |  | 2026-10-07 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | P3 |  | 2026-10-08 |
+| TSK-027 | flowstate: configurable backlog directory for private backlogs | P2 |  | 2026-10-08 |
 
 ## Recently Completed
 
