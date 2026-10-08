@@ -60,4 +60,12 @@ describe("scanLossy", () => {
     expect(() => scanLossy({ adf: "{" })).toThrow("not valid JSON");
     expect(() => scanLossy({})).toThrow("at least one");
   });
+
+  it("unwraps a saved REST issue response and rejects JSON that is not ADF", () => {
+    const doc = { type: "doc", content: [{ type: "panel" }] };
+    const adf = JSON.stringify({ fields: { description: doc } });
+    expect(blocking(scanLossy({ adf })).map((x) => x.kind)).toEqual(["panel"]);
+    expect(() => scanLossy({ adf: "{}" })).toThrow("must be an ADF document");
+    expect(() => scanLossy({ adf: '{"fields":{"description":null}}' })).toThrow("must be an ADF document");
+  });
 });
