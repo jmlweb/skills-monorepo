@@ -17,6 +17,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      # Runs before install/build/test so a bad tag fails in seconds.
+      - name: Guard release tag (matches package.json, commit on main)
+        run: |
+          git fetch origin main
+          node scripts/check-release-tag.mjs "$GITHUB_REF_NAME"
+
       - uses: pnpm/action-setup@v6
         with:
           version: 10.26.2
