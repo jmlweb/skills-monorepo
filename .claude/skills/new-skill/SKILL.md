@@ -48,7 +48,8 @@ Requirements, all checkable:
 
 ### 3. Write `plugins/<plugin>/skills/<name>/SKILL.md`
 
-Template (house shape — keep body ≤150 lines):
+Read `docs/writing-skills.md` first. Template (house shape — as short as the behaviour
+allows; ceiling 150 lines):
 
 ```markdown
 ---
@@ -80,6 +81,8 @@ effort: <medium|high>          # sonnet only
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" <command> --json true
 <Multi-line bodies via stdin: `--body -` with a heredoc.>
 
+Done when: <observable condition — CLI output, file state, user answer>.
+
 ### 2. <Step>
 
 ...
@@ -92,17 +95,29 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" <command> --json true
 Rules while writing:
 
 - `allowed-tools` gets only what the workflow actually uses; prefer `Bash(git:*)` over `Bash`.
-- Prose shared with sibling skills goes to `plugins/<plugin>/shared/*.md`, referenced by
-  relative path — never duplicated.
+- Every step ends with a `Done when:` line a second reader could verify.
+- Prose shared with sibling skills goes to `plugins/<plugin>/shared/*.md`, referenced as
+  `${CLAUDE_PLUGIN_ROOT}/shared/<file>.md` — never duplicated, never by relative path.
+- Calling another skill: "Call the Skill tool with `<plugin>:<skill>`", one skill per call,
+  model-invoked targets only; suggestions to the user use `/<plugin>:<skill>`.
+- Add a "run setup first" pointer only when output is wrong without setup (hard dependency).
+- Rewrite prohibitions as target behaviour; keep one only with its reason.
 - All paths to bundled files use `${CLAUDE_PLUGIN_ROOT}`.
 
-### 4. Register and document
+### 4. No-op pass
+
+Go through the draft sentence by sentence; delete each one a fresh model would obey
+without being told (role-play openers, restated titles, "be careful", step recaps).
+
+Done when: a second read finds nothing more to delete and the body is ≤150 lines.
+
+### 5. Register and document
 
 1. Add a row to the command table in `plugins/<plugin>/README.md` (match the existing
    emoji/format of that table).
 2. If the plugin has a root `SKILL.md` listing slash commands (flowstate does), add it there too.
 
-### 5. Validate
+### 6. Validate
 
 ```bash
 claude plugin validate .
@@ -111,7 +126,7 @@ claude plugin validate .
 Must pass. Then self-check against the AGENTS.md "New or edited skill" quality bar and list
 each checkbox with its status.
 
-### 6. Version note
+### 7. Version note
 
 A new skill is a `feat` → next release is at least **minor**. Do not bump now; remind the
 user in the confirmation.
