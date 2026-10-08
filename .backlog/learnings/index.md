@@ -11,3 +11,5 @@
 | LRN-005 | Settings env delivery to Bash/hooks unverified; CLAUDE_PROJECT_DIR absent in Bash | claude-code, settings, env, hooks, flowstate | archived | 2026-10-08 |
 | LRN-006 | Jira Markdown reads drop panels; a saved REST response is not a bare ADF doc | atlassian-polish, adf, jira, lossy-content | active | 2026-10-08 |
 | LRN-007 | Verified: settings env reaches Bash and hooks; CLAUDE_PROJECT_DIR is hook-only | claude-code, settings, env, hooks, flowstate | active | 2026-10-08 |
+| LRN-008 | Worktree agents must call /usr/bin/git; RTK rewrite trips the isolation guard | worktree, parallel, rtk, git, tooling | active | 2026-10-08 |
+| LRN-009 | Root plugin validate only checks marketplace; validate the plugin dir for agents/skills | claude-code, plugin-validation, agents | active | 2026-10-08 |

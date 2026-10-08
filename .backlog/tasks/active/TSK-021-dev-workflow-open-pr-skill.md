@@ -76,6 +76,7 @@ Turn a finished branch into a pull request whose description is written for huma
 
 ## Learnings
 
+- LRN-009: Root plugin validate only checks marketplace; validate the plugin dir for agents/skills
 ## Progress Log
 
 - [2026-10-07] Created

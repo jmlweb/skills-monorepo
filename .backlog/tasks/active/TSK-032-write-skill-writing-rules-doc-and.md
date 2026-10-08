@@ -32,6 +32,7 @@ Steps 1-3 of PLN-013: write docs/writing-skills.md, add trigger-worded AGENTS.md
 
 ## Learnings
 
+- LRN-008: Worktree agents must call /usr/bin/git; RTK rewrite trips the isolation guard
 ## Progress Log
 
 - [2026-10-08] Created
