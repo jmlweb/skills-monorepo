@@ -91,6 +91,67 @@ Classifies each failure of a failed GitHub Actions run as **real**, **flaky** or
 
 ---
 
+### 🚀 `/open-pr` — Open a PR people want to read
+
+Turns the current branch into a pull request. The description is written from your PR template by a read-only `pr-writer` agent: why first, plain words, no file-by-file changelog.
+
+```bash
+/open-pr                          # draft PR against the default branch
+/open-pr --ready                  # regular PR instead of a draft
+/open-pr --base develop           # another target branch
+/open-pr --template docs/pr.md    # use a specific template file
+```
+
+**What it does:**
+- 🛫 Preflight: `gh` authenticated, not on the base branch, commits ahead, no PR already open (then it points you to `/pr-ready`)
+- 🔐 Scans every commit in `<base>...HEAD` for secrets and sensitive files; stops on findings
+- 🧩 Resolves the template (see below) and suggests a Conventional Commits scope for the title
+- 👀 Shows title and body and waits for you to approve, edit or cancel
+- 📤 Only then runs `git push -u` and `gh pr create --draft`
+- 🔒 Never force-pushes, never creates anything before you say yes
+
+> **Requires:** [GitHub CLI](https://cli.github.com/) installed and authenticated (`gh auth login`)
+
+---
+
+### 🧾 PR templates
+
+`/open-pr` and `/pr-ready` pick the first template that exists:
+
+1. **Your repo's template** — GitHub's standard locations: `.github/pull_request_template.md`, then `docs/`, the repo root, or a `PULL_REQUEST_TEMPLATE/` folder. If several match, you are asked which one.
+2. **Your personal default** — `pr-template.md` in the plugin's data directory.
+3. **Built-in** — Why / What changed / How to test / Notes for reviewers.
+
+**How a template is read:**
+
+| In the template | What happens |
+|:----------------|:-------------|
+| `## Heading` | A section; kept in order |
+| `<!-- ... -->` under a heading | An instruction for the writer; removed from the output |
+| `<!-- optional ... -->` | The section is dropped when it does not apply |
+| Section without `optional` | Always kept, `N/A` if there is nothing to say |
+| `- [ ]` checklist items | Copied as written, never ticked |
+
+**Example:**
+
+```markdown
+## Why
+<!-- The problem in two sentences. Link the ticket instead of retelling it. -->
+
+## Screenshots
+<!-- optional: only for UI changes -->
+
+## Checklist
+- [ ] Tests added
+- [ ] Docs updated
+```
+
+**Set a personal default:** save your template as `pr-template.md` in the plugin data directory (`~/.claude/plugins/data/dev-workflow-jmlweb/` on a standard install). Run `/open-pr` once; it reports which template source it used, so you can confirm. Repo templates always win over it.
+
+The writing rules live in `references/pr-style-guide.md`.
+
+---
+
 ### ✅ `/pr-ready` — Get your PR mergeable
 
 Drives your own open PR to a mergeable state: updates the branch, triages red CI, handles unresolved review threads, trims the description, and requests reviewers.
@@ -106,7 +167,7 @@ Drives your own open PR to a mergeable state: updates the branch, triages red CI
 - 🚦 On red CI, hands off to `/ci-triage`
 - 💬 Splits unresolved review threads into *fixable* and *needs you*, fixes the first group within your branch diff
 - 🙋 Posts one-line replies and resolves threads only after you confirm
-- ✂️ Trims the PR body to what, why, how to test
+- ✂️ Rewrites the PR body through your [PR template](#-pr-templates) so it reads well and stays lean
 - 🔒 Never merges without `--merge`, never pushes to the base branch, never force-pushes without asking
 
 > **Requires:** [GitHub CLI](https://cli.github.com/) installed and authenticated (`gh auth login`)
@@ -172,6 +233,7 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 | `/changeset` | Git + `.changeset/` directory |
 | `/review-pr` | Git + GitHub CLI (`gh`) |
 | `/ci-triage` | Git + GitHub CLI (`gh`) |
+| `/open-pr` | Git + GitHub CLI (`gh`) |
 | `/pr-ready` | Git + GitHub CLI (`gh`) |
 | `/agent-handoff` | None (no external CLI) |
 | `/check-docs` | Git |

@@ -5,6 +5,13 @@ export class GitError extends Error {
   }
 }
 
+export class TemplateLookupError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TemplateLookupError";
+  }
+}
+
 export class InvalidArgumentError extends Error {
   constructor(message: string) {
     super(message);

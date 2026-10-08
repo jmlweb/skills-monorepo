@@ -2,7 +2,7 @@
 name: pr-ready
 argument-hint: [PR number or URL] [--merge]
 description: Drives the user's own open pull request to a mergeable state — updates the branch, triages red CI, handles unresolved review threads, trims the description, and requests reviewers. Use when the user says "get this PR ready", "make my PR mergeable", "address review comments", "/pr-ready", "fix my PR", or "resolve the review threads". Merges only with an explicit --merge flag. Not for reviewing someone else's PR (use review-pr). Requires GitHub CLI authenticated.
-allowed-tools: Read, Write, Edit, Grep, Skill, Bash(gh:*), Bash(git:*), Bash(command:*), Bash(pnpm:*), Bash(npm:*)
+allowed-tools: Read, Write, Edit, Grep, Skill, Agent, Bash(node:*), Bash(gh:*), Bash(git:*), Bash(command:*), Bash(pnpm:*), Bash(npm:*)
 model: sonnet
 effort: medium
 ---
@@ -89,7 +89,12 @@ Resolve only fixable threads; leave needs-user threads open.
 
 ### 8. Trim the description
 
-Rewrite the PR body to three short parts: **What**, **Why**, **How to test**. Keep linked issues and breaking-change notes; drop filler, file lists and changelogs of the diff. Show old vs new and ask before `gh pr edit <id> --body-file -`.
+Rewrite the PR body through the template, not a hardcoded shape.
+
+1. Resolve it: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" find-pr-template --user-dir "${CLAUDE_PLUGIN_DATA}" --json true`. `path` null (several repo templates) → ask which of `candidates`. Read the file.
+2. Gather `git log --format='%h %s%n%b' origin/<base>..HEAD`, `git diff --stat origin/<base>...HEAD`, a few key hunks, and any ticket id.
+3. Invoke the `Agent` tool with `subagent_type: "dev-workflow:pr-writer"`, passing the template, those inputs and the current title and body. It keeps linked issues and breaking-change notes and drops filler, file lists and changelogs of the diff.
+4. Show old vs new body (and the new title, only if it changed). Ask before `gh pr edit <id> --body-file -`.
 
 ### 9. Finish
 
