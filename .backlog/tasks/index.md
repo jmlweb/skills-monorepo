@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 4 |
+| Pending | 14 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 23 |
@@ -21,6 +21,16 @@ _No active tasks._
 | TSK-023 | atlassian-polish: verify md-to-adf with a real Jira write | P2 | atlassian-polish, adf, jira, verification | 2026-10-07 |
 | TSK-025 | dev-workflow: deslop skill | P3 |  | 2026-10-07 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | P3 |  | 2026-10-08 |
+| TSK-028 | Split skills into user-invoked and model-invoked | P2 |  | 2026-10-08 |
+| TSK-029 | Add Spec axis to review-pr against task acceptance criteria | P2 |  | 2026-10-08 |
+| TSK-030 | Add retro skill that turns session mistakes into checks | P2 |  | 2026-10-08 |
+| TSK-031 | Add flowstate guide skill mapping the flows | P3 |  | 2026-10-08 |
+| TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | P2 |  | 2026-10-08 |
+| TSK-033 | Audit flowstate and repo-local skills against writing rules | P3 |  | 2026-10-08 |
+| TSK-034 | Audit dev-workflow skills against writing rules | P3 |  | 2026-10-08 |
+| TSK-035 | Audit atlassian-polish skills against writing rules | P2 |  | 2026-10-08 |
+| TSK-036 | Add GLOSSARY.md and fix entity-name drift | P3 |  | 2026-10-08 |
+| TSK-037 | Adopt round-based grilling format in idea and add-task | P3 |  | 2026-10-08 |
 
 ## Recently Completed
 
