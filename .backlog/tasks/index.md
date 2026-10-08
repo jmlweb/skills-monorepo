@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 14 |
+| Pending | 18 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 23 |
@@ -31,6 +31,10 @@ _No active tasks._
 | TSK-035 | Audit atlassian-polish skills against writing rules | P2 |  | 2026-10-08 |
 | TSK-036 | Add GLOSSARY.md and fix entity-name drift | P3 |  | 2026-10-08 |
 | TSK-037 | Adopt round-based grilling format in idea and add-task | P3 |  | 2026-10-08 |
+| TSK-038 | Add skill lint test enforcing the skill quality bar | P2 |  | 2026-10-08 |
+| TSK-039 | Add routing evals for skill descriptions | P2 |  | 2026-10-08 |
+| TSK-040 | Require evidence for ticked acceptance criteria | P2 |  | 2026-10-08 |
+| TSK-041 | Extend writing rules with description shape and rationalization tables | P3 |  | 2026-10-08 |
 
 ## Recently Completed
 
