@@ -51,6 +51,7 @@ Today the backlog is hard-wired to `<project>/.backlog`. `findBacklogRoot` (`src
 
 ## Learnings
 
+- LRN-005: Settings env delivery to Bash/hooks unverified; CLAUDE_PROJECT_DIR absent in Bash
 ## Progress Log
 
 - [2026-10-08] Created

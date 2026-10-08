@@ -50,6 +50,7 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 
 ## Learnings
 
+- LRN-004: Parallel worktree agents start from a stale base and lack git hooks
 ## Progress Log
 
 - [2026-10-07] Created
