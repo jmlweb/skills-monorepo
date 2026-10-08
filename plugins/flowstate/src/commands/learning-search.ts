@@ -30,11 +30,11 @@ const STOPWORDS = new Set([
 ]);
 
 export async function learningSearch(
-  cwd: string,
+  root: string,
   input: LearningSearchInput,
 ): Promise<LearningSearchResult[]> {
   const limit = input.limit ?? 3;
-  const lDir = learningsDir(cwd);
+  const lDir = learningsDir(root);
 
   let entries: string[];
   try {

@@ -1,3 +1,3 @@
-export declare function ideaMove(cwd: string, id: string, status: "approved" | "discarded", taskId?: string): Promise<{
+export declare function ideaMove(root: string, id: string, status: "approved" | "discarded", taskId?: string): Promise<{
     path: string;
 }>;

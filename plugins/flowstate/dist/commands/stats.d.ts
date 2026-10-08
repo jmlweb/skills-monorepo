@@ -7,4 +7,4 @@ export interface BacklogStats {
     readonly pendingReports: number;
     readonly learnings: number;
 }
-export declare function stats(cwd: string): Promise<BacklogStats>;
+export declare function stats(root: string): Promise<BacklogStats>;

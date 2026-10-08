@@ -10,7 +10,7 @@ import { indexRebuild } from "./index-rebuild.js";
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active", "complete"];
 
 export async function taskMove(
-  cwd: string,
+  root: string,
   id: string,
   to: "active" | "complete" | "pending",
 ): Promise<{ path: string }> {
@@ -20,7 +20,7 @@ export async function taskMove(
   let fileName: string | undefined;
 
   for (const status of SEARCH_DIRS) {
-    const dir = taskDir(cwd, status);
+    const dir = taskDir(root, status);
     const found = await findEntityFile(dir, id);
     if (found) {
       sourcePath = join(dir, found);
@@ -57,7 +57,7 @@ export async function taskMove(
   };
   const body = appendToBody(doc.body, `- [${date}] ${actionMap[to]}`);
 
-  const destPath = join(taskDir(cwd, to), fileName);
+  const destPath = join(taskDir(root, to), fileName);
 
   await writeEntity(sourcePath, fm, body);
 
@@ -65,7 +65,7 @@ export async function taskMove(
     await moveFile(sourcePath, destPath);
   }
 
-  await indexRebuild(cwd, "tasks");
+  await indexRebuild(root, "tasks");
 
   return { path: destPath };
 }

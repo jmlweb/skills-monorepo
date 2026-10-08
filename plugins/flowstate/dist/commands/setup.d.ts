@@ -1,1 +1,1 @@
-export declare function setup(cwd: string, projectName: string): Promise<string>;
+export declare function setup(root: string, projectName: string): Promise<string>;

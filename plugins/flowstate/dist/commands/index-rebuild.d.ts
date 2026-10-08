@@ -1,1 +1,1 @@
-export declare function indexRebuild(cwd: string, type?: "tasks" | "learnings" | "all"): Promise<void>;
+export declare function indexRebuild(root: string, type?: "tasks" | "learnings" | "all"): Promise<void>;

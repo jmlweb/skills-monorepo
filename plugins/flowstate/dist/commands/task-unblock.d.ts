@@ -1,3 +1,3 @@
-export declare function taskUnblock(cwd: string, id: string, resolution?: string): Promise<{
+export declare function taskUnblock(root: string, id: string, resolution?: string): Promise<{
     path: string;
 }>;

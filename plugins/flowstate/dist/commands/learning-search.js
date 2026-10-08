@@ -8,9 +8,9 @@ const STOPWORDS = new Set([
     "add", "fix", "update", "implement", "create", "remove", "change", "set",
     "use", "make", "ensure", "support", "handle", "move", "run", "get", "check",
 ]);
-export async function learningSearch(cwd, input) {
+export async function learningSearch(root, input) {
     const limit = input.limit ?? 3;
-    const lDir = learningsDir(cwd);
+    const lDir = learningsDir(root);
     let entries;
     try {
         entries = await readdir(lDir).then((e) => e.filter((name) => name.startsWith("LRN-")));

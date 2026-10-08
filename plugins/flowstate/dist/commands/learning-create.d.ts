@@ -4,7 +4,7 @@ export interface LearningCreateInput {
     readonly body: string;
     readonly task?: string | undefined;
 }
-export declare function learningCreate(cwd: string, input: LearningCreateInput): Promise<{
+export declare function learningCreate(root: string, input: LearningCreateInput): Promise<{
     id: string;
     path: string;
 }>;

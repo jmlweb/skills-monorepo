@@ -8,10 +8,10 @@ import { appendToSection, hasSection } from "../core/markdown.js";
 import { nextId } from "./next-id.js";
 import { indexRebuild } from "./index-rebuild.js";
 const TASK_SEARCH_DIRS = ["pending", "active", "complete"];
-export async function learningCreate(cwd, input) {
-    const id = await nextId(cwd, "learning");
+export async function learningCreate(root, input) {
+    const id = await nextId(root, "learning");
     const slug = titleToSlug(input.title);
-    const dir = join(learningsDir(cwd), `${id}-${slug}`);
+    const dir = join(learningsDir(root), `${id}-${slug}`);
     const filePath = join(dir, "index.md");
     const date = today();
     await ensureDir(dir);
@@ -24,15 +24,15 @@ export async function learningCreate(cwd, input) {
         created: date,
     };
     await writeEntity(filePath, frontmatter, `\n${input.body}`);
-    await indexRebuild(cwd, "learnings");
+    await indexRebuild(root, "learnings");
     if (input.task) {
-        await appendLearningToTask(cwd, input.task, id, input.title);
+        await appendLearningToTask(root, input.task, id, input.title);
     }
     return { id, path: filePath };
 }
-async function appendLearningToTask(cwd, taskId, learningId, title) {
+async function appendLearningToTask(root, taskId, learningId, title) {
     for (const status of TASK_SEARCH_DIRS) {
-        const dir = taskDir(cwd, status);
+        const dir = taskDir(root, status);
         const fileName = await findEntityFile(dir, taskId);
         if (!fileName)
             continue;

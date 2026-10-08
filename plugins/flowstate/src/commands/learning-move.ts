@@ -8,12 +8,12 @@ import { indexRebuild } from "./index-rebuild.js";
 import type { LearningStatus } from "../core/types.js";
 
 export async function learningMove(
-  cwd: string,
+  root: string,
   id: string,
   status: "archived",
 ): Promise<{ id: string; status: LearningStatus; path: string }> {
   const normalizedId = normalizeIdInput(id, "learning");
-  const lDir = learningsDir(cwd);
+  const lDir = learningsDir(root);
 
   const entries = await readdir(lDir);
   const dirName = entries.find((e) => e.startsWith(`${normalizedId}-`) || e === normalizedId);
@@ -28,7 +28,7 @@ export async function learningMove(
   fm["status"] = status;
 
   await writeEntity(filePath, fm, doc.body);
-  await indexRebuild(cwd, "learnings");
+  await indexRebuild(root, "learnings");
 
   return { id: normalizedId, status, path: filePath };
 }

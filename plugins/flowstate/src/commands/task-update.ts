@@ -13,7 +13,7 @@ import { appendToSection, hasSection, tickCriteria } from "../core/markdown.js";
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active", "complete"];
 
 export async function taskUpdate(
-  cwd: string,
+  root: string,
   id: string,
   updates: Record<string, string>,
   log?: string,
@@ -22,7 +22,7 @@ export async function taskUpdate(
   let filePath: string | undefined;
 
   for (const status of SEARCH_DIRS) {
-    const dir = taskDir(cwd, status);
+    const dir = taskDir(root, status);
     const found = await findEntityFile(dir, id);
     if (found) {
       filePath = join(dir, found);

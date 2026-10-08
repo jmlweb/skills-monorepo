@@ -20,11 +20,11 @@ export interface TaskCompressResult {
 }
 
 export async function taskCompress(
-  cwd: string,
+  root: string,
   id: string,
   newBody: string,
 ): Promise<TaskCompressResult> {
-  const dir = taskDir(cwd, "complete");
+  const dir = taskDir(root, "complete");
   const fileName = await findEntityFile(dir, id);
   if (!fileName) {
     throw new EntityNotFoundError(id, "tasks/complete");

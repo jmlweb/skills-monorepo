@@ -20,12 +20,12 @@ export interface LearningCompressResult {
 }
 
 export async function learningCompress(
-  cwd: string,
+  root: string,
   id: string,
   newBody: string,
 ): Promise<LearningCompressResult> {
   const normalizedId = normalizeIdInput(id, "learning");
-  const lDir = learningsDir(cwd);
+  const lDir = learningsDir(root);
   const entries = await readdir(lDir);
   const dirName = entries.find(
     (e) => e.startsWith(`${normalizedId}-`) || e === normalizedId,

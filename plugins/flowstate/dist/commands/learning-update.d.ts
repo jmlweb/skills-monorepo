@@ -3,7 +3,7 @@ export interface LearningUpdateInput {
     readonly tags?: readonly string[];
     readonly body?: string;
 }
-export declare function learningUpdate(cwd: string, id: string, input: LearningUpdateInput): Promise<{
+export declare function learningUpdate(root: string, id: string, input: LearningUpdateInput): Promise<{
     id: string;
     path: string;
 }>;

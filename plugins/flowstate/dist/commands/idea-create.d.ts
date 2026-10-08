@@ -4,7 +4,7 @@ export interface IdeaCreateInput {
     readonly complexity: Complexity;
     readonly body: string;
 }
-export declare function ideaCreate(cwd: string, input: IdeaCreateInput): Promise<{
+export declare function ideaCreate(root: string, input: IdeaCreateInput): Promise<{
     id: string;
     path: string;
 }>;

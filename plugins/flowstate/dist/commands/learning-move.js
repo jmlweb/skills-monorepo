@@ -5,9 +5,9 @@ import { readEntity, writeEntity } from "../core/fs.js";
 import { normalizeIdInput } from "../core/id.js";
 import { EntityNotFoundError } from "../core/errors.js";
 import { indexRebuild } from "./index-rebuild.js";
-export async function learningMove(cwd, id, status) {
+export async function learningMove(root, id, status) {
     const normalizedId = normalizeIdInput(id, "learning");
-    const lDir = learningsDir(cwd);
+    const lDir = learningsDir(root);
     const entries = await readdir(lDir);
     const dirName = entries.find((e) => e.startsWith(`${normalizedId}-`) || e === normalizedId);
     if (!dirName) {
@@ -18,6 +18,6 @@ export async function learningMove(cwd, id, status) {
     const fm = { ...doc.frontmatter };
     fm["status"] = status;
     await writeEntity(filePath, fm, doc.body);
-    await indexRebuild(cwd, "learnings");
+    await indexRebuild(root, "learnings");
     return { id: normalizedId, status, path: filePath };
 }

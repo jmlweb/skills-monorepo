@@ -1,7 +1,7 @@
 export class BacklogNotFoundError extends Error {
-  constructor(cwd: string) {
+  constructor(root: string) {
     super(
-      `No .backlog/ directory found in ${cwd} or any parent directory. Run "flowstate setup" to create one.`,
+      `No .backlog/ directory found in ${root} or any parent directory. Run "flowstate setup" to create one.`,
     );
     this.name = "BacklogNotFoundError";
   }

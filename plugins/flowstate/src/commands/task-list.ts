@@ -17,7 +17,7 @@ export interface TaskListItem {
 }
 
 export async function taskList(
-  cwd: string,
+  root: string,
   status?: TaskStatus,
   limit?: number,
 ): Promise<TaskListItem[]> {
@@ -28,7 +28,7 @@ export async function taskList(
   const items: TaskListItem[] = [];
 
   for (const s of statuses) {
-    const dir = taskDir(cwd, s);
+    const dir = taskDir(root, s);
     const files = await listFiles(dir);
 
     for (const file of files) {

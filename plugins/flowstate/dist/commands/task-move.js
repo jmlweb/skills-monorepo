@@ -6,13 +6,13 @@ import { EntityNotFoundError } from "../core/errors.js";
 import { appendToBody } from "../core/markdown.js";
 import { indexRebuild } from "./index-rebuild.js";
 const SEARCH_DIRS = ["pending", "active", "complete"];
-export async function taskMove(cwd, id, to) {
+export async function taskMove(root, id, to) {
     // Find the task in any directory
     let sourcePath;
     let sourceDir;
     let fileName;
     for (const status of SEARCH_DIRS) {
-        const dir = taskDir(cwd, status);
+        const dir = taskDir(root, status);
         const found = await findEntityFile(dir, id);
         if (found) {
             sourcePath = join(dir, found);
@@ -44,11 +44,11 @@ export async function taskMove(cwd, id, to) {
         blocked: "Blocked",
     };
     const body = appendToBody(doc.body, `- [${date}] ${actionMap[to]}`);
-    const destPath = join(taskDir(cwd, to), fileName);
+    const destPath = join(taskDir(root, to), fileName);
     await writeEntity(sourcePath, fm, body);
     if (sourcePath !== destPath) {
         await moveFile(sourcePath, destPath);
     }
-    await indexRebuild(cwd, "tasks");
+    await indexRebuild(root, "tasks");
     return { path: destPath };
 }

@@ -18,10 +18,10 @@ const MIN_PROGRESS_LOG_ENTRIES_TO_TRIM = 4;
 const MIN_NOTES_CONTENT_LENGTH = 1;
 
 export async function taskCondense(
-  cwd: string,
+  root: string,
   id: string,
 ): Promise<TaskCondenseResult> {
-  const dir = taskDir(cwd, "complete");
+  const dir = taskDir(root, "complete");
   const fileName = await findEntityFile(dir, id);
   if (!fileName) {
     throw new EntityNotFoundError(id, "tasks/complete");
@@ -31,9 +31,9 @@ export async function taskCondense(
 }
 
 export async function taskCondenseAll(
-  cwd: string,
+  root: string,
 ): Promise<TaskCondenseResult[]> {
-  const dir = taskDir(cwd, "complete");
+  const dir = taskDir(root, "complete");
   const files = await listFiles(dir);
   const results: TaskCondenseResult[] = [];
   for (const file of files) {

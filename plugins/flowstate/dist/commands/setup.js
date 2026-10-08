@@ -35,23 +35,23 @@ const LEARNINGS_INDEX_TEMPLATE = (name) => `# ${name} - Learnings Index
 | ID | Title | Tags | Status | Date |
 |----|-------|------|--------|------|
 `;
-export async function setup(cwd, projectName) {
-    const root = backlogRoot(cwd);
+export async function setup(root, projectName) {
+    const backlogDir = backlogRoot(root);
     // Migration: rename plans/ -> ideas/
-    const oldPlansDir = join(root, "plans");
-    const newIdeasDir = join(root, "ideas");
+    const oldPlansDir = join(backlogDir, "plans");
+    const newIdeasDir = join(backlogDir, "ideas");
     if (existsSync(oldPlansDir) && !existsSync(newIdeasDir)) {
         await rename(oldPlansDir, newIdeasDir);
     }
     const dirs = [
-        join(root, "tasks", "pending"),
-        join(root, "tasks", "active"),
-        join(root, "tasks", "complete"),
-        join(root, "ideas", "pending"),
-        join(root, "ideas", "complete"),
-        join(root, "reports", "pending"),
-        join(root, "reports", "complete"),
-        join(root, "learnings"),
+        join(backlogDir, "tasks", "pending"),
+        join(backlogDir, "tasks", "active"),
+        join(backlogDir, "tasks", "complete"),
+        join(backlogDir, "ideas", "pending"),
+        join(backlogDir, "ideas", "complete"),
+        join(backlogDir, "reports", "pending"),
+        join(backlogDir, "reports", "complete"),
+        join(backlogDir, "learnings"),
     ];
     await Promise.all(dirs.map(ensureDir));
     // Git drops empty dirs; without a placeholder a fresh clone lacks tasks/active/ and
@@ -60,8 +60,8 @@ export async function setup(cwd, projectName) {
         if (err.code !== "EEXIST")
             throw err;
     })));
-    const taskIndexPath = join(root, "tasks", "index.md");
-    const learningsIndexPath = join(root, "learnings", "index.md");
+    const taskIndexPath = join(backlogDir, "tasks", "index.md");
+    const learningsIndexPath = join(backlogDir, "learnings", "index.md");
     await writeFile(taskIndexPath, TASK_INDEX_TEMPLATE(projectName), {
         flag: "wx",
     }).catch(() => {
@@ -72,5 +72,5 @@ export async function setup(cwd, projectName) {
     }).catch(() => {
         // File already exists — idempotent
     });
-    return root;
+    return backlogDir;
 }

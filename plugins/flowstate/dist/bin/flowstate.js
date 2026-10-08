@@ -190,15 +190,15 @@ async function main() {
     }
     const { flags, flagArrays, positional } = parseArgs(rest);
     const json = flags["json"] === "true";
-    const cwd = command === "setup"
+    const root = command === "setup"
         ? process.cwd()
         : findBacklogRoot(process.cwd());
     try {
         switch (command) {
             case "setup": {
                 const name = flags["project-name"] ?? "Project";
-                const root = await setup(cwd, name);
-                output({ root }, json);
+                const created = await setup(root, name);
+                output({ root: created }, json);
                 break;
             }
             case "next-id": {
@@ -207,13 +207,13 @@ async function main() {
                     console.error("Usage: flowstate next-id <task|idea|report|learning>");
                     process.exit(1);
                 }
-                const id = await nextId(cwd, asEntityType(raw));
+                const id = await nextId(root, asEntityType(raw));
                 output({ id }, json);
                 break;
             }
             case "task-create": {
                 const body = await getBody(flags);
-                const result = await taskCreate(cwd, {
+                const result = await taskCreate(root, {
                     title: required(flags, "title"),
                     priority: validatePriority(required(flags, "priority")),
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
@@ -230,7 +230,7 @@ async function main() {
             case "task-list": {
                 const status = flags["status"] ? asTaskStatus(flags["status"]) : undefined;
                 const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
-                const items = await taskList(cwd, status, limit);
+                const items = await taskList(root, status, limit);
                 output(items, json);
                 break;
             }
@@ -247,7 +247,7 @@ async function main() {
                     process.exit(1);
                 }
                 const to = toRaw;
-                const result = await taskMove(cwd, id, to);
+                const result = await taskMove(root, id, to);
                 output(result, json);
                 break;
             }
@@ -257,7 +257,7 @@ async function main() {
                     console.error("Usage: flowstate task-block <id> --reason <text>");
                     process.exit(1);
                 }
-                const result = await taskBlock(cwd, id, required(flags, "reason"));
+                const result = await taskBlock(root, id, required(flags, "reason"));
                 output(result, json);
                 break;
             }
@@ -277,7 +277,7 @@ async function main() {
                 }
                 const log = flags["log"] === "-" ? await readStdin() : flags["log"];
                 const checkCriteria = parseCriteriaIndexes(flags["check"]);
-                const result = await taskUpdate(cwd, id, updates, log, checkCriteria);
+                const result = await taskUpdate(root, id, updates, log, checkCriteria);
                 output(result, json);
                 break;
             }
@@ -287,13 +287,13 @@ async function main() {
                     console.error("Usage: flowstate task-unblock <id> [--resolution text]");
                     process.exit(1);
                 }
-                const result = await taskUnblock(cwd, id, flags["resolution"]);
+                const result = await taskUnblock(root, id, flags["resolution"]);
                 output(result, json);
                 break;
             }
             case "task-condense": {
                 if (flags["all"] === "true") {
-                    const results = await taskCondenseAll(cwd);
+                    const results = await taskCondenseAll(root);
                     output(results, json);
                 }
                 else {
@@ -302,7 +302,7 @@ async function main() {
                         console.error("Usage: flowstate task-condense <id> | flowstate task-condense --all");
                         process.exit(1);
                     }
-                    const result = await taskCondense(cwd, id);
+                    const result = await taskCondense(root, id);
                     output(result, json);
                 }
                 break;
@@ -318,33 +318,33 @@ async function main() {
                     console.error("Missing --body (use --body - to read from stdin)");
                     process.exit(1);
                 }
-                const result = await taskCompress(cwd, id, body);
+                const result = await taskCompress(root, id, body);
                 output(result, json);
                 if (!result.ok && !result.skippedReason)
                     process.exit(2);
                 break;
             }
             case "task-doctor": {
-                const result = await taskDoctor(cwd, {
+                const result = await taskDoctor(root, {
                     dryRun: flags["dry-run"] === "true",
                 });
                 output(result, json);
                 break;
             }
             case "stats": {
-                const result = await stats(cwd);
+                const result = await stats(root);
                 output(result, json);
                 break;
             }
             case "index-rebuild": {
                 const type = (flags["type"] ?? "all");
-                await indexRebuild(cwd, type);
+                await indexRebuild(root, type);
                 output({ rebuilt: type }, json);
                 break;
             }
             case "idea-create": {
                 const body = await getBody(flags);
-                const result = await ideaCreate(cwd, {
+                const result = await ideaCreate(root, {
                     title: required(flags, "title"),
                     complexity: validateComplexity(required(flags, "complexity")),
                     body,
@@ -364,7 +364,7 @@ async function main() {
                     status = statusRaw;
                 }
                 const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
-                const result = await ideaList(cwd, {
+                const result = await ideaList(root, {
                     ...(status !== undefined ? { status } : {}),
                     ...(limit !== undefined ? { limit } : {}),
                 });
@@ -377,13 +377,13 @@ async function main() {
                     console.error("Usage: flowstate idea-move <id> --status <approved|discarded>");
                     process.exit(1);
                 }
-                const result = await ideaMove(cwd, id, required(flags, "status"), flags["task-id"]);
+                const result = await ideaMove(root, id, required(flags, "status"), flags["task-id"]);
                 output(result, json);
                 break;
             }
             case "report-create": {
                 const body = await getBody(flags);
-                const result = await reportCreate(cwd, {
+                const result = await reportCreate(root, {
                     title: required(flags, "title"),
                     type: validateReportType(required(flags, "type")),
                     severity: validateSeverity(required(flags, "severity")),
@@ -398,13 +398,13 @@ async function main() {
                     console.error("Usage: flowstate report-move <id> --status <triaged|discarded>");
                     process.exit(1);
                 }
-                const result = await reportMove(cwd, id, required(flags, "status"), flags["task-id"]);
+                const result = await reportMove(root, id, required(flags, "status"), flags["task-id"]);
                 output(result, json);
                 break;
             }
             case "learning-create": {
                 const body = await getBody(flags);
-                const result = await learningCreate(cwd, {
+                const result = await learningCreate(root, {
                     title: required(flags, "title"),
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
                     body,
@@ -415,7 +415,7 @@ async function main() {
             }
             case "learning-search": {
                 const query = flags["query"] ?? flags["similar-to"];
-                const result = await learningSearch(cwd, {
+                const result = await learningSearch(root, {
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : undefined,
                     query,
                     limit: flags["limit"] ? parseInt(flags["limit"], 10) : undefined,
@@ -440,7 +440,7 @@ async function main() {
                 else if (includeArchived || allFlag) {
                     status = "all";
                 }
-                const result = await learningList(cwd, {
+                const result = await learningList(root, {
                     ...(status !== undefined ? { status } : {}),
                 });
                 output(result, json);
@@ -457,7 +457,7 @@ async function main() {
                     console.error(`Invalid --to value: "${toRaw}". Must be: archived`);
                     process.exit(1);
                 }
-                const result = await learningMove(cwd, id, "archived");
+                const result = await learningMove(root, id, "archived");
                 output(result, json);
                 break;
             }
@@ -473,7 +473,7 @@ async function main() {
                     ...(flags["tags"] !== undefined ? { tags: flags["tags"].split(",").map((t) => t.trim()) } : {}),
                     ...(body !== undefined ? { body } : {}),
                 };
-                const result = await learningUpdate(cwd, id, updateInput);
+                const result = await learningUpdate(root, id, updateInput);
                 output(result, json);
                 break;
             }
@@ -488,7 +488,7 @@ async function main() {
                     console.error("Missing --body (use --body - to read from stdin)");
                     process.exit(1);
                 }
-                const result = await learningCompress(cwd, id, body);
+                const result = await learningCompress(root, id, body);
                 output(result, json);
                 if (!result.ok && !result.skippedReason)
                     process.exit(2);

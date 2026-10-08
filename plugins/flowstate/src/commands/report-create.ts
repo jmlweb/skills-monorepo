@@ -14,13 +14,13 @@ export interface ReportCreateInput {
 }
 
 export async function reportCreate(
-  cwd: string,
+  root: string,
   input: ReportCreateInput,
 ): Promise<{ id: string; path: string }> {
-  const id = await nextId(cwd, "report");
+  const id = await nextId(root, "report");
   const slug = titleToSlug(input.title);
   const filename = `${id}-${slug}.md`;
-  const dir = reportDir(cwd, "pending");
+  const dir = reportDir(root, "pending");
   const filePath = join(dir, filename);
 
   const frontmatter: Record<string, unknown> = {

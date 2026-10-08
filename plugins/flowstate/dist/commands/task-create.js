@@ -6,12 +6,12 @@ import { taskDir, taskIndexPath } from "../core/paths.js";
 import { writeEntity } from "../core/fs.js";
 import { addTableRow } from "../core/markdown.js";
 import { nextId } from "./next-id.js";
-export async function taskCreate(cwd, input) {
-    const id = await nextId(cwd, "task");
+export async function taskCreate(root, input) {
+    const id = await nextId(root, "task");
     const slug = titleToSlug(input.title);
     const filename = `${id}-${slug}.md`;
     const date = today();
-    const dir = taskDir(cwd, "pending");
+    const dir = taskDir(root, "pending");
     const filePath = join(dir, filename);
     const frontmatter = {
         id,
@@ -46,11 +46,11 @@ ${criteriaLines}
 - [${date}] Created`;
     await writeEntity(filePath, frontmatter, body);
     // Update task index
-    await updateTaskIndex(cwd, id, input, date);
+    await updateTaskIndex(root, id, input, date);
     return { id, path: filePath };
 }
-async function updateTaskIndex(cwd, id, input, date) {
-    const indexPath = taskIndexPath(cwd);
+async function updateTaskIndex(root, id, input, date) {
+    const indexPath = taskIndexPath(root);
     let content = await readFile(indexPath, "utf-8");
     const tags = input.tags.length > 0 ? input.tags.join(", ") : "";
     const row = `| ${id} | ${input.title} | ${input.priority} | ${tags} | ${date} |`;

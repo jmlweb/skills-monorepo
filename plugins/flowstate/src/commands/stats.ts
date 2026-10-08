@@ -13,7 +13,7 @@ export interface BacklogStats {
   readonly learnings: number;
 }
 
-export async function stats(cwd: string): Promise<BacklogStats> {
+export async function stats(root: string): Promise<BacklogStats> {
   let pending = 0;
   let active = 0;
   let blocked = 0;
@@ -22,7 +22,7 @@ export async function stats(cwd: string): Promise<BacklogStats> {
   const [taskCounts, pendingIdeas, pendingReports, learnings] = await Promise.all([
     Promise.all(
       (["pending", "active", "complete"] as const).map(async (status) => {
-        const dir = taskDir(cwd, status);
+        const dir = taskDir(root, status);
         const files = await listFiles(dir);
         const filtered = files.filter((f) => f.name !== "index.md");
 
@@ -44,9 +44,9 @@ export async function stats(cwd: string): Promise<BacklogStats> {
         return { status, count: filtered.length, active: 0, blocked: 0 };
       }),
     ),
-    listFiles(ideaDir(cwd, "pending")).then((f) => f.length),
-    listFiles(reportDir(cwd, "pending")).then((f) => f.length),
-    readdir(learningsDir(cwd)).then((e) => e.filter((n) => n.startsWith("LRN-")).length).catch(() => 0),
+    listFiles(ideaDir(root, "pending")).then((f) => f.length),
+    listFiles(reportDir(root, "pending")).then((f) => f.length),
+    readdir(learningsDir(root)).then((e) => e.filter((n) => n.startsWith("LRN-")).length).catch(() => 0),
   ]);
 
   for (const c of taskCounts) {

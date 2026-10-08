@@ -13,30 +13,30 @@ export function findBacklogRoot(start) {
         dir = parent;
     }
 }
-export function backlogRoot(cwd) {
-    return join(cwd, ".backlog");
+export function backlogRoot(root) {
+    return join(root, ".backlog");
 }
-export function taskDir(cwd, status) {
+export function taskDir(root, status) {
     if (status === "blocked")
-        return taskDir(cwd, "active");
+        return taskDir(root, "active");
     if (status === "all")
-        return join(backlogRoot(cwd), "tasks");
-    return join(backlogRoot(cwd), "tasks", status);
+        return join(backlogRoot(root), "tasks");
+    return join(backlogRoot(root), "tasks", status);
 }
-export function ideaDir(cwd, status) {
-    return join(backlogRoot(cwd), "ideas", status);
+export function ideaDir(root, status) {
+    return join(backlogRoot(root), "ideas", status);
 }
-export function reportDir(cwd, status) {
-    return join(backlogRoot(cwd), "reports", status);
+export function reportDir(root, status) {
+    return join(backlogRoot(root), "reports", status);
 }
-export function learningsDir(cwd) {
-    return join(backlogRoot(cwd), "learnings");
+export function learningsDir(root) {
+    return join(backlogRoot(root), "learnings");
 }
-export function taskIndexPath(cwd) {
-    return join(backlogRoot(cwd), "tasks", "index.md");
+export function taskIndexPath(root) {
+    return join(backlogRoot(root), "tasks", "index.md");
 }
-export function learningsIndexPath(cwd) {
-    return join(backlogRoot(cwd), "learnings", "index.md");
+export function learningsIndexPath(root) {
+    return join(backlogRoot(root), "learnings", "index.md");
 }
 export const ENTITY_DIRS = {
     task: [

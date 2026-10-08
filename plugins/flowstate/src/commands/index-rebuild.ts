@@ -6,14 +6,14 @@ import { updateStatsTable, replaceSection } from "../core/markdown.js";
 import { readdir } from "node:fs/promises";
 
 export async function indexRebuild(
-  cwd: string,
+  root: string,
   type: "tasks" | "learnings" | "all" = "all",
 ): Promise<void> {
   if (type === "tasks" || type === "all") {
-    await rebuildTaskIndex(cwd);
+    await rebuildTaskIndex(root);
   }
   if (type === "learnings" || type === "all") {
-    await rebuildLearningsIndex(cwd);
+    await rebuildLearningsIndex(root);
   }
 }
 
@@ -53,13 +53,13 @@ async function readTasksFromDir(
   return tasks;
 }
 
-async function rebuildTaskIndex(cwd: string): Promise<void> {
-  const indexPath = taskIndexPath(cwd);
+async function rebuildTaskIndex(root: string): Promise<void> {
+  const indexPath = taskIndexPath(root);
   let content = await readFile(indexPath, "utf-8");
 
-  const pending = await readTasksFromDir(taskDir(cwd, "pending"));
-  const active = await readTasksFromDir(taskDir(cwd, "active"));
-  const complete = await readTasksFromDir(taskDir(cwd, "complete"));
+  const pending = await readTasksFromDir(taskDir(root, "pending"));
+  const active = await readTasksFromDir(taskDir(root, "active"));
+  const complete = await readTasksFromDir(taskDir(root, "complete"));
 
   const blockedCount = active.filter((t) => t.blockedBy).length;
   const activeCount = active.length - blockedCount;
@@ -110,11 +110,11 @@ async function rebuildTaskIndex(cwd: string): Promise<void> {
   await writeFile(indexPath, content, "utf-8");
 }
 
-async function rebuildLearningsIndex(cwd: string): Promise<void> {
-  const indexPath = learningsIndexPath(cwd);
+async function rebuildLearningsIndex(root: string): Promise<void> {
+  const indexPath = learningsIndexPath(root);
   let content = await readFile(indexPath, "utf-8");
 
-  const lDir = learningsDir(cwd);
+  const lDir = learningsDir(root);
   let entries: string[];
   try {
     entries = await readdir(lDir).then((e) =>

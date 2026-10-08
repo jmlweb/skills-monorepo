@@ -6,5 +6,5 @@ export interface TaskCondenseResult {
     readonly bytesAfter: number;
     readonly skippedReason?: string;
 }
-export declare function taskCondense(cwd: string, id: string): Promise<TaskCondenseResult>;
-export declare function taskCondenseAll(cwd: string): Promise<TaskCondenseResult[]>;
+export declare function taskCondense(root: string, id: string): Promise<TaskCondenseResult>;
+export declare function taskCondenseAll(root: string): Promise<TaskCondenseResult[]>;

@@ -51,16 +51,16 @@ const SYNONYMS: Record<string, TaskStatus> = {
 };
 
 export async function taskDoctor(
-  cwd: string,
+  root: string,
   options: { readonly dryRun?: boolean } = {},
 ): Promise<TaskDoctorResult> {
   const dryRun = options.dryRun === true;
-  const root = backlogRoot(cwd);
+  const backlogDir = backlogRoot(root);
   const fixes: TaskDoctorFix[] = [];
   let scanned = 0;
 
   for (const folder of FOLDERS) {
-    const dir = join(root, "tasks", folder);
+    const dir = join(backlogDir, "tasks", folder);
     let files;
     try {
       files = await listFiles(dir);

@@ -6,8 +6,8 @@ import { EntityNotFoundError } from "../core/errors.js";
 import { replaceSection, hasSection, appendToSection, appendToBody } from "../core/markdown.js";
 const MIN_PROGRESS_LOG_ENTRIES_TO_TRIM = 4;
 const MIN_NOTES_CONTENT_LENGTH = 1;
-export async function taskCondense(cwd, id) {
-    const dir = taskDir(cwd, "complete");
+export async function taskCondense(root, id) {
+    const dir = taskDir(root, "complete");
     const fileName = await findEntityFile(dir, id);
     if (!fileName) {
         throw new EntityNotFoundError(id, "tasks/complete");
@@ -15,8 +15,8 @@ export async function taskCondense(cwd, id) {
     const filePath = join(dir, fileName);
     return condenseFile(filePath, id);
 }
-export async function taskCondenseAll(cwd) {
-    const dir = taskDir(cwd, "complete");
+export async function taskCondenseAll(root) {
+    const dir = taskDir(root, "complete");
     const files = await listFiles(dir);
     const results = [];
     for (const file of files) {

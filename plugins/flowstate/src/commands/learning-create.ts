@@ -18,12 +18,12 @@ export interface LearningCreateInput {
 const TASK_SEARCH_DIRS = ["pending", "active", "complete"] as const;
 
 export async function learningCreate(
-  cwd: string,
+  root: string,
   input: LearningCreateInput,
 ): Promise<{ id: string; path: string }> {
-  const id = await nextId(cwd, "learning");
+  const id = await nextId(root, "learning");
   const slug = titleToSlug(input.title);
-  const dir = join(learningsDir(cwd), `${id}-${slug}`);
+  const dir = join(learningsDir(root), `${id}-${slug}`);
   const filePath = join(dir, "index.md");
   const date = today();
 
@@ -40,23 +40,23 @@ export async function learningCreate(
 
   await writeEntity(filePath, frontmatter, `\n${input.body}`);
 
-  await indexRebuild(cwd, "learnings");
+  await indexRebuild(root, "learnings");
 
   if (input.task) {
-    await appendLearningToTask(cwd, input.task, id, input.title);
+    await appendLearningToTask(root, input.task, id, input.title);
   }
 
   return { id, path: filePath };
 }
 
 async function appendLearningToTask(
-  cwd: string,
+  root: string,
   taskId: string,
   learningId: string,
   title: string,
 ): Promise<void> {
   for (const status of TASK_SEARCH_DIRS) {
-    const dir = taskDir(cwd, status);
+    const dir = taskDir(root, status);
     const fileName = await findEntityFile(dir, taskId);
     if (!fileName) continue;
 

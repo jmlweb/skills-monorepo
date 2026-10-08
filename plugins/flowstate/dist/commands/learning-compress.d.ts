@@ -7,4 +7,4 @@ export interface LearningCompressResult {
     readonly errors: readonly string[];
     readonly skippedReason?: string;
 }
-export declare function learningCompress(cwd: string, id: string, newBody: string): Promise<LearningCompressResult>;
+export declare function learningCompress(root: string, id: string, newBody: string): Promise<LearningCompressResult>;

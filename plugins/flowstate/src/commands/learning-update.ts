@@ -13,12 +13,12 @@ export interface LearningUpdateInput {
 }
 
 export async function learningUpdate(
-  cwd: string,
+  root: string,
   id: string,
   input: LearningUpdateInput,
 ): Promise<{ id: string; path: string }> {
   const normalizedId = normalizeIdInput(id, "learning");
-  const lDir = learningsDir(cwd);
+  const lDir = learningsDir(root);
 
   const entries = await readdir(lDir);
   const dirName = entries.find((e) => e.startsWith(`${normalizedId}-`) || e === normalizedId);
@@ -37,7 +37,7 @@ export async function learningUpdate(
   const body = input.body !== undefined ? `\n${input.body}` : doc.body;
 
   await writeEntity(filePath, fm, body);
-  await indexRebuild(cwd, "learnings");
+  await indexRebuild(root, "learnings");
 
   return { id: normalizedId, path: filePath };
 }

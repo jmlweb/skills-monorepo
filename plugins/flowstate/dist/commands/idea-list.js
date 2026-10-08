@@ -1,12 +1,12 @@
 import { join } from "node:path";
 import { ideaDir } from "../core/paths.js";
 import { listFiles, readEntity } from "../core/fs.js";
-export async function ideaList(cwd, input = {}) {
+export async function ideaList(root, input = {}) {
     const filter = input.status ?? "pending";
     const buckets = filter === "all" ? ["pending", "complete"] : [filter];
     const items = [];
     for (const bucket of buckets) {
-        const dir = ideaDir(cwd, bucket);
+        const dir = ideaDir(root, bucket);
         const files = await listFiles(dir);
         for (const file of files) {
             if (file.name === "index.md")

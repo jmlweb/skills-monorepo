@@ -4,8 +4,8 @@ import { findEntityFile, readEntity, writeEntity } from "../core/fs.js";
 import { EntityNotFoundError } from "../core/errors.js";
 import { validateCompression, } from "../core/compress-validate.js";
 const PROTECTED_SECTIONS = ["Acceptance Criteria"];
-export async function taskCompress(cwd, id, newBody) {
-    const dir = taskDir(cwd, "complete");
+export async function taskCompress(root, id, newBody) {
+    const dir = taskDir(root, "complete");
     const fileName = await findEntityFile(dir, id);
     if (!fileName) {
         throw new EntityNotFoundError(id, "tasks/complete");

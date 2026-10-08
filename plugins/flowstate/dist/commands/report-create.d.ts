@@ -5,7 +5,7 @@ export interface ReportCreateInput {
     readonly severity: Severity;
     readonly body: string;
 }
-export declare function reportCreate(cwd: string, input: ReportCreateInput): Promise<{
+export declare function reportCreate(root: string, input: ReportCreateInput): Promise<{
     id: string;
     path: string;
 }>;

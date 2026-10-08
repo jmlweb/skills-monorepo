@@ -22,10 +22,10 @@ export interface LearningListResult {
 }
 
 export async function learningList(
-  cwd: string,
+  root: string,
   input: LearningListInput = {},
 ): Promise<LearningListResult[]> {
-  const lDir = learningsDir(cwd);
+  const lDir = learningsDir(root);
 
   let entries: string[];
   try {

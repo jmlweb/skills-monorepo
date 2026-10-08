@@ -5,9 +5,9 @@ import { readEntity, writeEntity } from "../core/fs.js";
 import { normalizeIdInput } from "../core/id.js";
 import { EntityNotFoundError } from "../core/errors.js";
 import { validateCompression, } from "../core/compress-validate.js";
-export async function learningCompress(cwd, id, newBody) {
+export async function learningCompress(root, id, newBody) {
     const normalizedId = normalizeIdInput(id, "learning");
-    const lDir = learningsDir(cwd);
+    const lDir = learningsDir(root);
     const entries = await readdir(lDir);
     const dirName = entries.find((e) => e.startsWith(`${normalizedId}-`) || e === normalizedId);
     if (!dirName) {

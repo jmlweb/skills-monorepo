@@ -14,4 +14,4 @@ export interface LearningSearchResult {
     readonly reasons: readonly string[];
     readonly body?: string;
 }
-export declare function learningSearch(cwd: string, input: LearningSearchInput): Promise<LearningSearchResult[]>;
+export declare function learningSearch(root: string, input: LearningSearchInput): Promise<LearningSearchResult[]>;

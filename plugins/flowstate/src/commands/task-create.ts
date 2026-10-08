@@ -24,14 +24,14 @@ export interface TaskCreateResult {
 }
 
 export async function taskCreate(
-  cwd: string,
+  root: string,
   input: TaskCreateInput,
 ): Promise<TaskCreateResult> {
-  const id = await nextId(cwd, "task");
+  const id = await nextId(root, "task");
   const slug = titleToSlug(input.title);
   const filename = `${id}-${slug}.md`;
   const date = today();
-  const dir = taskDir(cwd, "pending");
+  const dir = taskDir(root, "pending");
   const filePath = join(dir, filename);
 
   const frontmatter: Record<string, unknown> = {
@@ -72,18 +72,18 @@ ${criteriaLines}
   await writeEntity(filePath, frontmatter, body);
 
   // Update task index
-  await updateTaskIndex(cwd, id, input, date);
+  await updateTaskIndex(root, id, input, date);
 
   return { id, path: filePath };
 }
 
 async function updateTaskIndex(
-  cwd: string,
+  root: string,
   id: string,
   input: TaskCreateInput,
   date: string,
 ): Promise<void> {
-  const indexPath = taskIndexPath(cwd);
+  const indexPath = taskIndexPath(root);
   let content = await readFile(indexPath, "utf-8");
 
   const tags = input.tags.length > 0 ? input.tags.join(", ") : "";

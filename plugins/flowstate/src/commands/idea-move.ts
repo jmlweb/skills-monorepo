@@ -5,12 +5,12 @@ import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
 
 export async function ideaMove(
-  cwd: string,
+  root: string,
   id: string,
   status: "approved" | "discarded",
   taskId?: string,
 ): Promise<{ path: string }> {
-  const pendingDir = ideaDir(cwd, "pending");
+  const pendingDir = ideaDir(root, "pending");
   const fileName = await findEntityFile(pendingDir, id);
   if (!fileName) {
     throw new EntityNotFoundError(id, "ideas/pending");
@@ -28,7 +28,7 @@ export async function ideaMove(
 
   await writeEntity(sourcePath, fm, doc.body);
 
-  const destDir = ideaDir(cwd, "complete");
+  const destDir = ideaDir(root, "complete");
   const destPath = join(destDir, fileName);
   await moveFile(sourcePath, destPath);
 

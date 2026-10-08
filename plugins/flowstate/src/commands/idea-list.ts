@@ -21,7 +21,7 @@ export interface IdeaListItem {
 }
 
 export async function ideaList(
-  cwd: string,
+  root: string,
   input: IdeaListInput = {},
 ): Promise<IdeaListItem[]> {
   const filter = input.status ?? "pending";
@@ -31,7 +31,7 @@ export async function ideaList(
   const items: IdeaListItem[] = [];
 
   for (const bucket of buckets) {
-    const dir = ideaDir(cwd, bucket);
+    const dir = ideaDir(root, bucket);
     const files = await listFiles(dir);
 
     for (const file of files) {

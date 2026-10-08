@@ -5,10 +5,10 @@ import { today } from "../core/date.js";
 import { EntityNotFoundError, InvalidArgumentError, SectionNotFoundError, } from "../core/errors.js";
 import { appendToSection, hasSection, tickCriteria } from "../core/markdown.js";
 const SEARCH_DIRS = ["pending", "active", "complete"];
-export async function taskUpdate(cwd, id, updates, log, checkCriteria = []) {
+export async function taskUpdate(root, id, updates, log, checkCriteria = []) {
     let filePath;
     for (const status of SEARCH_DIRS) {
-        const dir = taskDir(cwd, status);
+        const dir = taskDir(root, status);
         const found = await findEntityFile(dir, id);
         if (found) {
             filePath = join(dir, found);

@@ -5,10 +5,10 @@ import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
 import { appendToBody } from "../core/markdown.js";
 const SEARCH_DIRS = ["pending", "active", "complete"];
-export async function taskUnblock(cwd, id, resolution) {
+export async function taskUnblock(root, id, resolution) {
     let filePath;
     for (const status of SEARCH_DIRS) {
-        const dir = taskDir(cwd, status);
+        const dir = taskDir(root, status);
         const found = await findEntityFile(dir, id);
         if (found) {
             filePath = join(dir, found);

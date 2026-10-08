@@ -1,3 +1,3 @@
-export declare function taskBlock(cwd: string, id: string, reason: string): Promise<{
+export declare function taskBlock(root: string, id: string, reason: string): Promise<{
     path: string;
 }>;

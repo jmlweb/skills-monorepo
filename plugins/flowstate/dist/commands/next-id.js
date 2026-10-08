@@ -3,13 +3,13 @@ import { join } from "node:path";
 import { ENTITY_PREFIXES } from "../core/types.js";
 import { ENTITY_DIRS, backlogRoot } from "../core/paths.js";
 import { formatId } from "../core/id.js";
-export async function nextId(cwd, type) {
+export async function nextId(root, type) {
     const prefix = ENTITY_PREFIXES[type];
-    const root = backlogRoot(cwd);
+    const backlogDir = backlogRoot(root);
     const dirs = ENTITY_DIRS[type];
     let maxNum = 0;
     for (const { dir } of dirs) {
-        const fullPath = join(root, dir);
+        const fullPath = join(backlogDir, dir);
         try {
             const entries = await readdir(fullPath);
             for (const entry of entries) {

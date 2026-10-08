@@ -9,14 +9,14 @@ import { appendToBody } from "../core/markdown.js";
 const SEARCH_DIRS: readonly TaskStatus[] = ["pending", "active", "complete"];
 
 export async function taskUnblock(
-  cwd: string,
+  root: string,
   id: string,
   resolution?: string,
 ): Promise<{ path: string }> {
   let filePath: string | undefined;
 
   for (const status of SEARCH_DIRS) {
-    const dir = taskDir(cwd, status);
+    const dir = taskDir(root, status);
     const found = await findEntityFile(dir, id);
     if (found) {
       filePath = join(dir, found);

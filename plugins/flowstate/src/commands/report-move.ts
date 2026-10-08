@@ -5,12 +5,12 @@ import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
 
 export async function reportMove(
-  cwd: string,
+  root: string,
   id: string,
   status: "triaged" | "discarded",
   taskId?: string,
 ): Promise<{ path: string }> {
-  const pendingDir = reportDir(cwd, "pending");
+  const pendingDir = reportDir(root, "pending");
   const fileName = await findEntityFile(pendingDir, id);
   if (!fileName) {
     throw new EntityNotFoundError(id, "reports/pending");
@@ -28,7 +28,7 @@ export async function reportMove(
 
   await writeEntity(sourcePath, fm, doc.body);
 
-  const destDir = reportDir(cwd, "complete");
+  const destDir = reportDir(root, "complete");
   const destPath = join(destDir, fileName);
   await moveFile(sourcePath, destPath);
 

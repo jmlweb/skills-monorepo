@@ -3,8 +3,8 @@ import { reportDir } from "../core/paths.js";
 import { findEntityFile, readEntity, writeEntity, moveFile } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
-export async function reportMove(cwd, id, status, taskId) {
-    const pendingDir = reportDir(cwd, "pending");
+export async function reportMove(root, id, status, taskId) {
+    const pendingDir = reportDir(root, "pending");
     const fileName = await findEntityFile(pendingDir, id);
     if (!fileName) {
         throw new EntityNotFoundError(id, "reports/pending");
@@ -18,7 +18,7 @@ export async function reportMove(cwd, id, status, taskId) {
         fm["task-id"] = taskId;
     }
     await writeEntity(sourcePath, fm, doc.body);
-    const destDir = reportDir(cwd, "complete");
+    const destDir = reportDir(root, "complete");
     const destPath = join(destDir, fileName);
     await moveFile(sourcePath, destPath);
     return { path: destPath };

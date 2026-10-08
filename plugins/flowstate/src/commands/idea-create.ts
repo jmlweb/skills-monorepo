@@ -13,13 +13,13 @@ export interface IdeaCreateInput {
 }
 
 export async function ideaCreate(
-  cwd: string,
+  root: string,
   input: IdeaCreateInput,
 ): Promise<{ id: string; path: string }> {
-  const id = await nextId(cwd, "idea");
+  const id = await nextId(root, "idea");
   const slug = titleToSlug(input.title);
   const filename = `${id}-${slug}.md`;
-  const dir = ideaDir(cwd, "pending");
+  const dir = ideaDir(root, "pending");
   const filePath = join(dir, filename);
 
   const frontmatter: Record<string, unknown> = {

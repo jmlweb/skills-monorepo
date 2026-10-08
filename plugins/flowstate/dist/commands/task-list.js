@@ -1,13 +1,13 @@
 import { join } from "node:path";
 import { taskDir } from "../core/paths.js";
 import { listFiles, readEntity } from "../core/fs.js";
-export async function taskList(cwd, status, limit) {
+export async function taskList(root, status, limit) {
     const statuses = status
         ? [status]
         : ["pending", "active", "complete"];
     const items = [];
     for (const s of statuses) {
-        const dir = taskDir(cwd, s);
+        const dir = taskDir(root, s);
         const files = await listFiles(dir);
         for (const file of files) {
             if (file.name === "index.md")

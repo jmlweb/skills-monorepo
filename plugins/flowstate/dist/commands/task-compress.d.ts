@@ -7,4 +7,4 @@ export interface TaskCompressResult {
     readonly errors: readonly string[];
     readonly skippedReason?: string;
 }
-export declare function taskCompress(cwd: string, id: string, newBody: string): Promise<TaskCompressResult>;
+export declare function taskCompress(root: string, id: string, newBody: string): Promise<TaskCompressResult>;

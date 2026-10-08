@@ -13,4 +13,4 @@ export interface LearningListResult {
     readonly created: string;
     readonly body: string;
 }
-export declare function learningList(cwd: string, input?: LearningListInput): Promise<LearningListResult[]>;
+export declare function learningList(root: string, input?: LearningListInput): Promise<LearningListResult[]>;

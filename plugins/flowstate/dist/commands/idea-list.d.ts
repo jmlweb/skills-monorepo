@@ -13,4 +13,4 @@ export interface IdeaListItem {
     readonly taskId: string | undefined;
     readonly path: string;
 }
-export declare function ideaList(cwd: string, input?: IdeaListInput): Promise<IdeaListItem[]>;
+export declare function ideaList(root: string, input?: IdeaListInput): Promise<IdeaListItem[]>;
