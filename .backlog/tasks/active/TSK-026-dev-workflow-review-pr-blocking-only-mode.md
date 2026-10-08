@@ -1,12 +1,13 @@
 ---
 id: TSK-026
 title: dev-workflow: review-pr blocking-only mode
-status: pending
+status: active
 priority: P3
 tags: [dev-workflow, review-pr]
 created: 2026-10-08
 source: plan/PLN-005
 depends-on: []
+started: 2026-10-08
 ---
 
 # dev-workflow: review-pr blocking-only mode
@@ -57,3 +58,4 @@ Make review-pr report only blocking/important findings by default and post only 
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started

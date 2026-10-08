@@ -1,12 +1,13 @@
 ---
 id: TSK-043
 title: Fix: learning-list plain output breaks one-row-per-entity format with multiline body
-status: pending
+status: active
 priority: P3
 tags: [flowstate, cli, learnings, output]
 created: 2026-10-08
 source: report/RPT-007
 depends-on: []
+started: 2026-10-08
 ---
 
 # Fix: learning-list plain output breaks one-row-per-entity format with multiline body
@@ -37,3 +38,4 @@ Line-oriented consumers (`cut`, `grep`, `wc -l`, skills parsing rows) misread bo
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started
