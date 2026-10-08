@@ -58,6 +58,7 @@ Fetches the PR diff and launches specialized agents in parallel to produce a str
 /review-pr        # detects PR from current branch
 /review-pr 123    # by PR number
 /review-pr <url>  # by full GitHub URL
+/review-pr --all  # also show Nice to Have and Info findings
 ```
 
 **What it does:**
@@ -66,6 +67,10 @@ Fetches the PR diff and launches specialized agents in parallel to produce a str
 - 🧪 Conditionally adds a **qa-engineer** (critical user flows, new API endpoints)
 - ✅ Checks CI status via `gh pr checks`
 - 📋 Produces a full report with risk matrix and merge recommendation
+- 🔢 Numbers findings (`#1`, `#2`, …) across all agents as `path:line: severity: finding`
+- 🎯 Shows only **Critical, Must Fix and Should Fix** by default; `--all` adds Nice to Have and Info
+- 📄 The full unfiltered report is always written to `review.md`
+- 💬 Posts only the findings you pick, as one review with inline comments, after you confirm the exact text (lines outside the diff go into the review body)
 
 > **Requires:** [GitHub CLI](https://cli.github.com/) installed and authenticated (`gh auth login`)
 

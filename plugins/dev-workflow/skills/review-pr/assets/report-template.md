@@ -1,6 +1,6 @@
 # PR Review Report Template
 
-Use this template to aggregate all agent outputs into the final review.
+Use this template to aggregate all agent outputs into the final review. Findings are numbered globally (`#1`, `#2`, …) across agents and listed under their severity in Recommendations; the chat view hides Nice to Have and Info unless `--all`, but this file always keeps them all.
 
 ```markdown
 # PR Review: #{number} - {title}
@@ -26,7 +26,7 @@ Use this template to aggregate all agent outputs into the final review.
 | Perf | {icon} | {summary} |
 
 ## Code Review
-{code-reviewer output}
+{code-reviewer findings, each `#N path:line: severity: finding`}
 
 ## Security Review
 {security-reviewer output if applicable}
@@ -44,6 +44,7 @@ Use this template to aggregate all agent outputs into the final review.
 ## Recommendations
 
 ### 🔴 Critical (blocks merge)
+{#N path:line: finding}
 ### 🟠 Must Fix (blocks merge)
 ### 🟡 Should Fix (before merge recommended)
 ### 🟢 Nice to Have (follow-up)
