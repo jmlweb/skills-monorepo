@@ -125,7 +125,7 @@ Use `/reload-plugins` after making changes.
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:setup` | Create the `.backlog/` directory structure. Safe to re-run |
+| `/flowstate:setup` | Create the backlog directory structure (`.backlog/` by default, or a private location). Safe to re-run |
 | `/flowstate:overview` | Backlog overview with stats, active work, and health warnings |
 
 ### 📝 Tasks
@@ -379,6 +379,28 @@ node dist/bin/flowstate.js learning-list --include-archived true   # active + ar
 ```
 
 The `learning-search` command always operates on active learnings — archived entries are excluded from skill auto-loads (used by `start-task`, `next-task`, `idea`, `parallel`) so stale insights don't surface as live context.
+
+### 🔒 Private backlog
+
+Want the backlog out of version control without touching `.gitignore`? Create it somewhere git never tracks and point flowstate at it:
+
+```bash
+node dist/bin/flowstate.js setup --private          # <common-git-dir>/flowstate, shared by all worktrees
+node dist/bin/flowstate.js setup --dir /abs/path    # or any directory you like
+```
+
+`setup` prints a snippet; merge it into the git-ignored `.claude/settings.local.json` and restart the session:
+
+```json
+{ "env": { "FLOWSTATE_BACKLOG_DIR": "/abs/path/to/backlog" } }
+```
+
+How the backlog is found, in order:
+
+1. `FLOWSTATE_BACKLOG_DIR` — use an **absolute** path. A relative value is resolved against the project root (nearest ancestor with `.git` or `.backlog`), never `CLAUDE_PROJECT_DIR`. A configured directory that does not exist is an error, not an empty backlog.
+2. The nearest `.backlog/` walking up from the current directory.
+
+Check what flowstate sees with `node dist/bin/flowstate.js path` (add `--json true` for the source). Whether Claude Code's settings `env` reaches Bash tool calls and hooks is documented only indirectly, so verify it once in a real session with `echo $FLOWSTATE_BACKLOG_DIR`. In parallel runs a private backlog needs no "start" commit and is never stale in worktrees.
 
 ### Parallel execution flow
 

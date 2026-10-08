@@ -16,13 +16,13 @@ Task identifier (optional): $ARGUMENTS — accepts `TSK-001`, `001`, or `1`.
 
 ## Prerequisites
 
-Verify `.backlog/` exists.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists.
 
 ## Workflow
 
 ### 1. Identify Task
 
-If `$ARGUMENTS` provided, find matching file in `.backlog/tasks/active/`. If not there, check `.backlog/tasks/pending/` (a task can be completed without having been started) — if found there, confirm with the user before proceeding. If found nowhere, say so and stop.
+If `$ARGUMENTS` provided, find matching file in `{{BACKLOG}}/tasks/active/`. If not there, check `{{BACKLOG}}/tasks/pending/` (a task can be completed without having been started) — if found there, confirm with the user before proceeding. If found nowhere, say so and stop.
 
 If no argument, list active tasks and ask which to complete.
 

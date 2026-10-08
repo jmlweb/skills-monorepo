@@ -16,7 +16,7 @@ Report description (optional): $ARGUMENTS
 
 ## Prerequisites
 
-Verify `.backlog/` exists. If not, tell the user to run `/flowstate:setup` first.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists. If not, tell the user to run `/flowstate:setup` first.
 
 ## Workflow
 
@@ -69,7 +69,7 @@ Omit sections that don't apply (e.g., no "Steps to Reproduce" for findings).
 ```
 Filed RPT-{{ID}}: {{TITLE}}
   Type: {{TYPE}} | Severity: {{SEVERITY}}
-  File: .backlog/reports/pending/RPT-{{ID}}-{{slug}}.md
+  File: {{BACKLOG}}/reports/pending/RPT-{{ID}}-{{slug}}.md
 
 Next: /flowstate:triage-report RPT-{{ID}}
 ```

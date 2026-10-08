@@ -16,13 +16,13 @@ Task description (optional): $ARGUMENTS
 
 ## Prerequisites
 
-Verify `.backlog/` exists. If not, tell the user to run `/flowstate:setup` first.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists. If not, tell the user to run `/flowstate:setup` first.
 
 ## Workflow
 
 ### 1. Read Current State
 
-Read `.backlog/tasks/index.md` to understand the current backlog.
+Read `{{BACKLOG}}/tasks/index.md` to understand the current backlog.
 
 ### 2. Gather Task Information
 
@@ -73,7 +73,7 @@ The CLI assigns the next ID, creates the task file, and updates `tasks/index.md`
 Created TSK-{{ID}}: {{TITLE}}
   Priority: {{PRIORITY}}
   Tags: {{TAGS}}
-  File: .backlog/tasks/pending/TSK-{{ID}}-{{slug}}.md
+  File: {{BACKLOG}}/tasks/pending/TSK-{{ID}}-{{slug}}.md
 
 Next steps:
   /flowstate:start-task TSK-{{ID}}  — Start working on it

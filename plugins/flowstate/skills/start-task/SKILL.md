@@ -16,13 +16,13 @@ Task identifier (optional): $ARGUMENTS — accepts `TSK-001`, `001`, or `1`.
 
 ## Prerequisites
 
-Verify `.backlog/` exists. If not, tell the user to run `/flowstate:setup` first.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists. If not, tell the user to run `/flowstate:setup` first.
 
 ## Workflow
 
 ### 1. Identify Task
 
-If `$ARGUMENTS` provided, find the matching file in `.backlog/tasks/pending/`. If it is not there but exists in `.backlog/tasks/active/`, the task is already started — skip Step 4 (no move) and go to Step 5. If found nowhere, say so and stop.
+If `$ARGUMENTS` provided, find the matching file in `{{BACKLOG}}/tasks/pending/`. If it is not there but exists in `{{BACKLOG}}/tasks/active/`, the task is already started — skip Step 4 (no move) and go to Step 5. If found nowhere, say so and stop.
 
 If no argument, list all pending non-blocked tasks and ask which to start.
 
@@ -41,8 +41,8 @@ Before moving the task, gather relevant context automatically:
    node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{TASK_TAGS}}" --query "{{TASK_TITLE}} {{TASK_DESCRIPTION_FIRST_LINE}}" --limit 3 --json true
    ```
    The CLI returns only active learnings, scored by tag match and keyword relevance. Use the `title`, `tags`, and `reasons` fields to summarize relevance. Only read the full learning file if the user asks for details.
-2. **Active tasks**: Read `.backlog/tasks/active/` to list what else is in progress — helps the user understand current workload and spot potential overlaps.
-3. **Pending reports**: Scan `.backlog/reports/pending/` titles for anything related to this task's scope — avoids working on something with a known open issue.
+2. **Active tasks**: Read `{{BACKLOG}}/tasks/active/` to list what else is in progress — helps the user understand current workload and spot potential overlaps.
+3. **Pending reports**: Scan `{{BACKLOG}}/reports/pending/` titles for anything related to this task's scope — avoids working on something with a known open issue.
 
 If no learnings or reports match, skip silently — do not mention the absence.
 

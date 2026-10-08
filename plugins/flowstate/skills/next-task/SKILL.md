@@ -12,7 +12,7 @@ Analyze the backlog and recommend the best task to start next. When the highest-
 
 ## Prerequisites
 
-Verify `.backlog/` exists.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists.
 
 ## Workflow
 
@@ -61,7 +61,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL
 
 The CLI returns only active learnings, scored by tag match and keyword relevance. Use `title` and `reasons` to summarize relevance. Attribute each learning to the task(s) whose tags/title it overlaps with. Only read the full learning file if the user asks for details.
 
-Also scan `.backlog/reports/pending/` once for anything related to any task in the group.
+Also scan `{{BACKLOG}}/reports/pending/` once for anything related to any task in the group.
 
 If no matches, skip silently.
 

@@ -6,7 +6,7 @@ version: 2.6.3
 
 # Flowstate - Backlog Management System
 
-This project uses **Flowstate** for backlog management. All data lives in `.backlog/`.
+This project uses **Flowstate** for backlog management. All data lives in `.backlog/` by default, or in the directory named by `FLOWSTATE_BACKLOG_DIR` (private backlog). Never hardcode the path: run `flowstate path` to get the resolved directory.
 
 ## Structure
 
@@ -40,7 +40,8 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 
 | Command | Description |
 |---------|-------------|
-| `flowstate setup --project-name <name>` | Create .backlog/ structure |
+| `flowstate setup --project-name <name> [--dir <path> \| --private]` | Create the backlog structure (default `.backlog/`; `--dir`/`--private` for a private backlog, prints the settings snippet) |
+| `flowstate path` | Print the resolved backlog directory (`--json true` adds the source) |
 | `flowstate task-create --title <t> --priority <P> --tags <csv> --body -` | Create task |
 | `flowstate task-move <id> --to <active\|complete\|pending>` | Move task between states |
 | `flowstate task-update <id> [--set <key=value>] [--log <msg\|->] [--check <n,...>]` | Update task fields, append Progress Log bullets (`-` = stdin, one per line), tick criteria by 1-based index |

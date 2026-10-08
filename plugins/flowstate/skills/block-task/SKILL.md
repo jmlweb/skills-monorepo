@@ -16,7 +16,7 @@ $ARGUMENTS — First word is the task ID, rest is the block reason. Both optiona
 
 ## Prerequisites
 
-Verify `.backlog/` exists.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists.
 
 ## Workflow
 

@@ -19,11 +19,11 @@ IDs are zero-padded to 3 digits (e.g., `TSK-001`). The `id.ts` module handles pa
 
 ## Core Modules (`src/core/`)
 
-- **`paths.ts`** — `findBacklogRoot()` walks up from cwd to locate `.backlog/`. All path helpers derive from this.
+- **`paths.ts`** — `resolveBacklog()` is the single resolution point, called once in `src/bin/flowstate.ts`: `FLOWSTATE_BACKLOG_DIR` (absolute; relative resolves against the project root, never `CLAUDE_PROJECT_DIR`; a missing dir throws `BacklogDirMissingError`) else the nearest `.backlog/` walking up. It returns the backlog directory itself; commands take it as `root`, and all path helpers join from it. `resolveSetupTarget()` serves `setup --dir/--private`. The `path` command and `hooks/pre-commit-reminder.sh` apply the same rule; skills never hardcode `.backlog`.
 - **`fs.ts`** — `readEntity`/`writeEntity`/`moveFile`/`findEntityFile` — all async, wraps `fs/promises`.
 - **`frontmatter.ts`** — Custom YAML frontmatter parser/serializer (no library). Handles `[array]` syntax.
 - **`markdown.ts`** — Section manipulation: find, append, replace, table row add/remove, stats table update. Used by index rebuilds.
-- **`errors.ts`** — `BacklogNotFoundError`, `EntityNotFoundError`, `InvalidArgumentError`.
+- **`errors.ts`** — `BacklogNotFoundError`, `BacklogDirMissingError`, `EntityNotFoundError`, `InvalidArgumentError`.
 - **`types.ts`** — Shared type aliases: `EntityType`, `Priority`, `TaskStatus`, `IdeaStatus`, `ReportStatus`, `LearningStatus`, `ReportType`.
 - **`id.ts`** — `parseId`/`formatId`/`normalizeIdInput` — zero-padded IDs, case-insensitive input, bare number support.
 - **`date.ts`** — `today()` returns `YYYY-MM-DD` string.

@@ -16,7 +16,7 @@ Learning description (optional): $ARGUMENTS
 
 ## Prerequisites
 
-Verify `.backlog/` exists. If not, tell the user to run `/flowstate:setup` first.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists. If not, tell the user to run `/flowstate:setup` first.
 
 ## Workflow
 
@@ -86,7 +86,7 @@ Decide based on top match score (`reasons` array explains why each result matche
 
 ### 3. Link to Active Task (no prompt unless ambiguous)
 
-Check `.backlog/tasks/active/`:
+Check `{{BACKLOG}}/tasks/active/`:
 
 - **Exactly 1 active task** → link automatically (`--task TSK-XXX`). Do NOT ask.
 - **Multiple active tasks** → ask which one (or none) this relates to.
@@ -110,7 +110,7 @@ Omit `--task` if no active task is linked.
 Added LRN-{{ID}}: {{TITLE}}
   Tags: {{TAGS}}
   Linked to: TSK-{{XXX}} (or "No active task")
-  Directory: .backlog/learnings/LRN-{{ID}}-{{slug}}/
+  Directory: {{BACKLOG}}/learnings/LRN-{{ID}}-{{slug}}/
 
 Edit the file directly to refine. Add screenshots/attachments to the directory.
 ```

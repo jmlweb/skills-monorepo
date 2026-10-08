@@ -16,7 +16,7 @@ Search term (optional): $ARGUMENTS
 
 ## Prerequisites
 
-Verify `.backlog/learnings/` exists.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/learnings/` exists.
 
 ## Workflow
 
@@ -42,7 +42,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{SE
 
 - **Zero results** → say so and suggest broadening the search or running without arguments.
 
-**If no `$ARGUMENTS`** — read `.backlog/learnings/index.md` and display:
+**If no `$ARGUMENTS`** — read `{{BACKLOG}}/learnings/index.md` and display:
 
 ```
 ## Learnings Index ({{N}} entries)

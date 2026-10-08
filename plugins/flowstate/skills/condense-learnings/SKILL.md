@@ -63,7 +63,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-list --json true
 
 For each learning:
 
-1. **Read** the file at `.backlog/learnings/{{id}}-{{slug}}/index.md` with the `Read` tool. Skip if frontmatter has `compressed: true`.
+1. **Read** the file at `{{BACKLOG}}/learnings/{{id}}-{{slug}}/index.md` with the `Read` tool. Skip if frontmatter has `compressed: true`. (`{{BACKLOG}}` = output of `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path`)
 2. **Rewrite the body** following the caveman rules below. Frontmatter (`---\n…\n---`) stays out of the rewrite — only the body below it.
 3. **Pipe** to `learning-compress`:
 

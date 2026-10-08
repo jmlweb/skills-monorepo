@@ -17,7 +17,7 @@ $ARGUMENTS — comma-separated task IDs (e.g., `1,2,3` or `TSK-001,TSK-002`). Op
 
 ## Prerequisites
 
-Verify `.backlog/` exists.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists).
 
 ## Workflow
 
@@ -58,10 +58,10 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active
 
 The CLI handles frontmatter updates, file moves, and index updates.
 
-Then commit the moves. Worktrees branch from `HEAD`, so uncommitted moves leave subagents seeing stale `pending/` copies and cause merge conflicts later. The pathspec keeps unrelated staged work out of this commit:
+Then commit the moves, but only if `{{BACKLOG}}` is inside the repo's tracked tree (e.g. `{{BACKLOG}}` ends in `.backlog` and is not git-ignored). A private backlog (outside the repo or git-ignored) has nothing to commit: skip this step. It is also shared by every worktree, so subagents never see stale `pending/` copies. For a tracked backlog, worktrees branch from `HEAD`, so uncommitted moves leave subagents seeing stale `pending/` copies and cause merge conflicts later. The pathspec keeps unrelated staged work out of this commit:
 
 ```bash
-git add .backlog && git commit -m "chore(backlog): start {{IDS}}" -- .backlog
+git add "{{BACKLOG}}" && git commit -m "chore(backlog): start {{IDS}}" -- "{{BACKLOG}}"
 ```
 
 ### 5. Load Context for Subagents
@@ -74,7 +74,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL
 
 Distribute results to subagents by tag overlap: include a learning in a subagent's prompt if its tags or reasons reference terms from that task's title or tags. A single learning may appear in multiple prompts if relevant.
 
-Also scan `.backlog/reports/pending/` once for any reports related to the selected tasks' scope.
+Also scan `{{BACKLOG}}/reports/pending/` once for any reports related to the selected tasks' scope.
 
 ### 6. Launch Subagents
 
@@ -110,7 +110,7 @@ Complete Task TSK-{{ID}}: {{TITLE}}
 2. Apply the learnings above — they capture past mistakes and proven patterns
 3. Implement each acceptance criterion
 4. Verify changes work (build, lint, test as applicable)
-5. Do NOT modify anything under `.backlog/` and do NOT run flowstate CLI commands — other agents run in parallel, and the coordinator owns backlog state
+5. Do NOT modify anything under the backlog directory and do NOT run flowstate CLI commands — other agents run in parallel, and the coordinator owns backlog state
 6. Create a commit referencing TSK-{{ID}}
 7. End your final report with a `## Learnings` section: one entry per non-obvious root cause, undocumented behavior, gotcha, or reusable pattern you hit, each with Title, Tags, Context, Insight, Application. Skip routine work and anything obvious from the code. Write "None" if there are none.
 ```

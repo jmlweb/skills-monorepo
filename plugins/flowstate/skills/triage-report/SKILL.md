@@ -17,13 +17,13 @@ Report identifier (optional): $ARGUMENTS — accepts `RPT-001`, `001`, or `1`.
 
 ## Prerequisites
 
-Verify `.backlog/reports/pending/` has reports. If empty, inform the user.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/reports/pending/` has reports. If empty, inform the user.
 
 ## Workflow
 
 ### 1. Identify Report
 
-If `$ARGUMENTS` provided, find in `.backlog/reports/pending/`.
+If `$ARGUMENTS` provided, find in `{{BACKLOG}}/reports/pending/`.
 
 If no argument, list pending reports and ask which to triage.
 
@@ -45,8 +45,8 @@ Type: {{TYPE}} | Severity: {{SEVERITY}} | Created: {{DATE}}
 Before recommending, gather evidence. Skip steps that don't apply to the report type.
 
 - **Reproduce / locate**: grep the codebase for symbols, error messages, or file paths mentioned in the report. Confirm the affected code still exists and the issue is plausible.
-- **Check for duplicates**: scan `.backlog/tasks/pending/` and `.backlog/tasks/active/` for tasks with overlapping title, tags, or source. Note any matches.
-- **Cross-reference learnings**: search `.backlog/learnings/` for related insights that explain the behavior or suggest a fix.
+- **Check for duplicates**: scan `{{BACKLOG}}/tasks/pending/` and `{{BACKLOG}}/tasks/active/` for tasks with overlapping title, tags, or source. Note any matches.
+- **Cross-reference learnings**: search `{{BACKLOG}}/learnings/` for related insights that explain the behavior or suggest a fix.
 - **Assess completeness**: does the report contain enough to act on (repro steps, expected vs actual, scope)? List what's missing if not.
 
 Keep this internal — surface only the conclusions in the next step.

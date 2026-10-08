@@ -17,13 +17,13 @@ Plan identifier (optional): $ARGUMENTS — accepts `PLN-001`, `001`, or `1`.
 
 ## Prerequisites
 
-Verify `.backlog/ideas/pending/` has plans. If empty, inform the user.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/ideas/pending/` has plans. If empty, inform the user.
 
 ## Workflow
 
 ### 1. Identify Plan
 
-If `$ARGUMENTS` provided, find in `.backlog/ideas/pending/`.
+If `$ARGUMENTS` provided, find in `{{BACKLOG}}/ideas/pending/`.
 
 If no argument, list pending plans and ask which to review.
 
@@ -55,8 +55,8 @@ Before recommending, audit the plan against the actual codebase. Skip steps that
 - **Files exist & are accurate**: verify every path under "Files to Modify" exists. Check the relevant code matches what the plan assumes (function names, signatures, surrounding logic).
 - **Approach soundness**: read each step critically. Are there missing steps (tests, migrations, types, docs)? Steps that won't compile or contradict existing patterns?
 - **Risk gaps**: high/medium-complexity plans with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
-- **Conflicts with active work**: scan `.backlog/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
-- **Related learnings**: search `.backlog/learnings/` for prior insights that should shape the approach.
+- **Conflicts with active work**: scan `{{BACKLOG}}/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
+- **Related learnings**: search `{{BACKLOG}}/learnings/` for prior insights that should shape the approach.
 
 Keep this internal — surface only the conclusions in the next step.
 
