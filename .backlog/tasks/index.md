@@ -4,20 +4,21 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 20 |
-| Active | 0 |
+| Pending | 17 |
+| Active | 3 |
 | Blocked | 0 |
 | Complete | 23 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-021: dev-workflow: open-pr skill (P2)
+- TSK-032: Write skill-writing rules doc and wire into AGENTS.md and new-skill (P2)
+- TSK-040: Require evidence for ticked acceptance criteria (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-021 | dev-workflow: open-pr skill | P2 | dev-workflow, pr, skill, agent, cli | 2026-10-07 |
 | TSK-023 | atlassian-polish: verify md-to-adf with a real Jira write | P2 | atlassian-polish, adf, jira, verification | 2026-10-07 |
 | TSK-025 | dev-workflow: deslop skill | P3 | dev-workflow, skill, comments | 2026-10-07 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | P3 | dev-workflow, review-pr | 2026-10-08 |
@@ -25,7 +26,6 @@ _No active tasks._
 | TSK-029 | Add Spec axis to review-pr against task acceptance criteria | P2 | dev-workflow, review-pr, spec | 2026-10-08 |
 | TSK-030 | Add retro skill that turns session mistakes into checks | P2 | flowstate, skill, retro | 2026-10-08 |
 | TSK-031 | Add flowstate guide skill mapping the flows | P3 | flowstate, skill, docs | 2026-10-08 |
-| TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | P2 | skills, writing-rules, docs | 2026-10-08 |
 | TSK-033 | Audit flowstate and repo-local skills against writing rules | P3 | writing-rules, audit, flowstate | 2026-10-08 |
 | TSK-034 | Audit dev-workflow skills against writing rules | P3 | writing-rules, audit, dev-workflow | 2026-10-08 |
 | TSK-035 | Audit atlassian-polish skills against writing rules | P3 | writing-rules, audit, atlassian-polish | 2026-10-08 |
@@ -33,10 +33,9 @@ _No active tasks._
 | TSK-037 | Adopt round-based grilling format in idea and add-task | P3 | flowstate, skill, grilling | 2026-10-08 |
 | TSK-038 | Add skill lint test enforcing the skill quality bar | P2 | skills, lint, ci | 2026-10-08 |
 | TSK-039 | Add routing evals for skill descriptions | P2 | skills, evals, routing | 2026-10-08 |
-| TSK-040 | Require evidence for ticked acceptance criteria | P2 | flowstate, cli, acceptance-criteria | 2026-10-08 |
 | TSK-041 | Extend writing rules with description shape and rationalization tables | P2 | skills, writing-rules, docs | 2026-10-08 |
-| TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | P4 |  | 2026-10-08 |
-| TSK-043 | Fix: learning-list plain output breaks one-row-per-entity format with multiline body | P3 |  | 2026-10-08 |
+| TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | P4 | flowstate, cli, review-idea, templates | 2026-10-08 |
+| TSK-043 | Fix: learning-list plain output breaks one-row-per-entity format with multiline body | P3 | flowstate, cli, learnings, output | 2026-10-08 |
 
 ## Recently Completed
 

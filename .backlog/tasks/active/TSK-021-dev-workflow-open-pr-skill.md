@@ -1,12 +1,13 @@
 ---
 id: TSK-021
 title: dev-workflow: open-pr skill
-status: pending
+status: active
 priority: P2
 tags: [dev-workflow, pr, skill, agent, cli]
 created: 2026-10-07
 source: plan/PLN-007
 depends-on: []
+started: 2026-10-08
 ---
 
 # dev-workflow: open-pr skill
@@ -79,3 +80,4 @@ Turn a finished branch into a pull request whose description is written for huma
 
 - [2026-10-07] Created
 - [2026-10-07] Backlog review gap: ${CLAUDE_PLUGIN_DATA} is substituted into skill text, not exported to the CLI environment. find-pr-template must take the user template dir as an argument (e.g. --user-dir "${CLAUDE_PLUGIN_DATA}") instead of reading the env var; missing or empty --user-dir means no user template.
+- [2026-10-08] Started

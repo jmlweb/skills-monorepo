@@ -1,12 +1,13 @@
 ---
 id: TSK-040
 title: Require evidence for ticked acceptance criteria
-status: pending
+status: active
 priority: P2
 tags: [flowstate, cli, acceptance-criteria]
 created: 2026-10-08
 source: plan/PLN-022
 depends-on: []
+started: 2026-10-08
 ---
 
 # Require evidence for ticked acceptance criteria
@@ -59,3 +60,4 @@ Constraints found in the code:
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started
