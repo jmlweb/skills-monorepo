@@ -1,12 +1,13 @@
 ---
 id: TSK-029
 title: Add Spec axis to review-pr against task acceptance criteria
-status: pending
+status: active
 priority: P2
 tags: [dev-workflow, review-pr, spec]
 created: 2026-10-08
 source: plan/PLN-011
 depends-on: [TSK-026]
+started: 2026-10-08
 ---
 
 # Add Spec axis to review-pr against task acceptance criteria
@@ -52,3 +53,4 @@ Idea from mattpocock/skills `code-review`. Flowstate tasks already carry accepta
 
 - [2026-10-08] Created
 - [2026-10-08] Backlog check: sequenced after TSK-026. Both rewrite review-pr report-template.md; TSK-026 adds numbering and a severity filter, this task splits Standards and Spec. Keep the #N numbering global across both axes and apply the severity filter within each axis.
+- [2026-10-08] Started

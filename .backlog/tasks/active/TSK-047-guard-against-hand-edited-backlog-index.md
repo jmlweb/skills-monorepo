@@ -1,12 +1,13 @@
 ---
 id: TSK-047
 title: Guard against hand-edited backlog index and status/folder drift
-status: pending
+status: active
 priority: P3
 tags: [ci, backlog, guardrail]
 created: 2026-10-08
 source: TSK-030
 depends-on: []
+started: 2026-10-08
 ---
 
 # Guard against hand-edited backlog index and status/folder drift
@@ -28,3 +29,4 @@ From AGENTS.md mistake 8. Add a CI or pre-commit check that runs index-rebuild a
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-08] Started
