@@ -3,8 +3,10 @@ id: RPT-006
 title: review-idea approve nests idea headings under empty Description and duplicates Notes
 type: bug
 severity: low
-status: pending
+status: triaged
 created: 2026-10-08
+triaged: 2026-10-08
+task-id: TSK-042
 ---
 
 ## Summary

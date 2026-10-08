@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 18 |
+| Pending | 20 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 23 |
@@ -35,6 +35,8 @@ _No active tasks._
 | TSK-039 | Add routing evals for skill descriptions | P2 | skills, evals, routing | 2026-10-08 |
 | TSK-040 | Require evidence for ticked acceptance criteria | P2 | flowstate, cli, acceptance-criteria | 2026-10-08 |
 | TSK-041 | Extend writing rules with description shape and rationalization tables | P2 | skills, writing-rules, docs | 2026-10-08 |
+| TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | P4 |  | 2026-10-08 |
+| TSK-043 | Fix: learning-list plain output breaks one-row-per-entity format with multiline body | P3 |  | 2026-10-08 |
 
 ## Recently Completed
 
