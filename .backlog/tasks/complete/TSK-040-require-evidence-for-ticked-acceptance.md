@@ -1,13 +1,14 @@
 ---
 id: TSK-040
 title: Require evidence for ticked acceptance criteria
-status: active
+status: complete
 priority: P2
 tags: [flowstate, cli, acceptance-criteria]
 created: 2026-10-08
 source: plan/PLN-022
 depends-on: []
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # Require evidence for ticked acceptance criteria
@@ -46,12 +47,12 @@ Constraints found in the code:
 
 ## Acceptance Criteria
 
-- [ ] task-update --evidence JSON writes an inline evidence suffix on ticked criteria; keys outside --check and bad JSON rejected with typed errors
-- [ ] task-move --to complete reports ticked criteria without evidence in plain and --json output; exit code unchanged
-- [ ] Evidence suffix survives task-compress (test)
-- [ ] log-progress passes evidence per tick; complete-task re-runs command evidence and logs a reason for overrides
-- [ ] check-task ticks via task-update --check --evidence instead of hand-editing checkboxes
-- [ ] README CLI flags documented; pnpm typecheck, pnpm test, claude plugin validate . pass; flowstate bumped minor via pnpm bump
+- [x] task-update --evidence JSON writes an inline evidence suffix on ticked criteria; keys outside --check and bad JSON rejected with typed errors
+- [x] task-move --to complete reports ticked criteria without evidence in plain and --json output; exit code unchanged
+- [x] Evidence suffix survives task-compress (test)
+- [x] log-progress passes evidence per tick; complete-task re-runs command evidence and logs a reason for overrides
+- [x] check-task ticks via task-update --check --evidence instead of hand-editing checkboxes
+- [x] README CLI flags documented; pnpm typecheck, pnpm test, claude plugin validate . pass; flowstate bumped minor via pnpm bump
 
 ## Notes
 
@@ -61,3 +62,5 @@ Constraints found in the code:
 
 - [2026-10-08] Created
 - [2026-10-08] Started
+- [2026-10-08] Merged fd0c845; 268 flowstate tests, validate green
+- [2026-10-08] Completed

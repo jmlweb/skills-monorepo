@@ -1,13 +1,14 @@
 ---
 id: TSK-021
 title: dev-workflow: open-pr skill
-status: active
+status: complete
 priority: P2
 tags: [dev-workflow, pr, skill, agent, cli]
 created: 2026-10-07
 source: plan/PLN-007
 depends-on: []
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # dev-workflow: open-pr skill
@@ -62,15 +63,15 @@ Turn a finished branch into a pull request whose description is written for huma
 
 ## Acceptance Criteria
 
-- [ ] find-pr-template resolves repo, user (${CLAUDE_PLUGIN_DATA}/pr-template.md) and built-in templates in that order, with vitest coverage
-- [ ] Template semantics: ## headings are sections, <!-- --> comments are stripped instructions, optional drops a section, checklists kept verbatim
-- [ ] scan-secrets and detect-scope accept --range <base>...HEAD; staged-only stays the default; tests on a temp git repo
-- [ ] Read-only agent agents/pr-writer.md (tools: Read) follows references/pr-style-guide.md
-- [ ] skills/open-pr/SKILL.md: preflight, secrets scan, template, pr-writer, approval gate, then git push -u + gh pr create --draft
-- [ ] pr-ready step 8 uses find-pr-template + pr-writer instead of hardcoded What/Why/How to test
-- [ ] plugin.json description mentions PR creation; no agents key
-- [ ] README documents the command and template configuration
-- [ ] pnpm typecheck, pnpm test and claude plugin validate . pass
+- [x] find-pr-template resolves repo, user (${CLAUDE_PLUGIN_DATA}/pr-template.md) and built-in templates in that order, with vitest coverage
+- [x] Template semantics: ## headings are sections, <!-- --> comments are stripped instructions, optional drops a section, checklists kept verbatim
+- [x] scan-secrets and detect-scope accept --range <base>...HEAD; staged-only stays the default; tests on a temp git repo
+- [x] Read-only agent agents/pr-writer.md (tools: Read) follows references/pr-style-guide.md
+- [x] skills/open-pr/SKILL.md: preflight, secrets scan, template, pr-writer, approval gate, then git push -u + gh pr create --draft
+- [x] pr-ready step 8 uses find-pr-template + pr-writer instead of hardcoded What/Why/How to test
+- [x] plugin.json description mentions PR creation; no agents key
+- [x] README documents the command and template configuration
+- [x] pnpm typecheck, pnpm test and claude plugin validate . pass
 
 ## Notes
 
@@ -82,3 +83,5 @@ Turn a finished branch into a pull request whose description is written for huma
 - [2026-10-07] Created
 - [2026-10-07] Backlog review gap: ${CLAUDE_PLUGIN_DATA} is substituted into skill text, not exported to the CLI environment. find-pr-template must take the user template dir as an argument (e.g. --user-dir "${CLAUDE_PLUGIN_DATA}") instead of reading the env var; missing or empty --user-dir means no user template.
 - [2026-10-08] Started
+- [2026-10-08] Merged; 81 dev-workflow tests, validate green
+- [2026-10-08] Completed
