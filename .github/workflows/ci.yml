@@ -36,6 +36,10 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # Non-strict while the writing-rules audits (TSK-033..035) clear legacy warnings; flip to --strict after.
+      - name: Lint skills
+        run: pnpm lint:skills
+
       - name: Test
         run: pnpm test
 

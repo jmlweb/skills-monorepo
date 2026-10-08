@@ -54,6 +54,7 @@ pnpm typecheck             # tsc --noEmit per plugin
 pnpm version:sync          # plugin.json versions → marketplace.json
 pnpm vitest run src/core/id.test.ts        # single test file (run inside the plugin dir)
 node plugins/flowstate/dist/bin/flowstate.js <cmd> --json true   # run a CLI directly
+pnpm lint:skills         # skill quality bar (add --strict via node scripts/lint-skills.mjs --strict)
 claude plugin validate .   # marketplace + plugin schema validation
 ```
 
@@ -211,10 +212,11 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
 - [ ] `dist/` rebuilt and staged (hook does it — verify it fired)
 
 **New or edited skill**
-- [ ] Frontmatter complete; `name` == directory name; `allowed-tools` is the minimal scoped set
-- [ ] Model tier follows the CRUD-haiku / judgment-sonnet+effort rule
-- [ ] Description contains ≥3 quoted trigger phrases and states when to use it
-- [ ] Body ≤150 lines, numbered workflow steps, prerequisites checked before mutating anything
+- [ ] `pnpm lint:skills` has no errors and no new warnings (it checks: name == dir, frontmatter
+      key allowlist, description ≤1024 chars / one line / ≥3 quoted triggers, body ≤150 lines,
+      haiku-no-effort / sonnet+effort tiering, `${CLAUDE_PLUGIN_ROOT}` paths, CLI subcommands
+      exist, README lists the skill). Exemptions live in the script, never in frontmatter
+- [ ] `allowed-tools` is the minimal scoped set; numbered workflow steps, prerequisites checked before mutating anything
 - [ ] All state mutation shells out to the plugin CLI — no hand-edited backlog/index files
       (atlassian-polish: external Jira/Confluence writes only after explicit user approval)
 - [ ] Routing cases added/updated in `plugins/<plugin>/evals/routing.json` (≥3 positive, ≥2
@@ -222,7 +224,7 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
 - [ ] Description changed → tier-2 live run before and after, both results in the task's
       Progress Log: `claude plugin eval plugins/flowstate --case '<glob>'` (manual, costs
       model calls; cases in `evals/<case>/case.yaml`)
-- [ ] `claude plugin validate .` passes; plugin README command table updated
+- [ ] `claude plugin validate plugins/<name>` passes (root `.` only checks the marketplace, LRN-009); plugin README command table updated
 
 **Release**
 - [ ] Working tree clean, on `main`, pulled
