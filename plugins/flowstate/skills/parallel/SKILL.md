@@ -1,6 +1,6 @@
 ---
 name: parallel
-description: Execute multiple independent backlog tasks simultaneously using subagents with worktree isolation. Use when the user says "run tasks in parallel", "do these at the same time", or when multiple non-overlapping tasks can be worked on concurrently.
+description: Execute multiple independent backlog tasks simultaneously using subagents with worktree isolation. Use when the user says "run tasks in parallel", "do these at the same time", "work on these tasks concurrently", or when multiple non-overlapping tasks can be worked on concurrently.
 argument-hint: [task IDs separated by comma]
 allowed-tools: [Read, Write, Bash, Glob, Grep, Agent]
 model: sonnet

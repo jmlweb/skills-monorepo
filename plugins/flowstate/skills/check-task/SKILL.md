@@ -1,6 +1,6 @@
 ---
 name: check-task
-description: Verify that a task's declared status matches the actual codebase implementation. Use when the user says "check task status", "verify implementation", or during backlog health checks. Supports single-task and batch mode.
+description: Verify that a task's declared status matches the actual codebase implementation. Use when the user says "check task status", "verify implementation", "is this task really done", or during backlog health checks. Supports single-task and batch mode.
 argument-hint: [task ID or number]
 allowed-tools: [Read, Bash, Glob, Grep]
 model: sonnet
