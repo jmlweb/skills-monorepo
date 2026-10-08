@@ -1,13 +1,14 @@
 ---
 id: TSK-039
 title: Add routing evals for skill descriptions
-status: active
+status: complete
 priority: P2
 tags: [skills, evals, routing]
 created: 2026-10-08
 source: plan/PLN-021
 depends-on: []
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # Add routing evals for skill descriptions
@@ -44,12 +45,12 @@ Why we need it: flowstate has 18 skills with overlapping vocabulary (`idea`/`add
 
 ## Acceptance Criteria
 
-- [ ] scripts/routing-eval.mjs (zero-dep TF-IDF) checks positive top-3, negative not-rank-1, description collisions and a per-plugin rank-1 ratchet
-- [ ] scripts/routing-eval.test.mjs covers each check with fixtures plus a real-plugin run; pnpm test passes
-- [ ] evals/routing.json per plugin with >=3 positive and >=2 near-miss negative prompts per model-invoked skill
-- [ ] claude plugin eval case.yaml cases for overlapping flowstate pairs run once, results logged
+- [x] scripts/routing-eval.mjs (zero-dep TF-IDF) checks positive top-3, negative not-rank-1, description collisions and a per-plugin rank-1 ratchet
+- [x] scripts/routing-eval.test.mjs covers each check with fixtures plus a real-plugin run; pnpm test passes
+- [x] evals/routing.json per plugin with >=3 positive and >=2 near-miss negative prompts per model-invoked skill
+- [x] claude plugin eval case.yaml cases for overlapping flowstate pairs run once, results logged
 - [ ] claude plugin validate . still passes with evals/ dirs and claude plugin details token cost unchanged
-- [ ] AGENTS.md quality bar and new-skill require routing cases and a before/after tier-2 run on description changes
+- [x] AGENTS.md quality bar and new-skill require routing cases and a before/after tier-2 run on description changes
 
 ## Notes
 
@@ -62,3 +63,5 @@ Why we need it: flowstate has 18 skills with overlapping vocabulary (`idea`/`add
 - [2026-10-08] Created
 - [2026-10-08] Started
 - [2026-10-08] Merged d189a65; tier-2 run 10/10 pass (1 run each, check-task/next-task hit max_turns 4); claude plugin details token-cost check not run
+- [2026-10-08] Completed with criterion 5 unverified: claude plugin details token cost not run (evals/ holds no skills/agents/hooks). Criterion 4 met via prompt.md+graders (LRN-011), not case.yaml.
+- [2026-10-08] Completed

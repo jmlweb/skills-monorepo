@@ -1,13 +1,14 @@
 ---
 id: TSK-030
 title: Add retro skill that turns session mistakes into checks
-status: active
+status: complete
 priority: P2
 tags: [flowstate, skill, retro]
 created: 2026-10-08
 source: plan/PLN-012
 depends-on: []
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # Add retro skill that turns session mistakes into checks
@@ -40,14 +41,14 @@ Idea from mattpocock/skills `retro`. Our `add-learning` records lessons but neve
 
 ## Acceptance Criteria
 
-- [ ] plugins/flowstate/skills/retro/SKILL.md exists: user-invoked, sonnet/high, minimal allowed-tools
-- [ ] Defaults to current session; reads past session logs only when a path is given
-- [ ] Candidates ranked by frequency x cost; missing guardrail outranks missing pointer
-- [ ] Findings routed: mechanical to check task, judgement to AGENTS.md proposal, insight to learning, user-global rules proposal only
-- [ ] Filing via CLI only after per-item approval; learning-search --similar-to runs before learning-create
-- [ ] Command tables in plugins/flowstate/SKILL.md and README updated
-- [ ] Plugin bumped via pnpm bump minor; claude plugin validate . and pnpm test pass
-- [ ] Dogfood run over AGENTS.md Named mistakes files the mechanical ones as tasks
+- [x] plugins/flowstate/skills/retro/SKILL.md exists: user-invoked, sonnet/high, minimal allowed-tools
+- [x] Defaults to current session; reads past session logs only when a path is given
+- [x] Candidates ranked by frequency x cost; missing guardrail outranks missing pointer
+- [x] Findings routed: mechanical to check task, judgement to AGENTS.md proposal, insight to learning, user-global rules proposal only
+- [x] Filing via CLI only after per-item approval; learning-search --similar-to runs before learning-create
+- [x] Command tables in plugins/flowstate/SKILL.md and README updated
+- [x] Plugin bumped via pnpm bump minor; claude plugin validate . and pnpm test pass
+- [x] Dogfood run over AGENTS.md Named mistakes files the mechanical ones as tasks
 
 ## Notes
 
@@ -59,3 +60,4 @@ Idea from mattpocock/skills `retro`. Our `add-learning` records lessons but neve
 - [2026-10-08] Created
 - [2026-10-08] Started
 - [2026-10-08] Merged 8aefeb7; dogfood filed TSK-044..048
+- [2026-10-08] Completed

@@ -1,13 +1,14 @@
 ---
 id: TSK-041
 title: Extend writing rules with description shape and rationalization tables
-status: active
+status: complete
 priority: P2
 tags: [skills, writing-rules, docs]
 created: 2026-10-08
 source: plan/PLN-023
 depends-on: [TSK-032]
 started: 2026-10-08
+completed: 2026-10-08
 ---
 
 # Extend writing rules with description shape and rationalization tables
@@ -57,11 +58,11 @@ PLN-013 → TSK-032..035 define the doc and the audits. This idea adds scope to 
 
 ## Acceptance Criteria
 
-- [ ] Started only after TSK-032 has created docs/writing-skills.md
-- [ ] docs/writing-skills.md has a description-shape rule (what clause + triggers + Not for X, no workflow steps) with a bad/good pair from condense-tasks
-- [ ] docs/writing-skills.md has an optional Rationalizations section rule (Thought | Reality, max 6 rows, discipline skills only)
-- [ ] AGENTS.md description convention and .claude/skills/new-skill updated
-- [ ] TSK-028 and TSK-033..035 annotated via task-update --log
+- [x] Started only after TSK-032 has created docs/writing-skills.md
+- [x] docs/writing-skills.md has a description-shape rule (what clause + triggers + Not for X, no workflow steps) with a bad/good pair from condense-tasks
+- [x] docs/writing-skills.md has an optional Rationalizations section rule (Thought | Reality, max 6 rows, discipline skills only)
+- [x] AGENTS.md description convention and .claude/skills/new-skill updated
+- [x] TSK-028 and TSK-033..035 annotated via task-update --log
 - [ ] dev-workflow:check-docs passes on the doc
 
 ## Notes
@@ -74,3 +75,5 @@ PLN-013 → TSK-032..035 define the doc and the audits. This idea adds scope to 
 - [2026-10-08] Backlog grooming: priority P3 -> P2 because it blocks audits TSK-033..035; depends-on TSK-032.
 - [2026-10-08] Started
 - [2026-10-08] Merged 7633d37
+- [2026-10-08] Completed with criterion 6 verified by hand only, dev-workflow:check-docs not run.
+- [2026-10-08] Completed

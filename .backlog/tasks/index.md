@@ -5,15 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 19 |
-| Active | 3 |
+| Active | 0 |
 | Blocked | 0 |
-| Complete | 26 |
+| Complete | 29 |
 
 ## Active Tasks
 
-- TSK-030: Add retro skill that turns session mistakes into checks (P2)
-- TSK-039: Add routing evals for skill descriptions (P2)
-- TSK-041: Extend writing rules with description shape and rationalization tables (P2)
+_No active tasks._
 
 ## Pending Tasks
 
@@ -47,9 +45,9 @@
 | TSK-021 | dev-workflow: open-pr skill | 2026-10-08 |
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
 | TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
+| TSK-030 | Add retro skill that turns session mistakes into checks | 2026-10-08 |
 | TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | 2026-10-08 |
+| TSK-039 | Add routing evals for skill descriptions | 2026-10-08 |
 | TSK-040 | Require evidence for ticked acceptance criteria | 2026-10-08 |
+| TSK-041 | Extend writing rules with description shape and rationalization tables | 2026-10-08 |
 | TSK-022 | flowstate: log-progress skill | 2026-10-07 |
-| TSK-016 | Bump deprecated GitHub Actions to current majors | 2026-10-06 |
-| TSK-019 | dev-workflow: ci-triage skill | 2026-10-06 |
-| TSK-020 | dev-workflow: pr-ready skill | 2026-10-06 |
