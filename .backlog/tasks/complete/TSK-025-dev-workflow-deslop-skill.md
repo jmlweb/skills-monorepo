@@ -33,9 +33,9 @@ Remove LLM-style comments and prose from the current branch diff, keeping only c
 - `plugins/dev-workflow/README.md` — per-skill section + Requirements table row.
 
 ## Notes
+
 - Open: numbered list across all files at once vs per file — settle during implementation.
 - Deferred: `--pr` mode (overlaps `/pr-ready`).
-
 
 ## Acceptance Criteria
 
@@ -48,8 +48,6 @@ Remove LLM-style comments and prose from the current branch diff, keeping only c
 - [ ] dev-workflow README has a per-skill section and Requirements table row
 - [ ] claude plugin validate . passes
 - [ ] Released as a minor bump of dev-workflow
-
-## Notes
 
 ## Learnings
 

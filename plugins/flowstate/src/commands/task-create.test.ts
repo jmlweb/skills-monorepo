@@ -4,6 +4,8 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
+import { taskCondense } from "./task-condense.js";
+import { taskMove } from "./task-move.js";
 
 let tmp: string;
 
@@ -98,5 +100,72 @@ describe("taskCreate", () => {
 
     const content = await readFile(result.path, "utf-8");
     expect(content).toContain("source: plan/PLN-001");
+  });
+  describe("idea-style body", () => {
+    const ideaBody = [
+      "## Goal",
+      "",
+      "Ship it.",
+      "",
+      "## Approach",
+      "",
+      "```md",
+      "## Notes",
+      "```",
+      "",
+      "## Notes",
+      "",
+      "Idea note.",
+    ].join("\n");
+
+    const create = () =>
+      taskCreate(tmp, {
+        title: "Idea task",
+        priority: "P3",
+        tags: [],
+        description: ideaBody,
+        criteria: ["Done"],
+        source: "idea/IDE-001",
+        dependsOn: [],
+      });
+
+    it("nests idea headings under Description", async () => {
+      const content = await readFile((await create()).path, "utf-8");
+      const description = content.split("## Acceptance Criteria")[0]!;
+      expect(description).toContain("## Description\n\n### Goal\n\nShip it.");
+      expect(description).toContain("### Approach");
+      expect(content).not.toMatch(/^## Goal/m);
+    });
+
+    it("merges idea Notes into the single task Notes", async () => {
+      const content = await readFile((await create()).path, "utf-8");
+      const outsideFences = content.replace(/```[\s\S]*?```/g, "");
+      expect(outsideFences.match(/^## Notes$/gm)).toHaveLength(1);
+      expect(content).toMatch(/## Notes\n\nIdea note\.\n\n## Learnings/);
+    });
+
+    it("leaves fenced '## Notes' inside Description untouched", async () => {
+      const content = await readFile((await create()).path, "utf-8");
+      expect(content).toContain("```md\n## Notes\n```");
+    });
+
+    it("keeps task-condense acting on the single Notes section", async () => {
+      const { id } = await taskCreate(tmp, {
+        title: "Condense me",
+        priority: "P3",
+        tags: [],
+        description: "## Goal\n\nShip it.\n\n## Notes\n\nIdea note.",
+        criteria: ["Done"],
+        source: "idea/IDE-001",
+        dependsOn: [],
+      });
+      await taskMove(tmp, id, "complete");
+      await taskCondense(tmp, id);
+      const dir = join(tmp, "tasks", "complete");
+      const file = (await readdir(dir)).find((f) => f.startsWith(`${id}-`));
+      const content = await readFile(join(dir, file!), "utf-8");
+      expect(content).not.toContain("Idea note.");
+      expect(content.match(/^## Notes$/gm)).toHaveLength(1);
+    });
   });
 });

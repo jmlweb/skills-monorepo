@@ -36,8 +36,8 @@ Make review-pr report only blocking/important findings by default and post only 
 - `plugins/dev-workflow/README.md`
 
 ## Notes
-- Keep SKILL.md within the 150-line house range (76 lines today).
 
+- Keep SKILL.md within the 150-line house range (76 lines today).
 
 ## Acceptance Criteria
 
@@ -51,8 +51,6 @@ Make review-pr report only blocking/important findings by default and post only 
 - [ ] README documents --all, the new default and that the full report stays in review.md
 - [ ] claude plugin validate . passes
 - [ ] Released as a minor bump of dev-workflow
-
-## Notes
 
 ## Learnings
 

@@ -218,6 +218,71 @@ export function updateStatsTable(
   return lines.join("\n");
 }
 
+const FENCE_PATTERN = /^\s*(```|~~~)/;
+const NOTES_HEADING = /^##\s+Notes\s*$/;
+
+interface NotesSplit {
+  readonly rest: readonly string[];
+  readonly notes: readonly string[];
+  /** Index in `rest` where the first Notes heading sat, or -1. */
+  readonly firstAt: number;
+}
+
+// Fence-aware so a "## Notes" inside a code sample is never treated as a heading.
+function splitNotes(lines: readonly string[]): NotesSplit {
+  const rest: string[] = [];
+  const notes: string[] = [];
+  let firstAt = -1;
+  let inFence = false;
+  let inNotes = false;
+
+  for (const line of lines) {
+    if (FENCE_PATTERN.test(line)) inFence = !inFence;
+    if (!inFence && NOTES_HEADING.test(line)) {
+      if (firstAt === -1) firstAt = rest.length;
+      inNotes = true;
+      continue;
+    }
+    if (!inFence && inNotes && /^#{1,2}\s/.test(line)) inNotes = false;
+    if (inNotes) notes.push(line);
+    else rest.push(line);
+  }
+
+  return { rest, notes, firstAt };
+}
+
+/**
+ * Prepare an idea-style Markdown body for embedding under a task's own
+ * `## Description`: its `## Notes` is lifted out (to merge into the task's
+ * Notes) and remaining `##` headings are demoted so they nest, not sibling.
+ */
+export function embedUnderDescription(markdown: string): {
+  readonly description: string;
+  readonly notes: string;
+} {
+  const { rest, notes } = splitNotes(markdown.split("\n"));
+  let inFence = false;
+  const demoted = rest.map((line) => {
+    if (FENCE_PATTERN.test(line)) inFence = !inFence;
+    return !inFence && /^##\s/.test(line) ? `#${line}` : line;
+  });
+  return {
+    description: demoted.join("\n").trim(),
+    notes: notes.join("\n").trim(),
+  };
+}
+
+/** Collapse repeated `## Notes` sections into the first one. */
+export function mergeDuplicateNotes(body: string): string {
+  const { rest, notes, firstAt } = splitNotes(body.split("\n"));
+  const headings = body.split("\n").filter((l) => NOTES_HEADING.test(l)).length;
+  if (headings < 2) return body;
+
+  const merged = notes.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  const block = ["## Notes", "", ...(merged ? [merged, ""] : [""])];
+  return [...rest.slice(0, firstAt), ...block, ...rest.slice(firstAt)].join("\n");
+}
+
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

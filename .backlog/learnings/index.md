@@ -33,3 +33,4 @@
 | LRN-027 | lint:skills counts body lines excluding frontmatter | lint-skills, skills, writing-rules | active | 2026-10-09 |
 | LRN-028 | Re-merge a stale skill audit by taking main's files and replaying edits | workflow, skills, merge, worktree | active | 2026-10-09 |
 | LRN-029 | Piping pnpm bump to head can abort the bump via SIGPIPE | pnpm, bump, tooling | active | 2026-10-09 |
+| LRN-030 | Section helpers in markdown.ts are not fence-aware | flowstate, markdown, cli | active | 2026-10-09 |

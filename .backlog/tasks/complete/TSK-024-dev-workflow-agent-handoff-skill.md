@@ -32,8 +32,8 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 - `plugins/dev-workflow/README.md` — per-skill section + requirements table row.
 
 ## Notes
-- Open: whether prompts should name each repo's branch/worktree — settle during implementation.
 
+- Open: whether prompts should name each repo's branch/worktree — settle during implementation.
 
 ## Acceptance Criteria
 
@@ -46,8 +46,6 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 - [x] dev-workflow README has a per-skill section and requirements table row
 - [x] claude plugin validate . passes
 - [x] Released as a minor bump of dev-workflow
-
-## Notes
 
 ## Learnings
 

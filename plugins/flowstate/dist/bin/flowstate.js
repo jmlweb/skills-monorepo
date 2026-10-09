@@ -9,6 +9,7 @@ import { taskUpdate, parseEvidence } from "../commands/task-update.js";
 import { taskUnblock } from "../commands/task-unblock.js";
 import { taskCondense, taskCondenseAll } from "../commands/task-condense.js";
 import { taskCompress } from "../commands/task-compress.js";
+import { taskNormalize } from "../commands/task-normalize.js";
 import { taskDoctor } from "../commands/task-doctor.js";
 import { stats } from "../commands/stats.js";
 import { indexRebuild } from "../commands/index-rebuild.js";
@@ -51,6 +52,7 @@ Commands:
   task-update        Update task fields, log progress, tick criteria
   task-unblock       Unblock a task
   task-condense      Condense a complete task (or --all)
+  task-normalize     Merge duplicate Notes sections in a task
   task-compress      Replace a complete task body with a validated caveman-compressed version
   task-doctor        Reconcile task frontmatter status with folder location
   stats              Show backlog stats
@@ -83,6 +85,7 @@ const COMMAND_HELP = {
     "task-update": "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>] [--evidence <json>]\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)\n  --evidence '{\"2\":\"pnpm test → exit 0\"}'  attach proof to criteria ticked in the same call; keys must be in --check",
     "task-unblock": "Usage: flowstate task-unblock <id> [--resolution <text>]",
     "task-condense": "Usage: flowstate task-condense <id> | flowstate task-condense --all\n  Trims Notes section and middle Progress Log entries from complete tasks. Idempotent (sets condensed: true).",
+    "task-normalize": "Usage: flowstate task-normalize <id>\n  Merges repeated ## Notes sections of a task (any status) into the first one. Idempotent.",
     "task-compress": "Usage: flowstate task-compress <id> --body -\n  Replace task body with caveman-compressed version piped on stdin. Validates that all code blocks, inline code, URLs, IDs, dates, version numbers, and headings are preserved, and that the Acceptance Criteria section is byte-exact. Rejects on invariant failure with JSON diagnostics. Sets compressed: true on success. Idempotent.",
     "task-doctor": "Usage: flowstate task-doctor [--dry-run true]\n  Reconciles frontmatter `status` field with folder location for every task in tasks/{pending,active,complete}/. Maps synonyms (done, completed, todo, wip, ...) to canonical values. Idempotent.",
     stats: "Usage: flowstate stats",
@@ -332,6 +335,16 @@ async function main() {
                     const result = await taskCondense(root, id);
                     output(result, json);
                 }
+                break;
+            }
+            case "task-normalize": {
+                const id = positional[0];
+                if (!id) {
+                    console.error("Usage: flowstate task-normalize <id>");
+                    process.exit(1);
+                }
+                const result = await taskNormalize(root, id);
+                output(result, json);
                 break;
             }
             case "task-compress": {

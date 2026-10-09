@@ -4,7 +4,7 @@ import { today } from "../core/date.js";
 import { titleToSlug } from "../core/slug.js";
 import { taskDir, taskIndexPath } from "../core/paths.js";
 import { writeEntity } from "../core/fs.js";
-import { addTableRow } from "../core/markdown.js";
+import { addTableRow, embedUnderDescription } from "../core/markdown.js";
 import { nextId } from "./next-id.js";
 export async function taskCreate(root, input) {
     const id = await nextId(root, "task");
@@ -26,19 +26,20 @@ export async function taskCreate(root, input) {
     const criteriaLines = input.criteria.length > 0
         ? input.criteria.map((c) => `- [ ] ${c}`).join("\n")
         : "";
+    const { description, notes } = embedUnderDescription(input.description);
     const body = `
 # ${input.title}
 
 ## Description
 
-${input.description}
+${description}
 
 ## Acceptance Criteria
 
 ${criteriaLines}
 
 ## Notes
-
+${notes ? `\n${notes}\n` : ""}
 ## Learnings
 
 ## Progress Log
