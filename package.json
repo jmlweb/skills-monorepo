@@ -13,7 +13,8 @@
     "typecheck": "turbo run typecheck",
     "version:sync": "node scripts/version-sync.js",
     "version:check": "node scripts/check-version-consistency.mjs",
-    "backlog:check": "node scripts/check-backlog-integrity.mjs"
+    "backlog:check": "node scripts/check-backlog-integrity.mjs",
+    "names:check": "node scripts/check-reserved-names.mjs"
   },
   "devDependencies": {
     "simple-git-hooks": "^2.11.1",
