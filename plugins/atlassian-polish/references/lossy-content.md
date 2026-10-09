@@ -46,7 +46,7 @@ Verified on Cloud (CF-556, an issue with an inline screenshot):
    bare key; an ADF write only if `md-to-adf` gets `--jira-base`/`--projects` (formats §1).
    Note `renderedFields` auto-links bare keys even when the stored ADF is plain text, so it
    can't prove a link survived. On a re-read, the MCP Markdown shows smart links and
-   mentions as `<custom data-type=…>` tags: convert them with `readback-to-md` (SKILL step 3),
+   mentions as `<custom data-type=…>` tags: convert them with `readback-to-md` (jira-fetch.md "Round-trip"),
    never write them back as Markdown.
    Run the scan, don't eyeball it: save the strings to temp files and run
    `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/atlassian-polish.js" lossy-scan --file <md> --html <rendered.html> [--adf <KEY>.adf.json]`.
