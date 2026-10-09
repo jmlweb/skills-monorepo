@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 1 |
+| Pending | 0 |
 | Active | 3 |
 | Blocked | 1 |
-| Complete | 43 |
+| Complete | 44 |
 
 ## Active Tasks
 
@@ -20,13 +20,13 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-031 | Add flowstate guide skill mapping the flows | P3 | flowstate, skill, docs | 2026-10-08 |
 
 ## Recently Completed
 
 | ID | Title | Completed |
 |----|-------|-----------|
 | TSK-025 | dev-workflow: deslop skill | 2026-10-09 |
+| TSK-031 | Add flowstate guide skill mapping the flows | 2026-10-09 |
 | TSK-036 | Add GLOSSARY.md and fix entity-name drift | 2026-10-09 |
 | TSK-037 | Adopt round-based grilling format in idea and add-task | 2026-10-09 |
 | TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | 2026-10-09 |
@@ -35,4 +35,3 @@
 | TSK-021 | dev-workflow: open-pr skill | 2026-10-08 |
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | 2026-10-08 |
-| TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |

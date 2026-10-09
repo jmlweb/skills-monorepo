@@ -126,6 +126,7 @@ Use `/reload-plugins` after making changes.
 | Command | Description |
 |---------|-------------|
 | `/flowstate:setup` | Create the backlog directory structure (`.backlog/` by default, or a private location). Safe to re-run |
+| `/flowstate:guide` | 🔁 User-only. Map the commands into flows and name the next one to run |
 | `/flowstate:overview` | Backlog overview with stats, active work, and health warnings |
 
 ### 📝 Tasks

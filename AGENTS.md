@@ -163,6 +163,8 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   whose tags touch your task. That's what the index is for.
 - Every new/renamed skill: update the plugin README's command table and run
   `claude plugin validate .` before considering it done.
+- Adding, renaming or removing a flowstate skill also updates `plugins/flowstate/skills/guide/SKILL.md`
+  and the `plugins/flowstate/SKILL.md` command table ("a router that lies is worse than none").
 - Functions returning collections must distinguish "empty" from "lookup failed" — throw or
   validate the directory exists; never `catch → return []` (LRN-001, caused real bug RPT-003).
 

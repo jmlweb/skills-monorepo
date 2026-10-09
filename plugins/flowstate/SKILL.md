@@ -1,7 +1,7 @@
 ---
 name: flowstate
 description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
-version: 2.11.1
+version: 2.12.0
 ---
 
 # Flowstate - Backlog Management System
@@ -71,6 +71,7 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | Command | Description |
 |---------|-------------|
 | `/flowstate:setup` | User-only: initialize `.backlog/` in the current project (uses CLI) |
+| `/flowstate:guide` | User-only: map the commands into flows and name the next one to run |
 | `/flowstate:overview` | Show backlog overview and health |
 | `/flowstate:add-task` | Add a new task to the backlog |
 | `/flowstate:start-task` | Start working on a task |

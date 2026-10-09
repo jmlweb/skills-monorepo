@@ -1,12 +1,14 @@
 ---
 id: TSK-031
 title: Add flowstate guide skill mapping the flows
-status: pending
+status: complete
 priority: P3
 tags: [flowstate, skill, docs]
 created: 2026-10-08
 source: plan/PLN-010
 depends-on: [TSK-030]
+started: 2026-10-09
+completed: 2026-10-09
 ---
 
 # Add flowstate guide skill mapping the flows
@@ -40,13 +42,13 @@ Idea from mattpocock/skills `ask-matt`: a router over user-invoked skills, organ
 
 ## Acceptance Criteria
 
-- [ ] plugins/flowstate/skills/guide/SKILL.md exists: user-invoked, one-line description, haiku, allowed-tools Read, stateless
-- [ ] Map matches the revised flows: idea → review-idea → start-task → log-progress → complete-task; add-task as direct entry; on-ramps, maintenance, parallel, knowledge (incl. retro), setup precondition
-- [ ] guide holds flows and branches only; SKILL.md table stays a flat command list
-- [ ] Body requires reading a skill SKILL.md before describing it
-- [ ] AGENTS.md sync rule covers both guide and SKILL.md table
-- [ ] guide added to SKILL.md table and README
-- [ ] Plugin bumped via pnpm bump minor; claude plugin validate . and pnpm test pass
+- [x] plugins/flowstate/skills/guide/SKILL.md exists: user-invoked, one-line description, haiku, allowed-tools Read, stateless
+- [x] Map matches the revised flows: idea → review-idea → start-task → log-progress → complete-task; add-task as direct entry; on-ramps, maintenance, parallel, knowledge (incl. retro), setup precondition
+- [x] guide holds flows and branches only; SKILL.md table stays a flat command list
+- [x] Body requires reading a skill SKILL.md before describing it
+- [x] AGENTS.md sync rule covers both guide and SKILL.md table
+- [x] guide added to SKILL.md table and README
+- [x] Plugin bumped via pnpm bump minor; claude plugin validate . and pnpm test pass
 
 ## Notes
 
@@ -55,3 +57,7 @@ Idea from mattpocock/skills `ask-matt`: a router over user-invoked skills, organ
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-09] Started
+- [2026-10-09] Added skills/guide/SKILL.md, SKILL.md table row, README row, AGENTS.md sync rule
+- [2026-10-09] Bumped flowstate to 2.12.0; lint:skills, plugin validate, pnpm test all pass
+- [2026-10-09] Completed
