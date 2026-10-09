@@ -29,7 +29,7 @@ Rules for the description:
 
 - Imperative mood, lowercase, no trailing period
 - Max 72 chars
-- Show the drafted message to the user for approval before committing
+- Show the drafted message to the user and commit after approval
 
 ### Commit Type Reference
 
@@ -63,15 +63,9 @@ Output:
 - `source` is `files` (derived from staged paths), `branch` (fallback), or `none`.
 - `scopes` is the full deduped list if you need to inspect it.
 
-Rules the detector applies (for reference — no need to re-implement):
+Detector behaviour worth knowing: 2 scopes join with `,`; 3+ scopes give `suggested: null`; without workspace files it falls back to the branch name (task IDs like `PROJ-123` preserved). For plugins the scope is the directory name, which can differ from the package name.
 
-- `apps/{X}/...` and `plugins/{X}/...` → `X` (for plugins the directory name is the marketplace identity; the package name may differ)
-- `packages/{X}/...` → short name from that package's `package.json` (falls back to `X` if unreadable)
-- 2 scopes → joined by `,`
-- 3+ scopes → `suggested` is `null` (omit scope)
-- No workspace files → falls back to the current branch: strips known prefixes (`feature/`, `fix/`, `chore/`, `task/`, …), preserves `PROJ-123`-style task IDs, otherwise takes the first hyphen-separated word. Excludes `main`/`master`/`develop`/`dev`/`trunk`.
-
-You can override the inputs with `--files a,b,c` and `--branch name` if you need to dry-run against a hypothetical set.
+Dry-run against a hypothetical set with `--files a,b,c` and `--branch name`.
 
 ## Commit Execution (HEREDOC)
 
@@ -103,14 +97,11 @@ Exit codes:
 - `1` — findings detected; show them to the user and require explicit confirmation before committing
 - `2` — scanner error (not a git repo, git unavailable); report and stop
 
-The scanner covers:
+The scanner checks sensitive filenames (`.env*`, keys, certificates, credentials files) and credential patterns in added lines (cloud, Git host and payment tokens, private-key blocks, connection strings, hardcoded passwords).
 
-- **Sensitive filenames**: `.env*`, `credentials.json`, `secrets.json`, `*.pem`/`*.key`/`*.crt`/`*.p12`/`*.pfx`, SSH keys (`id_rsa*`, `id_ed25519*`, `id_dsa*`, `id_ecdsa*`), `.npmrc`/`.yarnrc`, any filename containing `api_key`/`secret`/`password`/`passwd`.
-- **Content patterns in added lines**: Stripe keys (`sk_live_`, `rk_live_`), Google API keys (`AIza…`), GitHub tokens (`ghp_`/`ghs_`/`gho_`/`ghu_`/`ghr_`), npm tokens (`npm_`), AWS access keys (`AKIA…`/`ASIA…`), Slack tokens (`xox[abprs]-…`), PEM private-key blocks, DB connection strings with credentials, and hardcoded password assignments.
-
-When any finding appears, surface the file + line + pattern name to the user verbatim. Do NOT proceed until they explicitly confirm (or they unstage/redact).
+On any finding, surface file + line + pattern name to the user verbatim. Commit only after they confirm explicitly or unstage/redact the content.
 
 ## Error Handling
 
-- **Hook failures**: show output, ask before `--no-verify` — NEVER skip hooks without permission
-- **Merge conflicts**: report conflicting files, suggest resolution first, do NOT auto-resolve
+- **Hook failures**: show the output and fix the cause, then retry the commit. Ask before `--no-verify`; a skipped hook hides a real failure.
+- **Merge conflicts**: report the conflicting files and let the user resolve them first

@@ -1,7 +1,7 @@
 ---
 name: review-pr
 argument-hint: [PR number or URL] [--all]
-description: Review a GitHub pull request with specialized agents running in parallel (code quality, security, QA, architecture as needed). Use when the user says "review PR", "review this pull request", "/review-pr", pastes a GitHub PR URL, or finishes a branch and wants feedback before merge. Fetches diff via `gh`, checks CI status, produces a structured report with risk matrix and merge recommendation. Requires GitHub CLI authenticated.
+description: Reviews a GitHub pull request for standards and spec fit, ending in a risk matrix and merge recommendation. Use when the user says "review PR", "review this pull request", "/review-pr", "review PR 42", "get feedback from specialized agents before merge", or pastes a GitHub PR URL. Not for stripping comments (use deslop) or explaining red CI (use ci-triage).
 allowed-tools: Read, Write, Grep, Agent, Bash(gh:*), Bash(git:*), Bash(command:*)
 model: sonnet
 effort: medium
@@ -18,7 +18,9 @@ Review a pull request by dispatching specialized agents in parallel and aggregat
 
 ## 1. Prerequisites
 
-`command -v gh` → `gh auth status` → `gh repo view`. If the PR is a draft or already merged, warn and ask before continuing.
+`command -v gh` → `gh auth status` → `gh repo view`. If any fails, tell the user (install `gh` or run `gh auth login`) and stop. If the PR is a draft or already merged, warn and ask before continuing.
+
+Done when: all three commands exit 0 and the user has answered any draft/merged warning.
 
 ## 2. Fetch PR
 
@@ -30,7 +32,9 @@ gh pr diff <id>
 gh pr checks <id>
 ```
 
-Run those in parallel. Checkout the branch only if local inspection is needed and you are not already on it.
+Run those in parallel. Check out the branch only when local inspection needs it and you are not already on it.
+
+Done when: metadata, diff and checks are held.
 
 ## 3. Size & categorize
 
@@ -40,6 +44,8 @@ From the diff stats, classify:
 - **Areas touched**: frontend / backend / infra / docs / tests / config
 
 For XLarge, suggest splitting before reviewing in depth.
+
+Done when: size and areas are stated.
 
 ## 4. Dispatch reviewers (parallel)
 
@@ -67,13 +73,16 @@ Judge whether the diff does what the originating task asked, separately from Sta
 
 Dispatch a `general-purpose` Agent (plugin skills cannot be a `subagent_type`) with the spec text, the diff, and `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/spec-brief.md` pasted into the prompt. It returns lines in the same `path:line: <severity>: <finding>` format, each quoting the criterion. If it fails, note the gap. The spec source works without flowstate installed.
 
+Done when: every dispatched agent has returned findings or a noted gap.
 ## 5. Aggregate
 
 1. Collect every agent's finding lines. Standards findings (code-reviewer, security, QA, architects) and Spec findings stay in separate axes. Number them globally in order across both axes, `#1`, `#2`, … (numbers stay stable across agents, axes and filters).
-2. Fill `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/report-template.md` with all findings, the CI check result, and the risk matrix. Keep finding text verbatim. Write the full, unfiltered report to `review.md` in the current directory (temporary — do not commit it).
+2. Fill `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/report-template.md` with all findings, the CI check result, and the risk matrix. Keep finding text verbatim. Write the full, unfiltered report to `review.md` in the current directory (temporary file, left uncommitted).
 3. Show the user each axis filtered to Critical, Must Fix and Should Fix; with `--all`, include Nice to Have and Info. Each axis keeps its own summary naming its worst finding; the axes are never merged or re-ranked against each other. Tell the user the full report is in `review.md`.
 
 CI: ✅ all green → proceed. ⏳ pending → note. ❌ failed → flag as merge blocker.
+
+Done when: `review.md` exists and the filtered report is shown.
 
 ## 6. Post
 
@@ -93,5 +102,4 @@ JSON
 ## Errors
 
 - **PR not found** → re-check id, repo access, `gh auth status`
-- **`gh` missing** → tell the user to install it (don't list per-OS commands)
 - **Rate limited** → wait or use a PAT

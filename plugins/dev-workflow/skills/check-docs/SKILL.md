@@ -1,13 +1,13 @@
 ---
 name: check-docs
 argument-hint: [path or scope]
-description: Audit project docs (README, CLAUDE.md, AGENTS.md, package READMEs, docs/) for content drift AND structural fit — versions, commands, paths, examples and instructions out of sync with the code, plus a 3-tier layout check (rules stay terse, READMEs stay human, deep docs live under docs/). Use when the user says "check docs", "are the docs up to date?", "audit the docs", after significant code changes, or before a release. Reports content + structural issues; defers markdown style/formatting to a linter. Monorepo-aware.
+description: Finds drift between project docs (README, CLAUDE.md, AGENTS.md, docs/) and the code, and docs filed in the wrong tier. Use when the user says "check docs", "are the docs up to date?", "audit the docs", or "docs check before a release". Not for markdown style (use a linter) or reviewing a pull request (use review-pr).
 allowed-tools: Read, Edit, Write, Grep, Glob, Agent, Bash(git:*), Bash(test:*), Bash(wc:*)
 model: sonnet
 effort: medium
 ---
 
-Audit documentation on two axes: **freshness** (claims still match the code) and **structure** (content lives in the right tier). Markdown style belongs to a linter, not to this skill.
+Audit documentation on two axes: **freshness** (claims still match the code) and **structure** (content lives in the right tier). Markdown style (whitespace, fence languages, heading hierarchy, table alignment, line length) belongs to the project's linter: leave it unreported.
 
 ## Usage
 
@@ -27,6 +27,8 @@ Audit documentation on two axes: **freshness** (claims still match the code) and
 
 Read project conventions first (`AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `docs/STYLE_GUIDE.md` if present) and note the existing tier layout (which `docs/` folders exist) before flagging anything.
 
+Done when: the file list for the run is fixed.
+
 ## Pass 1 — Freshness audit
 
 For every doc in scope, compare its claims against the current repo:
@@ -41,9 +43,11 @@ For every doc in scope, compare its claims against the current repo:
 
 For agent instructions also check: critical info up front, no contradictions, no dead pointers, conventions still reflected by the code (named exports, error handling style, etc.), and frontmatter (where applicable) is valid.
 
+Done when: every file in scope has been compared against each applicable bullet.
+
 ## Pass 2 — Structural audit
 
-Enforce a 3-tier doc layout. Caps are hard-coded.
+Enforce a 3-tier doc layout (rules stay terse, READMEs stay human, deep docs live under `docs/`). Caps are hard-coded.
 
 | Tier | Files | Cap | Voice |
 |---|---|---|---|
@@ -62,7 +66,9 @@ For each file in scope:
    - README with dense technical sections (long code blocks, deep API tables, multi-step internal procedures) → "this belongs in docs/".
 4. **Index check** — if a `docs/` folder has 3+ files and no `docs/README.md` (or `docs/index.md`), flag missing index.
 5. **Cross-link check** — every `docs/**/*.md` should be reachable from the index or another doc; orphans get flagged.
-6. **Extraction proposal** — for each cap or voice violation, propose a concrete diff that (a) moves the offending section into a new or existing `docs/` file, (b) leaves a one-line pointer in the source. Show the diff, ask for confirmation, then write.
+6. **Extraction proposal** — for each cap or voice violation, propose a concrete diff that (a) moves the offending section into a new or existing `docs/` file, (b) leaves a one-line pointer in the source.
+
+Done when: every file in scope has a tier or a skip, and every violation has an extraction proposal.
 
 Severity for structural findings is **Medium** by default; **High** when a proposed pointer would be broken or a rules file exceeds its cap by >50%.
 
@@ -77,18 +83,17 @@ Group all findings (both passes) by severity:
 
 For each finding: `file:line`, what is wrong, what the current state actually is, proposed fix.
 
+Done when: every finding appears under exactly one severity.
+
 ## Applying fixes
 
-Show the proposed diff per file and ask for confirmation before writing. Never auto-write content changes. Same protocol for both passes.
+For both passes, show the proposed diff per file and write it after the user confirms. Report (without editing) anything whose staleness or placement is uncertain.
 
-## Out of scope
-
-Markdown style — trailing whitespace, missing code-fence language, heading hierarchy, table alignment, duplicate headings, line length. Don't audit, fix, or report on these. They are deterministic concerns; the project may already handle them with its own tooling (or deliberately not).
+Done when: each shown diff has been confirmed, edited or declined.
 
 ## Notes
 
 - Preserve the user's voice and intentional formatting
-- Do not invent docs where none existed (except agent instructions, with consent)
+- Create new docs only for agent instructions, with consent
 - Monorepos: audit each package independently and report per-package
-- When unsure whether something is stale or misplaced, report it instead of editing
 - For very large doc sets, delegate per-package audits to subagents in parallel

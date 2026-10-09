@@ -11,11 +11,11 @@ Apply before any command that creates or changes something on GitHub
 
 ## Content
 
-- Write in English, in one plain, neutral line of tone: factual, no hype, no emoji.
-- Never add attribution lines ("Generated with…", tool or AI signatures) on your own.
-  Follow the user's and the project's settings if they say otherwise.
+- Write in English in a plain, factual tone: no hype, no emoji.
+- Add attribution lines ("Generated with…", tool or AI signatures) only when the user's
+  or the project's settings call for them.
 
 ## Git safety
 
-- Never push to the base branch without asking.
-- Never force-push without asking.
+- Ask before pushing to the base branch.
+- Ask before force-pushing.
