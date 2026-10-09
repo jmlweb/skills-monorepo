@@ -202,6 +202,25 @@ Standardizes work split across repos and run by parallel agents: writes one self
 
 ---
 
+### 🧹 `/deslop` — Strip LLM-style comments
+
+Removes comments an LLM added on your branch that restate code, narrate changes or sell the result, and keeps the ones that explain why.
+
+```bash
+/deslop            # base = upstream branch, else origin/HEAD
+/deslop develop    # compare against another base branch
+```
+
+**What it does:**
+- 🎯 Looks only at lines added in `git diff -M <base>...HEAD` (renames detected), so older comments are never touched
+- 🚫 Skips generated, vendored and lock files, and all Markdown
+- 🚩 Flags restating comments, boilerplate JSDoc, change-log comments, section banners and marketing tone
+- 🛟 Keeps why-comments, invariants, workarounds with links and lint-required public API docs
+- 🔢 Shows one numbered list across all files; you answer once (`all`, `1-4,7`, `none`)
+- ✂️ Removes only the selected comments and commits nothing
+
+---
+
 ### 📝 `/check-docs` — Documentation audit
 
 Audits docs on two axes: **content drift** (versions, commands, paths, examples, instructions out of sync with code) and **structural fit** (a 3-tier layout — rules stay terse, READMEs stay human, deep docs live under `docs/`). Markdown style/formatting is left to a linter.
@@ -245,6 +264,7 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 | `/open-pr` | Git + GitHub CLI (`gh`) |
 | `/pr-ready` | Git + GitHub CLI (`gh`) |
 | `/agent-handoff` | None (no external CLI) |
+| `/deslop` | Git |
 | `/check-docs` | Git |
 
 ## License

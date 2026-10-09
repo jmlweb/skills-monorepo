@@ -69,6 +69,23 @@
         }
       ]
     },
+    "deslop": {
+      "positive": [
+        "deslop my branch",
+        "remove the AI comments from this branch",
+        "strip the LLM slop comments from my diff"
+      ],
+      "negative": [
+        {
+          "prompt": "check docs for drift against the code",
+          "owner": "check-docs"
+        },
+        {
+          "prompt": "review this pull request for quality",
+          "owner": "review-pr"
+        }
+      ]
+    },
     "open-pr": {
       "positive": [
         "open a PR",
