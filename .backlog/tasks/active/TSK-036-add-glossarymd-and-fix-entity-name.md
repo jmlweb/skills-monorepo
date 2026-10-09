@@ -1,12 +1,13 @@
 ---
 id: TSK-036
 title: Add GLOSSARY.md and fix entity-name drift
-status: pending
+status: active
 priority: P3
 tags: [docs, naming, flowstate]
 created: 2026-10-08
 source: plan/PLN-015
 depends-on: []
+started: 2026-10-09
 ---
 
 # Add GLOSSARY.md and fix entity-name drift
@@ -47,3 +48,4 @@ Idea from mattpocock/skills `GLOSSARY.md`. Our vocabulary drifts: idea / plan / 
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-09] Started
