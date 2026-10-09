@@ -1,13 +1,14 @@
 ---
 id: TSK-036
 title: Add GLOSSARY.md and fix entity-name drift
-status: active
+status: complete
 priority: P3
 tags: [docs, naming, flowstate]
 created: 2026-10-08
 source: plan/PLN-015
 depends-on: []
 started: 2026-10-09
+completed: 2026-10-09
 ---
 
 # Add GLOSSARY.md and fix entity-name drift
@@ -45,7 +46,9 @@ Idea from mattpocock/skills `GLOSSARY.md`. Our vocabulary drifts: idea / plan / 
 
 ## Learnings
 
+- LRN-023: pnpm bump only works inside the plugin dir
 ## Progress Log
 
 - [2026-10-08] Created
 - [2026-10-09] Started
+- [2026-10-09] Completed

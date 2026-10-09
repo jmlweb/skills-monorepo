@@ -1,13 +1,14 @@
 ---
 id: TSK-025
 title: dev-workflow: deslop skill
-status: active
+status: complete
 priority: P3
 tags: [dev-workflow, skill, comments]
 created: 2026-10-07
 source: plan/PLN-003
 depends-on: []
 started: 2026-10-09
+completed: 2026-10-09
 ---
 
 # dev-workflow: deslop skill
@@ -56,3 +57,4 @@ Remove LLM-style comments and prose from the current branch diff, keeping only c
 
 - [2026-10-07] Created
 - [2026-10-09] Started
+- [2026-10-09] Completed

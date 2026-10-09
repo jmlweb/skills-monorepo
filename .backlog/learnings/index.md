@@ -25,3 +25,5 @@
 | LRN-019 | Worktree agents need /usr/bin/git, an install, and may start from a stale base | worktree, parallel, tooling, rtk | active | 2026-10-08 |
 | LRN-020 | task-create leaves index.md one trailing line short of index-rebuild output | flowstate, index, ci, testing | active | 2026-10-08 |
 | LRN-021 | Worktree guard rejects compound or variable-driven Bash commands | worktree, tooling, parallel | active | 2026-10-08 |
+| LRN-022 | tsc never deletes dist outputs whose source vanished, and turbo cache restores them | dist, build, turbo, ci | active | 2026-10-09 |
+| LRN-023 | pnpm bump only works inside the plugin dir | release, pnpm, tooling | active | 2026-10-09 |

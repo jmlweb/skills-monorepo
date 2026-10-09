@@ -5,16 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 6 |
-| Active | 3 |
+| Active | 0 |
 | Blocked | 1 |
-| Complete | 38 |
+| Complete | 41 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
-- TSK-025: dev-workflow: deslop skill (P3)
-- TSK-036: Add GLOSSARY.md and fix entity-name drift (P3)
-- TSK-048: Banned-names and stale dist file check (P3)
 
 ## Pending Tasks
 
@@ -31,6 +28,9 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-025 | dev-workflow: deslop skill | 2026-10-09 |
+| TSK-036 | Add GLOSSARY.md and fix entity-name drift | 2026-10-09 |
+| TSK-048 | Banned-names and stale dist file check | 2026-10-09 |
 | TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | 2026-10-08 |
 | TSK-021 | dev-workflow: open-pr skill | 2026-10-08 |
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
@@ -38,6 +38,3 @@
 | TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
 | TSK-028 | Split skills into user-invoked and model-invoked | 2026-10-08 |
 | TSK-029 | Add Spec axis to review-pr against task acceptance criteria | 2026-10-08 |
-| TSK-030 | Add retro skill that turns session mistakes into checks | 2026-10-08 |
-| TSK-032 | Write skill-writing rules doc and wire into AGENTS.md and new-skill | 2026-10-08 |
-| TSK-038 | Add skill lint test enforcing the skill quality bar | 2026-10-08 |

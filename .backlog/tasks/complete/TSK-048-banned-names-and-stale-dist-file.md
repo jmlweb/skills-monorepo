@@ -1,13 +1,14 @@
 ---
 id: TSK-048
 title: Banned-names and stale dist file check
-status: active
+status: complete
 priority: P3
 tags: [ci, test, guardrail]
 created: 2026-10-08
 source: TSK-030
 depends-on: []
 started: 2026-10-09
+completed: 2026-10-09
 ---
 
 # Banned-names and stale dist file check
@@ -26,7 +27,9 @@ From invariant 7 and mistake 15. Test failing on plan-create, a skill named plan
 
 ## Learnings
 
+- LRN-022: tsc never deletes dist outputs whose source vanished, and turbo cache restores them
 ## Progress Log
 
 - [2026-10-08] Created
 - [2026-10-09] Started
+- [2026-10-09] Completed
