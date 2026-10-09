@@ -39,7 +39,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true
 | Active | {{N}} |
 | Blocked | {{N}} |
 | Complete | {{N}} |
-| Plans (pending) | {{N}} |
+| Ideas (pending) | {{N}} |
 | Reports (pending) | {{N}} |
 | Learnings | {{N}} |
 
@@ -53,7 +53,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true
 
 If more than 10 pending tasks exist, add a footer: "… and N more. Use `task-list --status pending --json true` for the full list."
 
-### Pending Plans
+### Pending Ideas
 | ID | Title | Complexity | Created |
 |----|-------|------------|---------|
 
@@ -98,6 +98,6 @@ Skip this step if counts match — avoids unnecessary file reads.
 ```
 /flowstate:next-task       — Get a recommendation
 /flowstate:add-task        — Add new work
-/flowstate:review-idea     — Review pending plans
+/flowstate:review-idea     — Review pending ideas
 /flowstate:triage-report   — Triage pending reports
 ```

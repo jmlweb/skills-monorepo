@@ -7,9 +7,9 @@ model: sonnet
 effort: high
 ---
 
-# Generate Plan
+# Generate Idea
 
-Create a detailed implementation plan for a feature or change, saved for later review.
+Create an idea (a detailed implementation plan for a feature or change), saved for later review.
 
 ## Arguments
 
@@ -37,9 +37,9 @@ Before exploring code, gather backlog context:
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{FEATURE_DESCRIPTION}}" --limit 3 --json true
    ```
-   The CLI returns only active learnings, scored by keyword relevance. Use `title` and `reasons` to assess relevance. Read the full learning file only for high-scoring matches that directly affect the plan.
-2. **Active tasks**: Read `{{BACKLOG}}/tasks/active/` — the plan should account for work already in progress to avoid conflicts or duplication.
-3. **Pending reports**: Scan `{{BACKLOG}}/reports/pending/` for related bugs or findings that the plan should address or acknowledge.
+   The CLI returns only active learnings, scored by keyword relevance. Use `title` and `reasons` to assess relevance. Read the full learning file only for high-scoring matches that directly affect the idea.
+2. **Active tasks**: Read `{{BACKLOG}}/tasks/active/` — the idea should account for work already in progress to avoid conflicts or duplication.
+3. **Pending reports**: Scan `{{BACKLOG}}/reports/pending/` for related bugs or findings that the idea should address or acknowledge.
 
 If no matches found, skip silently.
 
@@ -51,15 +51,15 @@ Based on the description:
 - Identify dependencies and potential conflicts
 - Incorporate insights from learnings found in Step 2
 
-### 4. Generate Plan via CLI
+### 4. Generate Idea via CLI
 
 ```bash
 cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-create --title "{{TITLE}}" --complexity {{COMPLEXITY}} --body -
-{{PLAN_CONTENT}}
+{{IDEA_CONTENT}}
 BODY
 ```
 
-`{{PLAN_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
+`{{IDEA_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
 
 ```markdown
 ## Goal

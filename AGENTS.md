@@ -40,6 +40,7 @@ plugins/
 └── atlassian-polish/             # 2 skills + 1 agent + references + tiny CLI (md-to-adf); src/dist
 packages/shared-config/           # tsconfig.base.json all plugins extend
 scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh (+ node:test tests)
+GLOSSARY.md                       # ubiquitous language: entity names + words to avoid
 .backlog/                         # flowstate dogfooded on this repo (tasks, learnings, reports)
 .github/workflows/                # ci.yml (PR/main gates), release.yml (tag-triggered)
 ```
@@ -94,6 +95,8 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   `references/` or `docs/` under 300 lines. Don't hardcode plugin versions in READMEs —
   they drift (this bit us; see git history).
 - English for all docs and comments. Comments explain *why*, never *what*.
+- When naming a backlog entity or writing skill prose, use `GLOSSARY.md` terms (and
+  its _Avoid_ lists).
 
 ### CLI code
 

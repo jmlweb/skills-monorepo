@@ -54,8 +54,8 @@ Structure:
 
 Available commands:
   /flowstate:add-task    — Add a new task
-  /flowstate:idea        — Generate an implementation plan
-  /flowstate:report      — File a bug report or finding
+  /flowstate:idea        — Generate an idea (implementation plan)
+  /flowstate:report      — File a report (bug, finding, security)
   /flowstate:overview    — View backlog overview
 ```
 
