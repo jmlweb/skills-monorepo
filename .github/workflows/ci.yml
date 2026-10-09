@@ -67,3 +67,6 @@ jobs:
 
       - name: Check backlog index and status/folder consistency
         run: pnpm backlog:check
+
+      - name: Check reserved names and stale dist files
+        run: pnpm names:check
