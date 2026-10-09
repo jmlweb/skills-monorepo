@@ -1,12 +1,13 @@
 ---
 id: TSK-037
 title: Adopt round-based grilling format in idea and add-task
-status: pending
+status: active
 priority: P3
 tags: [flowstate, skill, grilling]
 created: 2026-10-08
 source: plan/PLN-016
 depends-on: []
+started: 2026-10-09
 ---
 
 # Adopt round-based grilling format in idea and add-task
@@ -35,11 +36,11 @@ Idea from mattpocock/skills `grilling`. Frontier = questions whose prerequisites
 
 ## Acceptance Criteria
 
-- [ ] plugins/flowstate/shared/grilling.md exists and is referenced via CLAUDE_PLUGIN_ROOT
-- [ ] Rules: frontier rounds, recommendation per question where yes accepts, inline fact lookup, labelled-block format, explicit done condition
-- [ ] idea gather-context step uses full rounds
-- [ ] add-task uses one proposal round where yes accepts all
-- [ ] flowstate bumped via pnpm bump patch; claude plugin validate . and pnpm test pass
+- [x] plugins/flowstate/shared/grilling.md exists and is referenced via CLAUDE_PLUGIN_ROOT
+- [x] Rules: frontier rounds, recommendation per question where yes accepts, inline fact lookup, labelled-block format, explicit done condition
+- [x] idea gather-context step uses full rounds
+- [x] add-task uses one proposal round where yes accepts all
+- [x] flowstate bumped via pnpm bump patch; claude plugin validate . and pnpm test pass
 
 ## Notes
 
@@ -48,3 +49,5 @@ Idea from mattpocock/skills `grilling`. Frontier = questions whose prerequisites
 ## Progress Log
 
 - [2026-10-08] Created
+- [2026-10-09] Started
+- [2026-10-09] Added shared/grilling.md; idea uses full rounds, add-task one proposal round; bumped flowstate to 2.11.1; typecheck, test, lint:skills, plugin validate pass (uncommitted)

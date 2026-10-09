@@ -21,13 +21,14 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Gather Context
 
-If `$ARGUMENTS` provided, use it as the starting point. Otherwise ask:
+Read `${CLAUDE_PLUGIN_ROOT}/shared/grilling.md` and run its rounds, starting from `$ARGUMENTS` when provided. The frontier covers:
 
-1. **What do you want to build or change?**
-2. **Why is this needed?**
-3. **Any constraints?** (deadlines, compatibility, etc.)
+- **Goal**: what to build or change
+- **Motivation**: why it is needed
+- **Constraints**: deadlines, compatibility, scope limits
+- Any further decision the codebase cannot answer
 
-Done when: goal, motivation and constraints are each known.
+Done when: the grilling done condition holds and goal, motivation and constraints are each known.
 
 ### 2. Load Context
 

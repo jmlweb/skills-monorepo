@@ -26,26 +26,16 @@ Done when: the index has been read.
 
 ### 2. Gather Task Information
 
-If `$ARGUMENTS` is provided, use it as the title. Otherwise ask.
+Read `${CLAUDE_PLUGIN_ROOT}/shared/grilling.md`. Run one proposal round in its format, using `$ARGUMENTS` as the title when provided. Each block carries a recommendation, so "yes" accepts all:
 
-Groom the task by asking:
+- **Title**: short and descriptive
+- **Description**: what needs to be done and why
+- **Acceptance Criteria**: 3-6 specific, testable checkboxes
+- **Priority**: P1 critical or blocking, P2 do next, P3 normal, P4 nice-to-have
+- **Tags**: freeform labels suggested from the description
+- **Dependencies**: pending tasks from the index this one depends on, or none
 
-1. **Title** — Short, descriptive (e.g., "Add user authentication", "Fix pagination bug")
-2. **Description** — What needs to be done and why
-3. **Acceptance Criteria** — Ask iteratively: "What else needs to be true for this to be complete?" Aim for 3-6 specific, testable criteria as checkboxes
-4. **Priority** — Suggest based on description:
-
-   | Priority | When to use |
-   |----------|-------------|
-   | P1 | Critical / blocking other work |
-   | P2 | High priority, should be done next |
-   | P3 | Normal backlog item |
-   | P4 | Nice-to-have, future consideration |
-
-5. **Tags** — Freeform labels (e.g., `backend`, `auth`, `ui`, `performance`). Suggest based on description
-6. **Dependencies** — Show pending tasks and ask if this depends on any
-
-Done when: title, description, 3-6 criteria, priority, tags and dependencies are each answered or explicitly empty.
+Done when: the user accepted or overrode every block in the round.
 
 ### 3. Create Task via CLI
 

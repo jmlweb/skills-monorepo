@@ -4,8 +4,8 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 2 |
-| Active | 3 |
+| Pending | 1 |
+| Active | 4 |
 | Blocked | 1 |
 | Complete | 42 |
 
@@ -15,13 +15,13 @@
 - TSK-033: Audit flowstate and repo-local skills against writing rules (P3)
 - TSK-034: Audit dev-workflow skills against writing rules (P3)
 - TSK-035: Audit atlassian-polish skills against writing rules (P3)
+- TSK-037: Adopt round-based grilling format in idea and add-task (P3)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-031 | Add flowstate guide skill mapping the flows | P3 | flowstate, skill, docs | 2026-10-08 |
-| TSK-037 | Adopt round-based grilling format in idea and add-task | P3 | flowstate, skill, grilling | 2026-10-08 |
 
 ## Recently Completed
 
