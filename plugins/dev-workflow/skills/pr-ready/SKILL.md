@@ -20,11 +20,13 @@ Read `${CLAUDE_PLUGIN_ROOT}/shared/github-posting.md` first. Every post, push or
 
 - `/pr-ready` — PR of the current branch
 - `/pr-ready 123` or `<url>` — a specific PR
-- `--merge` — merge at the end. Off by default; never merge without it.
+- `--merge` — merge at the end. Off by default.
 
 ## Prerequisites
 
-`command -v gh` → `gh auth status` → `gh repo view`. Stop with a clear message if any fails.
+`command -v gh` → `gh auth status` → `gh repo view`. If any fails, tell the user (install `gh` or run `gh auth login`) and stop.
+
+Done when: all three commands exit 0.
 
 ## Workflow
 
@@ -39,13 +41,16 @@ gh pr view <id> --json number,title,body,author,headRefName,baseRefName,state,is
 - State is not `OPEN` → stop. Author is not the current `gh` user → warn and ask before continuing.
 - Not on the PR branch → ask before `gh pr checkout`.
 
+Done when: one open PR is named and its branch is checked out.
 ### 2. Update the branch
 
 ```bash
 git fetch origin <base> && git merge origin/<base>
 ```
 
-Conflicts → stop, list the files, ask the user. Never resolve silently. Clean merge → ask before `git push` (plain push, never force; never push to the base branch).
+Conflicts → stop, list the files, and let the user decide how to resolve them. Clean merge → ask before `git push` (plain push to the PR branch).
+
+Done when: the branch contains `origin/<base>` and any push is confirmed or declined.
 
 ### 3. Check CI
 
@@ -54,7 +59,9 @@ gh pr checks <id>
 ```
 
 - Pending → note it, continue; re-check at step 9.
-- Failed → invoke `dev-workflow:ci-triage` with the Skill tool (never `subagent_type`). Apply its fix pointers; rerun or issue creation stays behind its own confirmations.
+- Failed → call the Skill tool with `dev-workflow:ci-triage`. Apply its fix pointers; rerun or issue creation stays behind its own confirmations.
+
+Done when: every check is green, pending (noted) or triaged.
 
 ### 4. Fetch unresolved review threads
 
@@ -64,6 +71,8 @@ gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$
 
 Keep threads with `isResolved: false`. None → skip to step 8.
 
+Done when: the unresolved thread list is held (possibly empty).
+
 ### 5. Classify threads
 
 - **fixable** — a concrete code, naming, typo or test change inside the user's own diff.
@@ -71,11 +80,15 @@ Keep threads with `isResolved: false`. None → skip to step 8.
 
 Show both groups with `path:line` and a one-line summary.
 
+Done when: every unresolved thread sits in exactly one group.
+
 ### 6. Fix the fixable group
 
 - Edit only files in the branch diff (`git diff --name-only origin/<base>...HEAD`). A fix that needs another file moves the thread to needs-user.
 - Run the tests that cover the changed files.
 - Show the diff and ask before committing. Conventional Commit message. Push with plain `git push`, after confirmation.
+
+Done when: the fixes are committed and pushed, or the user declined.
 
 ### 7. Reply and resolve
 
@@ -88,6 +101,8 @@ gh api graphql -f query='mutation($t:ID!){resolveReviewThread(input:{threadId:$t
 
 Resolve only fixable threads; leave needs-user threads open.
 
+Done when: each fixable thread has a posted reply and is resolved.
+
 ### 8. Trim the description
 
 Rewrite the PR body through the template, not a hardcoded shape.
@@ -97,11 +112,15 @@ Rewrite the PR body through the template, not a hardcoded shape.
 3. Invoke the `Agent` tool with `subagent_type: "dev-workflow:pr-writer"`, passing the template, those inputs and the current title and body. It keeps linked issues and breaking-change notes and drops filler, file lists and changelogs of the diff.
 4. Show old vs new body (and the new title, only if it changed). Ask before `gh pr edit <id> --body-file -`.
 
+Done when: the user approved or declined the new body.
+
 ### 9. Finish
 
 - Draft and the user asked to undraft → `gh pr ready <id>`.
 - User named reviewers → `gh pr edit <id> --add-reviewer <login>`. Never guess reviewers.
-- `--merge` given → offer to watch `gh pr checks <id> --watch` until green, then confirm once more and run `gh pr merge <id>` with the repo's usual method. Without the flag, never merge.
+- `--merge` given → offer to watch `gh pr checks <id> --watch` until green, then confirm once more and run `gh pr merge <id>` with the repo's usual method. Merging happens only on this path.
+
+Done when: each requested action ran or the user declined it.
 
 ### 10. Report
 
@@ -113,6 +132,5 @@ Remaining: <list, or "nothing — ready to merge">
 
 ## Errors
 
-- **`gh` missing** → tell the user to install it
 - **No permission to push or resolve** → report it, leave the thread open
 - **Rate limited** → wait or use a PAT
