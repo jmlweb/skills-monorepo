@@ -57,6 +57,10 @@ Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrit
 | `references/atlassian-formats.md` | Format decision table, pitfalls, rendering limits, attachment and image-replace flow |
 | `references/diagrams.md` | SVG hygiene, layout defaults, 2× render, self-check |
 | `references/lossy-content.md` | What Jira reads lose (Markdown-only MCP), lossy-content markers, backup files |
+| `references/jira-fetch.md` | Jira-only fetch steps: lossy scan, readback round-trip, people map, blockers |
+| `references/rewrite-and-preview.md` | Formatter inputs, result checks, preview layout |
+| `references/write-and-verify.md` | Write rules, REST preflight, post-write verify checks |
+| `references/audit.md` | What `--audit` prints |
 | `references/setup-auth.md` | Per-deployment auth commands, token pages, Keychain setup, troubleshooting |
 
 One tiny CLI (`md-to-adf`), zero runtime dependencies; `dist/` is committed, so there is no build step for users.
