@@ -1,6 +1,6 @@
 ---
 name: new-skill
-description: Scaffold a new skill inside an existing plugin (flowstate or dev-workflow) following house conventions — frontmatter, model tiering, trigger-rich description, CLI-mutates/skill-orchestrates split, README table, validation. Use when the user says "add a skill", "new skill", "create a slash command", or "scaffold a skill for <plugin>". Do NOT use for a whole new plugin (use new-plugin) or for project-local .claude/skills.
+description: Scaffold a new skill inside an existing plugin following house conventions — frontmatter, model tiering, trigger-rich description, CLI-mutates/skill-orchestrates split, README table, validation. Use when the user says "add a skill", "new skill", "create a slash command", or "scaffold a skill for <plugin>". Not for a whole new plugin (use new-plugin) or for project-local .claude/skills.
 argument-hint: [plugin] [skill-name] [purpose]
 allowed-tools: [Read, Write, Edit, Grep, Glob, Bash(claude:*), Bash(ls:*), Bash(node:*)]
 model: sonnet
@@ -37,11 +37,13 @@ Interview for whatever is missing, one question at a time:
 
 State the choice and why in one line.
 
+Done when: tier is stated in one line with its reason.
+
 ### 2. Pick the invocation mode
 
 If neither the model nor another skill (via the Skill tool) needs to reach this skill, the
 user fires it by hand: set `disable-model-invocation: true`, write a one-line human-facing
-description, and skip step 2b.
+description, and skip step 2b (done when the mode is chosen).
 
 ### 2b. Draft the description — this is the router (model-invoked skills)
 
@@ -51,6 +53,8 @@ description, and skip step 2b.
   for each. Shape: `docs/writing-skills.md` §6.
 - For a discipline skill (value is resisting a shortcut), offer a `## Rationalizations`
   section per `docs/writing-skills.md` §7.
+
+Done when: the description has at least 3 quoted triggers and a "Not for" clause where a sibling is confusable.
 
 ### 3. Write `plugins/<plugin>/skills/<name>/SKILL.md`
 
@@ -69,7 +73,7 @@ effort: <medium|high>          # sonnet only
 
 # <Title>
 
-<One paragraph: what this does and the end state.>
+<What this does and the end state.>
 
 ## Arguments
 
@@ -77,21 +81,16 @@ effort: <medium|high>          # sonnet only
 
 ## Prerequisites
 
-<Checks before mutating anything — e.g. `.backlog/` exists; abort with reason if not.>
+<Checks before mutating anything; abort with a reason if one fails.>
 
 ## Workflow
 
 ### 1. <Step>
 
-<For flowstate mutations, always:>
+<Flowstate mutations:>
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" <command> --json true
-<Multi-line bodies via stdin: `--body -` with a heredoc.>
 
 Done when: <observable condition — CLI output, file state, user answer>.
-
-### 2. <Step>
-
-...
 
 ## Confirmation
 
@@ -101,18 +100,16 @@ Done when: <observable condition — CLI output, file state, user answer>.
 Rules while writing:
 
 - `allowed-tools` gets only what the workflow actually uses; prefer `Bash(git:*)` over `Bash`.
-- Every step ends with a `Done when:` line a second reader could verify.
 - Prose shared with sibling skills goes to `plugins/<plugin>/shared/*.md`, referenced as
   `${CLAUDE_PLUGIN_ROOT}/shared/<file>.md` — never duplicated, never by relative path.
 - Calling another skill: "Call the Skill tool with `<plugin>:<skill>`", one skill per call,
   model-invoked targets only; suggestions to the user use `/<plugin>:<skill>`.
-- Add a "run setup first" pointer only for a hard dependency.
-- Rewrite prohibitions as target behaviour; keep one only with its reason.
+- Add a "run setup first" pointer only for a hard dependency; state prohibitions as target behaviour.
 
 ### 4. No-op pass
 
-Go through the draft sentence by sentence; delete each one a fresh model would obey
-without being told (role-play openers, restated titles, "be careful", step recaps).
+Delete each draft sentence a fresh model would obey without being told (role-play openers,
+restated titles, "be careful", step recaps).
 
 Done when: a second read finds nothing more to delete and the body is ≤150 lines.
 
@@ -121,6 +118,8 @@ Done when: a second read finds nothing more to delete and the body is ≤150 lin
 1. Add a row to the command table in `plugins/<plugin>/README.md` (match the existing
    emoji/format of that table).
 2. If the plugin has a root `SKILL.md` listing slash commands (flowstate does), add it there too.
+
+Done when: the README table (and root `SKILL.md` where present) has a row for the skill.
 
 ### 5b. Add routing cases
 
@@ -142,10 +141,11 @@ claude plugin validate .
 Both must pass with no error or warning for the new skill. Then list each AGENTS.md "New or
 edited skill" checkbox with its status.
 
+Done when: `claude plugin validate .` exits 0 and each quality-bar checkbox has a status.
+
 ### 7. Version note
 
-A new skill is a `feat` → next release is at least **minor**. Do not bump now; remind the
-user in the confirmation.
+A new skill is a `feat` → next release is at least **minor**. Leave the bump to the release and remind the user in the confirmation.
 
 ## Confirmation
 

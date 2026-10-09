@@ -1,14 +1,12 @@
 ---
 name: add-task
-description: Interactively groom and add a new task to the backlog. Use when the user wants to add work, create a ticket, file a TODO, track a feature request, or says "add task", "new task", "I need to do X".
+description: Grooms a request into a backlog task with priority, tags and acceptance criteria. Use when the user says "add task", "new task", "create a ticket", "file a TODO", or "I need to do X". Not for bugs or findings (use report) or implementation plans (use idea).
 argument-hint: [task description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: haiku
 ---
 
 # Add Task
-
-Interactively groom a new task and add it to the backlog.
 
 ## Arguments
 
@@ -24,11 +22,13 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 Read `{{BACKLOG}}/tasks/index.md` to understand the current backlog.
 
+Done when: the index has been read.
+
 ### 2. Gather Task Information
 
 If `$ARGUMENTS` is provided, use it as the title. Otherwise ask.
 
-Collect interactively:
+Groom the task by asking:
 
 1. **Title** — Short, descriptive (e.g., "Add user authentication", "Fix pagination bug")
 2. **Description** — What needs to be done and why
@@ -44,6 +44,8 @@ Collect interactively:
 
 5. **Tags** — Freeform labels (e.g., `backend`, `auth`, `ui`, `performance`). Suggest based on description
 6. **Dependencies** — Show pending tasks and ask if this depends on any
+
+Done when: title, description, 3-6 criteria, priority, tags and dependencies are each answered or explicitly empty.
 
 ### 3. Create Task via CLI
 
@@ -65,7 +67,9 @@ BODY
 - `{{CRITERIA_JSON}}` is a JSON array of strings, e.g. `'["criterion 1","criterion 2"]'`
 - `{{DEPS}}` is comma-separated task IDs, e.g. `TSK-001,TSK-002`. Omit the `--depends-on` flag entirely if there are no dependencies; omit `--criteria` if none were gathered.
 
-The CLI assigns the next ID, creates the task file, and updates `tasks/index.md` automatically.
+The CLI assigns the ID, creates the task file, and updates `tasks/index.md`.
+
+Done when: the CLI prints the new TSK ID.
 
 ### 4. Confirm
 

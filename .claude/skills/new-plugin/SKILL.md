@@ -1,6 +1,6 @@
 ---
 name: new-plugin
-description: Scaffold a complete new plugin in this monorepo — directory structure, plugin.json, package.json (zero-dep, ESM), shared tsconfig, vitest, optional CLI skeleton, marketplace entry, first build, and validation. Use when the user says "new plugin", "scaffold a plugin", "add a plugin to the marketplace", or "create plugin <name>". Do NOT use for adding a skill to an existing plugin (use new-skill).
+description: Scaffold a complete new plugin in this monorepo — directory structure, plugin.json, package.json (zero-dep, ESM), shared tsconfig, vitest, optional CLI skeleton, marketplace entry, first build, and validation. Use when the user says "new plugin", "scaffold a plugin", "add a plugin to the marketplace", or "create plugin <name>". Not for adding a skill to an existing plugin (use new-skill).
 argument-hint: [plugin-name] [description]
 allowed-tools: [Read, Write, Edit, Grep, Glob, Bash(pnpm:*), Bash(claude:*), Bash(ls:*), Bash(mkdir:*), Bash(node:*), Bash(git:*)]
 model: sonnet
@@ -39,6 +39,8 @@ plugins/<name>/
 With CLI, add: `tsconfig.json`, `vitest.config.ts`, `src/bin/<name>.ts`,
 `src/commands/`, `src/core/errors.ts`.
 
+Done when: every listed path exists.
+
 ### 2. plugin.json
 
 ```json
@@ -56,6 +58,8 @@ With CLI, add: `tsconfig.json`, `vitest.config.ts`, `src/bin/<name>.ts`,
 ```
 
 Ask the user for 3–6 keywords (they feed marketplace search).
+
+Done when: `plugin.json` has 3-6 keywords from the user.
 
 ### 3. package.json — zero-dep invariant lives here
 
@@ -80,22 +84,16 @@ Ask the user for 3–6 keywords (they feed marketplace search).
 }
 ```
 
-No `dependencies` key — ever. Skills-only plugins keep just the `bump` script and drop
+Leave out the `dependencies` key: zero runtime dependencies is a product feature. Skills-only plugins keep just the `bump` script and drop
 `bin`/devDeps/build scripts. CLI plugins add `"bin": { "<name>": "./dist/bin/<name>.js" }`.
+
+Done when: `package.json` has no `dependencies` key.
 
 ### 4. CLI skeleton (only if CLI chosen)
 
-- `tsconfig.json`: `{ "extends": "../../packages/shared-config/tsconfig.base.json", "compilerOptions": { "outDir": "./dist", "rootDir": "./src" }, "include": ["src"], "exclude": ["**/*.test.ts"] }`
-- `vitest.config.ts`: include `src/**/*.test.ts` (copy from dev-workflow).
-- `src/bin/<name>.ts`: copy the dispatcher shape from
-  `plugins/dev-workflow/src/bin/dev-workflow.ts` — `parseFlags` (`--key value`, bare flag →
-  `"true"`), `--json true` / `--cwd` globals, exit codes 0/1/2, `--help` usage text, `switch`
-  dispatch to `src/commands/*`.
-- `src/core/errors.ts`: typed error classes extending `Error`.
-- Command modules: `export async function cmd(cwd: string, input: Input): Promise<Result>`
-  with `readonly` interfaces, colocated `*.test.ts` (vitest, temp dirs via `mkdtemp`,
-  assert on real file contents).
-- Imports use explicit `.js` extensions (Node16 ESM).
+Read `.claude/skills/new-plugin/cli-skeleton.md` and create the files it lists.
+
+Done when: `node plugins/<name>/dist/bin/<name>.js --help` prints usage after the Step 7 build (or the plugin is skills-only).
 
 ### 5. Marketplace entry
 
@@ -111,11 +109,15 @@ Add to `.claude-plugin/marketplace.json` `plugins` array:
 }
 ```
 
+Done when: the entry exists at version `0.1.0`.
+
 ### 6. README.md
 
 README tier: human, emoji-friendly. Sections: what it is, install
 (`claude plugin install <name>@jmlweb`), command table (empty for now), requirements, MIT.
 No hardcoded version numbers in prose.
+
+Done when: the README has install, command table, requirements and license sections.
 
 ### 7. Wire up and verify — all must pass
 
@@ -129,6 +131,8 @@ claude plugin validate .
 
 For CLI plugins confirm `dist/bin/<name>.js` exists and runs:
 `node plugins/<name>/dist/bin/<name>.js --help`.
+
+Done when: every command in the block exits 0.
 
 ### 8. Report
 

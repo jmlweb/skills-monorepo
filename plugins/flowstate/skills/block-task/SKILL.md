@@ -1,14 +1,12 @@
 ---
 name: block-task
-description: Mark a task as blocked with a documented reason. Use when the user hits a dependency, external blocker, or technical limitation — says "blocked by", "can't proceed", "waiting for", "stuck on".
+description: Marks a task as blocked with a documented reason, or unblocks it, and lists unblocked alternatives. Use when the user says "blocked by", "can't proceed", "waiting for", "stuck on", or "unblock task". Not for finishing a task (use complete-task).
 argument-hint: [task ID] [reason]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: haiku
 ---
 
 # Block Task
-
-Mark a task as blocked, document the reason, and suggest alternatives.
 
 ## Arguments
 
@@ -26,6 +24,8 @@ Parse `$ARGUMENTS` for task ID (first word if it matches TSK-XXX, XXX, or a numb
 
 If no ID, check for active tasks and ask which to block. Look in both `tasks/active/` and `tasks/pending/`.
 
+Done when: a single task ID is resolved.
+
 ### 2. Get Block Reason
 
 If reason provided in `$ARGUMENTS` (words after the ID), use it. Otherwise ask.
@@ -36,17 +36,21 @@ Suggest common categories:
 - **Technical**: "Discovered a technical limitation"
 - **Clarification**: "Requirements are unclear, need user input"
 
+Done when: a non-empty reason string exists.
+
 ### 3. Block Task via CLI
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-block {{ID}} --reason "{{REASON}}"
 ```
 
-The CLI sets `status: blocked` and `blocked-by` in frontmatter, adds a progress log entry. The task file stays in its current directory (pending or active).
+The CLI sets `status: blocked` and `blocked-by` and adds a progress log entry; the task file stays in its directory.
+
+Done when: the CLI reports the task as blocked.
 
 ### 4. Auto-Capture Technical Insight
 
-If the blocker is **Technical** (a limitation discovered, not waiting on an external party), auto-draft a learning silently from the reason + recent conversation context. Derive title, tags, and body (Context / Insight / Application) from that context — do NOT ask the user. Link to the blocked task with `--task TSK-{{ID}}`.
+If the blocker is **Technical** (a limitation discovered, not waiting on an external party), auto-draft a learning silently from the reason + recent conversation context, deriving title, tags, and body (Context / Insight / Application) without asking. Link to the blocked task with `--task TSK-{{ID}}`.
 
 ```bash
 cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body -
@@ -54,11 +58,13 @@ cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-creat
 BODY
 ```
 
-Skip silently for Dependency / External / Clarification blockers — those don't yield reusable insights.
+Dependency, External and Clarification blockers yield no reusable insight; skip this step for them.
+
+Done when: a learning ID exists (Technical blocker) or the blocker category is not Technical.
 
 ### 5. Confirm and Suggest
 
-Print the confirmation with unblocked alternatives and any auto-captured learning. Do NOT prompt for follow-up actions:
+Print the confirmation with unblocked alternatives and any auto-captured learning, with no follow-up prompt:
 
 ```
 Blocked TSK-{{ID}}: {{REASON}}

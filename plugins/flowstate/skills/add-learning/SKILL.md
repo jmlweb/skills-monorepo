@@ -1,14 +1,12 @@
 ---
 name: add-learning
-description: Document a learning or insight discovered during development. Use when the user says "learned something", "TIL", "note this", "remember this for next time", or when a non-obvious discovery is made while working.
+description: Captures a non-obvious insight as a searchable learning linked to the active task. Use when the user says "learned something", "TIL", "note this", "remember this for next time", or when a non-obvious discovery is made while working. Not for logging session progress (use log-progress) or filing bugs (use report).
 argument-hint: [learning description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: haiku
 ---
 
 # Add Learning
-
-Document an insight, mistake, or discovery so it can be referenced in future work.
 
 ## Arguments
 
@@ -30,9 +28,11 @@ The default mode is **auto-draft**: write the learning directly from available c
 
 **Interactive mode**: only if `$ARGUMENTS` is empty AND no clear insight is present in recent context.
 
+Done when: a mode is chosen.
+
 ### 2a. Auto-Draft Mode
 
-Derive every field from `$ARGUMENTS` + recent conversation. Do NOT ask the user:
+Derive every field from `$ARGUMENTS` + recent conversation, without asking:
 
 - **Title** — one short line capturing the insight
 - **Context** — what was being worked on when the discovery happened
@@ -40,7 +40,9 @@ Derive every field from `$ARGUMENTS` + recent conversation. Do NOT ask the user:
 - **Application** — what to do (or avoid) in the future
 - **Tags** — derive from content keywords; if a task is being linked (see Step 3), include its tags too
 
-Then run the dedupe check (Step 2c) — do not skip it.
+Then run the dedupe check (Step 2c).
+
+Done when: Title, Context, Insight, Application and Tags are all filled.
 
 ### 2b. Interactive Mode
 
@@ -51,6 +53,8 @@ Ask only when context is missing:
 3. **Insight** — Why is this important? What's the non-obvious part?
 4. **Application** — What should you do (or avoid) in the future?
 5. **Tags** — Freeform labels (e.g., `database`, `testing`, `deployment`)
+
+Done when: the user has answered all five questions.
 
 ### 2c. Dedupe Check (before creating)
 
@@ -63,7 +67,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to 
 Decide based on top match score (`reasons` array explains why each result matched):
 
 - **Top score ≥ 5** → likely duplicate.
-  - In **auto-draft mode**: do NOT create a new learning and do NOT ask. Say `Skipped — duplicate of LRN-{{ID}}: {{TITLE}}` and stop.
+  - In **auto-draft mode**: skip creation without asking. Say `Skipped — duplicate of LRN-{{ID}}: {{TITLE}}` and stop.
   - In **interactive mode**: show the match and ask:
   ```
   Similar learning already exists:
@@ -84,13 +88,17 @@ Decide based on top match score (`reasons` array explains why each result matche
 
 - **No matches or scores ≤ 1** → proceed silently.
 
+Done when: the outcome is "create" or "skip", with the matched LRN ID when skipping.
+
 ### 3. Link to Active Task (no prompt unless ambiguous)
 
 Check `{{BACKLOG}}/tasks/active/`:
 
-- **Exactly 1 active task** → link automatically (`--task TSK-XXX`). Do NOT ask.
+- **Exactly 1 active task** → link automatically (`--task TSK-XXX`).
 - **Multiple active tasks** → ask which one (or none) this relates to.
 - **Zero active tasks** → omit `--task`.
+
+Done when: `--task` is set to one TSK ID or omitted.
 
 ### 4. Create Learning via CLI
 
@@ -100,9 +108,9 @@ cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-creat
 BODY
 ```
 
-The CLI handles ID assignment, directory creation, index update, and task linking automatically.
+The CLI assigns the ID, creates the directory, and updates the index. Omit `--task` when no task is linked.
 
-Omit `--task` if no active task is linked.
+Done when: the CLI prints the new LRN ID.
 
 ### 5. Confirm
 

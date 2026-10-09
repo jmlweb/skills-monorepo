@@ -10,8 +10,6 @@ effort: medium
 
 # Triage Report
 
-Review a pending report and decide: convert to task, discard, or request more info.
-
 ## Arguments
 
 Report identifier (optional): $ARGUMENTS — accepts `RPT-001`, `001`, or `1`.
@@ -27,6 +25,8 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 If `$ARGUMENTS` provided, find in `{{BACKLOG}}/reports/pending/`.
 
 If no argument, list pending reports and ask which to triage.
+
+Done when: one report file is resolved.
 
 ### 2. Present Summary
 
@@ -50,7 +50,9 @@ Before recommending, gather evidence. Skip steps that don't apply to the report 
 - **Cross-reference learnings**: search `{{BACKLOG}}/learnings/` for related insights that explain the behavior or suggest a fix.
 - **Assess completeness**: does the report contain enough to act on (repro steps, expected vs actual, scope)? List what's missing if not.
 
-Keep this internal — surface only the conclusions in the next step.
+Surface only the conclusions, in the next step.
+
+Done when: each applicable check has a conclusion.
 
 ### 4. Recommend
 
@@ -70,6 +72,8 @@ Then list the override options:
 3. **Needs more info** — Keep pending, note what's missing
 
 Ask the user to confirm the recommendation or pick a different option.
+
+Done when: the user has confirmed the recommendation or picked another option.
 
 ### 5a. Convert to Task
 
@@ -94,11 +98,15 @@ RPT-{{ID}} triaged → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 /flowstate:start-task TSK-{{NEW_ID}} to begin
 ```
 
+Done when: the CLI prints the new TSK ID and `report-move` exits 0.
+
 ### 5b. Discard
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --status discarded
 ```
+
+Done when: `report-move` exits 0.
 
 ### 5c. Needs More Info
 

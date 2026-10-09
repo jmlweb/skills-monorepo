@@ -1,14 +1,12 @@
 ---
 name: report
-description: File a structured bug report, finding, or security issue. Use when the user discovers a bug, says "found a bug", "report issue", "file a finding", "security concern", or when something unexpected is observed.
+description: Files a structured bug, finding, improvement or security report for later triage. Use when the user says "found a bug", "report issue", "file a finding", "security concern", or when something unexpected is observed. Not for planned work (use add-task).
 argument-hint: [report description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: haiku
 ---
 
 # File Report
-
-Generate a structured report for a bug, finding, improvement, or security issue.
 
 ## Arguments
 
@@ -31,6 +29,8 @@ If `$ARGUMENTS` provided, infer the type. Otherwise ask:
 | improvement | An enhancement or optimization opportunity |
 | security | A security vulnerability or concern |
 
+Done when: type is one of bug, finding, improvement, security.
+
 ### 2. Gather Details
 
 **All types:** Title, Summary, Details
@@ -43,6 +43,8 @@ If `$ARGUMENTS` provided, infer the type. Otherwise ask:
 
 **Security:** Attack vector, Affected components, Severity
 
+Done when: every field listed for the type has content.
+
 ### 3. Determine Severity
 
 | Severity | Criteria |
@@ -52,6 +54,8 @@ If `$ARGUMENTS` provided, infer the type. Otherwise ask:
 | medium | Partially broken, workaround exists |
 | low | Minor issue, cosmetic, edge case |
 
+Done when: severity is one of critical, high, medium, low.
+
 ### 4. Generate Report via CLI
 
 ```bash
@@ -60,9 +64,9 @@ cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-create 
 BODY
 ```
 
-The CLI handles ID assignment, file creation, and placement in `reports/pending/`.
+The CLI assigns the ID and places the file in `reports/pending/`. Include only sections that apply to the type.
 
-Omit sections that don't apply (e.g., no "Steps to Reproduce" for findings).
+Done when: the CLI prints the new RPT ID.
 
 ### 5. Confirm
 

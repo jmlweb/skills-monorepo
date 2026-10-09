@@ -10,8 +10,6 @@ effort: medium
 
 # Parallel Tasks
 
-Execute multiple independent backlog tasks simultaneously using subagents with worktree isolation.
-
 ## Arguments
 
 $ARGUMENTS — comma-separated task IDs (e.g., `1,2,3` or `TSK-001,TSK-002`). Optional.
@@ -30,6 +28,8 @@ If no argument:
 - List all pending non-blocked tasks
 - Parse file references from each task
 - Identify independent groups (no overlapping files)
+
+Done when: a list of validated, non-blocked task IDs exists.
 
 ### 2. Detect File Overlaps (Informational)
 
@@ -59,11 +59,13 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active
 
 The CLI handles frontmatter updates, file moves, and index updates.
 
-Then commit the moves, but only if `{{BACKLOG}}` is inside the repo's tracked tree (e.g. `{{BACKLOG}}` ends in `.backlog` and is not git-ignored). A private backlog (outside the repo or git-ignored) has nothing to commit: skip this step. It is also shared by every worktree, so subagents never see stale `pending/` copies. For a tracked backlog, worktrees branch from `HEAD`, so uncommitted moves leave subagents seeing stale `pending/` copies and cause merge conflicts later. The pathspec keeps unrelated staged work out of this commit:
+Then commit the moves when `{{BACKLOG}}` is inside the repo's tracked tree (it ends in `.backlog` and is not git-ignored). Worktrees branch from `HEAD`, so uncommitted moves leave subagents with stale `pending/` copies and cause merge conflicts later. A private backlog (outside the repo or git-ignored) is shared by every worktree and needs no commit; skip it. The pathspec keeps unrelated staged work out of this commit:
 
 ```bash
 git add "{{BACKLOG}}" && git commit -m "chore(backlog): start {{IDS}}" -- "{{BACKLOG}}"
 ```
+
+Done when: every selected task is in `tasks/active/` and the move commit exists when the backlog is tracked.
 
 ### 5. Load Context for Subagents
 
@@ -79,16 +81,16 @@ Also scan `{{BACKLOG}}/reports/pending/` once for any reports related to the sel
 
 ### 6. Launch Subagents
 
-Use the Agent tool to launch ALL subagents in a **single message** for true parallel execution.
+Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`.
 
-Each subagent gets `isolation: "worktree"`.
-
-If several tasks will each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt — otherwise they all pick the same next number.
+When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
 
 **Subagent prompt:**
 
 ```
 Complete Task TSK-{{ID}}: {{TITLE}}
+
+Done when: every subagent has returned a report.
 
 ## Task Description
 {{DESCRIPTION}}
@@ -111,7 +113,7 @@ Complete Task TSK-{{ID}}: {{TITLE}}
 2. Apply the learnings above — they capture past mistakes and proven patterns
 3. Implement each acceptance criterion
 4. Verify changes work (build, lint, test as applicable)
-5. Do NOT modify anything under the backlog directory and do NOT run flowstate CLI commands — other agents run in parallel, and the coordinator owns backlog state
+5. Leave the backlog directory and flowstate CLI to the coordinator, because other agents run in parallel
 6. Create a commit referencing TSK-{{ID}}
 7. End your final report with a `## Learnings` section: one entry per non-obvious root cause, undocumented behavior, gotcha, or reusable pattern you hit, each with Title, Tags, Context, Insight, Application. Skip routine work and anything obvious from the code. Write "None" if there are none.
 ```
@@ -131,7 +133,7 @@ cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-creat
 BODY
 ```
 
-Then report:
+Then report, ending when every selected task has a row and every `## Learnings` entry has an LRN ID or was skipped as None:
 
 ```
 ## Parallel Execution Complete
@@ -139,10 +141,7 @@ Then report:
 | Task | Result | Branch/Worktree |
 |------|--------|-----------------|
 
-### Next Steps
-- Review changes from each worktree
-- /flowstate:complete-task for successful tasks
-- /flowstate:block-task for failed tasks
+Next: review each worktree, then /flowstate:complete-task (succeeded) or /flowstate:block-task (failed).
 ```
 
 ## Error Handling

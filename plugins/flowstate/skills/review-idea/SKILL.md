@@ -10,8 +10,6 @@ effort: medium
 
 # Review Idea
 
-Review a pending idea and decide whether to approve (convert to task), discard, or revise it.
-
 ## Arguments
 
 Idea identifier (optional): $ARGUMENTS — accepts `PLN-001`, `001`, or `1`.
@@ -27,6 +25,8 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 If `$ARGUMENTS` provided, find in `{{BACKLOG}}/ideas/pending/`.
 
 If no argument, list pending ideas and ask which to review.
+
+Done when: one idea file is resolved.
 
 ### 2. Present Summary
 
@@ -59,7 +59,9 @@ Before recommending, audit the idea against the actual codebase. Skip steps that
 - **Conflicts with active work**: scan `{{BACKLOG}}/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
 - **Related learnings**: search `{{BACKLOG}}/learnings/` for prior insights that should shape the approach.
 
-Keep this internal — surface only the conclusions in the next step.
+Surface only the conclusions, in the next step.
+
+Done when: each applicable check has a conclusion.
 
 ### 4. Recommend
 
@@ -84,6 +86,8 @@ Then list the override options:
 
 Ask the user to confirm the recommendation or pick a different option.
 
+Done when: the user has confirmed the recommendation or picked another option.
+
 ### 5a. Approve
 
 ```bash
@@ -107,6 +111,8 @@ Idea PLN-{{ID}} approved → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 /flowstate:start-task TSK-{{NEW_ID}} to begin
 ```
 
+Done when: the CLI prints the new TSK ID and `idea-move` exits 0.
+
 ### 5b. Discard
 
 ```bash
@@ -114,6 +120,8 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status
 ```
 
 Confirm to the user.
+
+Done when: `idea-move` exits 0.
 
 ### 5c. Revise
 

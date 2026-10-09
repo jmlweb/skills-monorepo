@@ -1,6 +1,6 @@
 ---
 name: next-task
-description: Analyze the backlog and recommend the best task to start next, or up to 3 tasks if they can run in parallel. Use when the user asks "what should I work on?", "next task", "what's the priority?", or needs help deciding between multiple pending items.
+description: Recommends the best task to start next, or a parallel-safe group of up to 3. Use when the user asks "what should I work on?", "next task", "what's the priority?", or "what's next". Not for a full status dump (use overview).
 allowed-tools: [Read, Bash, Glob, Grep]
 model: sonnet
 effort: medium
@@ -8,7 +8,7 @@ effort: medium
 
 # Next Task
 
-Analyze the backlog and recommend the best task to start next. When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group so the user can run them with `/flowstate:parallel`.
+When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group for `/flowstate:parallel` (user-invoked).
 
 ## Prerequisites
 
@@ -23,11 +23,13 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status pending --
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true
 ```
 
-If pending tasks is empty, before falling back, also check pending ideas:
+When no pending tasks exist, check pending ideas next:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-list --status pending --json true
 ```
+
+Done when: pending and active lists are loaded (and pending ideas when no pending tasks exist).
 
 ### 2. Score Candidates
 
@@ -41,6 +43,8 @@ For each pending non-blocked task:
 | Tag affinity | Low | Shares tags with recently completed tasks |
 | Age | Low | Older tasks get slight preference |
 
+Done when: every pending non-blocked task has a score.
+
 ### 3. Detect Parallel Group
 
 Take the top-scoring candidate plus the next 1–2 highest-scoring ones and check whether they can run together. The group is parallel-safe only if **all** of these hold:
@@ -50,6 +54,8 @@ Take the top-scoring candidate plus the next 1–2 highest-scoring ones and chec
 - Tags and scope don't obviously collide on the same module (e.g. two tasks both tagged `auth` editing the same area is a conflict even if exact paths differ)
 
 Shrink the group from 3 → 2 → 1 until it satisfies the rules. If only the top pick survives, fall through to the single-pick presentation.
+
+Done when: the group size is 1, 2 or 3 and satisfies all three rules.
 
 ### 4. Load Context
 
@@ -65,11 +71,16 @@ Also scan `{{BACKLOG}}/reports/pending/` once for anything related to any task i
 
 If no matches, skip silently.
 
+Done when: one learning search and one reports scan have run.
+
 ### 5. Present
 
 **If the parallel group has 2–3 tasks:**
 
 ```
+
+Done when: one of the two recommendation blocks is printed.
+
 ## Next Task Recommendation
 
 ### Parallel Group ({{N}} tasks)
@@ -114,32 +125,18 @@ Why: {{REASONING}}
 Reply with a task ID/number to start it, or anything else to keep browsing.
 ```
 
-In both forms, show up to 5 alternatives. If more pending tasks exist, note: "… and N more pending."
+Show up to 5 alternatives in both forms; when more exist, add "… and N more pending."
 
 ### 6. Handle Response
 
 - **`parallel` / `all` / `yes` (when a group was offered)**: Tell the user to run `/flowstate:parallel {{IDs}}` with the group's task IDs (the command is user-invoked)
-- **Single ID or number** (top pick, group member, or any alternative): Move it to active via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active` (same as `/flowstate:start-task`) and proceed implementing
+- **Single ID or number** (top pick, group member, or any alternative): Move it to active via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active` (the `/flowstate:start-task` move) and proceed implementing
 - **Comma-separated IDs**: Tell the user to run `/flowstate:parallel {{IDs}}` with those IDs
 - **Question about a task**: Answer it without moving anything; the user can reply with an ID afterwards
-- **"no" / silence / unrelated**: Do nothing — user will re-invoke when ready
+- **"no" / silence / unrelated**: end here; the user re-invokes when ready
 
 ## Edge Cases
 
 - **All blocked**: Show blockers, suggest resolving or `/flowstate:add-task`
-- **No pending tasks, but pending ideas exist**: Surface the top 3 pending ideas as candidates and offer to promote one. Present:
-
-  ```
-  ## No Pending Tasks
-
-  No pending tasks, but {{N}} pending idea(s) ready for review:
-
-  | ID | Title | Complexity | Created |
-  |----|-------|------------|---------|
-
-  Reply with an idea ID to review (`/flowstate:review-idea <ID>`) and promote it to a task, or run `/flowstate:add-task` to add a new task directly.
-  ```
-
-  If the user picks an idea, tell the user to run `/flowstate:review-idea <ID>` rather than auto-promoting — review keeps a human in the loop for scoping decisions.
+- **No pending tasks, but pending ideas exist**: list the top 3 ideas (ID, title, complexity, created) and ask for an idea ID to review, or suggest `/flowstate:add-task`. If the user picks an idea, tell the user to run `/flowstate:review-idea <ID>`; review keeps a human in the loop for scoping decisions.
 - **No pending tasks and no pending ideas**: Suggest `/flowstate:add-task` or `/flowstate:idea`
-- **Many same-priority**: Rank by secondary factors, explain reasoning

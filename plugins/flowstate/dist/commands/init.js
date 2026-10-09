@@ -1,0 +1,63 @@
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { ensureDir } from "../core/fs.js";
+import { backlogRoot } from "../core/paths.js";
+const TASK_INDEX_TEMPLATE = (name) => `# ${name} - Task Index
+
+## Stats
+
+| Status | Count |
+|--------|-------|
+| Pending | 0 |
+| Active | 0 |
+| Blocked | 0 |
+| Complete | 0 |
+
+## Active Tasks
+
+_No active tasks._
+
+## Pending Tasks
+
+| ID | Title | Priority | Tags | Created |
+|----|-------|----------|------|---------|
+
+## Recently Completed
+
+| ID | Title | Completed |
+|----|-------|-----------|
+`;
+const LEARNINGS_INDEX_TEMPLATE = (name) => `# ${name} - Learnings Index
+
+> Consult a learning's full document before starting related work.
+
+| ID | Title | Tags | Status | Date |
+|----|-------|------|--------|------|
+`;
+export async function init(cwd, projectName) {
+    const root = backlogRoot(cwd);
+    const dirs = [
+        join(root, "tasks", "pending"),
+        join(root, "tasks", "active"),
+        join(root, "tasks", "complete"),
+        join(root, "plans", "pending"),
+        join(root, "plans", "complete"),
+        join(root, "reports", "pending"),
+        join(root, "reports", "complete"),
+        join(root, "learnings"),
+    ];
+    await Promise.all(dirs.map(ensureDir));
+    const taskIndexPath = join(root, "tasks", "index.md");
+    const learningsIndexPath = join(root, "learnings", "index.md");
+    await writeFile(taskIndexPath, TASK_INDEX_TEMPLATE(projectName), {
+        flag: "wx",
+    }).catch(() => {
+        // File already exists — idempotent
+    });
+    await writeFile(learningsIndexPath, LEARNINGS_INDEX_TEMPLATE(projectName), {
+        flag: "wx",
+    }).catch(() => {
+        // File already exists — idempotent
+    });
+    return root;
+}

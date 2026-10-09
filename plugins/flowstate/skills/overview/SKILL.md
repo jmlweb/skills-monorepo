@@ -1,14 +1,12 @@
 ---
 name: overview
-description: Show a comprehensive backlog overview with stats, active work, and health warnings. Use when the user asks "backlog status", "what's going on", "show tasks", "project overview", or wants to see the current state of all work.
+description: Shows backlog stats, active work and health warnings. Use when the user asks "backlog status", "what's going on", "show tasks", or "project overview". Not for choosing what to work on (use next-task).
 argument-hint: [summary]
 allowed-tools: [Read, Bash, Glob, Grep]
 model: haiku
 ---
 
 # Backlog Status
-
-Display the current state of the backlog with stats, active work, and health warnings.
 
 ## Arguments
 
@@ -30,6 +28,9 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true
 ### 2. Display
 
 ```
+
+Done when: the Quick Stats table and every non-empty section are printed.
+
 ## {{PROJECT}} - Backlog Status
 
 ### Quick Stats
@@ -81,7 +82,9 @@ WARNING: TSK-XXX active since YYYY-MM-DD (N days)
 NOTE: {{N}} high-priority tasks — consider reprioritizing
 ```
 
-**Index drift** (counts don't match disk): Offer to rebuild the index via the CLI (Step 4). Never edit `tasks/index.md` by hand.
+**Index drift** (counts don't match disk): offer to rebuild the index through the CLI (Step 4).
+
+Done when: each stale, blocked, imbalance and drift condition is reported or found absent.
 
 ### 4. Rebuild Index (only if drift detected)
 
@@ -91,7 +94,7 @@ If the stats from the CLI don't match what's in `tasks/index.md`, rebuild:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" index-rebuild
 ```
 
-Skip this step if counts match — avoids unnecessary file reads.
+Run only when counts differ.
 
 ### 5. Quick Actions
 

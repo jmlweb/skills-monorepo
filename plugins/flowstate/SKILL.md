@@ -1,12 +1,12 @@
 ---
 name: flowstate
 description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
-version: 2.10.1
+version: 2.10.2
 ---
 
 # Flowstate - Backlog Management System
 
-This project uses **Flowstate** for backlog management. All data lives in `.backlog/` by default, or in the directory named by `FLOWSTATE_BACKLOG_DIR` (private backlog). Never hardcode the path: run `flowstate path` to get the resolved directory.
+This project uses **Flowstate** for backlog management. All data lives in `.backlog/` by default, or in the directory named by `FLOWSTATE_BACKLOG_DIR` (private backlog). Get the resolved directory from `flowstate path`.
 
 ## Structure
 
@@ -45,7 +45,7 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `flowstate task-create --title <t> --priority <P> --tags <csv> --body -` | Create task |
 | `flowstate task-move <id> --to <active\|complete\|pending>` | Move task between states |
 | `flowstate task-update <id> [--set <key=value>] [--log <msg\|->] [--check <n,...>]` | Update task fields, append Progress Log bullets (`-` = stdin, one per line), tick criteria by 1-based index |
-| `flowstate task-block <id> --reason <text>` | Block a task (never set `status: blocked` by hand) |
+| `flowstate task-block <id> --reason <text>` | Block a task (the CLI owns `status: blocked`) |
 | `flowstate task-unblock <id> --resolution <text>` | Unblock a task |
 | `flowstate task-list [--status <s>] [--json true]` | List tasks |
 | `flowstate task-condense <id\|--all>` | Trim Notes + middle Progress Log of complete tasks |
@@ -105,7 +105,7 @@ Skills that involve starting or planning work (`start-task`, `next-task`, `idea`
 2. **Active tasks** — listed to show current workload and spot potential overlaps or conflicts.
 3. **Pending reports** — scanned for known reports related to the current scope.
 
-This context is loaded silently — if nothing relevant is found, the skill proceeds without mentioning the absence. The goal is zero-effort awareness: the backlog informs the work automatically.
+This context is loaded silently; when nothing is relevant, the skill proceeds without mentioning it.
 
 For ad-hoc browsing outside a skill workflow, use `/flowstate:learnings` to search and drill down into the full learnings index.
 
@@ -117,15 +117,15 @@ For ad-hoc browsing outside a skill workflow, use `/flowstate:learnings` to sear
 
 ### Capture Learnings As They Happen
 
-Don't wait until task completion — capture relevant discoveries the moment they surface, in auto-draft mode (no questions). Concrete triggers:
+Capture discoveries the moment they surface, in auto-draft mode (no questions). Triggers:
 
 - A fix worked and the **why** was non-obvious — surprising root cause, hidden dependency, undocumented behavior
 - A first attempt failed and the failure revealed a constraint worth remembering ("X doesn't work because Y")
 - You confirmed a pattern that future work in this area should reuse
 - You discovered a gotcha, footgun, or counterintuitive default
-- You read docs/source and found something that contradicts what the codebase or training data implies
+- Docs or source contradict what the codebase or training data implies
 - The user states a preference or rule that should outlive this conversation (route those toward `/flowstate:add-learning` even if the model would also save it as memory)
 
-When a trigger fires, invoke `/flowstate:add-learning` immediately using auto-draft mode — it derives every field from context without asking, dedupes against existing learnings, and links to the active task automatically. Surface the captured `LRN-XXX` inline so the user can edit or delete if the signal was wrong. **Do not ask permission to capture** — a stale learning is cheap to delete; a missed insight is gone.
+When a trigger fires, call the Skill tool with `flowstate:add-learning` immediately in auto-draft mode (it derives every field from context, dedupes, and links the active task). Show the captured `LRN-XXX` inline so the user can edit or delete it. Capture without asking permission: a stale learning is cheap to delete; a missed insight is gone.
 
-Skip the capture for: routine work, obvious-from-the-code facts, restatements of existing learnings (the dedupe check will catch those anyway), and anything tied only to this conversation's transient state.
+Capture only what is non-trivial; skip routine work, obvious-from-the-code facts, restatements of existing learnings (the dedupe check will catch those anyway), and anything tied only to this conversation's transient state.

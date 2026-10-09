@@ -1,6 +1,6 @@
 ---
 name: check-task
-description: Verify that a task's declared status matches the actual codebase implementation. Use when the user says "check task status", "verify implementation", "is this task really done", or during backlog health checks. Supports single-task and batch mode.
+description: Reports whether a task's declared status matches what the codebase implements, for one task or the whole backlog. Use when the user says "check task status", "verify implementation", "is this task really done", or "backlog health check". Not for finishing a task (use complete-task).
 argument-hint: [task ID or number]
 allowed-tools: [Read, Bash, Glob, Grep]
 model: sonnet
@@ -8,8 +8,6 @@ effort: medium
 ---
 
 # Check Task
-
-Verify that a task's declared status accurately reflects the actual implementation.
 
 ## Arguments
 
@@ -37,9 +35,13 @@ Fetch task data:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true
 ```
 
+Done when: the task list to check is fixed (confirmed by the user when it exceeds 8).
+
 ### 2. Read Task File
 
 Parse: status from frontmatter, acceptance criteria (checked/unchecked), files mentioned in description or notes.
+
+Done when: status, criteria and referenced files are extracted for every task in scope.
 
 ### 3. Verify Implementation
 
@@ -47,6 +49,8 @@ For each acceptance criterion:
 1. Search the codebase for implementations matching the criterion
 2. Check if referenced files exist and contain expected changes
 3. Run relevant checks if applicable (imports, function existence)
+
+Done when: every criterion has a found/not-found verdict with a file or command as proof.
 
 ### 4. Compare Status vs Reality
 
@@ -61,10 +65,15 @@ For each acceptance criterion:
 | complete | Broken/missing | Should reopen |
 | blocked | Blocker resolved | Should unblock |
 
+Done when: each task has one action from the table.
+
 ### 5. Report
 
 **Single task:**
 ```
+
+Done when: the report block is printed.
+
 ## TSK-{{ID}} Status Check
 
 Current: {{STATUS}} (in {{DIRECTORY}})
@@ -92,7 +101,7 @@ Summary: {{N}} tasks need attention
 ### 6. Offer Fixes
 
 - `/flowstate:complete-task` if fully implemented
-- Tick criteria that are met in code through the CLI, naming the file or test that proves each one; never hand-edit checkboxes, frontmatter or `index.md` (CLI-owned):
+- Tick criteria that are met in code through the CLI, naming the file or test that proves each one (the CLI owns checkboxes, frontmatter and `index.md`):
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --check {{N1,N2}} --evidence '{"{{N1}}":"{{FILE_OR_TEST}} → {{WHAT_IT_SHOWS}}"}'

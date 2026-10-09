@@ -9,10 +9,10 @@ effort: medium
 
 # Condense Learnings
 
-Two-pass shrink of `learnings/`:
+Two passes over `learnings/`:
 
 1. **Curation** — archive duplicates / stale entries, normalize tags.
-2. **Caveman compression** — rewrite the body of each remaining active learning terse, validated against invariants. Sets `compressed: true` on success.
+2. **Caveman compression** — rewrite the body of each remaining active learning terse. Sets `compressed: true` on success.
 
 ## Workflow
 
@@ -54,6 +54,8 @@ Rebuild the index:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" index-rebuild --type learnings
 ```
 
+Done when: every learning is classified keep, archive, merge or retag, and the index is rebuilt.
+
 ### 2. Pass 2 — caveman compress each remaining active learning
 
 Reload the active list (curation may have changed it):
@@ -65,7 +67,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-list --json true
 For each learning:
 
 1. **Read** the file at `{{BACKLOG}}/learnings/{{id}}-{{slug}}/index.md` with the `Read` tool. Skip if frontmatter has `compressed: true`. (`{{BACKLOG}}` = output of `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path`)
-2. **Rewrite the body** following the caveman rules below. Frontmatter (`---\n…\n---`) stays out of the rewrite — only the body below it.
+2. **Rewrite the body** following the caveman rules below. Rewrite only the body below the frontmatter.
 3. **Pipe** to `learning-compress`:
 
 ```bash
@@ -76,43 +78,13 @@ BODY
 
 Exit code `0` = success, `2` = invariant failure (JSON `errors` lists missing tokens). File untouched on failure.
 
-4. **On invariant failure** — retry **once** with diagnostics in your reasoning (e.g. "validator says missing LRN-014 — preserve it byte-exact"). Second failure → log + skip. Do not delete or alter the file.
+4. **On invariant failure** — retry **once**, using the diagnostics (e.g. "missing LRN-014"). A second failure is logged and skipped; the file stays as it was.
 
-### 3. Caveman compression rules (Pass 2 body rewrite)
+Done when: every uncompressed active learning has exit 0, or a logged second failure.
 
-**Drop**
+### 3. Caveman compression rules
 
-- Articles: `a`, `an`, `the`
-- Filler: `just`, `really`, `basically`, `actually`, `simply`, `essentially`, `generally`
-- Pleasantries: `sure`, `certainly`, `of course`, `happy to`, `I'd recommend`
-- Hedging: `it might be worth`, `you could consider`, `it would be good to`
-- Connective fluff: `however`, `furthermore`, `additionally`, `in addition`
-- Redundant phrasing: `in order to` → `to`, `make sure to` → `ensure`
-- "you should", "remember to" — state the rule directly
-
-**Preserve EXACTLY (validator enforces — byte-exact)**
-
-- Fenced code blocks (```` ``` ````) — every byte
-- Inline code (`` `…` ``)
-- URLs (`https://…`)
-- IDs: `TSK-\d{3,}`, `LRN-\d{3,}`, `PLN-\d{3,}`, `RPT-\d{3,}`
-- Dates: `YYYY-MM-DD`
-- Version numbers: `vX.Y.Z`
-- All markdown headings (same set, same order, exact heading text)
-
-**Compress**
-
-- Short synonyms: `big` not `extensive`, `fix` not `implement a solution for`, `use` not `utilize`
-- Fragments OK
-- Merge bullets that say the same thing
-- Keep one example where multiple show the same pattern
-- For learnings with `**Why:**` / `**How to apply:**` blocks: keep the labels, compress the prose after them
-
-**Pattern**
-
-> Original: "When you are writing tests for the database layer, you should always make sure to use a real database connection rather than mocking it, because we got burned last quarter when mocked tests passed but the production migration failed."
->
-> Compressed: "DB-layer tests must use real connection, not mock. Past incident 2025-Q3: mocks passed, prod migration failed."
+Before the first rewrite, read `${CLAUDE_PLUGIN_ROOT}/shared/caveman-compression.md`; it lists what to drop, what must stay byte-exact, and an example.
 
 ### 4. Report Summary
 

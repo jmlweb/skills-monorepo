@@ -1,14 +1,12 @@
 ---
 name: start-task
-description: Start working on a task by moving it from pending to active. Use when the user says "start task", "begin working on", "pick up task", or wants to begin implementing something from the backlog.
+description: Moves a task from pending to active, surfaces relevant learnings, and begins implementation. Use when the user says "start task", "begin working on", "pick up task", or "work on TSK-XXX". Not for choosing which task (use next-task).
 argument-hint: [task ID or number]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: haiku
 ---
 
 # Start Task
-
-Mark a task as in-progress and move it to the active directory.
 
 ## Arguments
 
@@ -26,11 +24,15 @@ If `$ARGUMENTS` provided, find the matching file in `{{BACKLOG}}/tasks/pending/`
 
 If no argument, list all pending non-blocked tasks and ask which to start.
 
+Done when: one task file is resolved, or the skill has stopped.
+
 ### 2. Validate
 
 - Task must exist in `tasks/pending/`
 - Task must NOT have `status: blocked` in frontmatter
 - If blocked, show the reason and suggest resolving it first
+
+Done when: the task is in `tasks/pending/` and not blocked, or the block reason has been shown.
 
 ### 3. Load Context
 
@@ -44,7 +46,9 @@ Before moving the task, gather relevant context automatically:
 2. **Active tasks**: Read `{{BACKLOG}}/tasks/active/` to list what else is in progress — helps the user understand current workload and spot potential overlaps.
 3. **Pending reports**: Scan `{{BACKLOG}}/reports/pending/` titles for anything related to this task's scope — avoids working on something with a known open issue.
 
-If no learnings or reports match, skip silently — do not mention the absence.
+With no matching learnings or reports, say nothing about them.
+
+Done when: learnings, active tasks and reports have been checked.
 
 ### 4. Move Task to Active
 
@@ -52,11 +56,13 @@ If no learnings or reports match, skip silently — do not mention the absence.
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active
 ```
 
-The CLI moves the file, updates frontmatter (`status: active`, `started: today`), adds a progress log entry, and updates `tasks/index.md` automatically.
+The CLI moves the file, sets `status: active` and `started`, logs an entry, and updates `tasks/index.md`.
+
+Done when: the CLI reports the task in `tasks/active/`.
 
 ### 5. Show Task Summary and Begin
 
-Show the summary, then start implementing immediately — do NOT ask for confirmation. The user already invoked `/start-task`; that is the confirmation.
+Show the summary, then start implementing immediately: invoking `/start-task` was the confirmation.
 
 ```
 Started TSK-{{ID}}: {{TITLE}}
@@ -79,4 +85,4 @@ After printing the summary, proceed directly: read the relevant code, make chang
 ## Notes
 
 - Multiple tasks can be active simultaneously
-- Starting a task does NOT block other tasks from being started
+- Starting a task leaves other tasks free to start
