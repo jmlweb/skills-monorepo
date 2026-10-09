@@ -19,7 +19,9 @@ Project name (optional): $ARGUMENTS
 ### 1. Check Existing State
 
 - Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path`. If it prints a directory, a backlog already exists there (affects only what you report in Step 5); if it errors, none does yet
-- Either way, do NOT create directories or index files by hand — the CLI in Step 4 is idempotent and creates only what is missing
+- Either way, leave directory and index creation to the CLI in Step 4, which is idempotent and creates only what is missing
+
+Done when: it is known whether a backlog exists.
 
 ### 2. Project Name
 
@@ -36,6 +38,8 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" setup --project-name "{{PROJE
 ```
 
 This creates the full directory structure, index files, and templates in one step. For a private backlog the output includes `settingsFile` and `settingsSnippet`.
+
+Done when: the CLI exits 0 and prints `root`.
 
 ### 5. Confirm
 
@@ -58,7 +62,7 @@ Available commands:
   /flowstate:overview    — View backlog overview
 ```
 
-For a private backlog, also print the snippet for the user to merge into the git-ignored `.claude/settings.local.json` (never edit settings yourself), then ask them to restart the session and verify with `echo $FLOWSTATE_BACKLOG_DIR`:
+For a private backlog, also print the snippet for the user to merge into the git-ignored `.claude/settings.local.json` (the user applies it; settings stay untouched), then ask the user to restart the session and verify with `echo $FLOWSTATE_BACKLOG_DIR`:
 
 ```json
 { "env": { "FLOWSTATE_BACKLOG_DIR": "{{ABSOLUTE_PATH}}" } }
@@ -68,7 +72,4 @@ Until the variable is set, flowstate will not find the private backlog.
 
 ## Idempotency
 
-This command is safe to run multiple times. It will:
-- Create missing directories without affecting existing ones
-- Create missing index files without overwriting existing ones
-- Never delete or modify existing content
+Re-running creates only missing directories and index files; existing content is untouched.

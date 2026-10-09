@@ -1,6 +1,6 @@
 ---
 name: triage-report
-description: Triage a pending report by converting it to a task, discarding it, or requesting more info. Use when the user says "triage report", "handle this bug", "convert to task", or when pending reports need attention.
+description: Triages a pending report into a task, a discard, or a request for more info. Use when the user says "triage report", "handle this bug", "convert report to task", or "review pending reports". Not for filing a new report (use report).
 argument-hint: [report ID]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
@@ -8,8 +8,6 @@ effort: medium
 ---
 
 # Triage Report
-
-Review a pending report and decide: convert to task, discard, or request more info.
 
 ## Arguments
 
@@ -26,6 +24,8 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 If `$ARGUMENTS` provided, find in `{{BACKLOG}}/reports/pending/`.
 
 If no argument, list pending reports and ask which to triage.
+
+Done when: one report file is resolved.
 
 ### 2. Present Summary
 
@@ -49,7 +49,9 @@ Before recommending, gather evidence. Skip steps that don't apply to the report 
 - **Cross-reference learnings**: search `{{BACKLOG}}/learnings/` for related insights that explain the behavior or suggest a fix.
 - **Assess completeness**: does the report contain enough to act on (repro steps, expected vs actual, scope)? List what's missing if not.
 
-Keep this internal — surface only the conclusions in the next step.
+Surface only the conclusions, in the next step.
+
+Done when: each applicable check has a conclusion.
 
 ### 4. Recommend
 
@@ -69,6 +71,8 @@ Then list the override options:
 3. **Needs more info** — Keep pending, note what's missing
 
 Ask the user to confirm the recommendation or pick a different option.
+
+Done when: the user has confirmed the recommendation or picked another option.
 
 ### 5a. Convert to Task
 
@@ -93,11 +97,15 @@ RPT-{{ID}} triaged → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 /flowstate:start-task TSK-{{NEW_ID}} to begin
 ```
 
+Done when: the CLI prints the new TSK ID and `report-move` exits 0.
+
 ### 5b. Discard
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --status discarded
 ```
+
+Done when: `report-move` exits 0.
 
 ### 5c. Needs More Info
 

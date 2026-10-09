@@ -1,6 +1,6 @@
 ---
 name: new-skill
-description: Scaffold a new skill inside an existing plugin (flowstate or dev-workflow) following house conventions — frontmatter, model tiering, trigger-rich description, CLI-mutates/skill-orchestrates split, README table, validation. Use when the user says "add a skill", "new skill", "create a slash command", or "scaffold a skill for <plugin>". Do NOT use for a whole new plugin (use new-plugin) or for project-local .claude/skills.
+description: Scaffold a new skill inside an existing plugin following house conventions — frontmatter, model tiering, trigger-rich description, CLI-mutates/skill-orchestrates split, README table, validation. Use when the user says "add a skill", "new skill", "create a slash command", or "scaffold a skill for <plugin>". Not for a whole new plugin (use new-plugin) or for project-local .claude/skills.
 argument-hint: [plugin] [skill-name] [purpose]
 allowed-tools: [Read, Write, Edit, Grep, Glob, Bash(claude:*), Bash(ls:*), Bash(node:*)]
 model: sonnet
@@ -37,6 +37,8 @@ Interview for whatever is missing, one question at a time:
 
 State the choice and why in one line.
 
+Done when: tier is stated in one line with its reason.
+
 ### 2. Draft the description — this is the router
 
 Requirements, all checkable:
@@ -45,6 +47,8 @@ Requirements, all checkable:
 - ≥3 quoted trigger phrases a user would actually type ("add task", "new task").
 - A "Use when…" sentence; a "Do NOT use for…" sentence if a sibling skill or native command
   is confusable.
+
+Done when: the description has at least 3 quoted triggers and a "Not for" clause where a sibling is confusable.
 
 ### 3. Write `plugins/<plugin>/skills/<name>/SKILL.md`
 
@@ -117,6 +121,8 @@ Done when: a second read finds nothing more to delete and the body is ≤150 lin
    emoji/format of that table).
 2. If the plugin has a root `SKILL.md` listing slash commands (flowstate does), add it there too.
 
+Done when: the README table (and root `SKILL.md` where present) has a row for the skill.
+
 ### 6. Validate
 
 ```bash
@@ -126,10 +132,11 @@ claude plugin validate .
 Must pass. Then self-check against the AGENTS.md "New or edited skill" quality bar and list
 each checkbox with its status.
 
+Done when: `claude plugin validate .` exits 0 and each quality-bar checkbox has a status.
+
 ### 7. Version note
 
-A new skill is a `feat` → next release is at least **minor**. Do not bump now; remind the
-user in the confirmation.
+A new skill is a `feat` → next release is at least **minor**. Leave the bump to the release and remind the user in the confirmation.
 
 ## Confirmation
 

@@ -1,6 +1,6 @@
 ---
 name: idea
-description: Generate a detailed implementation plan for a feature or change before coding begins. Use when the user says "plan this", "how should we implement", "design approach", or when a task needs architectural thinking.
+description: Produces an implementation plan saved for review before coding begins. Use when the user says "plan this", "how should we implement", "design approach", or "write up an idea", or when a task needs architectural thinking. Not for reviewing an existing plan (use review-idea) or adding a ready-to-do task (use add-task).
 argument-hint: [feature description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
@@ -8,8 +8,6 @@ effort: high
 ---
 
 # Generate Plan
-
-Create a detailed implementation plan for a feature or change, saved for later review.
 
 ## Arguments
 
@@ -29,6 +27,8 @@ If `$ARGUMENTS` provided, use it as the starting point. Otherwise ask:
 2. **Why is this needed?**
 3. **Any constraints?** (deadlines, compatibility, etc.)
 
+Done when: goal, motivation and constraints are each known.
+
 ### 2. Load Context
 
 Before exploring code, gather backlog context:
@@ -43,6 +43,8 @@ Before exploring code, gather backlog context:
 
 If no matches found, skip silently.
 
+Done when: learnings, active tasks and pending reports have been checked.
+
 ### 3. Explore the Codebase
 
 Based on the description:
@@ -50,6 +52,8 @@ Based on the description:
 - Understand existing patterns and architecture
 - Identify dependencies and potential conflicts
 - Incorporate insights from learnings found in Step 2
+
+Done when: every file the plan will change is named.
 
 ### 4. Generate Plan via CLI
 
@@ -62,6 +66,9 @@ BODY
 `{{PLAN_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
 
 ```markdown
+
+Done when: the CLI prints the new PLN ID.
+
 ## Goal
 ## Context
 ## Approach        (numbered steps)

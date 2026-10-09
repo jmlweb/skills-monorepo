@@ -8,7 +8,7 @@ model: haiku
 
 # Log Progress
 
-Append what happened this session to a task's Progress Log and tick the acceptance criteria it met, so the task file is a reliable "where was I" record after `/clear`.
+The task file is the "where was I" record after `/clear`: append this session to its Progress Log and tick the criteria it met.
 
 ## Arguments
 
@@ -31,15 +31,21 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --j
 
 Exactly one → use it. None or several → ask which task.
 
+Done when: one task ID is chosen.
+
 ### 2. Re-read the Task File
 
 Read the task file right before drafting, even if it was read earlier in the session. Criteria are ticked by position, so the numbering must reflect the file as it is now. Number the `## Acceptance Criteria` checkboxes 1, 2, 3… in order, counting ticked ones too.
 
+Done when: criteria are numbered from the file as it is now.
+
 ### 3. Draft the Update
 
 - **Log lines:** the note from `$ARGUMENTS` if given; otherwise draft 1–3 short lines from this session — what changed, then what's next. Facts only, no filler.
-- **Criteria:** propose ticking only unticked criteria the session clearly satisfied (code written, tests green, docs updated). When in doubt, leave it unticked.
+- **Criteria:** propose ticking only unticked criteria the session clearly satisfied (code written, tests green, docs updated). Leave doubtful ones unticked.
 - **Evidence:** for every criterion you propose to tick, name the proof: a command run this session plus its result (`pnpm test → exit 0`), or `manual: <what was checked>`. A criterion with no evidence available stays unticked.
+
+Done when: every proposed tick has named evidence.
 
 ### 4. Confirm
 
@@ -73,6 +79,8 @@ LOG
 ```
 
 An out-of-range index or a missing section aborts with nothing written. Re-read the file and retry with corrected numbers.
+
+Done when: the CLI exits 0, or the retry after correcting the numbers does.
 
 ### 6. Offer a Learning
 

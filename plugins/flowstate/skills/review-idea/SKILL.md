@@ -1,6 +1,6 @@
 ---
 name: review-idea
-description: Review a pending plan and decide — approve (convert to task), discard, or revise. Use when the user says "review plan", "approve plan", "check the plan", or after generating a plan with /flowstate:idea.
+description: Decides a pending plan's fate: approve it into a task, discard it, or revise it. Use when the user says "review plan", "approve plan", "check the plan", or "review idea", or after generating a plan. Not for creating a plan (use idea).
 argument-hint: [plan ID]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
@@ -8,8 +8,6 @@ effort: medium
 ---
 
 # Review Plan
-
-Review a pending plan and decide whether to approve (convert to task), discard, or revise it.
 
 ## Arguments
 
@@ -26,6 +24,8 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 If `$ARGUMENTS` provided, find in `{{BACKLOG}}/ideas/pending/`.
 
 If no argument, list pending plans and ask which to review.
+
+Done when: one plan file is resolved.
 
 ### 2. Present Summary
 
@@ -58,7 +58,9 @@ Before recommending, audit the plan against the actual codebase. Skip steps that
 - **Conflicts with active work**: scan `{{BACKLOG}}/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
 - **Related learnings**: search `{{BACKLOG}}/learnings/` for prior insights that should shape the approach.
 
-Keep this internal — surface only the conclusions in the next step.
+Surface only the conclusions, in the next step.
+
+Done when: each applicable check has a conclusion.
 
 ### 4. Recommend
 
@@ -83,6 +85,8 @@ Then list the override options:
 
 Ask the user to confirm the recommendation or pick a different option.
 
+Done when: the user has confirmed the recommendation or picked another option.
+
 ### 5a. Approve
 
 ```bash
@@ -106,6 +110,8 @@ Plan PLN-{{ID}} approved → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 /flowstate:start-task TSK-{{NEW_ID}} to begin
 ```
 
+Done when: the CLI prints the new TSK ID and `idea-move` exits 0.
+
 ### 5b. Discard
 
 ```bash
@@ -113,6 +119,8 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status
 ```
 
 Confirm to the user.
+
+Done when: `idea-move` exits 0.
 
 ### 5c. Revise
 

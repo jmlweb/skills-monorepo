@@ -1,6 +1,6 @@
 ---
 name: release-plugin
-description: Run the full release flow for a plugin in this monorepo — preflight checks, version bump, release commit, tag, push, and post-release verification. Use when the user says "release flowstate", "cut a release", "ship a new version", "bump and tag", or "publish dev-workflow". Do NOT use for changesets in other repos (that's dev-workflow:changeset) or for committing regular work.
+description: Run the full release flow for a plugin in this monorepo — preflight checks, version bump, release commit, tag, push, and post-release verification. Use when the user says "release flowstate", "cut a release", "ship a new version", "bump and tag", or "publish dev-workflow". Not for changesets in other repos (use dev-workflow:changeset) or for committing regular work (use dev-workflow:commit).
 argument-hint: [plugin] [patch|minor|major|x.y.z]
 allowed-tools: [Read, Grep, Bash(git:*), Bash(pnpm:*), Bash(gh:*), Bash(node:*), Bash(ls:*)]
 model: sonnet
@@ -38,11 +38,13 @@ and verify the GitHub Release was created.
 pnpm typecheck && pnpm build && pnpm test
 ```
 
-If anything fails, stop and report the failure verbatim. Never bump on a red build.
+If anything fails, stop and report the failure verbatim; bump only on a green build.
 
 After the build, confirm `git status --porcelain` is still empty. If `dist/` changed, the
 committed dist was stale — stop and tell the user; that drift must be committed separately
 (as its own `fix`/`chore` commit) before releasing.
+
+Done when: typecheck, build and test exit 0 and `git status --porcelain` is empty.
 
 ### 2. Bump
 
@@ -51,7 +53,9 @@ cd plugins/<name> && pnpm bump <patch|minor|major|x.y.z>
 ```
 
 This updates `package.json`, `.claude-plugin/plugin.json`, root `SKILL.md` (if present),
-and root `.claude-plugin/marketplace.json` via version-sync. Never edit any of these by hand.
+and root `.claude-plugin/marketplace.json` via version-sync; versions change only through `pnpm bump`.
+
+Done when: `pnpm bump` exits 0.
 
 ### 3. Verify the bump landed everywhere
 
@@ -64,6 +68,8 @@ Read the new version `V` from `plugins/<name>/package.json`, then grep for it in
 All must match. Also run `pnpm --filter <pkg> test` if the plugin has a `plugin.test.ts`
 version-sync test (flowstate does). Mismatch → stop, report which file is off.
 
+Done when: every listed file carries version `V`.
+
 ### 4. Commit and tag
 
 ```bash
@@ -74,6 +80,8 @@ git tag plugins/<name>/v<V>
 ```
 
 Confirm the tag doesn't already exist first (`git tag -l 'plugins/<name>/v<V>'`).
+
+Done when: `git tag -l` shows the new tag and HEAD is the release commit.
 
 ### 5. Push — requires explicit confirmation
 
@@ -96,6 +104,8 @@ git restore --staged --worktree -- plugins/<name>/package.json \
 # flowstate also: plugins/flowstate/SKILL.md
 ```
 
+Done when: the user declined (undo shown) or both pushes exited 0.
+
 ### 6. Post-release verification
 
 ```bash
@@ -105,8 +115,9 @@ gh release view plugins/<name>/v<V>
 ```
 
 Report the release URL. If the workflow fails, fetch the failing step's log
-(`gh run view <run-id> --log-failed`) and report it — do not delete or re-push tags to retry
-without the user's decision.
+(`gh run view <run-id> --log-failed`) and report it — leave tags in place and let the user decide whether to retry.
+
+Done when: `gh release view` prints the release URL.
 
 ## Confirmation output
 

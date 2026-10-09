@@ -1,14 +1,12 @@
 ---
 name: learnings
-description: Browse and search the learnings index for relevant past insights. Use when the user says "check learnings", "what did we learn about", "search knowledge", or at the start of a work session to review insights.
+description: Searches and displays past learnings. Use when the user says "check learnings", "what did we learn about", "search knowledge", or "show learnings", or at the start of a work session. Not for capturing a new insight (use add-learning).
 argument-hint: [search term or tag]
 allowed-tools: [Read, Bash, Glob, Grep]
 model: haiku
 ---
 
 # Browse Learnings
-
-View the learnings index and search for relevant past insights.
 
 ## Arguments
 
@@ -22,7 +20,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Search or Browse
 
-**If `$ARGUMENTS` provided** — go straight to the CLI search; do NOT read `index.md` first:
+**If `$ARGUMENTS` provided** — go straight to the CLI search, leaving `index.md` unread:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{SEARCH_TERM}}" --limit 10 --json true
@@ -45,6 +43,9 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{SE
 **If no `$ARGUMENTS`** — read `{{BACKLOG}}/learnings/index.md` and display:
 
 ```
+
+Done when: a result table, a single document, or the index table is displayed.
+
 ## Learnings Index ({{N}} entries)
 
 | ID | Title | Tags | Status | Date |

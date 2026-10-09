@@ -1,6 +1,6 @@
 ---
 name: condense-tasks
-description: Condense completed tasks: structural trim (drop Notes scratchpad, prune middle Progress Log) plus caveman-style prose compression (drop articles, filler, hedging) on remaining body. Validated against load-bearing invariants. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or wants to shrink the size of complete task files.
+description: Shrinks completed task files by trimming scratch notes and compressing prose, validated against load-bearing tokens. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or "shrink task files". Not for learnings (use condense-learnings).
 allowed-tools: [Bash, Read]
 model: sonnet
 effort: medium
@@ -8,10 +8,10 @@ effort: medium
 
 # Condense Tasks
 
-Two-pass shrink of `tasks/complete/`:
+Two passes over `tasks/complete/`:
 
 1. **Structural** — drop Notes content, keep first + last Progress Log entries (idempotent, sets `condensed: true`).
-2. **Caveman compression** — rewrite remaining prose terse, validated against invariants. Sets `compressed: true` on success.
+2. **Caveman compression** — rewrite remaining prose terse. Sets `compressed: true` on success.
 
 ## What gets touched
 
@@ -39,6 +39,8 @@ Single-task variant when the user names one:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-condense {{ID}} --json true
 ```
 
+Done when: the CLI JSON lists touched and skipped tasks.
+
 ### 2. Pass 2 — caveman compress
 
 List complete tasks and their paths:
@@ -50,7 +52,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status complete -
 For each task:
 
 1. **Read** the file with the `Read` tool. Skip if frontmatter has `compressed: true`.
-2. **Rewrite the body** following the caveman rules below. Keep the frontmatter line block (`---\n...\n---`) out of the rewrite — only the body below it.
+2. **Rewrite the body** following the caveman rules below. Rewrite only the body below the frontmatter.
 3. **Pipe** the new body to `task-compress`:
 
 ```bash
@@ -61,43 +63,13 @@ BODY
 
 Exit code `0` = success, `2` = invariant failure (JSON `errors` field lists each missing token / modified section). File is left untouched on failure.
 
-4. **On invariant failure** — re-read the original, retry **once** with the failure diagnostics included in your reasoning (e.g. "validator says missing URL X — preserve it byte-exact this time"). On second failure, log the task ID + errors and move on. Do not delete or alter the file.
+4. **On invariant failure** — re-read the original and retry **once**, using the diagnostics (e.g. "missing URL X"). On a second failure, log the task ID + errors and move on; the file stays as it was.
 
-### 3. Caveman compression rules (Pass 2 body rewrite)
+Done when: every uncompressed complete task has exit 0, or a logged second failure.
 
-**Drop**
+### 3. Caveman compression rules
 
-- Articles: `a`, `an`, `the`
-- Filler: `just`, `really`, `basically`, `actually`, `simply`, `essentially`, `generally`
-- Pleasantries: `sure`, `certainly`, `of course`, `happy to`, `I'd recommend`
-- Hedging: `it might be worth`, `you could consider`, `it would be good to`
-- Connective fluff: `however`, `furthermore`, `additionally`, `in addition`
-- Redundant phrasing: `in order to` → `to`, `make sure to` → `ensure`, `the reason is because` → `because`
-- "you should", "remember to", "we need to" — state the action directly
-
-**Preserve EXACTLY (validator enforces — byte-exact)**
-
-- Fenced code blocks (```` ``` ````) — every byte, including blank lines and comments inside
-- Inline code (`` `…` ``)
-- URLs (`https://…`)
-- IDs: `TSK-\d{3,}`, `LRN-\d{3,}`, `PLN-\d{3,}`, `RPT-\d{3,}`
-- Dates: `YYYY-MM-DD`
-- Version numbers: `vX.Y.Z`
-- All markdown headings (same set, same order, exact heading text)
-- The entire `## Acceptance Criteria` section — do not touch
-
-**Compress**
-
-- Short synonyms: `big` not `extensive`, `fix` not `implement a solution for`, `use` not `utilize`
-- Fragments OK: `Run tests before push.` not `You should always make sure to run the tests before pushing.`
-- Merge bullets that say the same thing differently
-- One example wins where multiple show the same pattern
-
-**Pattern**
-
-> Original: "We were finally able to track down the root cause of the bug, which turned out to be in the auth middleware where the token expiry check was using `<` instead of `<=`."
->
-> Compressed: "Root cause: auth middleware token expiry check used `<` instead of `<=`."
+Before the first rewrite, read `${CLAUDE_PLUGIN_ROOT}/shared/caveman-compression.md`; it lists what to drop, what must stay byte-exact, and an example.
 
 ### 4. Report Summary
 
@@ -127,4 +99,3 @@ If nothing was touched: `All {{N}} completed tasks are already lean or compresse
 - Only operates on tasks in `tasks/complete/`. Pending / active / blocked tasks are not touched.
 - Both passes are idempotent and independent: `condensed: true` blocks re-condense, `compressed: true` blocks re-compress.
 - Validation rejects any rewrite that drops a load-bearing token, reorders headings, or modifies Acceptance Criteria. The original file is preserved on failure.
-- Source-of-truth for completion timestamps lives in frontmatter (`completed:` field).
