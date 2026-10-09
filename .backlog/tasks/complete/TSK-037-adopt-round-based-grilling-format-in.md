@@ -1,13 +1,14 @@
 ---
 id: TSK-037
 title: Adopt round-based grilling format in idea and add-task
-status: active
+status: complete
 priority: P3
 tags: [flowstate, skill, grilling]
 created: 2026-10-08
 source: plan/PLN-016
 depends-on: []
 started: 2026-10-09
+completed: 2026-10-09
 ---
 
 # Adopt round-based grilling format in idea and add-task
@@ -51,3 +52,4 @@ Idea from mattpocock/skills `grilling`. Frontier = questions whose prerequisites
 - [2026-10-08] Created
 - [2026-10-09] Started
 - [2026-10-09] Added shared/grilling.md; idea uses full rounds, add-task one proposal round; bumped flowstate to 2.11.1; typecheck, test, lint:skills, plugin validate pass (uncommitted)
+- [2026-10-09] Completed

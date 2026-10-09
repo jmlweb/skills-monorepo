@@ -5,9 +5,9 @@
 | Status | Count |
 |--------|-------|
 | Pending | 1 |
-| Active | 4 |
+| Active | 3 |
 | Blocked | 1 |
-| Complete | 42 |
+| Complete | 43 |
 
 ## Active Tasks
 
@@ -15,7 +15,6 @@
 - TSK-033: Audit flowstate and repo-local skills against writing rules (P3)
 - TSK-034: Audit dev-workflow skills against writing rules (P3)
 - TSK-035: Audit atlassian-polish skills against writing rules (P3)
-- TSK-037: Adopt round-based grilling format in idea and add-task (P3)
 
 ## Pending Tasks
 
@@ -29,6 +28,7 @@
 |----|-------|-----------|
 | TSK-025 | dev-workflow: deslop skill | 2026-10-09 |
 | TSK-036 | Add GLOSSARY.md and fix entity-name drift | 2026-10-09 |
+| TSK-037 | Adopt round-based grilling format in idea and add-task | 2026-10-09 |
 | TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | 2026-10-09 |
 | TSK-048 | Banned-names and stale dist file check | 2026-10-09 |
 | TSK-018 | atlassian-polish: backups and rewrites may lose rich Jira content | 2026-10-08 |
@@ -36,4 +36,3 @@
 | TSK-024 | dev-workflow: agent-handoff skill | 2026-10-08 |
 | TSK-026 | dev-workflow: review-pr blocking-only mode | 2026-10-08 |
 | TSK-027 | flowstate: configurable backlog directory for private backlogs | 2026-10-08 |
-| TSK-028 | Split skills into user-invoked and model-invoked | 2026-10-08 |
