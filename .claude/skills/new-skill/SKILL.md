@@ -39,14 +39,20 @@ State the choice and why in one line.
 
 Done when: tier is stated in one line with its reason.
 
-### 2. Draft the description — this is the router
+### 2. Pick the invocation mode
 
-Requirements, all checkable:
+If neither the model nor another skill (via the Skill tool) needs to reach this skill, the
+user fires it by hand: set `disable-model-invocation: true`, write a one-line human-facing
+description, and skip step 2b (done when the mode is chosen).
 
-- Third person, starts with what the skill does.
+### 2b. Draft the description — this is the router (model-invoked skills)
+
+- Third person, one clause on the outcome; no steps, tools or validation mechanics.
 - ≥3 quoted trigger phrases a user would actually type ("add task", "new task").
-- A "Use when…" sentence; a "Do NOT use for…" sentence if a sibling skill or native command
-  is confusable.
+- Ask which neighbouring skill or native command is confusable; add "Not for X (use Y)"
+  for each. Shape: `docs/writing-skills.md` §6.
+- For a discipline skill (value is resisting a shortcut), offer a `## Rationalizations`
+  section per `docs/writing-skills.md` §7.
 
 Done when: the description has at least 3 quoted triggers and a "Not for" clause where a sibling is confusable.
 
@@ -67,7 +73,7 @@ effort: <medium|high>          # sonnet only
 
 # <Title>
 
-<One paragraph: what this does and the end state.>
+<What this does and the end state.>
 
 ## Arguments
 
@@ -75,21 +81,16 @@ effort: <medium|high>          # sonnet only
 
 ## Prerequisites
 
-<Checks before mutating anything — e.g. `.backlog/` exists; abort with reason if not.>
+<Checks before mutating anything; abort with a reason if one fails.>
 
 ## Workflow
 
 ### 1. <Step>
 
-<For flowstate mutations, always:>
+<Flowstate mutations:>
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" <command> --json true
-<Multi-line bodies via stdin: `--body -` with a heredoc.>
 
 Done when: <observable condition — CLI output, file state, user answer>.
-
-### 2. <Step>
-
-...
 
 ## Confirmation
 
@@ -99,19 +100,16 @@ Done when: <observable condition — CLI output, file state, user answer>.
 Rules while writing:
 
 - `allowed-tools` gets only what the workflow actually uses; prefer `Bash(git:*)` over `Bash`.
-- Every step ends with a `Done when:` line a second reader could verify.
 - Prose shared with sibling skills goes to `plugins/<plugin>/shared/*.md`, referenced as
   `${CLAUDE_PLUGIN_ROOT}/shared/<file>.md` — never duplicated, never by relative path.
 - Calling another skill: "Call the Skill tool with `<plugin>:<skill>`", one skill per call,
   model-invoked targets only; suggestions to the user use `/<plugin>:<skill>`.
-- Add a "run setup first" pointer only when output is wrong without setup (hard dependency).
-- Rewrite prohibitions as target behaviour; keep one only with its reason.
-- All paths to bundled files use `${CLAUDE_PLUGIN_ROOT}`.
+- Add a "run setup first" pointer only for a hard dependency; state prohibitions as target behaviour.
 
 ### 4. No-op pass
 
-Go through the draft sentence by sentence; delete each one a fresh model would obey
-without being told (role-play openers, restated titles, "be careful", step recaps).
+Delete each draft sentence a fresh model would obey without being told (role-play openers,
+restated titles, "be careful", step recaps).
 
 Done when: a second read finds nothing more to delete and the body is ≤150 lines.
 
@@ -123,14 +121,25 @@ Done when: a second read finds nothing more to delete and the body is ≤150 lin
 
 Done when: the README table (and root `SKILL.md` where present) has a row for the skill.
 
+### 5b. Add routing cases
+
+For model-invoked skills only, add to `plugins/<plugin>/evals/routing.json`: ≥3 positive prompts and ≥2 near-miss
+negatives (each with the neighbouring `owner` skill). Run `node scripts/routing-eval.mjs`;
+raise the ratchet with `--update-ratchet` when the rank-1 rate improved. For descriptions that
+overlap a neighbour, run `claude plugin eval plugins/<plugin> --case '<glob>'` before and after
+any later description edit.
+
+Done when: the script exits 0.
+
 ### 6. Validate
 
 ```bash
+pnpm lint:skills
 claude plugin validate .
 ```
 
-Must pass. Then self-check against the AGENTS.md "New or edited skill" quality bar and list
-each checkbox with its status.
+Both must pass with no error or warning for the new skill. Then list each AGENTS.md "New or
+edited skill" checkbox with its status.
 
 Done when: `claude plugin validate .` exits 0 and each quality-bar checkbox has a status.
 
@@ -144,6 +153,6 @@ A new skill is a `feat` → next release is at least **minor**. Leave the bump t
 Created /<plugin>:<name>
 Tier:     <model>[/<effort>] — <reason>
 Files:    skills/<name>/SKILL.md, README.md row[, root SKILL.md row]
-Validate: claude plugin validate . ✓
+Validate: pnpm lint:skills ✓, claude plugin validate . ✓
 Release:  pending — needs minor bump (pnpm bump minor) when you next release <plugin>
 ```

@@ -40,7 +40,7 @@ Done when: the Quick Stats table and every non-empty section are printed.
 | Active | {{N}} |
 | Blocked | {{N}} |
 | Complete | {{N}} |
-| Plans (pending) | {{N}} |
+| Ideas (pending) | {{N}} |
 | Reports (pending) | {{N}} |
 | Learnings | {{N}} |
 
@@ -54,7 +54,7 @@ Done when: the Quick Stats table and every non-empty section are printed.
 
 If more than 10 pending tasks exist, add a footer: "… and N more. Use `task-list --status pending --json true` for the full list."
 
-### Pending Plans
+### Pending Ideas
 | ID | Title | Complexity | Created |
 |----|-------|------------|---------|
 
@@ -101,6 +101,6 @@ Run only when counts differ.
 ```
 /flowstate:next-task       — Get a recommendation
 /flowstate:add-task        — Add new work
-/flowstate:review-idea     — Review pending plans
+/flowstate:review-idea     — Review pending ideas
 /flowstate:triage-report   — Triage pending reports
 ```

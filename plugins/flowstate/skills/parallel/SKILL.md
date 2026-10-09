@@ -1,6 +1,7 @@
 ---
 name: parallel
-description: Runs several independent backlog tasks at once in isolated worktrees. Use when the user says "run tasks in parallel", "do these at the same time", "parallelize these tasks", or hands over a parallel group from next-task. Not for a single task (use start-task).
+description: Runs independent backlog tasks at once in isolated worktrees via subagents.
+disable-model-invocation: true
 argument-hint: [task IDs separated by comma]
 allowed-tools: [Read, Write, Bash, Glob, Grep, Agent]
 model: sonnet
@@ -146,4 +147,4 @@ Next: review each worktree, then /flowstate:complete-task (succeeded) or /flowst
 ## Error Handling
 
 - Agent fails: block the task via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-block {{ID}} --reason "{{failure summary}}"`, continue others
-- All fail: summarize errors and suggest reviewing the task definitions
+- All fail: summarize errors, suggest reviewing task definitions

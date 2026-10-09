@@ -1,0 +1,124 @@
+{
+  "rank1Ratchet": 1,
+  "skills": {
+    "changeset": {
+      "positive": [
+        "add changeset for this change",
+        "record a package version bump in a changeset entry",
+        "generate a changeset, I finished work that should ship in the next release"
+      ],
+      "negative": [
+        {
+          "prompt": "commit these changes with a conventional message",
+          "owner": "commit"
+        },
+        {
+          "prompt": "open a PR for this branch",
+          "owner": "open-pr"
+        }
+      ]
+    },
+    "check-docs": {
+      "positive": [
+        "check docs",
+        "are the docs up to date with the code?",
+        "audit the README and AGENTS.md for drift before a release"
+      ],
+      "negative": [
+        {
+          "prompt": "review this pull request for security and quality",
+          "owner": "review-pr"
+        },
+        {
+          "prompt": "commit the README changes",
+          "owner": "commit"
+        }
+      ]
+    },
+    "ci-triage": {
+      "positive": [
+        "why is CI red",
+        "CI failed, is this test flaky or real",
+        "triage CI for this GitHub Actions run URL"
+      ],
+      "negative": [
+        {
+          "prompt": "review PR 42 for code quality",
+          "owner": "review-pr"
+        },
+        {
+          "prompt": "review this pull request and give me a merge recommendation",
+          "owner": "review-pr"
+        }
+      ]
+    },
+    "commit": {
+      "positive": [
+        "commit these changes",
+        "commit",
+        "I finished a logical unit of work, save progress to git with a conventional commit"
+      ],
+      "negative": [
+        {
+          "prompt": "add a changeset for the version bump",
+          "owner": "changeset"
+        },
+        {
+          "prompt": "open a pull request from the current branch",
+          "owner": "open-pr"
+        }
+      ]
+    },
+    "deslop": {
+      "positive": [
+        "deslop my branch",
+        "remove the AI comments from this branch",
+        "strip the LLM slop comments from my diff"
+      ],
+      "negative": [
+        {
+          "prompt": "check docs for drift against the code",
+          "owner": "check-docs"
+        },
+        {
+          "prompt": "review this pull request for quality",
+          "owner": "review-pr"
+        }
+      ]
+    },
+    "open-pr": {
+      "positive": [
+        "open a PR",
+        "create a pull request for this branch",
+        "make a PR for this branch, submit this branch"
+      ],
+      "negative": [
+        {
+          "prompt": "commit my staged changes",
+          "owner": "commit"
+        },
+        {
+          "prompt": "commit these changes with a conventional message",
+          "owner": "commit"
+        }
+      ]
+    },
+    "review-pr": {
+      "positive": [
+        "review PR 128",
+        "review this pull request",
+        "I finished the branch and want feedback from specialized agents before merge"
+      ],
+      "negative": [
+        {
+          "prompt": "why is CI red on this PR",
+          "owner": "ci-triage"
+        },
+        {
+          "prompt": "why is CI red on my branch",
+          "owner": "ci-triage"
+        }
+      ]
+    }
+  }
+}

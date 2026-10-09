@@ -1,13 +1,13 @@
 ---
 name: idea
-description: Produces an implementation plan saved for review before coding begins. Use when the user says "plan this", "how should we implement", "design approach", or "write up an idea", or when a task needs architectural thinking. Not for reviewing an existing plan (use review-idea) or adding a ready-to-do task (use add-task).
+description: Generate a detailed implementation plan for a feature or change before coding begins. Use when the user says "plan this", "how should we implement", "design approach", or when a task needs architectural thinking.
 argument-hint: [feature description]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
 effort: high
 ---
 
-# Generate Plan
+# Generate Idea
 
 ## Arguments
 
@@ -37,9 +37,9 @@ Before exploring code, gather backlog context:
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{FEATURE_DESCRIPTION}}" --limit 3 --json true
    ```
-   The CLI returns only active learnings, scored by keyword relevance. Use `title` and `reasons` to assess relevance. Read the full learning file only for high-scoring matches that directly affect the plan.
-2. **Active tasks**: Read `{{BACKLOG}}/tasks/active/` — the plan should account for work already in progress to avoid conflicts or duplication.
-3. **Pending reports**: Scan `{{BACKLOG}}/reports/pending/` for related bugs or findings that the plan should address or acknowledge.
+   The CLI returns only active learnings, scored by keyword relevance. Use `title` and `reasons` to assess relevance. Read the full learning file only for high-scoring matches that directly affect the idea.
+2. **Active tasks**: Read `{{BACKLOG}}/tasks/active/` — the idea should account for work already in progress to avoid conflicts or duplication.
+3. **Pending reports**: Scan `{{BACKLOG}}/reports/pending/` for related bugs or findings that the idea should address or acknowledge.
 
 If no matches found, skip silently.
 
@@ -53,17 +53,17 @@ Based on the description:
 - Identify dependencies and potential conflicts
 - Incorporate insights from learnings found in Step 2
 
-Done when: every file the plan will change is named.
+Done when: every file the idea will change is named.
 
-### 4. Generate Plan via CLI
+### 4. Generate Idea via CLI
 
 ```bash
 cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-create --title "{{TITLE}}" --complexity {{COMPLEXITY}} --body -
-{{PLAN_CONTENT}}
+{{IDEA_CONTENT}}
 BODY
 ```
 
-`{{PLAN_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
+`{{IDEA_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
 
 ```markdown
 

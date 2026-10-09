@@ -16,7 +16,7 @@ status: pending
 priority: {{P1|P2|P3|P4}}
 tags: [{{tag1}}, {{tag2}}]
 created: {{YYYY-MM-DD}}
-source: {{manual|plan/PLN-XXX|report/RPT-XXX}}
+source: {{manual|idea/PLN-XXX|report/RPT-XXX}}
 depends-on: []
 ---
 
@@ -90,7 +90,7 @@ complexity: {{low|medium|high}}
 - {{Question 1}}
 ```
 
-### Plan Frontmatter Fields (added on review)
+### Idea Frontmatter Fields (added on review)
 
 - `reviewed: YYYY-MM-DD`
 - `task-id: TSK-XXX` — when approved

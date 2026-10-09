@@ -118,6 +118,59 @@ than that is a signal to disclose, not to compress wording.
 Done when: removing any disclosed file leaves the happy path intact, and each pointer
 states the condition for reading it.
 
+## 6. Shape the description as a router
+
+The description decides whether the skill fires, and the model reads it before the body.
+A description that summarises the workflow lets the model follow the summary and skip the
+body (superpowers saw an agent run one review because the description said "code review
+between tasks", while the body specified two; triggers-only wording fixed it).
+
+Shape, in this order:
+
+1. One clause stating the outcome the skill produces, not the steps it takes.
+2. At least three quoted trigger phrases a user would type.
+3. "Not for X (use Y)" when a neighbouring skill or native command could be confused with
+   it.
+
+Steps, tools and validation mechanics belong in the body.
+
+Bad, from `condense-tasks` before the rewrite (outcome buried under mechanics):
+
+```yaml
+description: Condense completed tasks: structural trim (drop Notes scratchpad, prune middle Progress Log) plus caveman-style prose compression (drop articles, filler, hedging) on remaining body. Validated against load-bearing invariants. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or wants to shrink the size of complete task files.
+```
+
+Good (illustrative target; the audit tasks apply it to the real file):
+
+```yaml
+description: Shrinks completed task files so the done backlog stays cheap to read. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or "shrink the done folder". Not for learnings (use condense-learnings).
+```
+
+Done when: the description has one outcome clause, at least three quoted triggers, a
+"Not for" clause wherever a sibling overlaps, and no step, tool or check names.
+
+## 7. Add a Rationalizations section to discipline skills (optional)
+
+A discipline skill is one whose value is resisting a shortcut: `complete-task`, `commit`,
+`review-pr`, `parallel`, `log-progress`. For these, add a closing `## Rationalizations`
+section. Skip it for every other skill; a table on a CRUD skill is a no-op.
+
+Format: a two-column table `Thought | Reality`, at most 6 rows. Each row is a shortcut
+the model really takes (taken from an observed run, not invented). Each Reality cell
+states the target behaviour, so the table stays consistent with rule 2.
+
+```markdown
+## Rationalizations
+
+| Thought | Reality |
+|---------|---------|
+| "The criteria are obviously met, ticking them can wait" | Tick each criterion through the CLI before moving the task to done. |
+| "Hooks are slow, I'll skip them this once" | Commit with hooks on; a failing hook gets fixed, then the commit is retried. |
+```
+
+Done when: the section has at most 6 rows, every Thought was observed, and no Reality
+cell starts with "Don't" or "Never".
+
 ## Setup dependencies: hard versus soft
 
 Many flowstate skills need `.backlog/` to exist. Handle that dependency by kind:
@@ -155,5 +208,6 @@ slash-command suggestion, never a bare skill name.
 - [ ] Repeated phrases collapsed into one leading word
 - [ ] Every step ends with a checkable condition
 - [ ] Body at most 150 lines; extra detail disclosed with a conditional pointer
+- [ ] Description follows the router shape; Rationalizations only on discipline skills
 - [ ] Setup pointers present only for hard dependencies
 - [ ] Skill calls follow the Skill-tool convention above

@@ -1,6 +1,7 @@
 ---
 name: condense-tasks
-description: Shrinks completed task files by trimming scratch notes and compressing prose, validated against load-bearing tokens. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or "shrink task files". Not for learnings (use condense-learnings).
+description: Shrinks completed task files so the done backlog stays cheap to read.
+disable-model-invocation: true
 allowed-tools: [Bash, Read]
 model: sonnet
 effort: medium

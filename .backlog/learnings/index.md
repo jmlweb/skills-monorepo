@@ -13,3 +13,17 @@
 | LRN-007 | Verified: settings env reaches Bash and hooks; CLAUDE_PROJECT_DIR is hook-only | claude-code, settings, env, hooks, flowstate | active | 2026-10-08 |
 | LRN-008 | Worktree agents must call /usr/bin/git; RTK rewrite trips the isolation guard | worktree, parallel, rtk, git, tooling | active | 2026-10-08 |
 | LRN-009 | Root plugin validate only checks marketplace; validate the plugin dir for agents/skills | claude-code, plugin-validation, agents | active | 2026-10-08 |
+| LRN-010 | Worktree agents: use /usr/bin/git, pnpm install first, hooks don't run | worktree, git, rtk, pnpm, tooling | active | 2026-10-08 |
+| LRN-011 | claude plugin eval cases are prompt.md plus graders, not case.yaml | evals, claude-code, routing | active | 2026-10-08 |
+| LRN-012 | Top-3 routing test fixtures need more than 3 skills | testing, routing, tf-idf | active | 2026-10-08 |
+| LRN-013 | Worktree agents cannot run git through the rtk hook | tooling, worktree, rtk, git | active | 2026-10-08 |
+| LRN-014 | Fresh worktrees lack node_modules | tooling, worktree, testing | active | 2026-10-08 |
+| LRN-015 | Test not-on-main by checking out the tagged commit | testing, release, node-test | active | 2026-10-08 |
+| LRN-016 | CLI --help goes to stderr for dev-workflow and atlassian-polish, stdout for flowstate | cli, testing, skill-lint | active | 2026-10-08 |
+| LRN-017 | Worktree agents' git calls are refused when the guard cannot prove the command is not git | worktree, rtk, git, tooling | active | 2026-10-08 |
+| LRN-018 | Flipping skills to user-invoked shifts the routing rank-1 ratchet | routing, testing, skills, invocation | active | 2026-10-08 |
+| LRN-019 | Worktree agents need /usr/bin/git, an install, and may start from a stale base | worktree, parallel, tooling, rtk | active | 2026-10-08 |
+| LRN-020 | task-create leaves index.md one trailing line short of index-rebuild output | flowstate, index, ci, testing | active | 2026-10-08 |
+| LRN-021 | Worktree guard rejects compound or variable-driven Bash commands | worktree, tooling, parallel | active | 2026-10-08 |
+| LRN-022 | tsc never deletes dist outputs whose source vanished, and turbo cache restores them | dist, build, turbo, ci | active | 2026-10-09 |
+| LRN-023 | pnpm bump only works inside the plugin dir | release, pnpm, tooling | active | 2026-10-09 |

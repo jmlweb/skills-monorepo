@@ -14,7 +14,7 @@ No external services. No databases. Just files and Git.
 
 ## ✨ What is Flowstate?
 
-Flowstate adds a structured, file-based backlog to any project. Everything lives in a `.backlog/` directory that you can read, edit, and commit alongside your code. Claude understands the full system and manages the lifecycle end to end: **triage → plan → implement → learn**.
+Flowstate adds a structured, file-based backlog to any project. Everything lives in a `.backlog/` directory that you can read, edit, and commit alongside your code. Claude understands the full system and manages the lifecycle end to end: **triage → idea → implement → learn**.
 
 ```
 .backlog/
@@ -146,8 +146,8 @@ Use `/reload-plugins` after making changes.
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:idea` | Generate an implementation plan — explores code, identifies risks, saves for review |
-| `/flowstate:review-idea` | Approve (converts to task), discard, or revise a pending plan |
+| `/flowstate:idea` | Generate an idea (implementation plan) — explores code, identifies risks, saves for review |
+| `/flowstate:review-idea` | Approve (converts to task), discard, or revise a pending idea |
 
 ### 🐛 Reports
 
@@ -163,6 +163,7 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:add-learning` | Document an insight or lesson discovered during development |
 | `/flowstate:learnings` | Browse and search the learnings index |
 | `/flowstate:condense-learnings` | Deduplicate, archive stale entries, and normalize tags |
+| `/flowstate:retro` | 🔁 User-only. Review a session, rank its mistakes, and file approved ones as check tasks, AGENTS.md proposals, or learnings |
 
 ---
 

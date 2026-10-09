@@ -1,7 +1,8 @@
 ---
 name: pr-ready
 argument-hint: [PR number or URL] [--merge]
-description: Drives the user's own open pull request to a mergeable state — updates the branch, triages red CI, handles unresolved review threads, trims the description, and requests reviewers. Use when the user says "get this PR ready", "make my PR mergeable", "address review comments", "/pr-ready", "fix my PR", or "resolve the review threads". Merges only with an explicit --merge flag. Not for reviewing someone else's PR (use review-pr). Requires GitHub CLI authenticated.
+description: Drives your open pull request to a mergeable state.
+disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Grep, Skill, Agent, Bash(node:*), Bash(gh:*), Bash(git:*), Bash(command:*), Bash(pnpm:*), Bash(npm:*)
 model: sonnet
 effort: medium

@@ -58,14 +58,23 @@ Fetches the PR diff and launches specialized agents in parallel to produce a str
 /review-pr        # detects PR from current branch
 /review-pr 123    # by PR number
 /review-pr <url>  # by full GitHub URL
+/review-pr --all  # also show Nice to Have and Info findings
 ```
 
 **What it does:**
 - 🧑‍💻 Always runs a **code-reviewer** for quality and conventions
 - 🔒 Conditionally adds a **security-reviewer** (auth, payments, env vars, DB queries)
 - 🧪 Conditionally adds a **qa-engineer** (critical user flows, new API endpoints)
+- 📏 **Standards axis**: repo rules plus a code-smell baseline (Fowler smells, judgement calls, repo standards win)
+- 🎯 **Spec axis**: a general-purpose agent checks the diff against the originating task's acceptance criteria (missing or partial, scope creep, wrongly implemented), quoting each criterion
+- 🔗 Spec is found via a task/report ID (`TSK-`/`RPT-`) in branch, title, body or commits, then a local `.backlog/` task file, then the PR body or linked issue; with none, the Spec axis is skipped ("no spec available"). Works without flowstate
 - ✅ Checks CI status via `gh pr checks`
 - 📋 Produces a full report with risk matrix and merge recommendation
+- ⚖️ The two axes are reported in separate sections, each with its own worst finding, never merged or re-ranked
+- 🔢 Numbers findings (`#1`, `#2`, …) across all agents and both axes as `path:line: severity: finding`
+- 🎯 Shows only **Critical, Must Fix and Should Fix** by default; `--all` adds Nice to Have and Info
+- 📄 The full unfiltered report is always written to `review.md`
+- 💬 Posts only the findings you pick, as one review with inline comments, after you confirm the exact text (lines outside the diff go into the review body)
 
 > **Requires:** [GitHub CLI](https://cli.github.com/) installed and authenticated (`gh auth login`)
 
@@ -193,6 +202,25 @@ Standardizes work split across repos and run by parallel agents: writes one self
 
 ---
 
+### 🧹 `/deslop` — Strip LLM-style comments
+
+Removes comments an LLM added on your branch that restate code, narrate changes or sell the result, and keeps the ones that explain why.
+
+```bash
+/deslop            # base = upstream branch, else origin/HEAD
+/deslop develop    # compare against another base branch
+```
+
+**What it does:**
+- 🎯 Looks only at lines added in `git diff -M <base>...HEAD` (renames detected), so older comments are never touched
+- 🚫 Skips generated, vendored and lock files, and all Markdown
+- 🚩 Flags restating comments, boilerplate JSDoc, change-log comments, section banners and marketing tone
+- 🛟 Keeps why-comments, invariants, workarounds with links and lint-required public API docs
+- 🔢 Shows one numbered list across all files; you answer once (`all`, `1-4,7`, `none`)
+- ✂️ Removes only the selected comments and commits nothing
+
+---
+
 ### 📝 `/check-docs` — Documentation audit
 
 Audits docs on two axes: **content drift** (versions, commands, paths, examples, instructions out of sync with code) and **structural fit** (a 3-tier layout — rules stay terse, READMEs stay human, deep docs live under `docs/`). Markdown style/formatting is left to a linter.
@@ -236,6 +264,7 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 | `/open-pr` | Git + GitHub CLI (`gh`) |
 | `/pr-ready` | Git + GitHub CLI (`gh`) |
 | `/agent-handoff` | None (no external CLI) |
+| `/deslop` | Git |
 | `/check-docs` | Git |
 
 ## License

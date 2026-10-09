@@ -1,6 +1,7 @@
 ---
 name: condense-learnings
-description: Dedupes, retags and archives stale learnings, then compresses the remaining bodies, validated against load-bearing tokens. Use when the user says "condense learnings", "clean up learnings", "deduplicate learnings", or "organize learnings". Not for completed tasks (use condense-tasks).
+description: Dedupes, retags and compresses the learnings backlog.
+disable-model-invocation: true
 allowed-tools: [Bash, Read]
 model: sonnet
 effort: medium

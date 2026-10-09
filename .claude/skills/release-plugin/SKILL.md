@@ -1,6 +1,7 @@
 ---
 name: release-plugin
-description: Run the full release flow for a plugin in this monorepo — preflight checks, version bump, release commit, tag, push, and post-release verification. Use when the user says "release flowstate", "cut a release", "ship a new version", "bump and tag", or "publish dev-workflow". Not for changesets in other repos (use dev-workflow:changeset) or for committing regular work (use dev-workflow:commit).
+description: Runs the full release flow for a plugin: bump, commit, tag, push, verify.
+disable-model-invocation: true
 argument-hint: [plugin] [patch|minor|major|x.y.z]
 allowed-tools: [Read, Grep, Bash(git:*), Bash(pnpm:*), Bash(gh:*), Bash(node:*), Bash(ls:*)]
 model: sonnet

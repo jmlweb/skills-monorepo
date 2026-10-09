@@ -36,6 +36,10 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # Non-strict while the writing-rules audits (TSK-033..035) clear legacy warnings; flip to --strict after.
+      - name: Lint skills
+        run: pnpm lint:skills
+
       - name: Test
         run: pnpm test
 
@@ -57,3 +61,12 @@ jobs:
             echo "Run 'pnpm version:sync' locally and commit the result."
             exit 1
           fi
+
+      - name: Check versions are consistent
+        run: pnpm version:check
+
+      - name: Check backlog index and status/folder consistency
+        run: pnpm backlog:check
+
+      - name: Check reserved names and stale dist files
+        run: pnpm names:check

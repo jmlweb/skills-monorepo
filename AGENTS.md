@@ -40,6 +40,7 @@ plugins/
 └── atlassian-polish/             # 2 skills + 1 agent + references + tiny CLI (md-to-adf); src/dist
 packages/shared-config/           # tsconfig.base.json all plugins extend
 scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh (+ node:test tests)
+GLOSSARY.md                       # ubiquitous language: entity names + words to avoid
 .backlog/                         # flowstate dogfooded on this repo (tasks, learnings, reports)
 .github/workflows/                # ci.yml (PR/main gates), release.yml (tag-triggered)
 ```
@@ -54,6 +55,7 @@ pnpm typecheck             # tsc --noEmit per plugin
 pnpm version:sync          # plugin.json versions → marketplace.json
 pnpm vitest run src/core/id.test.ts        # single test file (run inside the plugin dir)
 node plugins/flowstate/dist/bin/flowstate.js <cmd> --json true   # run a CLI directly
+pnpm lint:skills         # skill quality bar (add --strict via node scripts/lint-skills.mjs --strict)
 claude plugin validate .   # marketplace + plugin schema validation
 ```
 
@@ -93,6 +95,8 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   `references/` or `docs/` under 300 lines. Don't hardcode plugin versions in READMEs —
   they drift (this bit us; see git history).
 - English for all docs and comments. Comments explain *why*, never *what*.
+- When naming a backlog entity or writing skill prose, use `GLOSSARY.md` terms (and
+  its _Avoid_ lists).
 
 ### CLI code
 
@@ -118,9 +122,14 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
 - **Model tiering:** deterministic CRUD skills → `model: haiku`, no `effort`. Judgment skills
   (planning, triage, review, compression) → `model: sonnet` + `effort: medium` (or `high` for
   the heaviest, e.g. flowstate `idea`).
-- **Description is the router.** Third person, states what the skill does, then concrete
-  triggers with quoted user phrases ("add task", "new task"), and when-NOT-to-use if
-  ambiguity is likely. A vague description means the skill never fires.
+- **Description is the router.** Third person: one clause on the outcome (never steps or
+  tools), then ≥3 quoted user phrases ("add task", "new task"), then "Not for X (use Y)"
+  when a sibling could be confused. Shape and examples: `docs/writing-skills.md` §6.
+  A vague description means the skill never fires.
+- **Invocation mode.** Skills the model or another skill must reach on its own stay
+  model-invoked. Skills only a user fires by hand carry `disable-model-invocation: true` and a
+  one-line human-facing description (no trigger list); the trigger-phrase rule above applies to
+  model-invoked skills only. No skill calls a user-invoked skill via the Skill tool.
 - Body shape: `# Title` → `## Arguments` (`$ARGUMENTS`) → `## Prerequisites` → `## Workflow`
   with numbered `### N. Step` sections → confirmation output block. Length: as short as the
   behaviour allows; ceiling 150 lines.
@@ -185,7 +194,7 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
    (or the bump script that calls it) writes versions there.
 10. **Pushes a tag as routine housekeeping.** → A `plugins/*/v*` tag push *publishes a
     release*. Never create or push tags unless the user explicitly asked for a release.
-11. **Writes a skill description without trigger phrases** ("Manages tasks."). → Description
+11. **Writes a model-invoked skill description without trigger phrases** ("Manages tasks."). → Description
     is the invocation router; include quoted user phrases or the skill is dead weight.
 12. **Silently swallows fs errors** (`catch { return [] }`). → LRN-001. Distinguish
     empty-result from lookup-failure.
@@ -210,13 +219,20 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
 - [ ] `dist/` rebuilt and staged (hook does it — verify it fired)
 
 **New or edited skill**
-- [ ] Frontmatter complete; `name` == directory name; `allowed-tools` is the minimal scoped set
-- [ ] Model tier follows the CRUD-haiku / judgment-sonnet+effort rule
-- [ ] Description contains ≥3 quoted trigger phrases and states when to use it
-- [ ] Body ≤150 lines, numbered workflow steps, prerequisites checked before mutating anything
+- [ ] `pnpm lint:skills` has no errors and no new warnings (it checks: name == dir, frontmatter
+      key allowlist, description ≤1024 chars / one line / ≥3 quoted triggers, body ≤150 lines,
+      haiku-no-effort / sonnet+effort tiering, `${CLAUDE_PLUGIN_ROOT}` paths, CLI subcommands
+      exist, README lists the skill). Exemptions live in the script, never in frontmatter
+- [ ] Invocation mode chosen: user-invoked (`disable-model-invocation: true`, one-line description) or model-invoked (router description)
+- [ ] `allowed-tools` is the minimal scoped set; numbered workflow steps, prerequisites checked before mutating anything
 - [ ] All state mutation shells out to the plugin CLI — no hand-edited backlog/index files
       (atlassian-polish: external Jira/Confluence writes only after explicit user approval)
-- [ ] `claude plugin validate .` passes; plugin README command table updated
+- [ ] Routing cases added/updated in `plugins/<plugin>/evals/routing.json` (≥3 positive, ≥2
+      near-miss negative per skill); `node scripts/routing-eval.mjs` / `pnpm test` pass
+- [ ] Description changed → tier-2 live run before and after, both results in the task's
+      Progress Log: `claude plugin eval plugins/flowstate --case '<glob>'` (manual, costs
+      model calls; cases in `evals/<case>/case.yaml`)
+- [ ] `claude plugin validate plugins/<name>` passes (root `.` only checks the marketplace, LRN-009); plugin README command table updated
 
 **Release**
 - [ ] Working tree clean, on `main`, pulled

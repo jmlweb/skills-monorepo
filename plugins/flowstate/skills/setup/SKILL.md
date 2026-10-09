@@ -1,6 +1,7 @@
 ---
 name: setup
-description: Initialize the flowstate backlog directory structure in the current project, optionally as a private (untracked) backlog. Use when starting a new project, setting up backlog management, or when the user says "set up flowstate", "create backlog", "initialize tracking", or "private backlog". Idempotent.
+description: Initializes the flowstate backlog in the current project, optionally private.
+disable-model-invocation: true
 argument-hint: [project name]
 allowed-tools: [Bash, Read, Write, Glob]
 model: haiku
@@ -57,8 +58,8 @@ Structure:
 
 Available commands:
   /flowstate:add-task    — Add a new task
-  /flowstate:idea        — Generate an implementation plan
-  /flowstate:report      — File a bug report or finding
+  /flowstate:idea        — Generate an idea (implementation plan)
+  /flowstate:report      — File a report (bug, finding, security)
   /flowstate:overview    — View backlog overview
 ```
 

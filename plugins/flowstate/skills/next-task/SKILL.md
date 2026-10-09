@@ -8,7 +8,7 @@ effort: medium
 
 # Next Task
 
-When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group for `/flowstate:parallel`.
+When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group for `/flowstate:parallel` (user-invoked).
 
 ## Prerequisites
 
@@ -129,14 +129,14 @@ Show up to 5 alternatives in both forms; when more exist, add "… and N more pe
 
 ### 6. Handle Response
 
-- **`parallel` / `all` / `yes` (when a group was offered)**: Call the Skill tool with `flowstate:parallel`, passing the group's task IDs
+- **`parallel` / `all` / `yes` (when a group was offered)**: Tell the user to run `/flowstate:parallel {{IDs}}` with the group's task IDs (the command is user-invoked)
 - **Single ID or number** (top pick, group member, or any alternative): Move it to active via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active` (the `/flowstate:start-task` move) and proceed implementing
-- **Comma-separated IDs**: Call the Skill tool with `flowstate:parallel`, passing those IDs
+- **Comma-separated IDs**: Tell the user to run `/flowstate:parallel {{IDs}}` with those IDs
 - **Question about a task**: Answer it without moving anything; the user can reply with an ID afterwards
 - **"no" / silence / unrelated**: end here; the user re-invokes when ready
 
 ## Edge Cases
 
 - **All blocked**: Show blockers, suggest resolving or `/flowstate:add-task`
-- **No pending tasks, but pending ideas exist**: list the top 3 ideas (ID, title, complexity, created) and ask for an idea ID to review, or suggest `/flowstate:add-task`. If the user picks an idea, call the Skill tool with `flowstate:review-idea`; review keeps a human in the loop for scoping decisions.
+- **No pending tasks, but pending ideas exist**: list the top 3 ideas (ID, title, complexity, created) and ask for an idea ID to review, or suggest `/flowstate:add-task`. If the user picks an idea, tell the user to run `/flowstate:review-idea <ID>`; review keeps a human in the loop for scoping decisions.
 - **No pending tasks and no pending ideas**: Suggest `/flowstate:add-task` or `/flowstate:idea`

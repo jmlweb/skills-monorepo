@@ -16,15 +16,6 @@ Task identifier (optional): $ARGUMENTS — accepts `TSK-001`, `001`, or `1`.
 
 Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}` exists.
 
-## Rationalizations
-
-| Thought | Reality |
-|---------|---------|
-| "Tests passed earlier this session" | Evidence is stale until re-run in Step 2 |
-| "The criterion is obviously met" | No evidence suffix, no tick |
-| "One unticked criterion is minor" | Offer the Step 2 options; the user decides |
-| "Nothing to learn from this task" | Scan the conversation in Step 3 before concluding that |
-
 ## Workflow
 
 ### 1. Identify Task
@@ -117,3 +108,12 @@ Learnings auto-captured: {{N}}
 ```
 
 If `N == 0`, omit the "Learnings auto-captured" block entirely.
+
+## Rationalizations
+
+| Thought | Reality |
+|---------|---------|
+| "Tests passed earlier this session" | Re-run the command in Step 2 and cite the fresh result. |
+| "The criterion is obviously met" | Tick it with an evidence suffix naming the check and its result. |
+| "One unticked criterion is minor" | Show the Step 2 options and let the user decide. |
+| "Nothing to learn from this task" | Scan the conversation in Step 3 before concluding that. |

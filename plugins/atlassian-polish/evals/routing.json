@@ -1,0 +1,13 @@
+{
+  "rank1Ratchet": 1,
+  "skills": {
+    "polish-atlassian": {
+      "positive": [
+        "polish this ticket",
+        "make this Jira ticket readable",
+        "clean up the epic description and rewrite this Confluence page"
+      ],
+      "negative": []
+    }
+  }
+}

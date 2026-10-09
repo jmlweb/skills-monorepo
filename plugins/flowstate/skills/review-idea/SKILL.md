@@ -1,35 +1,36 @@
 ---
 name: review-idea
-description: Decides a pending plan's fate: approve it into a task, discard it, or revise it. Use when the user says "review plan", "approve plan", "check the plan", or "review idea", or after generating a plan. Not for creating a plan (use idea).
-argument-hint: [plan ID]
+description: Reviews a pending idea and approves, discards or revises it.
+disable-model-invocation: true
+argument-hint: [idea ID]
 allowed-tools: [Read, Write, Bash, Glob, Grep]
 model: sonnet
 effort: medium
 ---
 
-# Review Plan
+# Review Idea
 
 ## Arguments
 
-Plan identifier (optional): $ARGUMENTS — accepts `PLN-001`, `001`, or `1`.
+Idea identifier (optional): $ARGUMENTS — accepts `PLN-001`, `001`, or `1`.
 
 ## Prerequisites
 
-Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/ideas/pending/` has plans. If empty, inform the user.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/ideas/pending/` has ideas. If empty, inform the user.
 
 ## Workflow
 
-### 1. Identify Plan
+### 1. Identify Idea
 
 If `$ARGUMENTS` provided, find in `{{BACKLOG}}/ideas/pending/`.
 
-If no argument, list pending plans and ask which to review.
+If no argument, list pending ideas and ask which to review.
 
-Done when: one plan file is resolved.
+Done when: one idea file is resolved.
 
 ### 2. Present Summary
 
-Read the full plan file and present:
+Read the full idea file and present:
 
 ```
 ## PLN-{{ID}}: {{TITLE}}
@@ -48,13 +49,13 @@ Complexity: {{COMPLEXITY}} | Created: {{DATE}}
 ...
 ```
 
-### 3. Audit the Plan
+### 3. Audit the Idea
 
-Before recommending, audit the plan against the actual codebase. Skip steps that don't apply.
+Before recommending, audit the idea against the actual codebase. Skip steps that don't apply.
 
-- **Files exist & are accurate**: verify every path under "Files to Modify" exists. Check the relevant code matches what the plan assumes (function names, signatures, surrounding logic).
+- **Files exist & are accurate**: verify every path under "Files to Modify" exists. Check the relevant code matches what the idea assumes (function names, signatures, surrounding logic).
 - **Approach soundness**: read each step critically. Are there missing steps (tests, migrations, types, docs)? Steps that won't compile or contradict existing patterns?
-- **Risk gaps**: high/medium-complexity plans with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
+- **Risk gaps**: high/medium-complexity ideas with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
 - **Conflicts with active work**: scan `{{BACKLOG}}/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
 - **Related learnings**: search `{{BACKLOG}}/learnings/` for prior insights that should shape the approach.
 
@@ -79,9 +80,9 @@ If the recommendation is **revise**, list the specific changes you'd make so the
 
 Then list the override options:
 
-1. **Approve** — Convert this plan into a backlog task
-2. **Discard** — This plan is not needed
-3. **Revise** — The plan needs changes
+1. **Approve** — Convert this idea into a backlog task
+2. **Discard** — This idea is not needed
+3. **Revise** — The idea needs changes
 
 Ask the user to confirm the recommendation or pick a different option.
 
@@ -90,12 +91,12 @@ Done when: the user has confirmed the recommendation or picked another option.
 ### 5a. Approve
 
 ```bash
-# Create task from plan (--body - reads stdin: pipe the plan's Goal + Approach)
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P}} --source "plan/PLN-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
-{{PLAN_GOAL_AND_APPROACH}}
+# Create task from idea (--body - reads stdin: pipe the idea's Goal + Approach)
+cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P}} --source "idea/PLN-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
+{{IDEA_GOAL_AND_APPROACH}}
 BODY
 
-# Move plan to complete (TSK-{{NEW_ID}} comes from the task-create output above)
+# Move idea to complete (TSK-{{NEW_ID}} comes from the task-create output above)
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status approved --task-id TSK-{{NEW_ID}}
 ```
 
@@ -106,7 +107,7 @@ The CLI handles frontmatter updates, file moves, and index updates.
 
 Confirm:
 ```
-Plan PLN-{{ID}} approved → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
+Idea PLN-{{ID}} approved → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 /flowstate:start-task TSK-{{NEW_ID}} to begin
 ```
 
@@ -125,7 +126,7 @@ Done when: `idea-move` exits 0.
 ### 5c. Revise
 
 1. Discuss needed changes with the user
-2. Edit plan in-place (stays in `ideas/pending/`)
+2. Edit idea in-place (stays in `ideas/pending/`)
 3. Add revision note:
    ```markdown
    ## Revision History
