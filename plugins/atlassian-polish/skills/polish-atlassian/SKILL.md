@@ -31,6 +31,7 @@ No target → ask which issue or page to polish.
 - Only the body (description / page content) changes. Status, assignee, labels, fields,
   issue links and page hierarchy stay as fetched; link changes the user wants go in the
   report as manual steps.
+- A fact that cannot be verified stays in the page and is marked `(unverified)`.
 - REST API calls use the user's stored API token: ask consent once per run, stating exactly
   which calls. The token is used inside the command and never printed.
 - Batch (epic children, child pages): all previews first, then one approval, then write.
