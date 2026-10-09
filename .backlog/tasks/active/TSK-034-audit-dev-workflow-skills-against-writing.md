@@ -33,6 +33,9 @@ Steps 4-7 of PLN-013. Depends on the rules task and TSK-028.
 
 ## Learnings
 
+- LRN-024: Agent worktrees can branch from a stale commit missing tooling
+- LRN-025: Worktree guard rejects rtk-rewritten git; use /usr/bin/git
+- LRN-026: Routing eval breaks when description rewrites drop legacy trigger words
 ## Progress Log
 
 - [2026-10-08] Created

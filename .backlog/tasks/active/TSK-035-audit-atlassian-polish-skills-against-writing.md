@@ -34,6 +34,7 @@ Also: bring polish-atlassian/SKILL.md (243 lines) under 150 by disclosing detail
 
 ## Learnings
 
+- LRN-027: lint:skills counts body lines excluding frontmatter
 ## Progress Log
 
 - [2026-10-08] Created

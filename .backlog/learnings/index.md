@@ -27,3 +27,9 @@
 | LRN-021 | Worktree guard rejects compound or variable-driven Bash commands | worktree, tooling, parallel | active | 2026-10-08 |
 | LRN-022 | tsc never deletes dist outputs whose source vanished, and turbo cache restores them | dist, build, turbo, ci | active | 2026-10-09 |
 | LRN-023 | pnpm bump only works inside the plugin dir | release, pnpm, tooling | active | 2026-10-09 |
+| LRN-024 | Agent worktrees can branch from a stale commit missing tooling | worktree, tooling, lint-skills, parallel | active | 2026-10-09 |
+| LRN-025 | Worktree guard rejects rtk-rewritten git; use /usr/bin/git | worktree, git, rtk | active | 2026-10-09 |
+| LRN-026 | Routing eval breaks when description rewrites drop legacy trigger words | routing, descriptions, evals, skills | active | 2026-10-09 |
+| LRN-027 | lint:skills counts body lines excluding frontmatter | lint-skills, skills, writing-rules | active | 2026-10-09 |
+| LRN-028 | Re-merge a stale skill audit by taking main's files and replaying edits | workflow, skills, merge, worktree | active | 2026-10-09 |
+| LRN-029 | Piping pnpm bump to head can abort the bump via SIGPIPE | pnpm, bump, tooling | active | 2026-10-09 |

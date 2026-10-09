@@ -33,6 +33,8 @@ Steps 4-7 of PLN-013. Depends on the rules task and TSK-028.
 
 ## Learnings
 
+- LRN-028: Re-merge a stale skill audit by taking main's files and replaying edits
+- LRN-029: Piping pnpm bump to head can abort the bump via SIGPIPE
 ## Progress Log
 
 - [2026-10-08] Created
