@@ -1,7 +1,7 @@
 ---
 name: flowstate
 description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
-version: 2.10.0
+version: 2.10.1
 ---
 
 # Flowstate - Backlog Management System
@@ -14,7 +14,7 @@ This project uses **Flowstate** for backlog management. All data lives in `.back
 .backlog/
 ├── ideas/pending/         # Implementation ideas awaiting review
 ├── ideas/complete/        # Approved or discarded ideas
-├── reports/pending/       # Bug reports, findings awaiting triage
+├── reports/pending/       # Reports awaiting triage
 ├── reports/complete/      # Processed reports
 ├── tasks/pending/         # Tasks to do
 ├── tasks/active/          # Tasks in progress (multiple allowed)
@@ -79,9 +79,9 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `/flowstate:log-progress` | Log session progress and tick met criteria |
 | `/flowstate:check-task` | Verify task status vs implementation |
 | `/flowstate:next-task` | Get a recommendation for what to work on next |
-| `/flowstate:idea` | Generate an implementation plan |
-| `/flowstate:review-idea` | User-only: review and decide on a pending plan |
-| `/flowstate:report` | File a bug report or finding |
+| `/flowstate:idea` | Generate an idea (implementation plan) |
+| `/flowstate:review-idea` | User-only: review and decide on a pending idea |
+| `/flowstate:report` | File a report (bug, finding, security) |
 | `/flowstate:triage-report` | User-only: triage a pending report |
 | `/flowstate:parallel` | User-only: run multiple tasks in parallel |
 | `/flowstate:condense-tasks` | User-only: trim Notes and middle Progress Log entries from completed tasks |
@@ -103,7 +103,7 @@ Skills that involve starting or planning work (`start-task`, `next-task`, `idea`
 
 1. **Learnings** — filtered by tag overlap or keyword match with the task/feature being worked on. Past insights, gotchas, and proven patterns are surfaced inline so they inform decisions without the user having to remember to check.
 2. **Active tasks** — listed to show current workload and spot potential overlaps or conflicts.
-3. **Pending reports** — scanned for known bugs or findings related to the current scope.
+3. **Pending reports** — scanned for known reports related to the current scope.
 
 This context is loaded silently — if nothing relevant is found, the skill proceeds without mentioning the absence. The goal is zero-effort awareness: the backlog informs the work automatically.
 
