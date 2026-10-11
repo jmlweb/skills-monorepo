@@ -27,6 +27,22 @@ claude plugin install atlassian-polish@jmlweb
 
 Or just ask: *"polish this ticket"*, *"clean up the epic description"*, *"rewrite this Confluence page"*.
 
+## How it works
+
+```mermaid
+flowchart LR
+    A([You: polish PROJ-123]) --> F["Fetch<br/><i>body + comments + links</i>"]
+    F --> B["Back up<br/><i>original saved first</i>"]
+    B --> R["Rewrite<br/><i>atlassian-formatter agent</i>"]
+    R --> P{"Preview<br/><i>+ what was removed</i>"}
+    P -- "revise" --> R
+    P -- "approve" --> W["Write<br/><i>MD → ADF via CLI</i>"]
+    P -- "--dry-run" --> X([Stop])
+    W --> V["Verify<br/><i>re-fetch, scan markup,<br/>images, links</i>"]
+```
+
+Nothing touches Jira or Confluence until the **Write** step, and only after you approve the preview. `--audit` stops right after fetching and just reports what's hard to read.
+
 ## What it does
 
 - 🔍 Reads the body **and** the comments — the newest dated source wins, so stale status lines get corrected

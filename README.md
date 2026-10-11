@@ -28,6 +28,29 @@
 
 ---
 
+## 🧭 How it all fits together
+
+Each plugin is a set of **skills** (slash commands written in markdown) that Claude follows, plus a tiny zero-dependency **CLI** for anything that must be deterministic. Skills do the thinking; the CLI does the file writes.
+
+```mermaid
+flowchart LR
+    U([You]) -- "/plugin:skill" --> S["Skill<br/><i>markdown instructions</i>"]
+    S -- "judgment, questions,<br/>previews" --> C([Claude])
+    S -- "state changes" --> CLI["Plugin CLI<br/><i>deterministic, tested</i>"]
+    CLI --> F[("Plain files<br/>.backlog/ · git · Jira")]
+    C -- "asks before<br/>anything irreversible" --> U
+```
+
+| Plugin | Everyday loop |
+|--------|---------------|
+| 🌊 **flowstate** | `idea` → `review-idea` → `start-task` → `log-progress` → `complete-task` |
+| 🛠️ **dev-workflow** | `commit` → `open-pr` → `ci-triage` / `review-pr` → `pr-ready` |
+| ✨ **atlassian-polish** | `atlassian-setup` → `polish-atlassian` (preview → approve → write) |
+
+> 🛡️ **Shared principles:** nothing is written to Jira, GitHub or your backlog without a clear step you can follow; tags, pushes and merges are never implicit; every plugin works with plain files and CLIs you already have.
+
+---
+
 ## ⚡ Quick Start
 
 > **Prerequisites:** [Claude Code](https://claude.ai/code) installed.
@@ -40,7 +63,21 @@ claude plugin marketplace add jmlweb/skills-monorepo
 claude plugin install flowstate@jmlweb
 ```
 
-Then open Claude Code in any repo and run `/flowstate:setup`. See the [flowstate README](./plugins/flowstate/README.md) for full usage, commands, and installation options (team setup, manual install).
+```bash
+# Install the others the same way
+claude plugin install dev-workflow@jmlweb
+claude plugin install atlassian-polish@jmlweb
+```
+
+Then open Claude Code in any repo and try:
+
+| Plugin | First command |
+|--------|---------------|
+| 🌊 flowstate | `/flowstate:setup`, then `/flowstate:guide` for a map of every command |
+| 🛠️ dev-workflow | `/dev-workflow:commit` (or just `/commit`) |
+| ✨ atlassian-polish | `/atlassian-polish:atlassian-setup`, then `/atlassian-polish:polish-atlassian PROJ-123` |
+
+Each plugin README has full usage, flags and requirements.
 
 ---
 
@@ -73,28 +110,24 @@ pnpm version:sync   # Sync plugin.json versions → marketplace.json
 ```text
 .claude-plugin/           # Root marketplace definition
 plugins/
-├── flowstate/            # Backlog management plugin
-│   ├── .claude-plugin/   # Plugin manifest (plugin.json)
-│   ├── hooks/            # Event handlers (test failure, pre-commit reminders)
-│   ├── skills/           # Slash command definitions (*.md)
-│   ├── src/              # TypeScript source
-│   │   ├── commands/     # CLI command implementations
-│   │   └── core/         # Shared modules (fs, paths, id, markdown…)
-│   ├── dist/             # ⚠️ Pre-built — must be committed
-│   └── package.json
-└── dev-workflow/         # Developer workflow plugin
-    ├── .claude-plugin/   # Plugin manifest
-    ├── skills/           # Slash command definitions (*.md)
-    ├── shared/           # Reusable instruction snippets shared across skills
-    ├── src/              # TypeScript source (commit/changeset CLI)
-    ├── dist/             # ⚠️ Pre-built — must be committed
-    └── package.json
+├── flowstate/            # Backlog management (20 skills + CLI + hooks)
+├── dev-workflow/         # Commits, PRs, CI, changesets, docs (9 skills + CLI + agent)
+└── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
 └── shared-config/        # Shared TypeScript base config
-scripts/
-├── bump-plugin.sh        # Bump a plugin's version (package.json + plugin.json + marketplace)
-├── pre-commit.mjs        # Pre-commit hook — rebuilds dist/ when src/ changes
-└── version-sync.js       # Version sync utility
+docs/                     # Contributor guides (e.g. writing-skills.md)
+scripts/                  # Pre-commit hook, version sync/bump, skill linter
+GLOSSARY.md               # Shared vocabulary for entities and skill prose
+```
+
+Inside each plugin:
+
+```text
+.claude-plugin/plugin.json   # Manifest
+skills/<name>/SKILL.md       # One folder per slash command
+agents/                      # Read-only sub-agents (where used)
+references/  shared/         # Deep docs and prose loaded on demand
+src/  →  dist/               # TypeScript CLI source → ⚠️ pre-built output, must be committed
 ```
 
 > **⚠️ Important:** `dist/` **must be committed**. Claude Code clones the repo and does not run build steps on install.

@@ -11,6 +11,41 @@ claude plugin install dev-workflow@jmlweb
 
 ---
 
+## 🗺️ How the skills fit together
+
+From first commit to merged PR, each skill hands off to the next:
+
+```mermaid
+flowchart LR
+    W([Write code]) --> DS["/deslop<br/><i>strip LLM-style comments</i>"]
+    DS --> CM["/commit<br/><i>or /changeset</i>"]
+    CM --> OP["/open-pr<br/><i>draft PR from your template</i>"]
+    OP --> CI{CI green?}
+    CI -- "no" --> TR["/ci-triage<br/><i>real · flaky · infra</i>"]
+    TR --> CM
+    CI -- "yes" --> RV["/review-pr<br/><i>parallel agents</i>"]
+    RV --> PR["/pr-ready<br/><i>threads, branch, description</i>"]
+    PR --> M([Merge])
+    DOC["/check-docs"] -. "before a release" .-> M
+    HO["/agent-handoff"] -. "work spans repos" .-> OP
+```
+
+> 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready` or `/agent-handoff` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
+
+| Skill | Use it when… | Writes anything? |
+|-------|--------------|------------------|
+| ✍️ `/commit` | you have staged changes | A commit, after you approve the message |
+| 📦 `/changeset` | a Changesets monorepo needs a version bump | A changeset file + commit |
+| 🧹 `/deslop` | your branch has chatty comments | Removes only the comments you select |
+| 🚀 `/open-pr` | the branch is ready for review | Push + draft PR, after you approve |
+| 🚦 `/ci-triage` | CI is red and you don't know why | Nothing until you confirm a rerun/issue |
+| 🔎 `/review-pr` | you want a second opinion before merge | `review.md`; PR comments only for findings you pick |
+| ✅ 🙋 `/pr-ready` | your own PR needs to get over the line | Branch merge, replies, description — each confirmed |
+| 🤝 🙋 `/agent-handoff` | work spans several repos | Nothing (read-only) |
+| 📝 `/check-docs` | docs may have drifted from the code | Nothing until you approve each change |
+
+---
+
 ## Skills
 
 ### ✍️ `/commit` — Smart commits

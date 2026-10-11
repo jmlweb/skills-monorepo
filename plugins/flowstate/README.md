@@ -121,50 +121,52 @@ Use `/reload-plugins` after making changes.
 
 ## 📋 Commands
 
+> 🙋 = **you run it** — Claude never fires these on its own. Everything else Claude can also reach for when you say things like *"add a task"*, *"what's next?"* or *"I'm done with TSK-004"*.
+
 ### Core
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:setup` | Create the backlog directory structure (`.backlog/` by default, or a private location). Safe to re-run |
-| `/flowstate:guide` | 🔁 User-only. Map the commands into flows and name the next one to run |
-| `/flowstate:overview` | Backlog overview with stats, active work, and health warnings |
+| 🙋 `/flowstate:setup` | Create the backlog (`.backlog/` by default, or a [private location](#-private-backlog)). Safe to re-run |
+| 🙋 `/flowstate:guide [situation]` | Not sure what to run? Maps the commands into flows and names the next one |
+| `/flowstate:overview` | Stats, active work, and health warnings at a glance |
 
 ### 📝 Tasks
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:add-task` | Interactively add a task (title, description, acceptance criteria, priority, tags) |
-| `/flowstate:start-task` | Move a task from pending to active. Loads relevant learnings and context |
-| `/flowstate:complete-task` | Mark a task done. Verifies acceptance criteria and extracts learnings |
-| `/flowstate:block-task` | Block a task with a documented reason. Suggests alternatives |
-| `/flowstate:log-progress` | Log session progress and tick met acceptance criteria via the CLI. Handy before `/clear` |
-| `/flowstate:check-task` | Verify a task's status matches actual implementation in the codebase |
-| `/flowstate:next-task` | Smart recommendation based on priority, dependencies, and recent work |
-| `/flowstate:parallel` | Run multiple independent tasks simultaneously in isolated git worktrees |
-| `/flowstate:condense-tasks` | Trim Notes and middle Progress Log entries from completed tasks |
+| `/flowstate:add-task` | Groom a request into a task: one round of proposals (title, criteria, priority, tags, dependencies) where *"yes"* accepts all |
+| `/flowstate:next-task` | Recommends what to start — scored by priority, unblocked status and what it unblocks. Suggests a parallel-safe group of up to 3 when tasks don't overlap |
+| `/flowstate:start-task` | Pending → active. Surfaces relevant learnings, active tasks and known bugs first |
+| `/flowstate:log-progress` | Dated progress entries + ticks criteria **with evidence**. Handy before `/clear` |
+| `/flowstate:complete-task` | Re-runs the evidence for every ticked criterion, extracts learnings, then moves the task to done |
+| `/flowstate:block-task` | Block a task with a documented reason; suggests alternatives |
+| `/flowstate:check-task` | Does the declared status match the code? One task or the whole backlog |
+| 🙋 `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees |
+| 🙋 `/flowstate:condense-tasks` | Shrink completed task files (drop notes, trim the log, compress prose) |
 
 ### 🗺️ Ideas
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:idea` | Generate an idea (implementation plan) — explores code, identifies risks, saves for review |
-| `/flowstate:review-idea` | Approve (converts to task), discard, or revise a pending idea |
+| `/flowstate:idea` | Design before you code: asks the open questions in rounds, explores the codebase, writes an implementation plan |
+| 🙋 `/flowstate:review-idea` | Approve (becomes a task), discard, or revise a pending idea |
 
 ### 🐛 Reports
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:report` | File a structured bug report, finding, or security issue |
-| `/flowstate:triage-report` | Convert a pending report to a task, discard it, or request more info |
+| `/flowstate:report` | File a structured bug, finding, or security issue |
+| 🙋 `/flowstate:triage-report` | Turn a pending report into a task, discard it, or ask for more info |
 
 ### 💡 Learnings
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:add-learning` | Document an insight or lesson discovered during development |
-| `/flowstate:learnings` | Browse and search the learnings index |
-| `/flowstate:condense-learnings` | Deduplicate, archive stale entries, and normalize tags |
-| `/flowstate:retro` | 🔁 User-only. Review a session, rank its mistakes, and file approved ones as check tasks, AGENTS.md proposals, or learnings |
+| `/flowstate:add-learning` | Record a non-obvious insight discovered while working |
+| `/flowstate:learnings` | Browse and search past insights |
+| 🙋 `/flowstate:condense-learnings` | Dedupe, normalize tags, archive stale entries, compress the rest |
+| 🙋 `/flowstate:retro` | Review a session, rank its mistakes, and file approved fixes as check tasks, `AGENTS.md` proposals, or learnings |
 
 ---
 
@@ -194,6 +196,30 @@ Claude suggests Flowstate commands when relevant — you don't always need to in
 | ✅ Finishes work on a task | `/flowstate:complete-task` |
 | 📖 Before starting work | Reads learnings to avoid past mistakes |
 
+### 🗣️ Questions in rounds, not one by one
+
+`idea` and `add-task` ask everything that is open **in a single round**. Each question comes with a recommended answer, so replying *"yes"* accepts the lot; override one with `Q2: P2`. Facts the repo can answer are looked up, never asked.
+
+### 🧾 Done means proven
+
+Ticking an acceptance criterion records *how you know*:
+
+```markdown
+- [x] 2. Token refresh works within the expiry window
+      — evidence: pnpm test auth → exit 0 (2026-04-05)
+```
+
+`complete-task` **re-runs** command-type evidence fresh and flags anything unticked, unproven, or now failing before it lets the task move to done.
+
+### 🪝 Hooks
+
+| When | What happens |
+|------|--------------|
+| A test command (`vitest`, `jest`, `pytest`, `pnpm test`…) fails | Claude is nudged to consider `/flowstate:report` |
+| Before a `git commit` while tasks are active | Claude sees the active tasks and considers `/flowstate:complete-task` |
+
+> Hooks need `jq` and `fd` on your `PATH`.
+
 ### ⚡ Parallel execution
 
 Run independent tasks simultaneously in isolated git worktrees:
@@ -222,6 +248,8 @@ flowchart TD
         ADD["/flowstate:add-task"] --> NEXT["/flowstate:next-task"]
         NEXT --> START["/flowstate:start-task"]
         START --> IMPL["implement"]
+        IMPL -. "as you go" .-> LOG["/flowstate:log-progress"]
+        LOG -.-> IMPL
         IMPL --> DONE["/flowstate:complete-task"]
         DONE -. "learnings extracted" .-> LEARN["/flowstate:add-learning"]
         DONE --> NEXT
@@ -233,6 +261,7 @@ flowchart TD
         TRIAGE -- "convert to task" --> ADD
     end
 
+    DONE -. "after a rough session" .-> RETRO["/flowstate:retro"]
     START -. "blocked?" .-> BLOCK["/flowstate:block-task"]
     BLOCK -. "resolved" .-> START
 ```
@@ -243,11 +272,16 @@ flowchart TD
 stateDiagram-v2
     [*] --> pending : created
     pending --> active : /start-task
+    active --> active : /log-progress
     active --> complete : /complete-task
     active --> blocked : /block-task
     blocked --> active : unblocked
     complete --> [*]
 ```
+
+### 🧭 Lost? Ask the guide
+
+`/flowstate:guide` prints the map above in text form. Give it a situation (*"I found a bug"*, *"I have a vague idea"*) and it names the exact command to run next.
 
 ---
 
@@ -260,7 +294,7 @@ stateDiagram-v2
 flowstate/
 ├── .claude-plugin/
 │   └── plugin.json           # plugin manifest
-├── skills/                   # 17 slash commands (SKILL.md each)
+├── skills/                   # 20 slash commands (SKILL.md each)
 ├── hooks/
 │   ├── hooks.json            # event handlers
 │   ├── on-test-failure.sh    # suggests /flowstate:report
