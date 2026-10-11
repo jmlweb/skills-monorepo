@@ -67,7 +67,7 @@ Done when: every criterion is proven by fresh evidence, or the user has chosen a
 
 ### 3. Extract Learnings
 
-Gather learning candidates from two sources, then create each one silently, deriving title, tags and Context / Insight / Application from context without asking.
+Gather learning candidates from two sources, then create each one silently, deriving title, tags and Context / Insight / Application from context without asking. Apply the dedupe check from `/flowstate:add-learning` Step 2c first and skip any candidate that duplicates an existing learning, saying `Skipped — duplicate of LRN-{{ID}}`.
 
 **3a. From the task file's Learnings section** — each entry becomes a full learning (expand the one-line entry into Context / Insight / Application using the task body and tags).
 

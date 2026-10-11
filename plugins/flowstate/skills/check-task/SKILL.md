@@ -72,8 +72,6 @@ Done when: each task has one action from the table.
 **Single task:**
 ```
 
-Done when: the report block is printed.
-
 ## TSK-{{ID}} Status Check
 
 Current: {{STATUS}} (in {{DIRECTORY}})
@@ -97,6 +95,8 @@ Recommended: {{action}}
 
 Summary: {{N}} tasks need attention
 ```
+
+Done when: the report block is printed.
 
 ### 6. Offer Fixes
 

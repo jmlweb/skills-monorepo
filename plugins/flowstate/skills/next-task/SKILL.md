@@ -79,8 +79,6 @@ Done when: one learning search and one reports scan have run.
 
 ```
 
-Done when: one of the two recommendation blocks is printed.
-
 ## Next Task Recommendation
 
 ### Parallel Group ({{N}} tasks)
@@ -126,6 +124,8 @@ Reply with a task ID/number to start it, or anything else to keep browsing.
 ```
 
 Show up to 5 alternatives in both forms; when more exist, add "… and N more pending."
+
+Done when: one of the two recommendation blocks is printed.
 
 ### 6. Handle Response
 

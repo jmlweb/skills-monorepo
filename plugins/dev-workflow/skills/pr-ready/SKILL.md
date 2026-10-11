@@ -48,7 +48,7 @@ Done when: one open PR is named and its branch is checked out.
 git fetch origin <base> && git merge origin/<base>
 ```
 
-Conflicts → stop, list the files, and let the user decide how to resolve them. Clean merge → ask before `git push` (plain push to the PR branch).
+Conflicts → stop, list the files, and let the user decide how to resolve them. Clean merge → ask before `git push` (plain push to the PR branch; force-push and base-branch pushes stay off the table, a rejected push is reported).
 
 Done when: the branch contains `origin/<base>` and any push is confirmed or declined.
 

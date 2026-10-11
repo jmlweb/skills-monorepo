@@ -26,7 +26,7 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Developer workflow tools — documentation auditing, PR reviews, commits, and task orchestration.",
-      "version": "1.5.1",
+      "version": "1.5.2",
       "keywords": [
         "documentation",
         "workflow",
@@ -40,7 +40,7 @@
       "name": "flowstate",
       "source": "./plugins/flowstate",
       "description": "Backlog management for Claude Code — tasks, ideas, reports, and learnings, all in plain files.",
-      "version": "2.12.0",
+      "version": "2.12.1",
       "keywords": [
         "backlog",
         "tasks",

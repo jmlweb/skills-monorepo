@@ -29,8 +29,6 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true
 
 ```
 
-Done when: the Quick Stats table and every non-empty section are printed.
-
 ## {{PROJECT}} - Backlog Status
 
 ### Quick Stats
@@ -66,6 +64,8 @@ If more than 10 pending tasks exist, add a footer: "… and N more. Use `task-li
 | ID | Title | Completed |
 |----|-------|-----------|
 ```
+
+Done when: the Quick Stats table and every non-empty section are printed.
 
 ### 3. Warnings
 

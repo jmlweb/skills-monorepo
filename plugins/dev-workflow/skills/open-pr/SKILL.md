@@ -94,6 +94,8 @@ gh pr create --draft --base <base> --head <branch> --title "<title>" --body-file
 EOF
 ```
 
+Push plainly to the feature branch only; a rejected push is reported and the run stops.
+
 - `--ready` → omit `--draft`.
 - Push rejected → report and stop.
 

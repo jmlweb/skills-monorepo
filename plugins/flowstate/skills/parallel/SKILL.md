@@ -90,8 +90,6 @@ When several tasks each create sequentially numbered files (ADRs, migrations), r
 ```
 Complete Task TSK-{{ID}}: {{TITLE}}
 
-Done when: every subagent has returned a report.
-
 ## Task Description
 {{DESCRIPTION}}
 
@@ -117,6 +115,8 @@ Done when: every subagent has returned a report.
 6. Create a commit referencing TSK-{{ID}}
 7. End your final report with a `## Learnings` section: one entry per non-obvious root cause, undocumented behavior, gotcha, or reusable pattern you hit, each with Title, Tags, Context, Insight, Application. Skip routine work and anything obvious from the code. Write "None" if there are none.
 ```
+
+Done when: every subagent has returned a report.
 
 ### 7. Collect Results
 

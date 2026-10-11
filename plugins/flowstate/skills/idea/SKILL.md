@@ -68,8 +68,6 @@ BODY
 
 ```markdown
 
-Done when: the CLI prints the new PLN ID.
-
 ## Goal
 ## Context
 ## Approach        (numbered steps)
@@ -84,6 +82,8 @@ The CLI handles ID assignment, file creation, and placement in `ideas/pending/`.
 - **low**: Single file or small change, clear path
 - **medium**: Multiple files, some decisions needed
 - **high**: Architectural change, many files, unknowns
+
+Done when: the CLI prints the new PLN ID.
 
 ### 5. Confirm
 

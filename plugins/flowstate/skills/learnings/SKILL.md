@@ -44,8 +44,6 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{SE
 
 ```
 
-Done when: a result table, a single document, or the index table is displayed.
-
 ## Learnings Index ({{N}} entries)
 
 | ID | Title | Tags | Status | Date |
@@ -53,6 +51,8 @@ Done when: a result table, a single document, or the index table is displayed.
 
 Enter a learning ID to read the full document, or a search term to filter.
 ```
+
+Done when: a result table, a single document, or the index table is displayed.
 
 ### 2. Drill Down
 
