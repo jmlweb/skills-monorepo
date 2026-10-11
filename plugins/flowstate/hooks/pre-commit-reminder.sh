@@ -36,7 +36,7 @@ fi
 BACKLOG_DIR="$ROOT_DIR/tasks/active"
 [ -d "$BACKLOG_DIR" ] || exit 0
 
-ACTIVE_COUNT=$(fd -e md . "$BACKLOG_DIR" | wc -l)
+ACTIVE_COUNT=$(find "$BACKLOG_DIR" -name '*.md' | wc -l)
 [ "$ACTIVE_COUNT" -gt 0 ] || exit 0
 
 TASKS=""

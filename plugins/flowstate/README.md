@@ -218,7 +218,7 @@ Ticking an acceptance criterion records *how you know*:
 | A test command (`vitest`, `jest`, `pytest`, `pnpm test`…) fails | Claude is nudged to consider `/flowstate:report` |
 | Before a `git commit` while tasks are active | Claude sees the active tasks and considers `/flowstate:complete-task` |
 
-> Hooks need `jq` and `fd` on your `PATH`.
+> Hooks need `jq` on your `PATH`.
 
 ### ⚡ Parallel execution
 

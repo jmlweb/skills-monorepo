@@ -30,7 +30,7 @@ plugins/
 │   ├── .claude-plugin/plugin.json
 │   ├── SKILL.md                  # always-on context skill — carries a version: field
 │   ├── skills/<name>/SKILL.md    # one dir per slash command
-│   ├── hooks/                    # hooks.json + bash hooks (need jq, fd)
+│   ├── hooks/                    # hooks.json + bash hooks (need jq)
 │   ├── references/               # architecture.md, plugin-docs.md, templates.md
 │   ├── src/{bin,commands,core}/  # CLI source; colocated *.test.ts
 │   └── dist/                     # COMMITTED build output
