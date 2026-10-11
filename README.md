@@ -47,6 +47,46 @@ flowchart LR
 | 🛠️ **dev-workflow** | `commit` → `open-pr` → `ci-triage` / `review-pr` → `pr-ready` |
 | ✨ **atlassian-polish** | `atlassian-setup` → `polish-atlassian` (preview → approve → write) |
 
+<details open>
+<summary><strong>🌊 flowstate</strong> — 20 skills</summary>
+
+| Area | Skills |
+|------|--------|
+| Setup & navigation | `setup` · `guide` · `overview` |
+| Tasks | `add-task` · `next-task` · `start-task` · `log-progress` · `complete-task` · `block-task` · `check-task` · `parallel` · `condense-tasks` |
+| Ideas | `idea` · `review-idea` |
+| Reports | `report` · `triage-report` |
+| Learnings | `add-learning` · `learnings` · `condense-learnings` · `retro` |
+
+</details>
+
+<details open>
+<summary><strong>🛠️ dev-workflow</strong> — 9 skills</summary>
+
+| Skill | What it does |
+|-------|--------------|
+| `commit` | Conventional Commits message from the staged diff, with secret scan |
+| `changeset` | Changesets entry with the right semver bump |
+| `deslop` | Strips LLM-style comments from your branch |
+| `open-pr` | Draft PR with a description written from your template |
+| `ci-triage` | Classifies red CI failures as real, flaky or infra |
+| `review-pr` | Parallel-agent PR review with risk matrix |
+| `pr-ready` | Gets your own PR mergeable: branch, threads, description |
+| `agent-handoff` | Per-repo prompts for multi-repo agent work, and report reconciliation |
+| `check-docs` | Audits docs for drift and structure |
+
+</details>
+
+<details open>
+<summary><strong>✨ atlassian-polish</strong> — 2 skills</summary>
+
+| Skill | What it does |
+|-------|--------------|
+| `atlassian-setup` | Connects Jira/Confluence (Cloud or Data Center) |
+| `polish-atlassian` | Rewrites issues, epics and pages into scannable content |
+
+</details>
+
 > 🛡️ **Shared principles:** nothing is written to Jira, GitHub or your backlog without a clear step you can follow; tags, pushes and merges are never implicit; every plugin works with plain files and CLIs you already have.
 
 ---
