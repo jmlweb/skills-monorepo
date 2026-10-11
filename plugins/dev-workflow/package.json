@@ -1,6 +1,6 @@
 {
   "name": "@jmlweb/dev-workflow",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Developer workflow tools for Claude Code",
   "type": "module",
   "bin": {
