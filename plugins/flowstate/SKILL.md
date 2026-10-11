@@ -1,6 +1,6 @@
 ---
 name: flowstate
-description: Activate when the project has a .backlog/ directory, or when the user discusses tasks, backlog, ideas, reports, bugs, or learnings. Provides contextual awareness of the flowstate backlog management system.
+description: Provides contextual awareness of the flowstate backlog management system. Activate when the project has a .backlog/ directory, or when the user refers to the flowstate backlog or its tasks, ideas, reports, or learnings.
 version: 2.12.1
 ---
 
@@ -113,7 +113,7 @@ For ad-hoc browsing outside a skill workflow, use `/flowstate:learnings` to sear
 ## Proactive Behavior
 
 - When you discover a bug or issue while working, suggest `/flowstate:report`
-- Before starting a complex feature, suggest `/flowstate:idea`
+- Before starting a complex feature whose plan should live in the backlog, suggest `/flowstate:idea`
 - When completing work, check if there are active tasks that match and suggest `/flowstate:complete-task`
 
 ### Capture Learnings As They Happen
