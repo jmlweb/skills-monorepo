@@ -42,3 +42,4 @@ Also: bring polish-atlassian/SKILL.md (243 lines) under 150 by disclosing detail
 - [2026-10-08] TSK-041: audit also rewrites workflow-summary descriptions to the docs/writing-skills.md section 6 shape and considers a section 7 Rationalizations table for discipline skills.
 - [2026-10-08] Audit ends by clearing its plugin's pnpm lint:skills warnings (TSK-038); a follow-up flips CI to --strict.
 - [2026-10-09] Started
+- [2026-10-11] Dry-run verification, no Atlassian access: every old polish-atlassian step/guard mapped to new SKILL.md or references with file:line; all refs exist and are linked; md-to-adf/readback-to-md/lossy-scan commands run as documented. NOT verified: live MCP/REST calls, runtime reference-reading, formatter agent behaviour (needs tier-2 eval + Atlassian). Minor wording softening: never-guess, never-invent, never-summarize now implied.
