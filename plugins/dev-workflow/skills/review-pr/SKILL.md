@@ -49,14 +49,14 @@ Done when: size and areas are stated.
 
 ## 4. Dispatch reviewers (parallel)
 
-Always run **code-reviewer** (haiku): conventions, types, exports, error handling, naming.
+Always run **code-reviewer**: conventions, types, exports, error handling, naming.
 
 Conditionally add, based on the diff:
 
-- **security-reviewer** (sonnet) — auth/authorization, sensitive data, env vars, DB queries, file uploads, payments, CORS/CSP. Apply OWASP Top 10.
-- **qa-engineer** (haiku) — new user-facing flows, API endpoints, UI changes that need integration/E2E coverage.
-- **frontend-architect** (sonnet) — new app structure or state-management migration.
-- **backend-architect** (sonnet) — new service architecture or schema overhaul.
+- **security-reviewer** — auth/authorization, sensitive data, env vars, DB queries, file uploads, payments, CORS/CSP. Apply OWASP Top 10.
+- **qa-engineer** — new user-facing flows, API endpoints, UI changes that need integration/E2E coverage.
+- **frontend-architect** — new app structure or state-management migration.
+- **backend-architect** — new service architecture or schema overhaul.
 
 The code-reviewer also gets the full `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/smells.md` pasted after its checklist section, so its findings cover the Standards axis (repo rules plus the smell baseline).
 
