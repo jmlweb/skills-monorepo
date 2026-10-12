@@ -3,6 +3,9 @@
   "version": "2.12.2",
   "description": "Deterministic CLI for flowstate backlog management",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "bin": {
     "flowstate": "./dist/bin/flowstate.js"
   },
@@ -14,9 +17,9 @@
     "bump": "bash ../../scripts/bump-plugin.sh flowstate"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
   },
   "keywords": [
     "claude-code",

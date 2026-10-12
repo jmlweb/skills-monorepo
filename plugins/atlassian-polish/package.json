@@ -3,6 +3,9 @@
   "version": "0.9.1",
   "description": "Rewrite Jira issues and Confluence pages into scannable, human-friendly content",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "bin": {
     "atlassian-polish": "./dist/bin/atlassian-polish.js"
   },
@@ -13,9 +16,9 @@
     "bump": "bash ../../scripts/bump-plugin.sh atlassian-polish"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
   },
   "keywords": [
     "claude-code",

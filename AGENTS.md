@@ -73,7 +73,7 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI â€
 3. **Zero runtime dependencies.** Plugin `package.json` files have *no* `dependencies` key â€”
    only `@types/node`, `typescript`, `vitest` as devDeps. Parsers (args, YAML frontmatter)
    are hand-rolled on purpose.
-4. **ESM only, Node16 resolution.** `"type": "module"` everywhere; relative imports need
+4. **ESM only, `module: Node20` + Node16 resolution.** `"type": "module"` everywhere; relative imports need
    explicit `.js` extensions even in `.ts` files.
 5. **Strict TS via `packages/shared-config/tsconfig.base.json`**: `strict`,
    `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, no unused locals/params.

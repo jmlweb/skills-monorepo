@@ -30,7 +30,7 @@ See [`references/architecture.md`](./references/architecture.md) for entry point
 ## Key Constraints
 
 - **Zero runtime dependencies** — only `@types/node`, `typescript`, `vitest` as devDeps.
-- **ESM only** — `"type": "module"` in package.json, `"module": "Node16"` in tsconfig.
+- **ESM only** — `"type": "module"` in package.json, `"module": "Node20"` in tsconfig.
 - **Strict TypeScript** — `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, no unused locals/params.
 - **Plugin version sync** — `plugin.json` and `package.json` versions must match (tested in `src/plugin.test.ts`).
 - **Deterministic scoring** in `learning-search.ts` — tag exact (+3), tag partial (+1), title keyword (+2), body keyword (+1), stopword-filtered.

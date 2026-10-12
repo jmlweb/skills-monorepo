@@ -77,9 +77,9 @@ Done when: `plugin.json` has 3-6 keywords from the user.
     "bump": "bash ../../scripts/bump-plugin.sh <name>"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
   }
 }
 ```
