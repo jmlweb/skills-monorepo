@@ -1,3 +1,6 @@
 packages:
   - "plugins/*"
   - "packages/*"
+
+# Refuse package versions published less than 7 days ago (minutes) — guards against compromised releases.
+minimumReleaseAge: 10080
