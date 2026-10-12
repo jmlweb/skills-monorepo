@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/on-test-failure.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/on-test-failure.sh\""
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-commit-reminder.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/pre-commit-reminder.sh\""
           }
         ]
       }

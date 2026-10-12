@@ -18,8 +18,7 @@ export class SetupError extends Error {}
 
 const RESERVED_SKILL_NAMES = ["plan", "init"];
 
-// Only places that ship behaviour or prompts. Plugin-level CLAUDE.md, AGENTS.md
-// and .backlog/ explain the renames and so must mention the old names.
+// Only places that ship behaviour or prompts. AGENTS.md and .backlog/ explain the renames and so must mention the old names.
 const SCANNED_DIRS = ["src", "skills", "agents", "hooks", "references", "shared", "evals"];
 const SCANNED_ROOT_FILES = ["README.md", "SKILL.md"];
 

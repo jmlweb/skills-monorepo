@@ -40,6 +40,8 @@ export async function commandName(cwd: string, input: Input): Promise<Result>
 
 Commands generate IDs via `nextId()`, write entities via `writeEntity()`, and update `index.md` files. The `index-rebuild` command regenerates indexes from disk (idempotent recovery).
 
+`learning-search` scores deterministically: tag exact (+3), tag partial (+1), title keyword (+2), body keyword (+1); query terms are stopword-filtered.
+
 ## Skills (`skills/`)
 
 17 SKILL.md files define Claude Code skill prompts. Each specifies `allowed-tools`, `model` (haiku/sonnet), and step-by-step instructions. Skills invoke the CLI via Bash tool calls.
