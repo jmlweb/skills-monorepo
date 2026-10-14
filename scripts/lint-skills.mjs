@@ -15,6 +15,8 @@ const ALLOWED_KEYS = new Set([
   'model',
   'effort',
   'disable-model-invocation',
+  'context',
+  'background',
 ])
 const ROOT_SKILL_EXTRA_KEYS = new Set(['version'])
 const MAX_DESCRIPTION_CHARS = 1024
@@ -33,6 +35,7 @@ const SEVERITY = {
   'description-triggers': 'warn',
   'body-length': 'warn',
   'model-tier': 'error',
+  'bash-scoped': 'warn',
   'plugin-root-path': 'warn',
   'cli-contract': 'error',
   'readme-drift': 'error',
@@ -42,6 +45,10 @@ const SEVERITY = {
 const EXEMPTIONS = {
   // Always-on context skill: activated by project state, not by user phrases.
   'plugins/flowstate/SKILL.md': ['description-triggers'],
+  // These run the project's own test/build commands, which no prefix rule can name.
+  'plugins/flowstate/skills/check-task/SKILL.md': ['bash-scoped'],
+  'plugins/flowstate/skills/complete-task/SKILL.md': ['bash-scoped'],
+  'plugins/flowstate/skills/start-task/SKILL.md': ['bash-scoped'],
 }
 
 /** Reads a flat `key: value` frontmatter block; returns null when it is missing or unterminated. */
@@ -171,6 +178,11 @@ function lintSkill(root, target, getHelp) {
   }
   if (fields.model === 'sonnet' && !['medium', 'high'].includes(fields.effort ?? '')) {
     add('model-tier', 'sonnet skills require `effort: medium` or `effort: high`')
+  }
+
+  // A bare `Bash` grants every command; `Bash(node:*)`-style prefixes keep the grant minimal.
+  if (/(^|[\[,\s])Bash(?=\s*(?:[,\]]|$))/.test(fields['allowed-tools'] ?? '')) {
+    add('bash-scoped', 'allowed-tools grants bare `Bash`; scope it (e.g. `Bash(node:*)`) or add an exemption')
   }
 
   const bodyText = body.join('\n')

@@ -7,22 +7,28 @@ model: sonnet
 effort: medium
 ---
 
+# Review PR
+
 Review a pull request by dispatching specialized agents in parallel and aggregating their findings into a single structured report.
 
-## Usage
+## Arguments
+
+`$ARGUMENTS` (optional):
 
 - `/review-pr` — current branch's PR
 - `/review-pr 123` — by number
 - `/review-pr <url>` — by full GitHub URL
 - `--all` — also show Nice to Have and Info findings (default shows Critical, Must Fix, Should Fix)
 
-## 1. Prerequisites
+## Prerequisites
 
-`command -v gh` → `gh auth status` → `gh repo view`. If any fails, tell the user (install `gh` or run `gh auth login`) and stop. If the PR is a draft or already merged, warn and ask before continuing.
+`command -v gh` → `gh auth status` → `gh repo view`. If any fails, tell the user (install `gh` or run `gh auth login`) and stop.
 
-Done when: all three commands exit 0 and the user has answered any draft/merged warning.
+Done when: all three commands exit 0.
 
-## 2. Fetch PR
+## Workflow
+
+### 1. Fetch PR
 
 Resolve the PR from argument, current branch (`gh pr view`), or ask. Then:
 
@@ -32,11 +38,11 @@ gh pr diff <id>
 gh pr checks <id>
 ```
 
-Run those in parallel. Check out the branch only when local inspection needs it and you are not already on it.
+Run those in parallel. Check out the branch only when local inspection needs it and you are not already on it. If `isDraft` is true or `state` is `MERGED`, warn and ask before continuing.
 
-Done when: metadata, diff and checks are held.
+Done when: metadata, diff and checks are held, and the user has answered any draft/merged warning.
 
-## 3. Size & categorize
+### 2. Size & categorize
 
 From the diff stats, classify:
 
@@ -47,7 +53,7 @@ For XLarge, suggest splitting before reviewing in depth.
 
 Done when: size and areas are stated.
 
-## 4. Dispatch reviewers (parallel)
+### 3. Dispatch reviewers (parallel)
 
 Always run **code-reviewer**: conventions, types, exports, error handling, naming.
 
@@ -62,11 +68,9 @@ The code-reviewer also gets the full `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/ass
 
 Each agent applies the relevant section of `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/checklists.md` and returns findings in its `Finding format` — paste both into the agent's prompt (subagents don't inherit this skill's context). Format: one line per finding, `path:line: <severity>: <finding>`, severity one of Critical, Must Fix, Should Fix, Nice to Have, Info. If an agent fails, continue with the rest and note the gap.
 
-### Spec axis (general-purpose agent)
+**Spec axis (general-purpose agent).** Judge whether the diff does what the originating task asked, separately from Standards. Find the spec in this order and stop at the first hit:
 
-Judge whether the diff does what the originating task asked, separately from Standards. Find the spec in this order and stop at the first hit:
-
-1. **Task/report ID** (`TSK-\d+` or `RPT-\d+`) in the branch name, PR title, PR body, or commit messages (`body` and `commits` from step 2).
+1. **Task/report ID** (`TSK-\d+` or `RPT-\d+`) in the branch name, PR title, PR body, or commit messages (`body` and `commits` from Step 1).
 2. **Local task file** `.backlog/tasks/{pending,active,complete}/<ID>*.md`, only when `.backlog/` exists. The PR branch may not be checked out, so a missing file falls through to the next source.
 3. **PR body or linked GitHub issue** (`gh issue view <n> --json title,body`): the acceptance criteria or requirements section.
 4. **Nothing found** → skip the Spec axis and write "no spec available" in the report.
@@ -74,7 +78,8 @@ Judge whether the diff does what the originating task asked, separately from Sta
 Dispatch a `general-purpose` Agent (plugin skills cannot be a `subagent_type`) with the spec text, the diff, and `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/spec-brief.md` pasted into the prompt. It returns lines in the same `path:line: <severity>: <finding>` format, each quoting the criterion. If it fails, note the gap. The spec source works without flowstate installed.
 
 Done when: every dispatched agent has returned findings or a noted gap.
-## 5. Aggregate
+
+### 4. Aggregate
 
 1. Collect every agent's finding lines. Standards findings (code-reviewer, security, QA, architects) and Spec findings stay in separate axes. Number them globally in order across both axes, `#1`, `#2`, … (numbers stay stable across agents, axes and filters).
 2. Fill `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/report-template.md` with all findings, the CI check result, and the risk matrix. Keep finding text verbatim. Write the full, unfiltered report to `review.md` in the current directory (temporary file, left uncommitted).
@@ -84,9 +89,9 @@ CI: ✅ all green → proceed. ⏳ pending → note. ❌ failed → flag as merg
 
 Done when: `review.md` exists and the filtered report is shown.
 
-## 6. Post
+### 5. Post
 
-1. Ask the user which finding numbers to post (or none), and the verdict: approve / request changes / comment / show again.
+1. Ask the user which finding numbers to post (or none), and the verdict: approve / request changes / comment / show again. On "none", print `Review kept local: review.md` and stop.
 2. Print the exact review that will be posted: verdict, summary body, and each selected `path:line` comment. Wait for an explicit go-ahead; edit and re-show on request.
 3. Post one review with the PR head SHA (`gh pr view <id> --json headRefOid`):
 
@@ -97,7 +102,9 @@ gh api repos/{owner}/{repo}/pulls/<n>/reviews --method POST --input - <<'JSON'
 JSON
 ```
 
-4. On HTTP 422 (line not in the diff), move the failing findings into `body` as `path:line: <finding>` bullets and repost. Done when the API returns the review URL.
+4. On HTTP 422 (line not in the diff), move the failing findings into `body` as `path:line: <finding>` bullets and repost.
+
+Done when: the API returned the review URL and it is printed, or the user chose "none".
 
 ## Errors
 

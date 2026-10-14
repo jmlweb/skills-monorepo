@@ -93,7 +93,7 @@ test("name-matches-dir: passes for matching name, errors on mismatch, root exemp
 });
 
 test("frontmatter-keys: allowlist enforced, version only on the root skill", () => {
-  seed({ fields: { "disable-model-invocation": "true", "argument-hint": "[x]", "allowed-tools": "Read" } });
+  seed({ fields: { "disable-model-invocation": "true", "argument-hint": "[x]", "allowed-tools": "Read", context: "fork", background: "false" } });
   assert.equal(rules(lintRepo(sandbox)).includes("frontmatter-keys"), false);
   seed({ fields: { version: "1.0.0", bogus: "1" } });
   const messages = lintRepo(sandbox).filter((f) => f.rule === "frontmatter-keys").map((f) => f.message);
@@ -133,6 +133,17 @@ test("body-length: warns above 150 lines", () => {
   const warn = lintRepo(sandbox).filter((f) => f.rule === "body-length");
   assert.equal(warn.length, 1);
   assert.equal(warn[0].severity, "warn");
+});
+
+test("bash-scoped: warns on bare Bash in any list form, passes scoped grants", () => {
+  seed({ fields: { "allowed-tools": "[Read, Bash, Glob]" } });
+  assert.deepEqual(rules(lintRepo(sandbox)), ["bash-scoped"]);
+  seed({ fields: { "allowed-tools": "Read, Grep, Bash" } });
+  assert.deepEqual(rules(lintRepo(sandbox)), ["bash-scoped"]);
+  seed({ fields: { "allowed-tools": "[Read, \"Bash(node:*)\", Glob]" } });
+  assert.deepEqual(lintRepo(sandbox), []);
+  seed({ fields: { "allowed-tools": "Read, Bash(git:*), Bash(test:*)" } });
+  assert.deepEqual(lintRepo(sandbox), []);
 });
 
 test("model-tier: haiku forbids effort, sonnet requires medium or high", () => {

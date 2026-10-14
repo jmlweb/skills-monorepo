@@ -1,7 +1,7 @@
 ---
 name: next-task
 description: Recommends the best task to start next, or a parallel-safe group of up to 3. Use when the user asks "what should I work on?", "next task", "what's the priority?", or "what's next". Not for a full status dump (use overview).
-allowed-tools: [Read, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)", Glob, Grep]
 model: sonnet
 effort: medium
 ---
@@ -130,10 +130,12 @@ Done when: one of the two recommendation blocks is printed.
 ### 6. Handle Response
 
 - **`parallel` / `all` / `yes` (when a group was offered)**: Tell the user to run `/flowstate:parallel {{IDs}}` with the group's task IDs (the command is user-invoked)
-- **Single ID or number** (top pick, group member, or any alternative): Move it to active via `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active` (the `/flowstate:start-task` move) and proceed implementing
+- **Single ID or number** (top pick, group member, or any alternative): call the Skill tool with `flowstate:start-task` and that ID; it moves the task to active and begins implementation
 - **Comma-separated IDs**: Tell the user to run `/flowstate:parallel {{IDs}}` with those IDs
-- **Question about a task**: Answer it without moving anything; the user can reply with an ID afterwards
+- **Question about a task**: Answer it, leaving every task where it is; the user can reply with an ID afterwards
 - **"no" / silence / unrelated**: end here; the user re-invokes when ready
+
+Done when: one of the five branches above has run.
 
 ## Edge Cases
 

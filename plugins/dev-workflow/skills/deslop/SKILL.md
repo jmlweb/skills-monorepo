@@ -17,7 +17,9 @@ Remove comments an LLM added to the current branch that restate code, narrate ch
 
 ## Prerequisites
 
-`git rev-parse --is-inside-work-tree` succeeds and `git diff --quiet` shows no unstaged edits to the files in scope; otherwise tell the user and stop (an Edit on top of unrelated edits is hard to review).
+`git rev-parse --is-inside-work-tree` succeeds and `git diff --quiet` exits 0 (no unstaged edits); otherwise tell the user and stop (an Edit on top of unrelated edits is hard to review).
+
+Done when: both commands exit 0.
 
 ## Workflow
 
@@ -89,3 +91,5 @@ Done when: each selected item is gone and the diff touches no code tokens.
 Deslop: removed <K> of <N> flagged comments across <F> files (base <base>)
 Kept <M-K> comments. Review with `git diff`; nothing is committed.
 ```
+
+Done when: the block is printed.

@@ -182,6 +182,10 @@ Many flowstate skills need `.backlog/` to exist. Handle that dependency by kind:
   search with zero hits). Omit the pointer; the model recovers on its own and the line
   would be a no-op.
 
+Resolve the backlog directory with a step the model runs (`flowstate path`), not with
+`` !`command` `` preprocessing: a failing preprocessed command aborts the invocation before
+the model can point the user at `/flowstate:setup`.
+
 The audit of 2026-10-08 found all eight existing "run setup first" pointers are hard
 dependencies, so none needed removal. Re-run that classification for any pointer you
 add: the test is whether the skill's output would be wrong without setup.

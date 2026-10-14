@@ -7,9 +7,13 @@ model: sonnet
 effort: medium
 ---
 
+# Check Docs
+
 Audit documentation on two axes: **freshness** (claims still match the code) and **structure** (content lives in the right tier). Markdown style (whitespace, fence languages, heading hierarchy, table alignment, line length) belongs to the project's linter: leave it unreported.
 
-## Usage
+## Arguments
+
+`$ARGUMENTS` (optional):
 
 - `/check-docs` — full audit (freshness + structure)
 - `/check-docs README.md` — single file, both passes
@@ -17,19 +21,21 @@ Audit documentation on two axes: **freshness** (claims still match the code) and
 - `/check-docs agents` — only agent instructions (`AGENTS.md`, `CLAUDE.md`, `.claude/`)
 - `/check-docs structure` — only the structural pass
 
-## Scope
+## Workflow
+
+### 1. Fix the scope
 
 - Path/file argument → audit just that
 - `agents` → `AGENTS.md`, `CLAUDE.md`, every `.claude/**/*.md`
-- `structure` → run only the structural pass over the full doc set
+- `structure` → run only the structural pass (Step 3) over the full doc set
 - No argument → all `git ls-files '*.md'`, prioritized: agent instructions → root README → package READMEs → `docs/` → other
-- **Always exclude** `**/SKILL.md` and `**/skills/**/*.md` — those are skill specs, not project documentation
+- Drop `**/SKILL.md` and `**/skills/**/*.md` from every scope: those are skill specs, not project documentation
 
 Read project conventions first (`AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `docs/STYLE_GUIDE.md` if present) and note the existing tier layout (which `docs/` folders exist) before flagging anything.
 
 Done when: the file list for the run is fixed.
 
-## Pass 1 — Freshness audit
+### 2. Freshness audit
 
 For every doc in scope, compare its claims against the current repo:
 
@@ -38,14 +44,14 @@ For every doc in scope, compare its claims against the current repo:
 - **Paths**: every relative path or file reference resolves (`git ls-files`)
 - **Examples**: code snippets call APIs/exports/CLIs that still exist with the documented signatures
 - **Tech stack & structure**: described stack and directory layout match the actual deps and tree
-- **Instructions**: setup, install, run, build, deploy steps are still accurate (smoke-check by reading the relevant code/config — do not execute)
+- **Instructions**: setup, install, run, build, deploy steps are still accurate (smoke-check by reading the relevant code and config; this pass is read-only)
 - **Internal links**: cross-references between repo docs resolve
 
 For agent instructions also check: critical info up front, no contradictions, no dead pointers, conventions still reflected by the code (named exports, error handling style, etc.), and frontmatter (where applicable) is valid.
 
 Done when: every file in scope has been compared against each applicable bullet.
 
-## Pass 2 — Structural audit
+### 3. Structural audit
 
 Enforce a 3-tier doc layout (rules stay terse, READMEs stay human, deep docs live under `docs/`). Caps are hard-coded.
 
@@ -61,7 +67,7 @@ For each file in scope:
 
 1. **Tier classification** by path; files outside the table are skipped by this pass.
 2. **Cap check** — `wc -l` vs. tier cap. Over → finding.
-3. **Voice/content check** (heuristic — flag, don't auto-rewrite):
+3. **Voice/content check** (heuristic: report a finding, rewrite only in Step 5):
    - Rules file with prose paragraphs, narrative tone, or extended examples → "this looks like documentation, not rules".
    - README with dense technical sections (long code blocks, deep API tables, multi-step internal procedures) → "this belongs in docs/".
 4. **Index check** — if a `docs/` folder has 3+ files and no `docs/README.md` (or `docs/index.md`), flag missing index.
@@ -72,7 +78,7 @@ Done when: every file in scope has a tier or a skip, and every violation has an 
 
 Severity for structural findings is **Medium** by default; **High** when a proposed pointer would be broken or a rules file exceeds its cap by >50%.
 
-## Reporting
+### 4. Report
 
 Group all findings (both passes) by severity:
 
@@ -85,11 +91,19 @@ For each finding: `file:line`, what is wrong, what the current state actually is
 
 Done when: every finding appears under exactly one severity.
 
-## Applying fixes
+### 5. Apply fixes
 
-For both passes, show the proposed diff per file and write it after the user confirms. Report (without editing) anything whose staleness or placement is uncertain.
+For both passes, show the proposed diff per file and write it after the user confirms. A finding whose staleness or placement is uncertain stays a report line with no diff.
 
 Done when: each shown diff has been confirmed, edited or declined.
+
+### 6. Confirm
+
+```
+Docs audit: <N> findings (<critical>/<high>/<medium>/<low>) across <F> files · <K> fixes applied
+```
+
+Done when: the line is printed.
 
 ## Notes
 

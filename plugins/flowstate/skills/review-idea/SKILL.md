@@ -3,7 +3,7 @@ name: review-idea
 description: Reviews a pending idea and approves, discards or revises it.
 disable-model-invocation: true
 argument-hint: [idea ID]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, Edit, "Bash(node:*)", "Bash(git:*)", Glob, Grep]
 model: sonnet
 effort: medium
 ---
@@ -49,6 +49,8 @@ Complexity: {{COMPLEXITY}} | Created: {{DATE}}
 ...
 ```
 
+Done when: the summary block is printed.
+
 ### 3. Audit the Idea
 
 Before recommending, audit the idea against the actual codebase. Skip steps that don't apply.
@@ -57,7 +59,7 @@ Before recommending, audit the idea against the actual codebase. Skip steps that
 - **Approach soundness**: read each step critically. Are there missing steps (tests, migrations, types, docs)? Steps that won't compile or contradict existing patterns?
 - **Risk gaps**: high/medium-complexity ideas with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
 - **Conflicts with active work**: scan `{{BACKLOG}}/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
-- **Related learnings**: search `{{BACKLOG}}/learnings/` for prior insights that should shape the approach.
+- **Related learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for prior insights that should shape the approach.
 
 Surface only the conclusions, in the next step.
 
@@ -91,8 +93,8 @@ Done when: the user has confirmed the recommendation or picked another option.
 ### 5a. Approve
 
 ```bash
-# Create task from idea (--body - reads stdin: pipe the idea's Goal + Approach)
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P}} --source "idea/PLN-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
+# Create task from idea (stdin carries the idea's Goal + Approach)
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P}} --source "idea/PLN-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body - <<'BODY'
 {{IDEA_GOAL_AND_APPROACH}}
 BODY
 
@@ -126,9 +128,11 @@ Done when: `idea-move` exits 0.
 ### 5c. Revise
 
 1. Discuss needed changes with the user
-2. Edit idea in-place (stays in `ideas/pending/`)
-3. Add revision note:
+2. Edit the idea body in place with the Edit tool (the file stays in `ideas/pending/`; frontmatter untouched)
+3. Append a revision note at the end of the file:
    ```markdown
    ## Revision History
    - [{{TODAY}}] {{what changed}}
    ```
+
+Done when: the idea file holds the agreed changes and a dated revision note.

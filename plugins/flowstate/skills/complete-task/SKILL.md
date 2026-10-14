@@ -2,7 +2,7 @@
 name: complete-task
 description: Verifies acceptance-criteria evidence, captures learnings, and moves a task to done. Use when the user says "done with task", "complete task", "mark as done", or "finish task", or when all acceptance criteria are met. Not for recording partial progress (use log-progress).
 argument-hint: [task ID or number]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, Bash, Glob, Grep]
 model: haiku
 ---
 
@@ -67,7 +67,13 @@ Done when: every criterion is proven by fresh evidence, or the user has chosen a
 
 ### 3. Extract Learnings
 
-Gather learning candidates from two sources, then create each one silently, deriving title, tags and Context / Insight / Application from context without asking. Apply the dedupe check from `/flowstate:add-learning` Step 2c first and skip any candidate that duplicates an existing learning, saying `Skipped — duplicate of LRN-{{ID}}`.
+Gather learning candidates from two sources, then create each one silently, deriving title, tags and Context / Insight / Application from context without asking. Dedupe each candidate first:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --json true
+```
+
+A top `score` of 5 or more means a duplicate: say `Skipped — duplicate of LRN-{{ID}}` and move to the next candidate.
 
 **3a. From the task file's Learnings section** — each entry becomes a full learning (expand the one-line entry into Context / Insight / Application using the task body and tags).
 
@@ -76,7 +82,7 @@ Gather learning candidates from two sources, then create each one silently, deri
 For every candidate from 3a or 3b, run:
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task {{TSK_ID}} --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task {{TSK_ID}} --body - <<'BODY'
 {{BODY_DRAFTED_FROM_CONTEXT}}
 BODY
 ```
@@ -108,6 +114,8 @@ Learnings auto-captured: {{N}}
 ```
 
 If `N == 0`, omit the "Learnings auto-captured" block entirely.
+
+Done when: the confirmation block is printed, including any warning relayed from Step 4.
 
 ## Rationalizations
 

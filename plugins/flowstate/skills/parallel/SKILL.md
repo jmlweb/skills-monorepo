@@ -3,7 +3,7 @@ name: parallel
 description: Runs independent backlog tasks at once in isolated worktrees via subagents.
 disable-model-invocation: true
 argument-hint: [task IDs separated by comma]
-allowed-tools: [Read, Write, Bash, Glob, Grep, Agent]
+allowed-tools: [Read, "Bash(node:*)", "Bash(git:*)", Glob, Grep, Agent]
 model: sonnet
 effort: medium
 ---
@@ -35,6 +35,8 @@ Done when: a list of validated, non-blocked task IDs exists.
 
 Parse each task for file references. Note overlaps — with worktree isolation these won't conflict at runtime but may need manual merge afterward.
 
+Done when: each candidate pair is marked overlapping or disjoint.
+
 ### 3. Present Selection
 
 ```
@@ -48,6 +50,10 @@ Recommended groups:
 
 Which tasks? (comma-separated)
 ```
+
+Skip the question when `$ARGUMENTS` already named the tasks.
+
+Done when: the user has named the tasks to run, or `$ARGUMENTS` did.
 
 ### 4. Start All Selected Tasks
 
@@ -78,6 +84,8 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL
 Distribute results to subagents by tag overlap: include a learning in a subagent's prompt if its tags or reasons reference terms from that task's title or tags. A single learning may appear in multiple prompts if relevant.
 
 Also scan `{{BACKLOG}}/reports/pending/` once for any reports related to the selected tasks' scope.
+
+Done when: each selected task has its list of learnings and reports (possibly empty).
 
 ### 6. Launch Subagents
 
@@ -123,7 +131,7 @@ Done when: every subagent has returned a report.
 Create each learning from the subagents' `## Learnings` sections here, in the main tree, one at a time — sequential creation is what keeps `LRN-NNN` IDs unique and the index conflict-free:
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body - <<'BODY'
 ## Context
 {{context}}
 ## Insight

@@ -2,7 +2,7 @@
 name: start-task
 description: Moves a task from pending to active, surfaces relevant learnings, and begins implementation. Use when the user says "start task", "begin working on", "pick up task", or "work on TSK-XXX". Not for choosing which task (use next-task).
 argument-hint: [task ID or number]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 model: haiku
 ---
 
@@ -28,11 +28,10 @@ Done when: one task file is resolved, or the skill has stopped.
 
 ### 2. Validate
 
-- Task must exist in `tasks/pending/`
-- Task must NOT have `status: blocked` in frontmatter
-- If blocked, show the reason and suggest resolving it first
+- The task file is in `tasks/pending/`
+- Its frontmatter `status` is `pending`. When it is `blocked`, show the `blocked-by` reason, suggest `/flowstate:block-task` to unblock it, and stop
 
-Done when: the task is in `tasks/pending/` and not blocked, or the block reason has been shown.
+Done when: the task is in `tasks/pending/` with `status: pending`, or the block reason has been shown and the skill stopped.
 
 ### 3. Load Context
 
@@ -81,6 +80,8 @@ Reminders: /flowstate:add-learning · /flowstate:block-task · /flowstate:comple
 ```
 
 After printing the summary, proceed directly: read the relevant code, make changes, run tests.
+
+Done when: the summary block is printed and implementation has begun.
 
 ## Notes
 

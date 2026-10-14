@@ -38,6 +38,7 @@ Done when: all three commands exit 0.
 - `gh pr list --head <branch> --state open --json number,url` not empty → stop and point to `/dev-workflow:pr-ready` with that URL.
 
 Done when: base and branch are named and every check above passed.
+
 ### 2. Scan for secrets
 
 ```bash
@@ -109,6 +110,8 @@ PR #<n> — <title>
 State: draft (or ready) · Base: <base> · Template: <repo|user|builtin>
 Next: /dev-workflow:pr-ready when CI and reviews need driving
 ```
+
+Done when: the block is printed with the URL from Step 6.
 
 ## Errors
 

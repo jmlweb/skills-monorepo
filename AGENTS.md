@@ -118,7 +118,10 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
 
 - One directory per skill: `skills/<name>/SKILL.md`, dir name == frontmatter `name`.
 - Frontmatter fields in use: `name`, `description`, `argument-hint` (optional),
-  `allowed-tools` (minimal set, prefer scoped `Bash(git:*)` over bare `Bash`), `model`, `effort`.
+  `allowed-tools` (minimal set, prefer scoped `Bash(git:*)` over bare `Bash`), `model`, `effort`,
+  `context: fork` + `background: false` (only on skills with no user questions and no
+  dependence on the conversation: the subagent sees the skill text and arguments, nothing
+  else; `background: false` makes the turn wait for its report).
 - **Model tiering:** deterministic CRUD skills → `model: haiku`, no `effort`. Judgment skills
   (planning, triage, review, compression) → `model: sonnet` + `effort: medium` (or `high` for
   the heaviest, e.g. flowstate `idea`).
@@ -137,7 +140,11 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   positive phrasing, leading words, a completion criterion per step, progressive disclosure.
 - Bundled files via `${CLAUDE_PLUGIN_ROOT}` (e.g.
   `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --json true`).
-  Multi-line bodies via stdin: `--body -` with a heredoc. `${CLAUDE_PLUGIN_DATA}` is for
+  Multi-line bodies via stdin: `--body -` with the heredoc attached to the `node` command
+  itself (`node "…/flowstate.js" learning-create … --body - <<'BODY'`), so the command starts
+  with `node` and `allowed-tools: Bash(node:*)` covers it without a prompt; a `cat … |` prefix
+  would break that match. Bare `Bash` in `allowed-tools` only when the skill runs
+  project-specific commands (tests, builds). `${CLAUDE_PLUGIN_DATA}` is for
   persistent state surviving updates — used only by atlassian-polish for backups; don't
   reach for it without need.
 - Shared prose between skills goes in the plugin's `shared/*.md`, referenced as

@@ -3,7 +3,7 @@ name: triage-report
 description: Triages a pending report into a task, a discard or a request for more info.
 disable-model-invocation: true
 argument-hint: [report ID]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, Edit, "Bash(node:*)", Glob, Grep]
 model: sonnet
 effort: medium
 ---
@@ -41,13 +41,15 @@ Type: {{TYPE}} | Severity: {{SEVERITY}} | Created: {{DATE}}
 ...
 ```
 
+Done when: the summary block is printed.
+
 ### 3. Investigate
 
 Before recommending, gather evidence. Skip steps that don't apply to the report type.
 
 - **Reproduce / locate**: grep the codebase for symbols, error messages, or file paths mentioned in the report. Confirm the affected code still exists and the issue is plausible.
 - **Check for duplicates**: scan `{{BACKLOG}}/tasks/pending/` and `{{BACKLOG}}/tasks/active/` for tasks with overlapping title, tags, or source. Note any matches.
-- **Cross-reference learnings**: search `{{BACKLOG}}/learnings/` for related insights that explain the behavior or suggest a fix.
+- **Cross-reference learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for related insights that explain the behavior or suggest a fix.
 - **Assess completeness**: does the report contain enough to act on (repro steps, expected vs actual, scope)? List what's missing if not.
 
 Surface only the conclusions, in the next step.
@@ -78,8 +80,8 @@ Done when: the user has confirmed the recommendation or picked another option.
 ### 5a. Convert to Task
 
 ```bash
-# Create task from report (--body - reads stdin: pipe the report's summary + key details)
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "Fix: {{TITLE}}" --priority {{P}} --source "report/RPT-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body -
+# Create task from report (stdin carries the report's summary + key details)
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "Fix: {{TITLE}}" --priority {{P}} --source "report/RPT-{{ID}}" --criteria '{{CRITERIA_JSON}}' --body - <<'BODY'
 {{REPORT_SUMMARY_AND_DETAILS}}
 BODY
 
@@ -111,9 +113,11 @@ Done when: `report-move` exits 0.
 ### 5c. Needs More Info
 
 1. Ask what's missing
-2. Add to the report:
+2. Append to the end of the report file with the Edit tool (frontmatter untouched):
    ```markdown
    ## Missing Information
    - [{{TODAY}}] {{what's needed}}
    ```
-3. Keep in `reports/pending/`
+3. The file stays in `reports/pending/`
+
+Done when: the report file ends with a dated Missing Information entry.

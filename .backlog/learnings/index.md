@@ -34,3 +34,4 @@
 | LRN-028 | Re-merge a stale skill audit by taking main's files and replaying edits | workflow, skills, merge, worktree | active | 2026-10-09 |
 | LRN-029 | Piping pnpm bump to head can abort the bump via SIGPIPE | pnpm, bump, tooling | active | 2026-10-09 |
 | LRN-030 | Section helpers in markdown.ts are not fence-aware | flowstate, markdown, cli | active | 2026-10-09 |
+| LRN-031 | Attach stdin heredocs to the node command so Bash(node:*) covers them; avoid ! preprocessing for flowstate path | skills, allowed-tools, claude-code, permissions | active | 2026-10-14 |

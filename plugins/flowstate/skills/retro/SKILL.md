@@ -75,14 +75,14 @@ Done when: every candidate has an explicit answer.
 Run only approved items, through the flowstate CLI:
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P1-P4}} --tags retro --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P1-P4}} --tags retro --body - <<'BODY'
 {{SPEC}}
 BODY
 ```
 
 - Bugs or findings: `report-create --title ... --type <bug|finding|improvement|security> --severity <level> --body -`.
 - Learnings: first run `learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --json true`. A top score of 5 or more means a duplicate: report the existing LRN and skip. Otherwise run `learning-create --title ... --tags ... --body -`.
-- AGENTS.md edits: print the approved diff for the user to apply; this skill has no write tools, and `~/.claude/rules/` is never edited.
+- AGENTS.md edits and `~/.claude/rules/` proposals: print the approved diff or text for the user to apply (this skill has no write tools).
 
 Done when: each approved item printed an ID or a diff, or was reported as a duplicate.
 
@@ -95,3 +95,5 @@ Retro complete: {{N}} incidents, {{M}} candidates
   Proposals (user-global): {{count}}
   Skipped: {{count}}
 ```
+
+Done when: the confirmation block is printed.

@@ -107,3 +107,5 @@ Done when: the report block is printed.
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --check {{N1,N2}} --evidence '{"{{N1}}":"{{FILE_OR_TEST}} → {{WHAT_IT_SHOWS}}"}'
 ```
 - Suggest reopening if marked complete but broken
+
+Done when: every task whose action is not "Correct" has a fix offered, and each tick the user accepted ran through the CLI.

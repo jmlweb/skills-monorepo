@@ -2,7 +2,7 @@
 name: report
 description: Files a structured bug, finding, improvement or security report for later triage. Use when the user says "found a bug", "report issue", "file a finding", "security concern", or when something unexpected is observed. Not for planned work (use add-task).
 argument-hint: [report description]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)", Glob, Grep]
 model: haiku
 ---
 
@@ -59,12 +59,12 @@ Done when: severity is one of critical, high, medium, low.
 ### 4. Generate Report via CLI
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-create --title "{{TITLE}}" --type {{TYPE}} --severity {{SEVERITY}} --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-create --title "{{TITLE}}" --type {{TYPE}} --severity {{SEVERITY}} --body - <<'BODY'
 {{REPORT_CONTENT}}
 BODY
 ```
 
-The CLI assigns the ID and places the file in `reports/pending/`. Include only sections that apply to the type.
+`{{REPORT_CONTENT}}` is one `## <Field>` section per field gathered in Step 2 (for example `## Summary`, `## Steps to Reproduce`), in that order. The CLI assigns the ID and places the file in `reports/pending/`.
 
 Done when: the CLI prints the new RPT ID.
 
@@ -77,3 +77,5 @@ Filed RPT-{{ID}}: {{TITLE}}
 
 Next: /flowstate:triage-report RPT-{{ID}}
 ```
+
+Done when: the confirmation block is printed.

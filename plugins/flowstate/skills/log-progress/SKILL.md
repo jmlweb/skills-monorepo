@@ -1,8 +1,8 @@
 ---
 name: log-progress
-description: Record session progress on a task — dated Progress Log entries plus ticking acceptance criteria that are now met — through the CLI, never by hand-editing the task file. Use when the user says "log progress", "update the task", "tick criterion 2", "mark criteria done", "save where I am", or before /clear on unfinished work. Not for finishing a task (use complete-task) or blocking it (use block-task).
+description: Records session progress on a task as dated Progress Log entries and ticks the acceptance criteria now met. Use when the user says "log progress", "update the task", "tick criterion 2", "mark criteria done", "save where I am", or before /clear on unfinished work. Not for finishing a task (use complete-task) or blocking it (use block-task).
 argument-hint: [task ID] [note]
-allowed-tools: [Read, Bash(node:*)]
+allowed-tools: [Read, "Bash(node:*)"]
 model: haiku
 ---
 
@@ -72,11 +72,13 @@ On edit, apply the user's changes and show the draft again. On cancel, stop with
 Each non-empty stdin line becomes its own dated bullet. Drop `--check` and `--evidence` when nothing is ticked. `--evidence` is a JSON object keyed by criterion number; every key must also be in `--check`.
 
 ```bash
-cat <<'LOG' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --log - --check {{N1,N2}} --evidence '{"{{N1}}":"{{COMMAND}} → {{RESULT}}"}'
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --log - --check {{N1,N2}} --evidence '{"{{N1}}":"{{COMMAND}} → {{RESULT}}"}' <<'LOG'
 {{LINE_1}}
 {{LINE_2}}
 LOG
 ```
+
+The task file, its checkboxes and `index.md` change only through this command.
 
 An out-of-range index or a missing section aborts with nothing written. Re-read the file and retry with corrected numbers.
 
@@ -84,7 +86,9 @@ Done when: the CLI exits 0, or the retry after correcting the numbers does.
 
 ### 6. Offer a Learning
 
-If the session surfaced something non-obvious (a gotcha, a root cause), offer `/flowstate:add-learning`. Never create the learning yourself.
+If the session surfaced something non-obvious (a gotcha, a root cause), suggest `/flowstate:add-learning` in one line; the user runs it, so the learning is created there, not here.
+
+Done when: the suggestion is printed, or nothing non-obvious surfaced.
 
 ### 7. Confirm
 
@@ -94,3 +98,5 @@ Remaining criteria: {{UNTICKED_COUNT}}
 ```
 
 If every criterion is now ticked, suggest `/flowstate:complete-task {{ID}}`.
+
+Done when: the confirmation line is printed.

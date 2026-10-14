@@ -2,7 +2,7 @@
 name: block-task
 description: Marks a task as blocked with a documented reason, or unblocks it, and lists unblocked alternatives. Use when the user says "blocked by", "can't proceed", "waiting for", "stuck on", or "unblock task". Not for finishing a task (use complete-task).
 argument-hint: [task ID] [reason]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)", Glob]
 model: haiku
 ---
 
@@ -53,7 +53,7 @@ Done when: the CLI reports the task as blocked.
 If the blocker is **Technical** (a limitation discovered, not waiting on an external party), auto-draft a learning silently from the reason + recent conversation context, deriving title, tags, and body (Context / Insight / Application) without asking. Link to the blocked task with `--task TSK-{{ID}}`.
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task TSK-{{ID}} --body - <<'BODY'
 {{BODY_DRAFTED_FROM_CONTEXT}}
 BODY
 ```
@@ -77,12 +77,16 @@ Unblocked alternatives:
 /flowstate:report can file this as a finding if it needs broader visibility.
 ```
 
+Done when: the confirmation block is printed.
+
 ## Unblocking
 
-To unblock a task:
+When the user asks to unblock a task ("unblock TSK-XXX", "blocker resolved"), skip Steps 2–5 and run:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-unblock {{ID}} --resolution "{{TEXT}}"
 ```
 
-Then use `/flowstate:start-task` if needed.
+`{{TEXT}}` is how the blocker was resolved, from `$ARGUMENTS` or asked. Then print `Unblocked TSK-{{ID}}: {{TEXT}}` and suggest `/flowstate:start-task TSK-{{ID}}`.
+
+Done when: the CLI reports the task unblocked and the confirmation line is printed.

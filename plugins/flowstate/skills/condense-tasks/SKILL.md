@@ -2,12 +2,18 @@
 name: condense-tasks
 description: Shrinks completed task files so the done backlog stays cheap to read.
 disable-model-invocation: true
-allowed-tools: [Bash, Read]
+context: fork
+background: false
+allowed-tools: [Read, "Bash(node:*)"]
 model: sonnet
 effort: medium
 ---
 
 # Condense Tasks
+
+## Arguments
+
+Task identifier (optional): $ARGUMENTS — accepts `TSK-001`, `001`, or `1`. Empty means every complete task.
 
 Two passes over `tasks/complete/`:
 
@@ -34,7 +40,7 @@ Two passes over `tasks/complete/`:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-condense --all --json true
 ```
 
-Single-task variant when the user names one:
+Single-task variant when `$ARGUMENTS` names one:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-condense {{ID}} --json true
@@ -57,7 +63,7 @@ For each task:
 3. **Pipe** the new body to `task-compress`:
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-compress {{ID}} --body - --json true
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-compress {{ID}} --body - --json true <<'BODY'
 {{COMPRESSED_BODY}}
 BODY
 ```
@@ -71,6 +77,8 @@ Done when: every uncompressed complete task has exit 0, or a logged second failu
 ### 3. Caveman compression rules
 
 Before the first rewrite, read `${CLAUDE_PLUGIN_ROOT}/shared/caveman-compression.md`; it lists what to drop, what must stay byte-exact, and an example.
+
+Done when: the file has been read once in this run, before the first `task-compress` call.
 
 ### 4. Report Summary
 
@@ -94,6 +102,8 @@ Total bytes saved: {{TOTAL}}
 ```
 
 If nothing was touched: `All {{N}} completed tasks are already lean or compressed.`
+
+Done when: the summary block or the nothing-touched line is printed.
 
 ## Notes
 

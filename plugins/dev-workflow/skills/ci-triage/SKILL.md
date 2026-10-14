@@ -88,9 +88,9 @@ CI triage: <workflow> #<run id> on <branch>
 Proposed: rerun failed jobs · open N issues (titles below)
 ```
 
-This skill is read-only until here. Ask before any rerun or issue creation, following `github-posting.md`, and run only what the user approves.
+This skill is read-only until here. Ask before any rerun or issue creation, following `github-posting.md`, and run only what the user approves. Print one line per action taken (`Rerun requested: <url>`, `Issue #<n> opened: <title>`).
 
-Done when: the user has approved or declined each proposed action.
+Done when: the user has approved or declined each proposed action, and every approved action printed its line.
 
 ## Errors
 

@@ -145,3 +145,4 @@ Not done:
 ```
 
 One line per page. "Not done" lists every skipped action, unverified fact and manual step.
+Done when: every target from step 1 has a line, and "Not done" is present or empty.

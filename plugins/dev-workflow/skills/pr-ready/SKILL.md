@@ -42,6 +42,7 @@ gh pr view <id> --json number,title,body,author,headRefName,baseRefName,state,is
 - Not on the PR branch → ask before `gh pr checkout`.
 
 Done when: one open PR is named and its branch is checked out.
+
 ### 2. Update the branch
 
 ```bash
@@ -117,7 +118,7 @@ Done when: the user approved or declined the new body.
 ### 9. Finish
 
 - Draft and the user asked to undraft → `gh pr ready <id>`.
-- User named reviewers → `gh pr edit <id> --add-reviewer <login>`. Never guess reviewers.
+- User named reviewers → `gh pr edit <id> --add-reviewer <login>`, with exactly the logins the user gave; with none given, leave reviewers as they are.
 - `--merge` given → offer to watch `gh pr checks <id> --watch` until green, then confirm once more and run `gh pr merge <id>` with the repo's usual method. Merging happens only on this path.
 
 Done when: each requested action ran or the user declined it.
@@ -129,6 +130,8 @@ PR #<n> — <title>
 Branch: up to date · CI: <green|red|pending> · Threads: <fixed>/<total> resolved, <k> need you
 Remaining: <list, or "nothing — ready to merge">
 ```
+
+Done when: the block is printed.
 
 ## Errors
 

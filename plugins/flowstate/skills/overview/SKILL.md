@@ -1,16 +1,11 @@
 ---
 name: overview
 description: Shows backlog stats, active work and health warnings. Use when the user asks "backlog status", "what's going on", "show tasks", or "project overview". Not for choosing what to work on (use next-task).
-argument-hint: [summary]
-allowed-tools: [Read, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)"]
 model: haiku
 ---
 
 # Backlog Status
-
-## Arguments
-
-$ARGUMENTS — ignored; this command takes no arguments.
 
 ## Prerequisites
 
@@ -24,6 +19,8 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" stats --json true
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true
 ```
+
+Done when: both commands returned JSON.
 
 ### 2. Display
 
@@ -82,19 +79,17 @@ WARNING: TSK-XXX active since YYYY-MM-DD (N days)
 NOTE: {{N}} high-priority tasks — consider reprioritizing
 ```
 
-**Index drift** (counts don't match disk): offer to rebuild the index through the CLI (Step 4).
+**Index drift**: the per-status counts in `{{BACKLOG}}/tasks/index.md` differ from the `stats` JSON. Report it and go to Step 4.
 
 Done when: each stale, blocked, imbalance and drift condition is reported or found absent.
 
-### 4. Rebuild Index (only if drift detected)
-
-If the stats from the CLI don't match what's in `tasks/index.md`, rebuild:
+### 4. Rebuild Index (only when Step 3 found drift)
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" index-rebuild
 ```
 
-Run only when counts differ.
+Done when: the CLI exits 0, or Step 3 found no drift and this step was skipped.
 
 ### 5. Quick Actions
 
@@ -104,3 +99,5 @@ Run only when counts differ.
 /flowstate:review-idea     — Review pending ideas
 /flowstate:triage-report   — Triage pending reports
 ```
+
+Done when: the quick-actions block is printed.

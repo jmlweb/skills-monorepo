@@ -3,7 +3,7 @@ name: setup
 description: Initializes the flowstate backlog in the current project, optionally private.
 disable-model-invocation: true
 argument-hint: [project name]
-allowed-tools: [Bash, Read, Write, Glob]
+allowed-tools: [Read, "Bash(node:*)"]
 model: haiku
 ---
 
@@ -28,9 +28,13 @@ Done when: it is known whether a backlog exists.
 
 If `$ARGUMENTS` is provided, use it as the project name. Otherwise, infer from the current directory name or ask the user.
 
+Done when: one project name is fixed.
+
 ### 3. Public or Private?
 
 Skip this question if a backlog already exists. Otherwise ask whether the backlog should be committed with the project (default) or kept private, outside version control without editing `.gitignore`. Private uses `--private` (creates `<common-git-dir>/flowstate`, shared by all worktrees) or `--dir <path>` for a custom location.
+
+Done when: the choice is public, `--private`, or `--dir <path>`.
 
 ### 4. Create Backlog Structure
 
@@ -70,6 +74,8 @@ For a private backlog, also print the snippet for the user to merge into the git
 ```
 
 Until the variable is set, flowstate will not find the private backlog.
+
+Done when: the confirmation block is printed (plus the settings snippet for a private backlog).
 
 ## Idempotency
 

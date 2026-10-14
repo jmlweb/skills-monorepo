@@ -2,7 +2,9 @@
 name: condense-learnings
 description: Dedupes, retags and compresses the learnings backlog.
 disable-model-invocation: true
-allowed-tools: [Bash, Read]
+context: fork
+background: false
+allowed-tools: [Read, "Bash(node:*)"]
 model: sonnet
 effort: medium
 ---
@@ -40,7 +42,7 @@ Apply each action:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-move {{ID}} --to archived
 
 # Update the winner when merging (add missing insights from the loser):
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-update {{ID}} --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-update {{ID}} --body - <<'BODY'
 {{MERGED_BODY}}
 BODY
 
@@ -71,7 +73,7 @@ For each learning:
 3. **Pipe** to `learning-compress`:
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-compress {{ID}} --body - --json true
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-compress {{ID}} --body - --json true <<'BODY'
 {{COMPRESSED_BODY}}
 BODY
 ```
@@ -85,6 +87,8 @@ Done when: every uncompressed active learning has exit 0, or a logged second fai
 ### 3. Caveman compression rules
 
 Before the first rewrite, read `${CLAUDE_PLUGIN_ROOT}/shared/caveman-compression.md`; it lists what to drop, what must stay byte-exact, and an example.
+
+Done when: the file has been read once in this run, before the first `learning-compress` call.
 
 ### 4. Report Summary
 
@@ -107,6 +111,8 @@ Total bytes saved: {{TOTAL}}
 ```
 
 If nothing changed: `All {{N}} learnings are already curated and compressed.`
+
+Done when: the summary block or the nothing-changed line is printed.
 
 ## Notes
 

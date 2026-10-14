@@ -2,7 +2,7 @@
 name: learnings
 description: Searches and displays past learnings. Use when the user says "check learnings", "what did we learn about", "search knowledge", or "show learnings", or at the start of a work session. Not for capturing a new insight (use add-learning).
 argument-hint: [search term or tag]
-allowed-tools: [Read, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)", Glob]
 model: haiku
 ---
 
@@ -77,6 +77,8 @@ When the user selects a learning ID (or when a single search result auto-opened)
 ### Attachments
 - screenshot.png
 ```
+
+Done when: the full learning body is displayed, or no ID was selected.
 
 ## Usage Tips
 

@@ -125,6 +125,8 @@ Done when: MCP and REST each have a result (✔, ✘ with code, or skipped).
 
 Print the confirmation block below.
 
+Done when: every line of the block has a value.
+
 ## Confirmation
 
 ```

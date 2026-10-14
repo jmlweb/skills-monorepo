@@ -1,8 +1,8 @@
 ---
 name: idea
-description: Generate a detailed implementation plan for a feature or change before coding begins. Use when the user says "plan this", "how should we implement", "design approach", or when a task needs architectural thinking.
+description: Generates a detailed implementation plan for a feature or change before coding begins. Use when the user says "plan this", "how should we implement", "design approach", or when a task needs architectural thinking. Not for work that is already scoped (use add-task).
 argument-hint: [feature description]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)", Glob, Grep]
 model: sonnet
 effort: high
 ---
@@ -59,7 +59,7 @@ Done when: every file the idea will change is named.
 ### 4. Generate Idea via CLI
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-create --title "{{TITLE}}" --complexity {{COMPLEXITY}} --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-create --title "{{TITLE}}" --complexity {{COMPLEXITY}} --body - <<'BODY'
 {{IDEA_CONTENT}}
 BODY
 ```
@@ -94,3 +94,5 @@ Created PLN-{{ID}}: {{TITLE}}
 
 Next: /flowstate:review-idea PLN-{{ID}}  — Approve, discard, or revise
 ```
+
+Done when: the confirmation block is printed.

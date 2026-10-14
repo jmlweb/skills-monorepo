@@ -2,7 +2,7 @@
 name: add-task
 description: Grooms a request into a backlog task with priority, tags and acceptance criteria. Use when the user says "add task", "new task", "create a ticket", "file a TODO", or "I need to do X". Not for bugs or findings (use report) or implementation plans (use idea).
 argument-hint: [task description]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)", Glob, Grep]
 model: haiku
 ---
 
@@ -39,17 +39,17 @@ Done when: the user accepted or overrode every block in the round.
 
 ### 3. Create Task via CLI
 
-Pipe the description via stdin heredoc:
+Pass the description on stdin with a heredoc:
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create \
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create \
   --title "{{TITLE}}" \
   --priority {{PRIORITY}} \
   --tags "{{TAGS}}" \
   --criteria '{{CRITERIA_JSON}}' \
   --source manual \
   --depends-on "{{DEPS}}" \
-  --body -
+  --body - <<'BODY'
 {{DESCRIPTION}}
 BODY
 ```

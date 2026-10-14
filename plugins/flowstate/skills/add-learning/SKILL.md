@@ -2,7 +2,7 @@
 name: add-learning
 description: Captures a non-obvious insight as a searchable learning linked to the active task. Use when the user says "learned something", "TIL", "note this", "remember this for next time", or when a non-obvious discovery is made while working. Not for logging session progress (use log-progress) or filing bugs (use report).
 argument-hint: [learning description]
-allowed-tools: [Read, Write, Bash, Glob, Grep]
+allowed-tools: [Read, "Bash(node:*)", Glob]
 model: haiku
 ---
 
@@ -103,10 +103,12 @@ Done when: `--task` is set to one TSK ID or omitted.
 ### 4. Create Learning via CLI
 
 ```bash
-cat <<'BODY' | node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task {{TSK_ID}} --body -
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TITLE}}" --tags "{{TAGS}}" --task {{TSK_ID}} --body - <<'BODY'
 {{LEARNING_CONTENT}}
 BODY
 ```
+
+`{{LEARNING_CONTENT}}` uses three headings, in this order: `## Context`, `## Insight`, `## Application`.
 
 The CLI assigns the ID, creates the directory, and updates the index. Omit `--task` when no task is linked.
 
@@ -122,3 +124,5 @@ Added LRN-{{ID}}: {{TITLE}}
 
 Edit the file directly to refine. Add screenshots/attachments to the directory.
 ```
+
+Done when: the confirmation block is printed.
