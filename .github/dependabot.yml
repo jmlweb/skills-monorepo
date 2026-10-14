@@ -23,9 +23,6 @@ updates:
       dev-dependencies:
         patterns: ["*"]
         update-types: [minor, patch]
-      dev-dependencies-major:
-        patterns: ["*"]
-        update-types: [major]
     ignore:
       # @types/node majors track the Node runtime; bump them together with engines.node and CI.
       - dependency-name: "@types/node"
