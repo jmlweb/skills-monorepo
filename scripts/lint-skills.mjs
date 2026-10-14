@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Lints every SKILL.md against the AGENTS.md "New or edited skill" quality bar.
+// Lints every SKILL.md against the "New or edited skill" quality bar in docs/agent-playbook.md.
 // Zero dependencies on purpose: the repo ships no runtime deps and the frontmatter
 // subset the skills use (flat `key: value`) does not justify a YAML parser.
 import { spawnSync } from 'node:child_process'

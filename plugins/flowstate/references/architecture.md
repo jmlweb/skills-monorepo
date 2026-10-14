@@ -44,9 +44,9 @@ Commands generate IDs via `nextId()`, write entities via `writeEntity()`, and up
 
 ## Skills (`skills/`)
 
-17 SKILL.md files define Claude Code skill prompts. Each specifies `allowed-tools`, `model` (haiku/sonnet), and step-by-step instructions. Skills invoke the CLI via Bash tool calls.
+20 SKILL.md files define Claude Code skill prompts. Each specifies `allowed-tools` (scoped, `Bash(node:*)` for CLI calls), `model` (haiku/sonnet), and step-by-step instructions. Skills invoke the CLI via Bash tool calls; `condense-tasks` and `condense-learnings` run in a forked subagent (`context: fork`).
 
 ## Hooks (`hooks/`)
 
 - `on-test-failure.sh` (PostToolUse) — Suggests `/flowstate:report` when tests fail.
-- `pre-commit-reminder.sh` (PreToolUse) — Reminds to check learnings before commits.
+- `pre-commit-reminder.sh` (PreToolUse) — Before `git commit`, lists the active tasks so `/flowstate:complete-task` is considered.

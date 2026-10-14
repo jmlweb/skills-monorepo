@@ -1,6 +1,7 @@
 # Claude Code Plugin Documentation Reference
 
-Source: https://code.claude.com/docs/es/plugins
+Sources: https://code.claude.com/docs/en/plugins, https://code.claude.com/docs/en/skills,
+https://code.claude.com/docs/en/sub-agents (checked 2026-10-14)
 
 ---
 
@@ -54,18 +55,25 @@ Both are substituted in skill content, agent content, hook commands, and MCP/LSP
 | Field                      | Required    | Description                                                              |
 |----------------------------|-------------|--------------------------------------------------------------------------|
 | `name`                     | No          | Display name. Defaults to directory name. Lowercase, numbers, hyphens. Max 64 chars. |
-| `description`              | Recommended | What + when. Truncated at 250 chars in listing. Front-load key use case. |
+| `description`              | Recommended | What + when, third person. Front-load the key use case. Max 1024 chars (platform spec); the `/` listing shows `description` + `when_to_use` up to 1536 chars |
+| `when_to_use`              | No          | Extra trigger phrases or example requests; appended to `description` in the listing |
 | `argument-hint`            | No          | Shown in autocomplete. E.g. `[issue-number]`                            |
-| `disable-model-invocation` | No          | `true` = only user can invoke. Default: `false`                          |
+| `arguments`                | No          | Named positional args (`[issue, branch]`) available as `$issue`, `$branch` |
+| `disable-model-invocation` | No          | `true` = only user can invoke; also blocks subagent preloading. Default: `false` |
 | `user-invocable`           | No          | `false` = hidden from `/` menu. Default: `true`                          |
-| `allowed-tools`            | No          | Space-separated or YAML list of tools Claude can use without permission  |
-| `model`                    | No          | Model override when skill is active                                      |
-| `effort`                   | No          | `low`, `medium`, `high`, `max` (Opus only)                              |
-| `context`                  | No          | `fork` = run in subagent                                                 |
-| `agent`                    | No          | Subagent type when `context: fork`. E.g. `Explore`, `Plan`              |
-| `hooks`                    | No          | Hooks scoped to skill lifecycle                                          |
+| `allowed-tools`            | No          | Tools pre-approved for the turn that invokes the skill (space-, comma-separated or YAML list). Grants only; clears on the next user message |
+| `disallowed-tools`         | No          | Tools removed while the skill is active; clears on the next user message |
+| `model`                    | No          | Same values as `/model` (`haiku`, `sonnet`, `opus`, a full model ID) or `inherit`. Turn-only; sets the subagent model with `context: fork` |
+| `effort`                   | No          | `low`, `medium`, `high`, `xhigh`, `max`; available levels depend on the model |
+| `context`                  | No          | `fork` = run in a forked subagent with the skill text and `$ARGUMENTS` as its prompt, no conversation history |
+| `agent`                    | No          | Subagent type when `context: fork`: `Explore`, `Plan`, `general-purpose` (default) or `<plugin>:<agent>` |
+| `background`               | No          | With `context: fork`: `true` (default) returns immediately, `false` waits for the report. Needs Claude Code 2.1.218+ |
+| `hooks`                    | No          | Hooks active from invocation until session end                           |
 | `paths`                    | No          | Glob patterns limiting when skill activates                              |
-| `shell`                    | No          | `bash` (default) or `powershell`                                         |
+| `shell`                    | No          | `bash` (default) or `powershell` for `` !`cmd` `` blocks                 |
+| `metadata`, `license`, `compatibility` | No | Accepted and ignored by Claude Code; the only extra keys allowed when the same SKILL.md is uploaded to claude.ai or the Skills API |
+
+Unknown keys are ignored without an error in Claude Code (the root flowstate `SKILL.md` relies on this for `version`). Booleans accept `true/false`, `yes/no`, `on/off`, `1/0`.
 
 ### String Substitutions
 
@@ -89,7 +97,16 @@ Both are substituted in skill content, agent content, hook commands, and MCP/LSP
 
 - `` !`command` `` inline: runs shell command, output replaces placeholder
 - ` ```! ` fenced block: multi-line shell commands
-- Preprocessing, not Claude execution
+- Preprocessing, not Claude execution. A failing command aborts the whole invocation, so a
+  command that may legitimately fail (e.g. `flowstate path` without a backlog) stays a
+  model-run step instead
+
+### Permission rules
+
+`allowed-tools` entries use the settings permission syntax: `Bash(node:*)` matches any
+command string that starts with `node `. A pipeline that starts with `cat` is not matched,
+so stdin bodies go in a heredoc attached to the `node` command (`node … --body - <<'BODY'`).
+Skills are matched with `Skill(name)` (exact) or `Skill(name *)` (prefix).
 
 ---
 
@@ -201,12 +218,17 @@ plugin-root/
 ## Best Practices
 
 ### Skills
-- Front-load description with key use case (truncated at 250 chars)
-- Keep SKILL.md under 500 lines; move details to supporting files
+- Front-load description with key use case; include the words users would naturally say
+- Keep SKILL.md under 500 lines (official cap; this repo caps bodies at 150 and discloses
+  the rest into `references/` or `shared/`)
 - Use `disable-model-invocation: true` for side-effect skills (deploy, commit)
 - Use `user-invocable: false` for background knowledge skills
-- Use `allowed-tools` to restrict tool access per skill
-- Use `context: fork` for isolated tasks that don't need conversation history
+- Use `allowed-tools` to pre-approve the minimal scoped set per skill
+- Use `context: fork` only for skills with explicit instructions, no user questions and no
+  dependence on the conversation
+- Test with every model tier the skill may run on; what works on Opus may need more detail
+  for Haiku. `claude plugin eval` runs with/without baselines; `/skill-doctor` reports
+  listing cost and unused skills
 
 ### Plugin
 - Use `${CLAUDE_PLUGIN_ROOT}` for all paths to bundled files

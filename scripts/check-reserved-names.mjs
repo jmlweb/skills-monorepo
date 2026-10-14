@@ -1,5 +1,5 @@
 /**
- * Guards AGENTS.md invariant 7 and named mistake 15:
+ * Guards AGENTS.md invariant 7 and docs/agent-playbook.md named mistake 15:
  *  1. reserved names stay dead: no `plan-create` reference, no skill named
  *     `plan` or `init`, no `plans/` path outside migration code;
  *  2. every `plugins/<name>/dist/**\/*.js` maps to a `src/**\/*.ts` module, so

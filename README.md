@@ -125,7 +125,7 @@ Each plugin README has full usage, flags and requirements.
 
 ### Prerequisites
 
-- **Node.js** 18+
+- **Node.js** 22+ (CI runs 22 and 24)
 - **pnpm** 10+
 
 ### Setup
@@ -142,6 +142,7 @@ pnpm install
 pnpm build          # Build all plugins via Turborepo
 pnpm test           # Run all test suites
 pnpm typecheck      # Type-check all plugins (no emit)
+pnpm lint:skills    # Lint every SKILL.md against the house rules
 pnpm version:sync   # Sync plugin.json versions → marketplace.json
 ```
 
@@ -155,8 +156,8 @@ plugins/
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
 └── shared-config/        # Shared TypeScript base config
-docs/                     # Contributor guides (e.g. writing-skills.md)
-scripts/                  # Pre-commit hook, version sync/bump, skill linter
+docs/                     # Contributor guides (writing-skills.md, agent-playbook.md)
+scripts/                  # Pre-commit hook, version sync/bump, skill linter, routing eval
 GLOSSARY.md               # Shared vocabulary for entities and skill prose
 ```
 

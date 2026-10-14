@@ -2,7 +2,7 @@
 
 # 🌊 Flowstate
 
-**Backlog management for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — tasks, ideas, reports, and learnings, all in plain markdown.**
+**Backlog management for [Claude Code](https://code.claude.com/docs) — tasks, ideas, reports, and learnings, all in plain markdown.**
 
 No external services. No databases. Just files and Git.
 
@@ -143,7 +143,7 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:block-task` | Block a task with a documented reason; suggests alternatives |
 | `/flowstate:check-task` | Does the declared status match the code? One task or the whole backlog |
 | 🙋 `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees |
-| 🙋 `/flowstate:condense-tasks` | Shrink completed task files (drop notes, trim the log, compress prose) |
+| 🙋 `/flowstate:condense-tasks` | Shrink completed task files (drop notes, trim the log, compress prose). Runs in an isolated subagent so the loop stays out of your context |
 
 ### 🗺️ Ideas
 
@@ -165,7 +165,7 @@ Use `/reload-plugins` after making changes.
 |---------|-------------|
 | `/flowstate:add-learning` | Record a non-obvious insight discovered while working |
 | `/flowstate:learnings` | Browse and search past insights |
-| 🙋 `/flowstate:condense-learnings` | Dedupe, normalize tags, archive stale entries, compress the rest |
+| 🙋 `/flowstate:condense-learnings` | Dedupe, normalize tags, archive stale entries, compress the rest. Runs in an isolated subagent |
 | 🙋 `/flowstate:retro` | Review a session, rank its mistakes, and file approved fixes as check tasks, `AGENTS.md` proposals, or learnings |
 
 ---

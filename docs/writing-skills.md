@@ -140,7 +140,7 @@ Bad, from `condense-tasks` before the rewrite (outcome buried under mechanics):
 description: Condense completed tasks: structural trim (drop Notes scratchpad, prune middle Progress Log) plus caveman-style prose compression (drop articles, filler, hedging) on remaining body. Validated against load-bearing invariants. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or wants to shrink the size of complete task files.
 ```
 
-Good (illustrative target; the audit tasks apply it to the real file):
+Good (the current `condense-tasks` description):
 
 ```yaml
 description: Shrinks completed task files so the done backlog stays cheap to read. Use when the user says "condense tasks", "clean up done tasks", "trim completed backlog", or "shrink the done folder". Not for learnings (use condense-learnings).
