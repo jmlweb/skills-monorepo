@@ -23,3 +23,7 @@ updates:
       dev-dependencies:
         patterns: ["*"]
         update-types: [minor, patch]
+    ignore:
+      # @types/node majors track the Node runtime; bump them together with engines.node and CI.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
