@@ -33,6 +33,17 @@ describe("reportCreate", () => {
     expect(fm["type"]).toBe("security");
     expect(fm["severity"]).toBe("critical");
   });
+
+  it("creates reports/pending/ when the backlog lacks it", async () => {
+    await rm(join(tmp, "reports"), { recursive: true, force: true });
+    const result = await reportCreate(tmp, {
+      title: "Old backlog",
+      type: "finding",
+      severity: "low",
+      body: "Details",
+    });
+    expect(result.path).toContain("/reports/pending/");
+  });
 });
 
 describe("reportMove", () => {
@@ -64,6 +75,19 @@ describe("reportMove", () => {
     const fm = doc.frontmatter as Record<string, unknown>;
     expect(fm["status"]).toBe("discarded");
     expect(fm["task-id"]).toBeUndefined();
+    expect(result.path).toContain("/reports/complete/");
+  });
+
+  it("creates reports/complete/ when the backlog lacks it", async () => {
+    const { id } = await reportCreate(tmp, {
+      title: "Old backlog",
+      type: "bug",
+      severity: "low",
+      body: "Details",
+    });
+    await rm(join(tmp, "reports", "complete"), { recursive: true, force: true });
+
+    const result = await reportMove(tmp, id, "discarded");
     expect(result.path).toContain("/reports/complete/");
   });
 });

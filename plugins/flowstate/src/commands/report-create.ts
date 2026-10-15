@@ -3,7 +3,7 @@ import type { ReportType, Severity } from "../core/types.js";
 import { today } from "../core/date.js";
 import { titleToSlug } from "../core/slug.js";
 import { reportDir } from "../core/paths.js";
-import { writeEntity } from "../core/fs.js";
+import { ensureDir, writeEntity } from "../core/fs.js";
 import { nextId } from "./next-id.js";
 
 export interface ReportCreateInput {
@@ -32,6 +32,8 @@ export async function reportCreate(
     created: today(),
   };
 
+  // Backlogs set up before reports existed have no reports/ folder.
+  await ensureDir(dir);
   await writeEntity(filePath, frontmatter, `\n${input.body}`);
   return { id, path: filePath };
 }

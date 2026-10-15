@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { today } from "../core/date.js";
 import { titleToSlug } from "../core/slug.js";
 import { reportDir } from "../core/paths.js";
-import { writeEntity } from "../core/fs.js";
+import { ensureDir, writeEntity } from "../core/fs.js";
 import { nextId } from "./next-id.js";
 export async function reportCreate(root, input) {
     const id = await nextId(root, "report");
@@ -18,6 +18,8 @@ export async function reportCreate(root, input) {
         status: "pending",
         created: today(),
     };
+    // Backlogs set up before reports existed have no reports/ folder.
+    await ensureDir(dir);
     await writeEntity(filePath, frontmatter, `\n${input.body}`);
     return { id, path: filePath };
 }

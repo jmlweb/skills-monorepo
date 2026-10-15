@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { reportDir } from "../core/paths.js";
-import { findEntityFile, readEntity, writeEntity, moveFile } from "../core/fs.js";
+import { ensureDir, findEntityFile, readEntity, writeEntity, moveFile } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
 
@@ -30,6 +30,8 @@ export async function reportMove(
 
   const destDir = reportDir(root, "complete");
   const destPath = join(destDir, fileName);
+  // Backlogs set up before reports existed have no reports/ folder.
+  await ensureDir(destDir);
   await moveFile(sourcePath, destPath);
 
   return { path: destPath };
