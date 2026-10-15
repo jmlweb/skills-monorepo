@@ -1,6 +1,6 @@
 ---
 name: review-idea
-description: Reviews a pending idea and approves, discards or revises it.
+description: Reviews pending ideas and approves, discards or revises each one.
 disable-model-invocation: true
 argument-hint: [idea ID]
 allowed-tools: [Read, Edit, "Bash(node:*)", "Bash(git:*)", Glob, Grep]
@@ -12,25 +12,25 @@ effort: medium
 
 ## Arguments
 
-Idea identifier (optional): $ARGUMENTS — accepts `PLN-001`, `001`, or `1`.
+Idea identifier (optional): $ARGUMENTS — accepts `PLN-001`, `001`, or `1`. With one, the run reviews that idea; without one, every pending idea in order.
 
 ## Prerequisites
 
-Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/ideas/pending/` has ideas. If empty, inform the user.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/ideas/pending/` has ideas. If empty, inform the user and stop.
 
 ## Workflow
 
-### 1. Identify Idea
+### 1. Identify Ideas
 
-If `$ARGUMENTS` provided, find in `{{BACKLOG}}/ideas/pending/`.
+With `$ARGUMENTS`: resolve that one idea in `{{BACKLOG}}/ideas/pending/`. The queue holds only that idea.
 
-If no argument, list pending ideas and ask which to review.
+Without `$ARGUMENTS`: the queue holds every file in `{{BACKLOG}}/ideas/pending/`, sorted by ID ascending (oldest first).
 
-Done when: one idea file is resolved.
+Done when: the queue holds one or more pending idea files, in run order.
 
 ### 2. Present Summary
 
-Read the full idea file and present:
+Take the head of the queue. Read the full idea file and present:
 
 ```
 ## PLN-{{ID}}: {{TITLE}}
@@ -85,12 +85,17 @@ Then list the override options:
 1. **Approve** — Convert this idea into a backlog task
 2. **Discard** — This idea is not needed
 3. **Revise** — The idea needs changes
+4. **Stop** — End the run now; this idea and the rest of the queue stay pending
 
-Ask the user to confirm the recommendation or pick a different option.
+Ask the user to confirm the recommendation or pick a different option. A plain "yes" accepts the recommendation.
 
-Done when: the user has confirmed the recommendation or picked another option.
+Done when: the user has confirmed the recommendation, picked another option, or chosen stop.
 
-### 5a. Approve
+### 5. Apply the Decision
+
+Run the branch the user chose. Stop applies nothing and goes to step 7.
+
+#### 5a. Approve
 
 ```bash
 # Create task from idea (stdin carries the idea's Goal + Approach)
@@ -115,20 +120,18 @@ Idea PLN-{{ID}} approved → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 
 Done when: the CLI prints the new TSK ID and `idea-move` exits 0.
 
-### 5b. Discard
+#### 5b. Discard
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status discarded
 ```
 
-Confirm to the user.
+Done when: `idea-move` exits 0 and the discard is confirmed to the user.
 
-Done when: `idea-move` exits 0.
-
-### 5c. Revise
+#### 5c. Revise
 
 1. Discuss needed changes with the user
-2. Edit the idea body in place with the Edit tool (the file stays in `ideas/pending/`; frontmatter untouched)
+2. Edit the idea body in place with the Edit tool (frontmatter untouched). The file stays in `ideas/pending/` and joins the run's skipped list, so later steps don't present it again
 3. Append a revision note at the end of the file:
    ```markdown
    ## Revision History
@@ -136,3 +139,21 @@ Done when: `idea-move` exits 0.
    ```
 
 Done when: the idea file holds the agreed changes and a dated revision note.
+
+### 6. Next Idea
+
+Drop from the queue every idea on the skipped list. If the queue still holds ideas, return to step 2 with the head of the queue. Otherwise go to step 7.
+
+Done when: the queue is empty or stop was chosen.
+
+### 7. Closing Summary
+
+A single-idea run ends with the confirm output of step 5a, 5b or 5c. A multi-idea run ends with one line per idea, in run order (`PLN-XXX not reached` for ideas left after a stop), then the pending count:
+
+```
+PLN-002 → TSK-051 (P2)
+PLN-003 discarded
+2 still pending in ideas/pending/
+```
+
+Done when: the outcome of every idea in the queue is printed and the pending count matches the files left in `ideas/pending/`.

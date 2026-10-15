@@ -34,7 +34,7 @@ Done when: every behaviour claim in the reply comes from a SKILL.md read in this
 **Precondition.** `setup` creates `.backlog/`; every other flow needs it.
 
 **Main flow.** Work that needs design first:
-`idea` → `review-idea` (approving creates the task) → `start-task` → `log-progress` (as many times as needed) → `complete-task`
+`idea` → `review-idea` (approving creates the task; one by ID or all pending in one run) → `start-task` → `log-progress` (as many times as needed) → `complete-task`
 
 **Direct entry.** Work already scoped: `add-task` skips the idea step, then continue at `start-task`.
 

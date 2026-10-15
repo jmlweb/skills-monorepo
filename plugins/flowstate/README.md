@@ -150,7 +150,7 @@ Use `/reload-plugins` after making changes.
 | Command | Description |
 |---------|-------------|
 | `/flowstate:idea` | Design before you code: asks the open questions in rounds, explores the codebase, writes an implementation plan |
-| 🙋 `/flowstate:review-idea` | Approve (becomes a task), discard, or revise a pending idea |
+| 🙋 `/flowstate:review-idea` | Review every pending idea in order, or one by ID: approve it (becomes a task), discard it, or revise it |
 
 ### 🐛 Reports
 

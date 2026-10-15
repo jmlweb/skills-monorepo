@@ -81,7 +81,7 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `/flowstate:check-task` | Verify task status vs implementation |
 | `/flowstate:next-task` | Get a recommendation for what to work on next |
 | `/flowstate:idea` | Generate an idea (implementation plan) |
-| `/flowstate:review-idea` | User-only: review and decide on a pending idea |
+| `/flowstate:review-idea` | User-only: review all pending ideas in order, or one by ID |
 | `/flowstate:report` | File a report (bug, finding, security) |
 | `/flowstate:triage-report` | User-only: triage all pending reports in order, or one by ID |
 | `/flowstate:parallel` | User-only: run multiple tasks in parallel |
