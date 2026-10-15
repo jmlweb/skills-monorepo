@@ -28,9 +28,10 @@ flowchart LR
     PR --> M([Merge])
     DOC["/check-docs"] -. "before a release" .-> M
     HO["/agent-handoff"] -. "work spans repos" .-> OP
+    PT["/prune-tests"] -. "suite slow or bloated" .-> CM
 ```
 
-> 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready` or `/agent-handoff` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
+> 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready`, `/agent-handoff` or `/prune-tests` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
 
 | Skill | Use it when… | Writes anything? |
 |-------|--------------|------------------|
@@ -43,6 +44,7 @@ flowchart LR
 | ✅ 🙋 `/pr-ready` | your own PR needs to get over the line | Branch merge, replies, description — each confirmed |
 | 🤝 🙋 `/agent-handoff` | work spans several repos | Nothing (read-only) |
 | 📝 `/check-docs` | docs may have drifted from the code | Nothing until you approve each change |
+| 🧪 🙋 `/prune-tests` | the suite is slow or you suspect redundant tests | Only the items you approve, in the working tree; never commits |
 
 ---
 
@@ -288,6 +290,54 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 
 ---
 
+### 🧪 `/prune-tests` — Find tests that add nothing
+
+Finds tests that repeat what other tests already check, proposes rewrites that keep every check, and applies only what you approve. It never commits.
+
+```bash
+/prune-tests                 # whole repo
+/prune-tests packages/foo    # one package
+```
+
+**What it does:**
+- 🔍 Detects the test runner (vitest, jest or `node --test`) and its coverage support
+- 🧾 Static scan: assertion-free, trivial, skipped, duplicate and sleepy tests, with no test run needed
+- 📊 Optional dynamic pass (asked first, with a cost estimate): per-file coverage, and Stryker kill sets when Stryker is installed
+- 🏷️ Labels every proposal: `C1…` deletions (redundant tests ranked by time saved, then clutter) and `R1…` rewrites that passed verification; config advice stays unlabelled
+- ✅ Each rewrite is applied and run 3 times (plus shuffled order where the runner supports it, and a coverage comparison where coverage is available) before you see it; failed rewrites are never shown
+- 🙋 Applies only the labels you reply with, then re-runs the suite and restores anything that broke it
+
+> **Try test selection first.** `vitest --changed` runs only the tests a diff affects, with nothing deleted. Use `/prune-tests` when the suite is still slow or you want less to maintain.
+
+> **A passing suite does not prove fault detection was kept.** The re-run catches mistakes; your approval of each item is the real check. Criteria and the evidence behind them: [`references/test-redundancy.md`](references/test-redundancy.md).
+
+---
+
+## 🧰 CLI
+
+The skills call a bundled zero-dependency CLI for everything that must be deterministic. You can run it directly too: add `--json true` to any command for JSON output.
+
+```bash
+node plugins/dev-workflow/dist/bin/dev-workflow.js <command> [flags]
+```
+
+| Command | Used by | What it does |
+|---------|---------|--------------|
+| `scan-secrets` | `/commit`, `/changeset`, `/open-pr` | Scans staged changes (or `--range <base>...HEAD`) for secrets and sensitive files |
+| `detect-scope` | `/commit`, `/changeset`, `/open-pr` | Suggests a Conventional Commits scope from the files and branch |
+| `detect-packages` | `/changeset` | Lists workspace packages touched by staged files |
+| `changeset-name` | `/changeset` | Generates an unused `adjective-noun-verb` changeset name |
+| `find-pr-template` | `/open-pr`, `/pr-ready` | Resolves the PR template: repo, then `--user-dir`, then built-in |
+| `detect-test-runner` | `/prune-tests` | Detects vitest, jest or `node --test`, with test, suite, coverage and shuffle commands, and whether Stryker is installed |
+| `test-static-scan` | `/prune-tests` | Finds assertion-free, trivial, skipped, duplicate, parameterisable and sleepy tests |
+| `test-verify-rewrite` | `/prune-tests` | Swaps in a rewritten test file, runs it N times, restores the original, and checks cases, assertions, timing and coverage (`--claim lines\|time\|fold`, `--coverage-command`) |
+| `coverage-subsets` | `/prune-tests` | Finds test files whose coverage (Istanbul JSON or LCOV) is a subset of another's |
+| `mutation-subsets` | `/prune-tests` | Finds tests whose Stryker kill set is a subset of another's; warns when bail mode hides killers |
+
+Exit codes: `0` clean, `1` findings or a failed verification, `2` error.
+
+---
+
 ## Requirements
 
 | Skill | Requirement |
@@ -301,6 +351,7 @@ Audits docs on two axes: **content drift** (versions, commands, paths, examples,
 | `/agent-handoff` | None (no external CLI) |
 | `/deslop` | Git |
 | `/check-docs` | Git |
+| `/prune-tests` | Git (clean working tree) + a supported test runner; coverage needs a coverage provider, Stryker is optional |
 
 ## License
 

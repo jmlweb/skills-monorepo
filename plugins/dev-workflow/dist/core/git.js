@@ -66,3 +66,8 @@ export function getCurrentBranch(cwd) {
     const out = runGit(cwd, ["rev-parse", "--abbrev-ref", "HEAD"]).trim();
     return out === "HEAD" ? "" : out;
 }
+// Null means git has no history for the file (untracked), not that git failed.
+export function getLastCommitTime(cwd, file) {
+    const out = runGit(cwd, ["log", "-1", "--format=%ct", "--", file]).trim();
+    return out ? Number(out) * 1000 : null;
+}

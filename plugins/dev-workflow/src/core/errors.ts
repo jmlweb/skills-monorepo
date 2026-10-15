@@ -18,3 +18,10 @@ export class InvalidArgumentError extends Error {
     this.name = "InvalidArgumentError";
   }
 }
+
+export class TestCommandError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TestCommandError";
+  }
+}
