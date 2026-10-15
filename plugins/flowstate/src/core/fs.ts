@@ -1,6 +1,6 @@
 import { readFile, writeFile, mkdir, readdir, rename } from "node:fs/promises";
-import type { Dirent } from "node:fs";
 import { randomUUID } from "node:crypto";
+import { existsSync, type Dirent } from "node:fs";
 import { dirname } from "node:path";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter.js";
 import type { ParsedDocument } from "./types.js";
@@ -35,8 +35,17 @@ export async function ensureDir(path: string): Promise<void> {
 }
 
 export async function listFiles(dir: string): Promise<Dirent[]> {
-  const entries = await readdir(dir, { withFileTypes: true });
-  return entries.filter((e) => e.isFile() && e.name.endsWith(".md"));
+  try {
+    const entries = await readdir(dir, { withFileTypes: true });
+    return entries.filter((e) => e.isFile() && e.name.endsWith(".md"));
+  } catch (err) {
+    // Git drops empty status folders, so a missing leaf under an existing entity folder
+    // means "no entities". A missing parent still throws: that is a wrong cwd (LRN-001).
+    if ((err as NodeJS.ErrnoException).code === "ENOENT" && existsSync(dirname(dir))) {
+      return [];
+    }
+    throw err;
+  }
 }
 
 export async function findEntityFile(

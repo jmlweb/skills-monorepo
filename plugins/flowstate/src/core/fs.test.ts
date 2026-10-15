@@ -104,8 +104,12 @@ describe("listFiles", () => {
     ]);
   });
 
-  it("throws for non-existent directory", async () => {
-    await expect(listFiles(join(tmp, "nope"))).rejects.toThrow();
+  it("returns [] for a missing status folder under an existing entity folder", async () => {
+    expect(await listFiles(join(tmp, "active"))).toEqual([]);
+  });
+
+  it("throws when the entity folder itself is missing", async () => {
+    await expect(listFiles(join(tmp, "nope", "pending"))).rejects.toThrow(/ENOENT/);
   });
 });
 

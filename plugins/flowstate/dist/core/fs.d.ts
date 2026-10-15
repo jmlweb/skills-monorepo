@@ -1,4 +1,4 @@
-import type { Dirent } from "node:fs";
+import { type Dirent } from "node:fs";
 import type { ParsedDocument } from "./types.js";
 export declare function readEntity(path: string): Promise<ParsedDocument>;
 export declare function writeEntity(path: string, frontmatter: Record<string, unknown>, body: string): Promise<void>;
