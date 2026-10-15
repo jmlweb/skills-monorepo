@@ -34,12 +34,12 @@ plugins/
 │   ├── references/               # architecture.md, plugin-docs.md, templates.md
 │   ├── src/{bin,commands,core}/  # CLI source; colocated *.test.ts
 │   └── dist/                     # COMMITTED build output
-├── dev-workflow/                 # commit/changeset/check-docs/review-pr skills + CLI
+├── dev-workflow/                 # commit/changeset/check-docs/review-pr/prune-tests skills + CLI
 │   ├── shared/commit-basics.md   # prose shared by commit + changeset skills
 │   └── (same structure, no root SKILL.md, no hooks)
 └── atlassian-polish/             # 2 skills + 1 agent + references + tiny CLI (md-to-adf); src/dist
 packages/shared-config/           # tsconfig.base.json all plugins extend
-scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh (+ node:test tests)
+scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh, sandbox-*.mjs (+ node:test tests)
 GLOSSARY.md                       # ubiquitous language: entity names + words to avoid
 .backlog/                         # flowstate dogfooded on this repo (tasks, learnings, reports)
 .github/workflows/                # ci.yml (PR/main gates), release.yml (tag-triggered)
@@ -57,7 +57,10 @@ pnpm vitest run src/core/id.test.ts        # single test file (run inside the pl
 node plugins/flowstate/dist/bin/flowstate.js <cmd> --json true   # run a CLI directly
 pnpm lint:skills         # skill quality bar (add --strict via node scripts/lint-skills.mjs --strict)
 claude plugin validate .   # marketplace + plugin schema validation
+pnpm sandbox:prune-tests   # live /prune-tests run on a throwaway repo: build, Claude, invariant check
 ```
+
+Live skill tests run in a sandbox harness, never by hand (playbook mistakes 17–19).
 
 Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI — run
 `pnpm build` before it, or it tests stale code.

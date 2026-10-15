@@ -46,6 +46,30 @@ mistakes to avoid, the per-deliverable checklist, and the release mechanics.
 16. **Grants bare `Bash` in a skill, or pipes `cat` into the CLI.** → `Bash(node:*)` matches
     only commands that start with `node`; attach the heredoc to the `node` command
     (`… --body - <<'BODY'`). `scripts/lint-skills.mjs` warns on bare `Bash` (LRN-031).
+17. **Hands the user a live skill test before running its CLI steps on the fixture.** →
+    Preflight every CLI call the skill makes against the sandbox fixture first, and compare
+    with the expected candidates. In TSK-050 the preflight found 3 detection bugs that would
+    otherwise each have cost the user a manual run.
+18. **Makes the user drive the sandbox by hand** (create the repo, reset, `git status`,
+    `npm test`). → A skill that mutates the working tree gets a `scripts/sandbox-<skill>.mjs`
+    harness: rebuild, fresh fixture, launch `claude --plugin-dir`, then check the invariants
+    on exit. The user only talks to Claude. Model: `pnpm sandbox:prune-tests`.
+19. **Tests skill edits through the installed plugin.** → This session's skills load from
+    `~/.claude/plugins/cache/`, not `plugins/`. Test source with `claude --plugin-dir
+    plugins/<name>`, and rebuild `dist/` first. Skills that need a clean tree cannot run in
+    this repo while it has work in progress, so they run in the sandbox.
+20. **Writes a runner-output parser from memory.** → Assert it against the runner's real
+    default output, and paste that sample into the test. Node 24's default reporter prints
+    `ℹ pass N`; TAP prints `# pass N`. Only TAP was handled, so every count read as unknown.
+21. **Judges a runtime property with a static count.** → One call in a loop or table runs
+    once per row, so counting calls in the source rejects valid folds. Back a static check
+    with runtime evidence (the passed-case count) or scope it to where it holds.
+22. **Patches files with inline `node -e` or `sed` holding nested quotes, or chains a file
+    write after a fallible command.** → In `sed … && cat > f <<EOF`, a failing `sed` silently
+    skips the write, and the next step builds on a file that does not exist. Use Edit, or
+    write a patch script with a quoted heredoc and run it as its own command.
+23. **Trims `git status --porcelain` output.** → The first line's leading space is part of
+    the status code; `.trim()` shifts every path by one character. Use `.trimEnd()`.
 
 ## Quality bar per deliverable
 
@@ -75,6 +99,8 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
       Progress Log: `claude plugin eval plugins/flowstate --case '<glob>'` (manual, costs
       model calls; a case is `evals/<case>/prompt.md` plus `graders/*.md`, LRN-011)
 - [ ] `claude plugin validate plugins/<name>` passes (root `.` only checks the marketplace, LRN-009); plugin README command table updated
+- [ ] Skill mutates the working tree → its CLI steps preflighted on the fixture, then one
+      live run via `pnpm sandbox:<skill>` ends in PASS (mistakes 17–19)
 
 **Release**
 - [ ] Working tree clean, on `main`, pulled
