@@ -5,7 +5,7 @@
 | Status | Count |
 |--------|-------|
 | Pending | 0 |
-| Active | 1 |
+| Active | 2 |
 | Blocked | 1 |
 | Complete | 46 |
 
@@ -13,6 +13,7 @@
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
 - TSK-035: Audit atlassian-polish skills against writing rules (P3)
+- TSK-049: Triage all pending reports sequentially when triage-report gets no argument (P3)
 
 ## Pending Tasks
 

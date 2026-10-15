@@ -157,7 +157,7 @@ Use `/reload-plugins` after making changes.
 | Command | Description |
 |---------|-------------|
 | `/flowstate:report` | File a structured bug, finding, or security issue |
-| 🙋 `/flowstate:triage-report` | Turn a pending report into a task, discard it, or ask for more info |
+| 🙋 `/flowstate:triage-report` | Triage every pending report in severity order, or one by ID: turn it into a task, discard it, or ask for more info |
 
 ### 💡 Learnings
 

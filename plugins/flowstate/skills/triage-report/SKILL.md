@@ -14,21 +14,25 @@ effort: medium
 
 Report identifier (optional): $ARGUMENTS — accepts `RPT-001`, `001`, or `1`.
 
+With an identifier, the run triages that one report. Without one, the run triages every pending report in order.
+
 ## Prerequisites
 
-Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/reports/pending/` has reports. If empty, inform the user.
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/reports/pending/` has reports. If empty, inform the user and stop.
 
 ## Workflow
 
-### 1. Identify Report
+### 1. Identify Reports
 
-If `$ARGUMENTS` provided, find in `{{BACKLOG}}/reports/pending/`.
+With `$ARGUMENTS`: resolve that one report in `{{BACKLOG}}/reports/pending/`. The queue holds only that report.
 
-If no argument, list pending reports and ask which to triage.
+Without `$ARGUMENTS`: the queue holds every file in `{{BACKLOG}}/reports/pending/`, sorted by the frontmatter `severity` (critical → high → medium → low), then by ID ascending.
 
-Done when: one report file is resolved.
+Done when: the queue holds one or more pending report files, in run order.
 
 ### 2. Present Summary
+
+Take the head of the queue. Print:
 
 ```
 ## RPT-{{ID}}: {{TITLE}}
@@ -72,12 +76,17 @@ Then list the override options:
 1. **Convert to task** — Create a backlog task from this report
 2. **Discard** — Not actionable
 3. **Needs more info** — Keep pending, note what's missing
+4. **Stop** — End the run now; this report and the rest of the queue stay pending
 
-Ask the user to confirm the recommendation or pick a different option.
+Ask the user to confirm the recommendation or pick a different option. A plain "yes" accepts the recommendation.
 
-Done when: the user has confirmed the recommendation or picked another option.
+Done when: the user has confirmed the recommendation, picked another option, or chosen stop.
 
-### 5a. Convert to Task
+### 5. Apply the Decision
+
+Run the branch the user chose. Stop applies nothing and goes to step 7.
+
+#### 5a. Convert to Task
 
 ```bash
 # Create task from report (stdin carries the report's summary + key details)
@@ -102,7 +111,7 @@ RPT-{{ID}} triaged → TSK-{{NEW_ID}}: {{TITLE}} ({{PRIORITY}})
 
 Done when: the CLI prints the new TSK ID and `report-move` exits 0.
 
-### 5b. Discard
+#### 5b. Discard
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --status discarded
@@ -110,7 +119,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --stat
 
 Done when: `report-move` exits 0.
 
-### 5c. Needs More Info
+#### 5c. Needs More Info
 
 1. Ask what's missing
 2. Append to the end of the report file with the Edit tool (frontmatter untouched):
@@ -118,6 +127,26 @@ Done when: `report-move` exits 0.
    ## Missing Information
    - [{{TODAY}}] {{what's needed}}
    ```
-3. The file stays in `reports/pending/`
+3. The file stays in `reports/pending/` and joins the run's skipped list, so later steps don't present it again
 
 Done when: the report file ends with a dated Missing Information entry.
+
+### 6. Next Report
+
+Drop from the queue every report on the skipped list. If the queue still holds reports, return to step 2 with the head of the queue. Otherwise go to step 7.
+
+Done when: the queue is empty or stop was chosen.
+
+### 7. Closing Summary
+
+A single-report run ends with the confirm output of step 5a, 5b or 5c. A multi-report run ends with one line per report, in run order, then the pending count:
+
+```
+RPT-003 → TSK-050 (P2)
+RPT-001 discarded
+RPT-005 needs info
+RPT-006 not reached
+4 still pending in reports/pending/
+```
+
+Done when: the outcome of every report in the queue is printed and the pending count matches the files left in `reports/pending/`.

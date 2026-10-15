@@ -42,7 +42,7 @@ Done when: every behaviour claim in the reply comes from a SKILL.md read in this
 
 **Stuck.** `block-task` records the blocker. `check-task` confirms a task's status matches the code.
 
-**Problems found along the way.** `report` files a bug or finding → `triage-report` turns it into a task or discards it.
+**Problems found along the way.** `report` files a bug or finding → `triage-report` turns each into a task or discards it, one by ID or all pending in one run.
 
 **Knowledge.** `add-learning` records an insight, `learnings` searches them, `retro` mines a session's mistakes into durable fixes.
 
