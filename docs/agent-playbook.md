@@ -53,7 +53,8 @@ mistakes to avoid, the per-deliverable checklist, and the release mechanics.
 18. **Makes the user drive the sandbox by hand** (create the repo, reset, `git status`,
     `npm test`). → A skill that mutates the working tree gets a `scripts/sandbox-<skill>.mjs`
     harness: rebuild, fresh fixture, launch `claude --plugin-dir`, then check the invariants
-    on exit. The user only talks to Claude. Model: `pnpm sandbox:prune-tests`.
+    on exit. The user only talks to Claude. Model: `pnpm sandbox:prune-tests`; build the
+    harness on `scripts/sandbox-lib.mjs` (`createGitSandbox`, `gitInvariantFailures`, `runHarness`).
 19. **Tests skill edits through the installed plugin.** → This session's skills load from
     `~/.claude/plugins/cache/`, not `plugins/`. Test source with `claude --plugin-dir
     plugins/<name>`, and rebuild `dist/` first. Skills that need a clean tree cannot run in
@@ -100,7 +101,8 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
       model calls; a case is `evals/<case>/prompt.md` plus `graders/*.md`, LRN-011)
 - [ ] `claude plugin validate plugins/<name>` passes (root `.` only checks the marketplace, LRN-009); plugin README command table updated
 - [ ] Skill mutates the working tree → its CLI steps preflighted on the fixture, then one
-      live run via `pnpm sandbox:<skill>` ends in PASS (mistakes 17–19)
+      live run via `pnpm sandbox:<skill>` ends in PASS (mistakes 17–19); harnesses today:
+      `sandbox:prune-tests`, `sandbox:deslop`
 
 **Release**
 - [ ] Working tree clean, on `main`, pulled

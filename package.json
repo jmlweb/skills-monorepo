@@ -15,7 +15,8 @@
     "version:check": "node scripts/check-version-consistency.mjs",
     "backlog:check": "node scripts/check-backlog-integrity.mjs",
     "names:check": "node scripts/check-reserved-names.mjs",
-    "sandbox:prune-tests": "node scripts/sandbox-prune-tests.mjs"
+    "sandbox:prune-tests": "node scripts/sandbox-prune-tests.mjs",
+    "sandbox:deslop": "node scripts/sandbox-deslop.mjs"
   },
   "devDependencies": {
     "simple-git-hooks": "^2.14.0",

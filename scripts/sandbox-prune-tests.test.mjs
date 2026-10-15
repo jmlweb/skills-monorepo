@@ -47,7 +47,7 @@ test("flags a changed source file, a staged file and a leftover copy", () => {
     const { failures } = checkSandbox(dir);
     assert.ok(failures.some((f) => f.startsWith("files are staged")));
     assert.ok(failures.some((f) => f.startsWith("untracked files left behind")));
-    assert.ok(failures.some((f) => f.startsWith("non-test files changed")));
+    assert.ok(failures.some((f) => f.startsWith("files outside test/ changed")));
   });
 });
 
