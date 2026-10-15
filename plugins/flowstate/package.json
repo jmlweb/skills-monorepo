@@ -1,6 +1,6 @@
 {
   "name": "@flowstate/cli",
-  "version": "2.12.5",
+  "version": "2.13.0",
   "description": "Deterministic CLI for flowstate backlog management",
   "type": "module",
   "engines": {
