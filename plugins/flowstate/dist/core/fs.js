@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir, readdir, rename } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
+import { dirname } from "node:path";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter.js";
 export async function readEntity(path) {
     const content = await readFile(path, "utf-8");
@@ -10,10 +11,13 @@ export async function writeEntity(path, frontmatter, body) {
     // Write-then-rename so concurrent readers never see a truncated file.
     // The .tmp suffix keeps listFiles() (which filters on .md) from picking it up.
     const tmp = `${path}.${process.pid}.${randomUUID()}.tmp`;
+    // Git does not keep empty folders, so a status folder can be missing in a fresh clone.
+    await mkdir(dirname(path), { recursive: true });
     await writeFile(tmp, content, "utf-8");
     await rename(tmp, path);
 }
 export async function moveFile(src, dst) {
+    await mkdir(dirname(dst), { recursive: true });
     await rename(src, dst);
 }
 export async function ensureDir(path) {

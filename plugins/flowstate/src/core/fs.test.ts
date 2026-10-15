@@ -53,6 +53,13 @@ describe("writeEntity / readEntity", () => {
     expect(doc.frontmatter["id"]).toBe("TSK-001");
     expect(doc.body).toContain("# Fix bug");
   });
+
+  it("creates a missing parent directory", async () => {
+    // Git does not keep empty folders, so a fresh clone can lack ideas/pending/.
+    const path = join(tmp, "ideas", "pending", "PLN-001-x.md");
+    await writeEntity(path, { id: "PLN-001" }, "\n# X");
+    expect(await readFile(path, "utf-8")).toContain("id: PLN-001");
+  });
 });
 
 describe("moveFile", () => {
@@ -71,6 +78,15 @@ describe("moveFile", () => {
     const dstFiles = await readdir(dst);
     expect(srcFiles).not.toContain("TSK-001.md");
     expect(dstFiles).toContain("TSK-001.md");
+  });
+
+  it("creates a missing destination directory", async () => {
+    const srcPath = join(tmp, "TSK-001.md");
+    await writeEntity(srcPath, { id: "TSK-001" }, "\nBody");
+
+    await moveFile(srcPath, join(tmp, "complete", "TSK-001.md"));
+
+    expect(await readdir(join(tmp, "complete"))).toContain("TSK-001.md");
   });
 });
 
