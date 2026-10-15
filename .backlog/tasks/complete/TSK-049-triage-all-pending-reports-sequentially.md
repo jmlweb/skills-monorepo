@@ -1,13 +1,14 @@
 ---
 id: TSK-049
 title: Triage all pending reports sequentially when triage-report gets no argument
-status: active
+status: complete
 priority: P3
 tags: []
 created: 2026-10-15
 source: idea/PLN-024
 depends-on: []
 started: 2026-10-15
+completed: 2026-10-15
 ---
 
 # Triage all pending reports sequentially when triage-report gets no argument
@@ -31,13 +32,13 @@ Version bump and release notes are part of the release step, not this task. Note
 
 ## Acceptance Criteria
 
-- [ ] Bare /flowstate:triage-report walks every pending report ordered by severity (critical to low) then ID ascending, reading severity from each report frontmatter
-- [ ] An ID argument still triages only that report
-- [ ] Each report runs summary, investigate, recommend, confirm; the menu offers stop, which ends the run
-- [ ] Reports marked needs more info stay pending and are not revisited in the same run
-- [ ] The run ends with one line per report outcome and the count still pending
-- [ ] argument-hint, Arguments section, README row, root SKILL.md table and guide wording describe both modes; description frontmatter unchanged
-- [ ] pnpm lint:skills and claude plugin validate plugins/flowstate pass; SKILL.md body stays under 150 lines
+- [x] Bare /flowstate:triage-report walks every pending report ordered by severity (critical to low) then ID ascending, reading severity from each report frontmatter — evidence: manual: triage-report/SKILL.md step 1 sorts by frontmatter severity then ID (2026-10-15) (2026-10-15)
+- [x] An ID argument still triages only that report — evidence: manual: step 1 With $ARGUMENTS queue holds only that report (2026-10-15) (2026-10-15)
+- [x] Each report runs summary, investigate, recommend, confirm; the menu offers stop, which ends the run — evidence: manual: steps 2-5 loop, menu offers stop, step 4 done-when (2026-10-15) (2026-10-15)
+- [x] Reports marked needs more info stay pending and are not revisited in the same run — evidence: manual: step 5c item 3 keeps file pending + skipped list (2026-10-15) (2026-10-15)
+- [x] The run ends with one line per report outcome and the count still pending — evidence: manual: closing block lists per-report outcome + still pending count (2026-10-15) (2026-10-15)
+- [x] argument-hint, Arguments section, README row, root SKILL.md table and guide wording describe both modes; description frontmatter unchanged — evidence: manual: Arguments section, README.md:160, SKILL.md:86, guide/SKILL.md:45; git show 7a62911 has no description diff (2026-10-15) (2026-10-15)
+- [x] pnpm lint:skills and claude plugin validate plugins/flowstate pass; SKILL.md body stays under 150 lines — evidence: pnpm lint:skills → 0 errors 0 warnings; claude plugin validate . + plugins/flowstate → passed (2026-10-15) (2026-10-15)
 
 ## Notes
 
@@ -47,3 +48,4 @@ Version bump and release notes are part of the release step, not this task. Note
 
 - [2026-10-15] Created
 - [2026-10-15] Started
+- [2026-10-15] Completed
