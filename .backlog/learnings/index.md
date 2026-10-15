@@ -35,3 +35,6 @@
 | LRN-029 | Piping pnpm bump to head can abort the bump via SIGPIPE | pnpm, bump, tooling | active | 2026-10-09 |
 | LRN-030 | Section helpers in markdown.ts are not fence-aware | flowstate, markdown, cli | active | 2026-10-09 |
 | LRN-031 | Attach stdin heredocs to the node command so Bash(node:*) covers them; avoid ! preprocessing for flowstate path | skills, allowed-tools, claude-code, permissions | active | 2026-10-14 |
+| LRN-032 | Node 24 default test reporter prints 'ℹ pass N', not TAP's '# pass N' | testing, node-test, parsing | active | 2026-10-15 |
+| LRN-033 | Static assertion-call count rejects valid table folds | testing, refactoring, verification | active | 2026-10-15 |
+| LRN-034 | Plugin skills in a session load from the plugin cache, not from plugins/ | claude-code, plugins, testing | active | 2026-10-15 |
