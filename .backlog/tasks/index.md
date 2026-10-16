@@ -5,14 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 0 |
-| Active | 1 |
+| Active | 0 |
 | Blocked | 1 |
-| Complete | 49 |
+| Complete | 50 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
-- TSK-051: flowstate: shared learnings across projects, on by default (P2)
 
 ## Pending Tasks
 
@@ -23,6 +22,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-051 | flowstate: shared learnings across projects, on by default | 2026-10-16 |
 | TSK-035 | Audit atlassian-polish skills against writing rules | 2026-10-15 |
 | TSK-049 | Triage all pending reports sequentially when triage-report gets no argument | 2026-10-15 |
 | TSK-050 | dev-workflow prune-tests skill for redundant tests | 2026-10-15 |
@@ -32,4 +32,3 @@
 | TSK-031 | Add flowstate guide skill mapping the flows | 2026-10-09 |
 | TSK-036 | Add GLOSSARY.md and fix entity-name drift | 2026-10-09 |
 | TSK-037 | Adopt round-based grilling format in idea and add-task | 2026-10-09 |
-| TSK-042 | Fix: review-idea approve nests idea headings under empty Description and duplicates Notes | 2026-10-09 |

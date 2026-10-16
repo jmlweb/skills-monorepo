@@ -38,3 +38,5 @@
 | LRN-032 | Node 24 default test reporter prints 'ℹ pass N', not TAP's '# pass N' | testing, node-test, parsing | active | 2026-10-15 |
 | LRN-033 | Static assertion-call count rejects valid table folds | testing, refactoring, verification | active | 2026-10-15 |
 | LRN-034 | Plugin skills in a session load from the plugin cache, not from plugins/ | claude-code, plugins, testing | active | 2026-10-15 |
+| LRN-035 | Any CLI spawn with the real env writes to the shared registry | flowstate, testing, registry | active | 2026-10-16 |
+| LRN-036 | Registry identity needs realpath: macOS temp dirs alias /var and /private/var | flowstate, macos, paths | active | 2026-10-16 |
