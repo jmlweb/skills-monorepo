@@ -10,6 +10,9 @@ import {
 
 export const BACKLOG_DIR_ENV = "FLOWSTATE_BACKLOG_DIR";
 
+// "off" stops this backlog from registering and from reading other projects' learnings.
+export const SHARED_LEARNINGS_ENV = "FLOWSTATE_SHARED";
+
 export type BacklogSource = "env" | "walk-up";
 
 export interface ResolvedBacklog {

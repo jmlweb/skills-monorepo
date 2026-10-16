@@ -99,3 +99,38 @@ describe("learningList", () => {
     expect(results[1]!.id).toBe("LRN-002");
   });
 });
+
+describe("learningList across backlogs", () => {
+  let sibling: string;
+  const shared = () => [{ root: sibling, label: "sibling-project" }];
+
+  beforeEach(async () => {
+    sibling = await mkdtemp(join(tmpdir(), "flowstate-sibling-"));
+    await setup(sibling, "Sibling");
+  });
+
+  afterEach(async () => {
+    await rm(sibling, { recursive: true, force: true });
+  });
+
+  it("lists local learnings first, then shared ones, each with its source", async () => {
+    await learningCreate(tmp, { title: "Local", tags: ["a"], body: "x" });
+    await learningCreate(sibling, { title: "Remote", tags: ["b"], body: "y" });
+
+    const results = await learningList(tmp, { shared: shared() });
+    expect(results.map((r) => [r.title, r.source])).toEqual([
+      ["Local", "local"],
+      ["Remote", "sibling-project"],
+    ]);
+  });
+
+  it("scope local omits shared learnings", async () => {
+    await learningCreate(sibling, { title: "Remote", tags: ["b"], body: "y" });
+
+    const results = await learningList(tmp, {
+      scope: "local",
+      shared: shared(),
+    });
+    expect(results).toEqual([]);
+  });
+});

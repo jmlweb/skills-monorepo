@@ -3,6 +3,8 @@ import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { BacklogDirMissingError, BacklogNotFoundError, InvalidArgumentError, } from "./errors.js";
 export const BACKLOG_DIR_ENV = "FLOWSTATE_BACKLOG_DIR";
+// "off" stops this backlog from registering and from reading other projects' learnings.
+export const SHARED_LEARNINGS_ENV = "FLOWSTATE_SHARED";
 // Nearest ancestor holding .git (dir or worktree file) or .backlog. Deliberately
 // independent of CLAUDE_PROJECT_DIR, which Bash tool calls do not receive.
 export function findProjectRoot(start) {

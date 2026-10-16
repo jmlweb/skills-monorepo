@@ -1,11 +1,23 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdtemp, rm, readFile, readdir, mkdir } from "node:fs/promises";
+import { describe, it, expect, beforeEach, afterEach, afterAll } from "vitest";
+import { mkdtemp, rm, readFile, readdir, mkdir, realpath } from "node:fs/promises";
+import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 
 const CLI = join(import.meta.dirname, "../../dist/bin/flowstate.js");
 let tmp: string;
+
+// Every spawn inherits this, so no test writes to the developer's real shared registry.
+const xdgConfigHome = mkdtempSync(join(tmpdir(), "flowstate-xdg-"));
+process.env["XDG_CONFIG_HOME"] = xdgConfigHome;
+afterAll(async () => {
+  await rm(xdgConfigHome, { recursive: true, force: true });
+});
+// Each test's temp backlogs are gone afterwards; their registry entries would only warn.
+afterEach(async () => {
+  await rm(join(xdgConfigHome, "flowstate"), { recursive: true, force: true });
+});
 
 function run(
   ...args: string[]
@@ -498,5 +510,123 @@ describe("CLI integration", () => {
     } finally {
       await rm(isolated, { recursive: true, force: true });
     }
+  });
+});
+
+describe("shared learnings across backlogs", () => {
+  let parent: string;
+  let home: string;
+  let project: string;
+  let sibling: string;
+
+  function runAt(cwd: string, extra: Record<string, string>, ...args: string[]): string {
+    return execFileSync("node", [CLI, ...args], {
+      cwd,
+      encoding: "utf-8",
+      timeout: 10000,
+      env: cleanEnv({ XDG_CONFIG_HOME: home, ...extra }),
+    }).trim();
+  }
+
+  beforeEach(async () => {
+    parent = await mkdtemp(join(tmpdir(), "flowstate-shared-"));
+    home = join(parent, "config");
+    project = join(parent, "local-project");
+    sibling = join(parent, "billing-service");
+    await mkdir(project);
+    await mkdir(sibling);
+  });
+
+  afterEach(async () => {
+    await rm(parent, { recursive: true, force: true });
+  });
+
+  it("registers the backlog on setup", async () => {
+    runAt(project, {}, "setup", "--project-name", "Local");
+    const registry = await readFile(join(home, "flowstate", "backlogs"), "utf-8");
+    expect(registry).toContain(join(await realpath(project), ".backlog"));
+  });
+
+  it("reads a sibling backlog and labels each learning with its project", () => {
+    runAt(sibling, {}, "setup", "--project-name", "Billing");
+    runAt(sibling, {}, "learning-create", "--title", "Redis quirk in billing", "--tags", "redis", "--body", "x");
+    runAt(project, {}, "setup", "--project-name", "Local");
+    runAt(project, {}, "learning-create", "--title", "Redis quirk local", "--tags", "redis", "--body", "y");
+
+    const results = JSON.parse(
+      runAt(project, {}, "learning-search", "--tags", "redis", "--json", "true"),
+    ) as { source: string }[];
+    expect(results.map((r) => r.source)).toEqual(["local", "billing-service"]);
+  });
+
+  it("appends source as the last text column", () => {
+    runAt(sibling, {}, "setup", "--project-name", "Billing");
+    runAt(sibling, {}, "learning-create", "--title", "Redis quirk in billing", "--tags", "redis", "--body", "x");
+    runAt(project, {}, "setup", "--project-name", "Local");
+    runAt(project, {}, "learning-create", "--title", "Redis quirk local", "--tags", "redis", "--body", "y");
+
+    const lines = runAt(project, {}, "learning-search", "--tags", "redis").split("\n");
+    expect(lines.map((line) => line.split("\t").at(-1))).toEqual(["local", "billing-service"]);
+  });
+
+  it("scope local keeps sibling learnings out of the output", () => {
+    runAt(sibling, {}, "setup", "--project-name", "Billing");
+    runAt(sibling, {}, "learning-create", "--title", "Redis quirk in billing", "--tags", "redis", "--body", "x");
+    runAt(project, {}, "setup", "--project-name", "Local");
+
+    const out = runAt(project, {}, "learning-search", "--tags", "redis", "--scope", "local", "--json", "true");
+    expect(JSON.parse(out)).toEqual([]);
+  });
+
+  it("FLOWSTATE_SHARED=off neither registers nor reads", async () => {
+    runAt(sibling, {}, "setup", "--project-name", "Billing");
+    runAt(sibling, {}, "learning-create", "--title", "Redis quirk in billing", "--tags", "redis", "--body", "x");
+
+    const off = { FLOWSTATE_SHARED: "off" };
+    runAt(project, off, "setup", "--project-name", "Local");
+    const registry = await readFile(join(home, "flowstate", "backlogs"), "utf-8");
+    expect(registry).toContain(join(await realpath(sibling), ".backlog"));
+    expect(registry).not.toContain(join(await realpath(project), ".backlog"));
+    const results = JSON.parse(
+      runAt(project, off, "learning-search", "--tags", "redis", "--json", "true"),
+    ) as unknown[];
+    expect(results).toEqual([]);
+  });
+
+  it("rejects an invalid --scope value", () => {
+    runAt(project, {}, "setup", "--project-name", "Local");
+    const result = spawnSync("node", [CLI, "learning-search", "--tags", "redis", "--scope", "everywhere"], {
+      cwd: project,
+      encoding: "utf-8",
+      env: cleanEnv({ XDG_CONFIG_HOME: home }),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid --scope value: "everywhere"/);
+  });
+
+  it("an unreadable registry warns on registration but does not fail setup", async () => {
+    await mkdir(join(home, "flowstate", "backlogs"), { recursive: true });
+    const result = spawnSync("node", [CLI, "setup", "--project-name", "Local"], {
+      cwd: project,
+      encoding: "utf-8",
+      env: cleanEnv({ XDG_CONFIG_HOME: home }),
+    });
+    expect(result.status).toBe(0);
+    expect(result.stderr).toMatch(/backlog not registered for shared learnings/);
+  });
+
+  it("an unreadable registry fails learning-search with an actionable error", async () => {
+    runAt(project, {}, "setup", "--project-name", "Local");
+    // The setup above wrote the registry as a file; swap it for a directory to make it unreadable.
+    await rm(join(home, "flowstate", "backlogs"));
+    await mkdir(join(home, "flowstate", "backlogs"));
+    const result = spawnSync("node", [CLI, "learning-search", "--tags", "redis"], {
+      cwd: project,
+      encoding: "utf-8",
+      env: cleanEnv({ XDG_CONFIG_HOME: home }),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Cannot read the shared backlog registry/);
+    expect(result.stderr).toMatch(/FLOWSTATE_SHARED=off/);
   });
 });

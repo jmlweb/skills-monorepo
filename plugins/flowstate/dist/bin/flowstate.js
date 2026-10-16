@@ -27,6 +27,7 @@ import { learningCompress } from "../commands/learning-compress.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
 import { resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import { isSharedEnabled, registerBacklog, resolveSharedBacklogs, } from "../core/registry.js";
 const VALID_ENTITY_TYPES = new Set([
     "task",
     "idea",
@@ -96,8 +97,8 @@ const COMMAND_HELP = {
     "report-create": "Usage: flowstate report-create --title <text> --type <bug|finding|improvement|security> --severity <low|medium|high|critical> [--body <text|->]",
     "report-move": "Usage: flowstate report-move <id> --status <triaged|discarded> [--task-id <id>]",
     "learning-create": "Usage: flowstate learning-create --title <text> [--tags t1,t2] [--task <id>] [--body <text|->]",
-    "learning-search": "Usage: flowstate learning-search [--tags t1,t2] [--query <text> | --similar-to <title>] [--limit <n>] [--body true]\n  --similar-to is an alias for --query, intended for dedupe / similarity checks before creating a learning.",
-    "learning-list": "Usage: flowstate learning-list [--status <active|archived|superseded|all>] [--include-archived true] [--all true]\n  Default: active only. --include-archived and --all are aliases for --status all.",
+    "learning-search": "Usage: flowstate learning-search [--tags t1,t2] [--query <text> | --similar-to <title>] [--limit <n>] [--body true] [--scope <local|all>]\n  --similar-to is an alias for --query, intended for dedupe / similarity checks before creating a learning.\n  --scope all (default) also reads active learnings from registered sibling backlogs; local reads only this one. Results carry a source column: local, or the owning project's name.",
+    "learning-list": "Usage: flowstate learning-list [--status <active|archived|superseded|all>] [--include-archived true] [--all true] [--scope <local|all>]\n  Default: active only. --include-archived and --all are aliases for --status all. --scope defaults to all, as learning-search does.",
     "learning-move": "Usage: flowstate learning-move <id> --to archived",
     "learning-update": "Usage: flowstate learning-update <id> [--title <text>] [--tags t1,t2] [--body <text|->]",
     "learning-compress": "Usage: flowstate learning-compress <id> --body -\n  Replace learning body with caveman-compressed version piped on stdin. Validates that all code blocks, inline code, URLs, IDs, dates, version numbers, and headings are preserved. Rejects on invariant failure with JSON diagnostics. Sets compressed: true on success. Idempotent.",
@@ -141,6 +142,35 @@ function parseArgs(args) {
         }
     }
     return { flags, flagArrays, positional };
+}
+// Registration is best-effort: a failed write must never fail the command that triggered it.
+async function registerForSharing(root) {
+    if (!isSharedEnabled())
+        return;
+    try {
+        await registerBacklog(root);
+    }
+    catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        console.error(`warning: backlog not registered for shared learnings: ${reason}`);
+    }
+}
+function parseScope(value) {
+    if (value === undefined || value === "all")
+        return "all";
+    if (value === "local")
+        return "local";
+    throw new InvalidArgumentError(`Invalid --scope value: "${value}". Must be one of: local, all`);
+}
+// Skips go to stderr so stdout stays a bare JSON array for every caller.
+async function sharedForScope(root, scope) {
+    if (scope === "local" || !isSharedEnabled())
+        return [];
+    const { sources, skipped } = await resolveSharedBacklogs(root);
+    for (const { path, reason } of skipped) {
+        console.error(`warning: shared backlog ${path} skipped (${reason})`);
+    }
+    return sources;
 }
 function required(flags, key) {
     const val = flags[key];
@@ -204,6 +234,7 @@ async function main() {
                 isPrivate: flags["private"] === "true",
             });
             const created = await setup(target.dir, name);
+            await registerForSharing(created);
             output(target.isCustom
                 ? {
                     root: created,
@@ -215,6 +246,7 @@ async function main() {
         }
         const resolved = resolveBacklog(process.cwd());
         const root = resolved.dir;
+        await registerForSharing(root);
         switch (command) {
             case "path": {
                 if (json)
@@ -455,11 +487,14 @@ async function main() {
             }
             case "learning-search": {
                 const query = flags["query"] ?? flags["similar-to"];
+                const scope = parseScope(flags["scope"]);
                 const result = await learningSearch(root, {
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : undefined,
                     query,
                     limit: flags["limit"] ? parseInt(flags["limit"], 10) : undefined,
                     includeBody: flags["body"] === "true",
+                    scope,
+                    shared: await sharedForScope(root, scope),
                 });
                 output(result, json);
                 break;
@@ -480,8 +515,11 @@ async function main() {
                 else if (includeArchived || allFlag) {
                     status = "all";
                 }
+                const scope = parseScope(flags["scope"]);
                 const result = await learningList(root, {
                     ...(status !== undefined ? { status } : {}),
+                    scope,
+                    shared: await sharedForScope(root, scope),
                 });
                 output(result, json);
                 break;

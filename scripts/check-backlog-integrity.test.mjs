@@ -17,6 +17,8 @@ function cli(...args) {
   const run = spawnSync("node", [join(root, "plugins/flowstate/dist/bin/flowstate.js"), ...args], {
     cwd: root,
     encoding: "utf-8",
+    // Fixtures are temporary; registering them would leave dead entries in the user's registry.
+    env: { ...process.env, FLOWSTATE_SHARED: "off" },
   });
   assert.equal(run.status, 0, run.stderr);
   return run.stdout;

@@ -81,7 +81,7 @@ BODY
 ```
 
 - Bugs or findings: `report-create --title ... --type <bug|finding|improvement|security> --severity <level> --body -`.
-- Learnings: first run `learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --json true`. A top score of 5 or more means a duplicate: report the existing LRN and skip. Otherwise run `learning-create --title ... --tags ... --body -`.
+- Learnings: first run `learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --scope local --json true`. A top score of 5 or more means a duplicate: report the existing LRN and skip. Otherwise run `learning-create --title ... --tags ... --body -`.
 - AGENTS.md edits and `~/.claude/rules/` proposals: print the approved diff or text for the user to apply (this skill has no write tools).
 
 Done when: each approved item printed an ID or a diff, or was reported as a duplicate.

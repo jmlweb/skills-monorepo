@@ -28,3 +28,10 @@ export class SectionNotFoundError extends Error {
         this.name = "SectionNotFoundError";
     }
 }
+export class RegistryReadError extends Error {
+    constructor(path, cause) {
+        const reason = cause instanceof Error ? cause.message : String(cause);
+        super(`Cannot read the shared backlog registry "${path}": ${reason}. Fix its permissions, or set FLOWSTATE_SHARED=off to skip shared learnings.`);
+        this.name = "RegistryReadError";
+    }
+}

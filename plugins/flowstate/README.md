@@ -168,6 +168,22 @@ Use `/reload-plugins` after making changes.
 | 🙋 `/flowstate:condense-learnings` | Dedupe, normalize tags, archive stale entries, compress the rest. Runs in an isolated subagent |
 | 🙋 `/flowstate:retro` | Review a session, rank its mistakes, and file approved fixes as check tasks, `AGENTS.md` proposals, or learnings |
 
+### 🌐 Shared learnings
+
+Learnings are the one thing worth carrying across projects: tooling footguns, Claude Code quirks, testing patterns. Flowstate keeps a user-level registry of every backlog it touches (`$XDG_CONFIG_HOME/flowstate/backlogs`, falling back to `~/.config/flowstate/backlogs`). `learning-search` and `learning-list` read the active learnings of the other registered backlogs too. Shared reads are read-only; tasks, ideas and reports never leave their backlog.
+
+On by default. Each result carries a `source`: `local`, or the name of the project it came from. Skills that add or dedupe learnings (`add-learning`, `complete-task`, `retro`, `condense-learnings`) search the local backlog only, so a learning from another project is never edited or archived by mistake. Pass `--scope local` to any search to get the same restriction.
+
+> **Privacy:** a learning written in a client project becomes visible to every other project on this machine that flowstate has touched. Opt out in any project that handles client work.
+
+To opt out, set `FLOWSTATE_SHARED=off` in `.claude/settings.local.json`, or in `~/.claude/settings.json` for every project:
+
+```json
+{ "env": { "FLOWSTATE_SHARED": "off" } }
+```
+
+A registered backlog that has moved or been unmounted is skipped with a warning on stderr, and its entry stays in the registry. Delete the line by hand to forget it.
+
 ---
 
 ## 🧠 Smart features
@@ -409,6 +425,8 @@ The skills shell out to a small CLI (`dist/bin/flowstate.js`). Run `flowstate --
 | `learning-list` | `--all true` | `false` | Legacy alias for `--include-archived` / `--status all` (kept for backwards compatibility) |
 | `learning-search` | `--tags t1,t2` | — | Comma-separated tag filter. Matches only active learnings |
 | `learning-search` | `--query <text>` | — | Keyword search across title and body, scored deterministically |
+| `learning-search` | `--scope <local\|all>` | `all` | `local` reads this backlog only. `all` also reads registered sibling backlogs; each result carries `backlog` (path) and `source` (last text column) |
+| `learning-list` | `--scope <local\|all>` | `all` | Same meaning as for `learning-search` |
 | `task-update` | `--evidence '{"2":"pnpm test → exit 0"}'` | — | JSON object keyed by criterion number; written as an inline `— evidence: … (date)` suffix. Every key must also be in `--check` |
 | `task-move` | `--to complete` | — | Reports ticked criteria without evidence (`unverifiedCriteria` in `--json true`). Warning only; exit code stays 0 |
 

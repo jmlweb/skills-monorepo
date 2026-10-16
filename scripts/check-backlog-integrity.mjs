@@ -69,7 +69,8 @@ export function collectIndexDrift(rootDir, backlogDir) {
     cpSync(backlogDir, copy, { recursive: true });
     const run = spawnSync("node", [cli, "index-rebuild"], {
       cwd: rootDir,
-      env: { ...process.env, FLOWSTATE_BACKLOG_DIR: copy },
+      // A temp copy must never join the user's shared-learnings registry.
+      env: { ...process.env, FLOWSTATE_BACKLOG_DIR: copy, FLOWSTATE_SHARED: "off" },
       encoding: "utf-8",
     });
     if (run.status !== 0) {

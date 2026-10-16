@@ -43,3 +43,16 @@ export async function findEntityFile(dir, idPrefix) {
     const match = files.find((f) => f.name.startsWith(idPrefix + "-"));
     return match?.name;
 }
+// A missing learnings/ dir is a fresh backlog, so it reads as empty. Any other failure
+// must surface: an empty result there would look like "no learnings" (LRN-001).
+export async function listLearningFiles(dir) {
+    try {
+        const names = await readdir(dir);
+        return names.filter((name) => name.startsWith("LRN-")).sort();
+    }
+    catch (error) {
+        if (error.code === "ENOENT")
+            return [];
+        throw error;
+    }
+}

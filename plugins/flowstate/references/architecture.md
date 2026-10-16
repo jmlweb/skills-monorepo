@@ -42,6 +42,8 @@ Commands generate IDs via `nextId()`, write entities via `writeEntity()`, and up
 
 `learning-search` scores deterministically: tag exact (+3), tag partial (+1), title keyword (+2), body keyword (+1); query terms are stopword-filtered.
 
+Shared learnings: `core/registry.ts` owns the user-level registry (`$XDG_CONFIG_HOME/flowstate/backlogs`, one absolute backlog path per line). `main()` registers the current backlog on every command, and `setup` registers the backlog it creates. `resolveSharedBacklogs` returns the other registered backlogs and skips missing, relative or `learnings/`-less entries with a reason, never pruning them. `learningSources` puts the local backlog first, so a stable sort keeps local learnings ahead on ties. Commands take `scope` and `shared` as input and never read the environment; the bin owns registration and the stderr warnings. `FLOWSTATE_SHARED=off` disables both directions.
+
 ## Skills (`skills/`)
 
 20 SKILL.md files define Claude Code skill prompts. Each specifies `allowed-tools` (scoped, `Bash(node:*)` for CLI calls), `model` (haiku/sonnet), and step-by-step instructions. Skills invoke the CLI via Bash tool calls; `condense-tasks` and `condense-learnings` run in a forked subagent (`context: fork`).

@@ -29,6 +29,14 @@ _Avoid_: bug or finding as the entity name (they are report types), issue
 A durable insight discovered while working, tagged and searchable. ID prefix `LRN`.
 _Avoid_: lesson, note, TIL
 
+**Shared learning**:
+A **learning** read from another project's backlog, which that backlog registered in the user-level **registry**. Read-only from the current project; its `source` names the owning project.
+_Avoid_: global learning, team learning
+
+**Registry**:
+The user-level file (`$XDG_CONFIG_HOME/flowstate/backlogs`) listing every backlog path flowstate has touched. Its entries feed shared learnings.
+_Avoid_: index (that name belongs to `index.md`)
+
 ## Relationships
 
 - A **backlog** contains **entities** of four kinds.

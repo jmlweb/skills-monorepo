@@ -1,5 +1,6 @@
 import type { EntityType, TaskStatus } from "./types.js";
 export declare const BACKLOG_DIR_ENV = "FLOWSTATE_BACKLOG_DIR";
+export declare const SHARED_LEARNINGS_ENV = "FLOWSTATE_SHARED";
 export type BacklogSource = "env" | "walk-up";
 export interface ResolvedBacklog {
     readonly dir: string;

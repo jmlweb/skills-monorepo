@@ -59,7 +59,7 @@ Before recommending, audit the idea against the actual codebase. Skip steps that
 - **Approach soundness**: read each step critically. Are there missing steps (tests, migrations, types, docs)? Steps that won't compile or contradict existing patterns?
 - **Risk gaps**: high/medium-complexity ideas with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
 - **Conflicts with active work**: scan `{{BACKLOG}}/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
-- **Related learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for prior insights that should shape the approach.
+- **Related learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for prior insights that should shape the approach. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 
 Surface only the conclusions, in the next step.
 

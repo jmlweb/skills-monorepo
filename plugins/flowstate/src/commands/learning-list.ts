@@ -1,7 +1,11 @@
-import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { learningsDir } from "../core/paths.js";
-import { readEntity } from "../core/fs.js";
+import { listLearningFiles, readEntity } from "../core/fs.js";
+import {
+  learningSources,
+  type LearningScope,
+  type LearningSource,
+} from "../core/registry.js";
 import type { LearningFrontmatter, LearningStatus } from "../core/types.js";
 
 export type LearningStatusFilter = LearningStatus | "all";
@@ -9,6 +13,8 @@ export type LearningStatusFilter = LearningStatus | "all";
 export interface LearningListInput {
   readonly all?: boolean;
   readonly status?: LearningStatusFilter;
+  readonly scope?: LearningScope | undefined;
+  readonly shared?: readonly LearningSource[] | undefined;
 }
 
 export interface LearningListResult {
@@ -19,48 +25,45 @@ export interface LearningListResult {
   readonly task: string;
   readonly created: string;
   readonly body: string;
+  readonly backlog: string;
+  readonly source: string;
 }
 
 export async function learningList(
   root: string,
   input: LearningListInput = {},
 ): Promise<LearningListResult[]> {
-  const lDir = learningsDir(root);
-
-  let entries: string[];
-  try {
-    entries = await readdir(lDir).then((e) =>
-      e.filter((name) => name.startsWith("LRN-")).sort(),
-    );
-  } catch {
-    return [];
-  }
-
   const filter: LearningStatusFilter =
     input.status ?? (input.all ? "all" : "active");
 
   const results: LearningListResult[] = [];
 
-  for (const entry of entries) {
-    const indexFile = join(lDir, entry, "index.md");
-    try {
-      const doc = await readEntity(indexFile);
-      const fm = doc.frontmatter as unknown as LearningFrontmatter;
-      const status = String(fm.status ?? "active");
+  for (const source of learningSources(root, input.scope ?? "all", input.shared ?? [])) {
+    const lDir = learningsDir(source.root);
 
-      if (filter !== "all" && status !== filter) continue;
+    for (const entry of await listLearningFiles(lDir)) {
+      const indexFile = join(lDir, entry, "index.md");
+      try {
+        const doc = await readEntity(indexFile);
+        const fm = doc.frontmatter as unknown as LearningFrontmatter;
+        const status = String(fm.status ?? "active");
 
-      results.push({
-        id: String(fm.id),
-        title: String(fm.title),
-        status,
-        tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
-        task: String(fm.task ?? ""),
-        created: String(fm.created),
-        body: doc.body.trim(),
-      });
-    } catch {
-      // Skip invalid entries
+        if (filter !== "all" && status !== filter) continue;
+
+        results.push({
+          id: String(fm.id),
+          title: String(fm.title),
+          status,
+          tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
+          task: String(fm.task ?? ""),
+          created: String(fm.created),
+          body: doc.body.trim(),
+          backlog: source.root,
+          source: source.label,
+        });
+      } catch {
+        // Skip invalid entries
+      }
     }
   }
 

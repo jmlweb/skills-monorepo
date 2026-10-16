@@ -34,6 +34,13 @@ import {
   settingsSnippet,
 } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import {
+  isSharedEnabled,
+  registerBacklog,
+  resolveSharedBacklogs,
+  type LearningScope,
+  type LearningSource,
+} from "../core/registry.js";
 
 const VALID_ENTITY_TYPES = new Set<EntityType>([
   "task",
@@ -129,9 +136,9 @@ const COMMAND_HELP: Record<string, string> = {
   "learning-create":
     "Usage: flowstate learning-create --title <text> [--tags t1,t2] [--task <id>] [--body <text|->]",
   "learning-search":
-    "Usage: flowstate learning-search [--tags t1,t2] [--query <text> | --similar-to <title>] [--limit <n>] [--body true]\n  --similar-to is an alias for --query, intended for dedupe / similarity checks before creating a learning.",
+    "Usage: flowstate learning-search [--tags t1,t2] [--query <text> | --similar-to <title>] [--limit <n>] [--body true] [--scope <local|all>]\n  --similar-to is an alias for --query, intended for dedupe / similarity checks before creating a learning.\n  --scope all (default) also reads active learnings from registered sibling backlogs; local reads only this one. Results carry a source column: local, or the owning project's name.",
   "learning-list":
-    "Usage: flowstate learning-list [--status <active|archived|superseded|all>] [--include-archived true] [--all true]\n  Default: active only. --include-archived and --all are aliases for --status all.",
+    "Usage: flowstate learning-list [--status <active|archived|superseded|all>] [--include-archived true] [--all true] [--scope <local|all>]\n  Default: active only. --include-archived and --all are aliases for --status all. --scope defaults to all, as learning-search does.",
   "learning-move":
     "Usage: flowstate learning-move <id> --to archived",
   "learning-update":
@@ -190,6 +197,36 @@ function parseArgs(args: readonly string[]): {
   }
 
   return { flags, flagArrays, positional };
+}
+
+// Registration is best-effort: a failed write must never fail the command that triggered it.
+async function registerForSharing(root: string): Promise<void> {
+  if (!isSharedEnabled()) return;
+  try {
+    await registerBacklog(root);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    console.error(`warning: backlog not registered for shared learnings: ${reason}`);
+  }
+}
+
+function parseScope(value: string | undefined): LearningScope {
+  if (value === undefined || value === "all") return "all";
+  if (value === "local") return "local";
+  throw new InvalidArgumentError(`Invalid --scope value: "${value}". Must be one of: local, all`);
+}
+
+// Skips go to stderr so stdout stays a bare JSON array for every caller.
+async function sharedForScope(
+  root: string,
+  scope: LearningScope,
+): Promise<readonly LearningSource[]> {
+  if (scope === "local" || !isSharedEnabled()) return [];
+  const { sources, skipped } = await resolveSharedBacklogs(root);
+  for (const { path, reason } of skipped) {
+    console.error(`warning: shared backlog ${path} skipped (${reason})`);
+  }
+  return sources;
 }
 
 function required(flags: Record<string, string>, key: string): string {
@@ -262,6 +299,7 @@ async function main(): Promise<void> {
         isPrivate: flags["private"] === "true",
       });
       const created = await setup(target.dir, name);
+      await registerForSharing(created);
       output(
         target.isCustom
           ? {
@@ -277,6 +315,7 @@ async function main(): Promise<void> {
 
     const resolved = resolveBacklog(process.cwd());
     const root = resolved.dir;
+    await registerForSharing(root);
 
     switch (command) {
       case "path": {
@@ -554,11 +593,14 @@ async function main(): Promise<void> {
 
       case "learning-search": {
         const query = flags["query"] ?? flags["similar-to"];
+        const scope = parseScope(flags["scope"]);
         const result = await learningSearch(root, {
           tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : undefined,
           query,
           limit: flags["limit"] ? parseInt(flags["limit"], 10) : undefined,
           includeBody: flags["body"] === "true",
+          scope,
+          shared: await sharedForScope(root, scope),
         });
         output(result, json);
         break;
@@ -582,8 +624,11 @@ async function main(): Promise<void> {
         } else if (includeArchived || allFlag) {
           status = "all";
         }
+        const scope = parseScope(flags["scope"]);
         const result = await learningList(root, {
           ...(status !== undefined ? { status } : {}),
+          scope,
+          shared: await sharedForScope(root, scope),
         });
         output(result, json);
         break;

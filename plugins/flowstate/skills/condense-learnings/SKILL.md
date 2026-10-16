@@ -23,7 +23,7 @@ Two passes over `learnings/`:
 Load all active learnings:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-list --json true
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-list --scope local --json true
 ```
 
 If empty or fewer than 2: skip Pass 1, go straight to Pass 2.
@@ -63,7 +63,7 @@ Done when: every learning is classified keep, archive, merge or retag, and the i
 Reload the active list (curation may have changed it):
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-list --json true
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-list --scope local --json true
 ```
 
 For each learning:

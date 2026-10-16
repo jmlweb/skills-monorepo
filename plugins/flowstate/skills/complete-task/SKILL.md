@@ -70,7 +70,7 @@ Done when: every criterion is proven by fresh evidence, or the user has chosen a
 Gather learning candidates from two sources, then create each one silently, deriving title, tags and Context / Insight / Application from context without asking. Dedupe each candidate first:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --json true
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --scope local --json true
 ```
 
 A top `score` of 5 or more means a duplicate: say `Skipped — duplicate of LRN-{{ID}}` and move to the next candidate.

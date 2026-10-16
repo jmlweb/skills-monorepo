@@ -6,3 +6,4 @@ export declare function moveFile(src: string, dst: string): Promise<void>;
 export declare function ensureDir(path: string): Promise<void>;
 export declare function listFiles(dir: string): Promise<Dirent[]>;
 export declare function findEntityFile(dir: string, idPrefix: string): Promise<string | undefined>;
+export declare function listLearningFiles(dir: string): Promise<string[]>;

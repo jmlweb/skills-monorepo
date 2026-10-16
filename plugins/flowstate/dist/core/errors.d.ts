@@ -13,3 +13,6 @@ export declare class InvalidArgumentError extends Error {
 export declare class SectionNotFoundError extends Error {
     constructor(id: string, heading: string);
 }
+export declare class RegistryReadError extends Error {
+    constructor(path: string, cause: unknown);
+}

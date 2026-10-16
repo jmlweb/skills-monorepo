@@ -61,7 +61,7 @@ Done when: the user has answered all five questions.
 Before creating, search for similar existing learnings to avoid duplicates:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --json true
+node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --scope local --json true
 ```
 
 Decide based on top match score (`reasons` array explains why each result matched):

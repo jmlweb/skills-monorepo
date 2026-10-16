@@ -32,8 +32,8 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{SE
   ```
   ## Search Results for "{{TERM}}"
 
-  | ID | Title | Tags | Score | Date |
-  |----|-------|------|-------|------|
+  | ID | Title | Tags | Score | Date | Source |
+  |----|-------|------|-------|------|--------|
 
   Enter a learning ID to read the full document.
   ```
@@ -56,9 +56,9 @@ Done when: a result table, a single document, or the index table is displayed.
 
 ### 2. Drill Down
 
-When the user selects a learning ID (or when a single search result auto-opened):
+When the user selects a learning ID (or when a single search result auto-opened); if that ID appears under more than one `source` (each backlog numbers its own LRN-001), ask which source to open first:
 
-- Read the full `LRN-XXX-slug/index.md`
+- Read the full `LRN-XXX-slug/index.md` (under the result's `backlog` path when its `source` is not `local`; never edit it)
 - Display the content
 - List attachments in the directory
 
@@ -84,5 +84,6 @@ Done when: the full learning body is displayed, or no ID was selected.
 
 - Run `/flowstate:learnings` at the start of a work session to review recent insights
 - Search by tag to find relevant learnings for your current task
+- Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 - `learning-search` only returns active learnings — archived and superseded entries are excluded so stale insights don't surface as live context
 - To browse archived entries explicitly, run `learning-list --status archived` (or `--include-archived true` for active + archived + superseded)

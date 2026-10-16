@@ -59,8 +59,8 @@ In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/di
 | `flowstate report-create --title <t> --type <t> --severity <s> --body -` | Create report |
 | `flowstate report-move <id> --status <triaged\|discarded> [--task-id <TSK-XXX>]` | Move report |
 | `flowstate learning-create --title <t> --tags <csv> --body - [--task <TSK-XXX>]` | Create learning |
-| `flowstate learning-search [--tags <csv>] [--query <text>] [--limit <n>]` | Search active learnings by tags/keywords |
-| `flowstate learning-list [--all true] [--json true]` | List learnings (active only by default) |
+| `flowstate learning-search [--tags <csv>] [--query <text>] [--limit <n>] [--scope local\|all]` | Search active learnings by tags/keywords; `all` (default) includes registered sibling backlogs |
+| `flowstate learning-list [--all true] [--scope local\|all] [--json true]` | List learnings (active only by default; `all` includes sibling backlogs) |
 | `flowstate learning-move <id> --to archived` | Archive a learning |
 | `flowstate learning-update <id> [--title <t>] [--tags <csv>] [--body -]` | Update learning fields |
 | `flowstate learning-compress <id> --body -` | Replace learning body with validated compressed version |

@@ -81,7 +81,7 @@ Run a single combined search using all unique tags and titles from the selected 
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL_UNIQUE_TAGS}}" --query "{{ALL_TITLES_CONCATENATED}}" --limit 5 --json true
 ```
 
-Distribute results to subagents by tag overlap: include a learning in a subagent's prompt if its tags or reasons reference terms from that task's title or tags. A single learning may appear in multiple prompts if relevant.
+Distribute results to subagents by tag overlap: include a learning in a subagent's prompt if its tags or reasons reference terms from that task's title or tags. A single learning may appear in multiple prompts if relevant. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 
 Also scan `{{BACKLOG}}/reports/pending/` once for any reports related to the selected tasks' scope.
 
