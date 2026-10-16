@@ -36,6 +36,8 @@ All commands support `--json true` for structured output. Use `--body -` to pipe
 
 In the table below, `flowstate` is shorthand for `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js"`.
 
+Never store `node <path>` in a shell variable and run `$F ...`: zsh does not word-split unquoted variables, so it looks for one file named `node /…` and fails with ENOENT. Write the full command each time, or store only the path and run `node "$F" ...`.
+
 ### CLI Commands
 
 | Command | Description |

@@ -18,7 +18,7 @@ Session log path (optional): $ARGUMENTS
 
 ## Prerequisites
 
-Resolve the backlog directory with `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path`. If it errors, stop and tell the user to run `/flowstate:setup` first (filing needs the backlog).
+Resolve the backlog directory with `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path`. If it errors, stop and tell the user to run `/flowstate:setup` first (filing needs the backlog). Write every CLI call as the full `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" ...` command; never put `node <path>` in a shell variable (zsh does not word-split it).
 
 Done when: the command prints a directory.
 
