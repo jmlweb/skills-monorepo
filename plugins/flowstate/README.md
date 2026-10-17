@@ -128,7 +128,7 @@ Use `/reload-plugins` after making changes.
 | Command | Description |
 |---------|-------------|
 | 🙋 `/flowstate:setup` | Create the backlog (`.backlog/` by default, or a [private location](#-private-backlog)). Safe to re-run |
-| 🙋 `/flowstate:kickstart [description]` | New project? Grills the idea, evaluates it honestly against existing tools, drafts ADRs, `AGENTS.md` and an overview, has an independent agent review them, then seeds a walking-skeleton set of tasks. Creates the backlog if missing and never overwrites existing files |
+| 🙋 `/flowstate:kickstart [description]` | New project? Grills the idea, then evaluates it honestly: is the need real, what already covers it, does it work for your goal, and what is the riskiest assumption. Drafts ADRs, `AGENTS.md` and an overview, has an independent agent review them, then seeds tasks that start by testing that assumption. Creates the backlog if missing and never overwrites existing files |
 | 🙋 `/flowstate:guide [situation]` | Not sure what to run? Maps the commands into flows and names the next one |
 | `/flowstate:overview` | Stats, active work, and health warnings at a glance |
 

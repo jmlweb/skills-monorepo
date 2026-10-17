@@ -28,6 +28,9 @@ export const DENY_LIST = [
   "pyqt", "tkinter", "streamlit", "numpy", "pandas",
 ];
 
+// The skill's own bound on seeded tasks.
+export const TASK_RANGE = { min: 3, max: 8 };
+
 const README = `# temp-tower
 
 Empty project; the brief lives in the kickstart prompt.
@@ -40,7 +43,22 @@ export function createSandbox(dir = DEFAULT_DIR) {
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const mentions = (text, word) => new RegExp(`(^|[^\\w.])${escape(word)}(?![\\w])`, "i").test(text);
 
+// Context may name libraries as domain facts; only the Decision is held to the altitude rule.
+export const decisionSection = (adr) => /^## Decision\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(adr)?.[1] ?? "";
+
 const listFiles = (dir, pattern) => (existsSync(dir) ? readdirSync(dir).filter((f) => pattern.test(f)) : []);
+
+function claudeMdFailures(dir) {
+  const claude = join(dir, "CLAUDE.md");
+  const stat = lstatSync(claude, { throwIfNoEntry: false });
+  if (!stat) return ["CLAUDE.md is missing"];
+  if (stat.isSymbolicLink()) {
+    const target = readlinkSync(claude);
+    return target === "AGENTS.md" ? [] : [`CLAUDE.md links to ${target}, expected AGENTS.md`];
+  }
+  // The skill's fallback when `ln` fails.
+  return readFileSync(claude, "utf-8").trim() === "@AGENTS.md" ? [] : ["CLAUDE.md is neither a symlink to AGENTS.md nor an @AGENTS.md pointer"];
+}
 
 export function checkSandbox(dir = DEFAULT_DIR) {
   const failures = [];
@@ -50,23 +68,32 @@ export function checkSandbox(dir = DEFAULT_DIR) {
   for (const path of ["docs/evaluation.md", "docs/overview.md", "AGENTS.md"]) {
     if (!existsSync(join(dir, path))) failures.push(`${path} is missing`);
   }
+  const evaluation = join(dir, "docs", "evaluation.md");
+  if (existsSync(evaluation)) {
+    const text = readFileSync(evaluation, "utf-8");
+    if (!/^\*\*Feasibility:\*\*\s*(feasible with caveats|feasible|infeasible)\b/m.test(text)) failures.push("docs/evaluation.md has no Feasibility verdict line");
+    if (!/^\*\*Build:\*\*\s*(build with changes|build|don't build)\b/m.test(text)) failures.push("docs/evaluation.md has no Build verdict line");
+  }
 
   const adrDir = join(dir, "docs", "adr");
   const adrs = listFiles(adrDir, /^\d{4}-.+\.md$/);
   if (adrs.length === 0) failures.push("no ADR files in docs/adr/ (expected NNNN-<slug>.md)");
   for (const adr of adrs) {
     const text = readFileSync(join(adrDir, adr), "utf-8");
-    const leaked = DENY_LIST.filter((word) => mentions(text, word));
-    if (leaked.length) failures.push(`docs/adr/${adr} names a library or framework: ${leaked.join(", ")}`);
+    const leaked = DENY_LIST.filter((word) => mentions(decisionSection(text), word));
+    if (leaked.length) failures.push(`docs/adr/${adr} Decision names a library or framework: ${leaked.join(", ")}`);
+    if (!/^\*\*Status:\*\*\s*accepted\b/m.test(text)) failures.push(`docs/adr/${adr} is not accepted`);
   }
 
-  const claude = join(dir, "CLAUDE.md");
-  if (!existsSync(claude)) failures.push("CLAUDE.md is missing");
-  else if (!lstatSync(claude).isSymbolicLink()) failures.push("CLAUDE.md is not a symlink");
-  else if (readlinkSync(claude) !== "AGENTS.md") failures.push(`CLAUDE.md links to ${readlinkSync(claude)}, expected AGENTS.md`);
+  failures.push(...claudeMdFailures(dir));
 
-  const tasks = listFiles(join(dir, ".backlog", "tasks", "pending"), /^TSK-\d+.*\.md$/);
-  if (tasks.length === 0) failures.push("no tasks in .backlog/tasks/pending/");
+  const pendingDir = join(dir, ".backlog", "tasks", "pending");
+  const tasks = listFiles(pendingDir, /^TSK-\d+.*\.md$/);
+  if (tasks.length < TASK_RANGE.min || tasks.length > TASK_RANGE.max) {
+    failures.push(`${tasks.length} tasks in .backlog/tasks/pending/, expected ${TASK_RANGE.min}-${TASK_RANGE.max}`);
+  }
+  const linked = tasks.filter((task) => /^depends-on:\s*\[\s*TSK-/m.test(readFileSync(join(pendingDir, task), "utf-8")));
+  if (tasks.length > 0 && linked.length === 0) failures.push("no seeded task has a depends-on link");
 
   const changed = git(dir, ["status", "--porcelain", "--untracked-files=all"]).split("\n").filter(Boolean);
   return { ok: failures.length === 0, failures, changed };
@@ -74,11 +101,11 @@ export function checkSandbox(dir = DEFAULT_DIR) {
 
 function printExpectations() {
   console.log(`Expected (the prompt auto-accepts every round and checkpoint):
-  evaluation  docs/evaluation.md names OrcaSlicer's native temperature tower generator (WebSearch results vary: check by eye)
-  ADRs        docs/adr/0001-….md onward, mechanism classes only; no library from the deny-list
-  docs        AGENTS.md, CLAUDE.md -> AGENTS.md symlink, docs/overview.md
-  review      flowstate:kickstart-reviewer findings shown, fixes applied, ADRs accepted
-  tasks       a walking skeleton in .backlog/tasks/pending/ with depends-on links
+  evaluation  docs/evaluation.md with Feasibility and Build verdicts; names OrcaSlicer's native temperature tower generator (WebSearch results vary: check by eye)
+  ADRs        docs/adr/0001-….md onward, status accepted, no deny-listed library in any Decision
+  docs        AGENTS.md, CLAUDE.md -> AGENTS.md (symlink or @AGENTS.md pointer), docs/overview.md
+  review      flowstate:kickstart-reviewer findings shown (by eye: it read the templates file)
+  tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, at least one depends-on link; task 1 tests the riskiest assumption (by eye)
 Shared learnings are off for this session (FLOWSTATE_SHARED=off), so the sandbox backlog stays out of the registry.
 `);
 }
@@ -94,7 +121,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       create: createSandbox,
       check: checkSandbox,
       printExpectations,
-      passMessage: "no commit, evaluation + ADRs + AGENTS.md + overview written, CLAUDE.md symlinked, no library in ADRs, tasks seeded",
+      passMessage: "no commit, evaluation with both verdicts, accepted ADRs with clean Decisions, AGENTS.md + overview, CLAUDE.md linked, 3-8 linked tasks",
       mode: process.argv[2],
     }),
   );
