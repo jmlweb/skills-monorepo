@@ -33,6 +33,8 @@ Done when: every behaviour claim in the reply comes from a SKILL.md read in this
 
 **Precondition.** `setup` creates `.backlog/`; every other flow needs it.
 
+**New project.** `kickstart` takes a project description through evaluation, ADRs, starter docs, an independent review and the first tasks (creating `.backlog/` if missing), then continue at `start-task`.
+
 **Main flow.** Work that needs design first:
 `idea` → `review-idea` (approving creates the task; one by ID or all pending in one run) → `start-task` → `log-progress` (as many times as needed) → `complete-task`
 

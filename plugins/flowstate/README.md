@@ -128,6 +128,7 @@ Use `/reload-plugins` after making changes.
 | Command | Description |
 |---------|-------------|
 | 🙋 `/flowstate:setup` | Create the backlog (`.backlog/` by default, or a [private location](#-private-backlog)). Safe to re-run |
+| 🙋 `/flowstate:kickstart [description]` | New project? Grills the idea, evaluates it honestly against existing tools, drafts ADRs, `AGENTS.md` and an overview, has an independent agent review them, then seeds a walking-skeleton set of tasks. Creates the backlog if missing and never overwrites existing files |
 | 🙋 `/flowstate:guide [situation]` | Not sure what to run? Maps the commands into flows and names the next one |
 | `/flowstate:overview` | Stats, active work, and health warnings at a glance |
 
@@ -253,6 +254,7 @@ Each subagent works in isolation. Overlap detection prevents conflicts. Results 
 ```mermaid
 flowchart TD
     INIT["/flowstate:setup"] --> ADD
+    KICK["/flowstate:kickstart"] -- "evaluate, ADRs, review, seed tasks" --> NEXT
 
     subgraph Idea
         PLAN["/flowstate:idea"] --> REVIEW["/flowstate:review-idea"]
@@ -310,7 +312,9 @@ stateDiagram-v2
 flowstate/
 ├── .claude-plugin/
 │   └── plugin.json           # plugin manifest
-├── skills/                   # 20 slash commands (SKILL.md each)
+├── skills/                   # 21 slash commands (SKILL.md each)
+├── agents/                   # kickstart-reviewer, read-only reviewer for /flowstate:kickstart
+├── shared/                   # prose shared by skills (grilling, templates)
 ├── hooks/
 │   ├── hooks.json            # event handlers
 │   ├── on-test-failure.sh    # suggests /flowstate:report

@@ -37,6 +37,10 @@ _Avoid_: global learning, team learning
 The user-level file (`$XDG_CONFIG_HOME/flowstate/backlogs`) listing every backlog path flowstate has touched. Its entries feed shared learnings.
 _Avoid_: index (that name belongs to `index.md`)
 
+**ADR**:
+An architecture decision record: one file in the *target* project's `docs/adr/`, written by `kickstart`. Its Decision names a mechanism class, never a product. A project file, not a backlog **entity**.
+_Avoid_: design doc, RFC, decision log
+
 ## Relationships
 
 - A **backlog** contains **entities** of four kinds.

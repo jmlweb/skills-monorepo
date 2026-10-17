@@ -1,7 +1,7 @@
 ---
 name: flowstate
 description: Provides contextual awareness of the flowstate backlog management system. Activate when the project has a .backlog/ directory, or when the user refers to the flowstate backlog or its tasks, ideas, reports, or learnings.
-version: 2.15.1
+version: 2.16.0
 ---
 
 # Flowstate - Backlog Management System
@@ -74,6 +74,7 @@ Never store `node <path>` in a shell variable and run `$F ...`: zsh does not wor
 |---------|-------------|
 | `/flowstate:setup` | User-only: initialize `.backlog/` in the current project (uses CLI) |
 | `/flowstate:guide` | User-only: map the commands into flows and name the next one to run |
+| `/flowstate:kickstart` | User-only: turn a project description into an evaluation, ADRs, starter docs, a reviewed draft and first tasks |
 | `/flowstate:overview` | Show backlog overview and health |
 | `/flowstate:add-task` | Add a new task to the backlog |
 | `/flowstate:start-task` | Start working on a task |
