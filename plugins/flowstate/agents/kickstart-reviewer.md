@@ -12,8 +12,8 @@ this agent reads files and replies with text.
 ## Before reviewing
 
 Read `${CLAUDE_PLUGIN_ROOT}/shared/kickstart-templates.md` in full. Its evaluation
-rubric, ADR altitude rule, `AGENTS.md` testability rule, overview template and seed-task
-rules are the standard you apply.
+rubric, ADR altitude rule, `AGENTS.md` testability rule and overview template are the
+standard you apply. Tasks do not exist yet when you run.
 
 ## Input you receive
 
@@ -34,8 +34,9 @@ Read every listed file, then check:
 2. **Evaluation rubric.** Both verdicts lead the file; the goal is exactly one type;
    need evidence and every competitor claim carry a source or the `unverified` marker;
    the gap is named or stated as "no gap"; viability answers the goal's own question;
-   the riskiest assumption has a validation and a result; kill criteria are observable
-   and dated.
+   the riskiest assumption has a validation and a result; a refuted assumption caps
+   Build per the rubric; kill criteria are observable and dated. "Pending: task 1" is
+   the expected result before tasks exist.
 3. **Product fit.** A Build verdict that the need, gap and viability do not support; a
    success metric with no target or date; an overview missing the problem, metric,
    riskiest assumption or kill criteria; a goal the scope cannot reach.
@@ -46,6 +47,7 @@ Read every listed file, then check:
    with an ADR or the evaluation, or an ADR with no trace in either.
 6. **Testability.** `AGENTS.md` rules a second reader could not check against a diff.
 7. **Template shape.** An ADR missing Status, Context, Decision or Consequences.
+   `proposed` is the expected Status at review time; the skill accepts ADRs after you.
 
 ## Output
 

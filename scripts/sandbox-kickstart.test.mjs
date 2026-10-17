@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { checkSandbox, createSandbox, decisionSection } from "./sandbox-kickstart.mjs";
-import { writeFiles } from "./sandbox-lib.mjs";
+import { git, writeFiles } from "./sandbox-lib.mjs";
 
 function withSandbox(fn) {
   const dir = mkdtempSync(join(tmpdir(), "kickstart-sandbox-"));
@@ -38,9 +38,27 @@ const EVALUATION = `# Evaluation: temp-tower
 
 ## Need
 Forum threads ask for per-band temperatures.
+Why now: nothing changed
+
+## Feasibility
+Plain-text G-code, no slicer plugin needed.
+
+## Market
+| Alternative | What it covers | Source |
+|-------------|----------------|--------|
+| OrcaSlicer | native generator | https://example.invalid/orca |
+
+## Gap
+PrusaSlicer users have no native generator.
 
 ## Viability
 Shows G-code parsing to hiring managers.
+
+## Riskiest assumption
+Sliced G-code exposes band heights — validation: read one file — result: pending: TSK-001
+
+## Kill criteria
+No recruiter opens the repo by 2026-12-01.
 `;
 
 const OVERVIEW = `# temp-tower
@@ -63,7 +81,7 @@ function kickstarted(dir, { adr = ADR } = {}) {
     "AGENTS.md": "# AGENTS.md\n",
     ".backlog/tasks/pending/TSK-001-test-the-riskiest-assumption.md": task("TSK-001"),
     ".backlog/tasks/pending/TSK-002-rewrite-one-band.md": task("TSK-002", "TSK-001"),
-    ".backlog/tasks/pending/TSK-003-rewrite-every-band.md": task("TSK-003", "TSK-002"),
+    ".backlog/tasks/pending/TSK-003-rewrite-every-band.md": task("TSK-003", "TSK-001,TSK-002"),
   });
   symlinkSync("AGENTS.md", join(dir, "CLAUDE.md"));
 }
@@ -172,5 +190,62 @@ test("flags missing product sections and tasks without an Outcome line", () => {
     assert.ok(failures.includes("docs/evaluation.md lacks sections: Viability"));
     assert.ok(failures.includes("docs/overview.md lacks sections: Kill criteria"));
     assert.ok(failures.includes("tasks without an Outcome line: TSK-001-test-the-riskiest-assumption.md"));
+  });
+});
+
+test("accepts bold or backticked verdict words", () => {
+  withSandbox((dir) => {
+    kickstarted(dir);
+    const evaluation = EVALUATION.replace("**Feasibility:** feasible", "**Feasibility:** **feasible**").replace(
+      "**Build:** build with changes",
+      "**Build:** `build with changes`",
+    );
+    writeFileSync(join(dir, "docs", "evaluation.md"), evaluation);
+    assert.deepEqual(checkSandbox(dir).failures, []);
+  });
+});
+
+test("flags every missing evaluation heading", () => {
+  withSandbox((dir) => {
+    kickstarted(dir);
+    writeFileSync(join(dir, "docs", "evaluation.md"), EVALUATION.replace("## Market", "## Others").replace("## Kill criteria", "## Stop"));
+    assert.ok(checkSandbox(dir).failures.includes("docs/evaluation.md lacks sections: Market, Kill criteria"));
+  });
+});
+
+test("the deny-list respects word boundaries and covers short names", () => {
+  const decision = (words) => ADR.replace("A pure function", `${words} A pure function`);
+  const leaks = (dir, adr) => {
+    writeFileSync(join(dir, "docs", "adr", "0001-process-gcode-as-a-stream.md"), adr);
+    return checkSandbox(dir).failures.filter((f) => f.includes("Decision names"));
+  };
+  withSandbox((dir) => {
+    kickstarted(dir);
+    assert.deepEqual(leaks(dir, decision("We invite contributors.")), []);
+    assert.ok(leaks(dir, decision("A Flask-based API."))[0]?.endsWith("flask"));
+    assert.ok(leaks(dir, decision("Rendered with next.js."))[0]?.endsWith("next.js"));
+    assert.ok(leaks(dir, decision("Stored in Postgres behind Docker."))[0]?.endsWith("postgres, docker"));
+  });
+});
+
+test("flags a task 1 with dependencies and links to tasks that do not exist", () => {
+  withSandbox((dir) => {
+    kickstarted(dir);
+    writeFiles(dir, {
+      ".backlog/tasks/pending/TSK-001-test-the-riskiest-assumption.md": task("TSK-001", "TSK-002"),
+      ".backlog/tasks/pending/TSK-003-rewrite-every-band.md": task("TSK-003", "TSK-001,TSK-009"),
+    });
+    const { failures } = checkSandbox(dir);
+    assert.ok(failures.includes("TSK-001 is task 1 and must have no depends-on, has TSK-002"));
+    assert.ok(failures.includes("TSK-003 depends on unknown tasks: TSK-009"));
+  });
+});
+
+test("flags a commit made in the sandbox", () => {
+  withSandbox((dir) => {
+    kickstarted(dir);
+    git(dir, ["add", "-A"]);
+    git(dir, ["commit", "-q", "-m", "chore: kickstart"]);
+    assert.ok(checkSandbox(dir).failures.includes("a commit was made; kickstart must never commit"));
   });
 });

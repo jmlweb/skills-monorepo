@@ -17,7 +17,8 @@ export const DEFAULT_DIR = sandboxDir("kickstart");
 export const BRIEF =
   "A temperature tower G-code generator for PrusaSlicer users: the user downloads a tower STL, slices it with their own " +
   "material profile, and the tool rewrites the hotend temperature per band, taking its defaults from the sliced G-code. " +
-  "Goal: portfolio. Accept every recommendation and approve every checkpoint without asking for changes.";
+  "Goal: portfolio. Accept every recommendation and approve every checkpoint without asking for changes. " +
+  "When a checkpoint recommends stopping, proceed anyway. Create the backlog when offered.";
 
 // Libraries and frameworks an ADR Decision might leak. Domain products the
 // project targets (PrusaSlicer, OrcaSlicer) are allowed, and so are English
@@ -25,12 +26,12 @@ export const BRIEF =
 export const DENY_LIST = [
   "socket.io", "fastify", "django", "flask", "fastapi", "electron", "tauri", "next.js", "nextjs", "vue", "svelte",
   "angular", "prisma", "postgresql", "mongodb", "redis", "sqlite", "tailwind", "webpack", "vite", "yargs", "typer",
-  "pyqt", "tkinter", "streamlit", "numpy", "pandas",
+  "pyqt", "tkinter", "streamlit", "numpy", "pandas", "postgres", "mysql", "docker", "kafka", "rabbitmq", "nuxt", "deno",
 ];
 
 // Headings the templates require; matched case-insensitively so wording drift
 // in capitalisation is not a failure.
-export const EVALUATION_SECTIONS = ["Need", "Viability"];
+export const EVALUATION_SECTIONS = ["Need", "Feasibility", "Market", "Gap", "Viability", "Riskiest assumption", "Kill criteria"];
 export const OVERVIEW_SECTIONS = ["Problem", "Success metric", "Riskiest assumption", "Kill criteria"];
 const missingSections = (text, sections) => sections.filter((s) => !new RegExp(`^## ${s}\\b`, "im").test(text));
 
@@ -66,6 +67,29 @@ function claudeMdFailures(dir) {
   return readFileSync(claude, "utf-8").trim() === "@AGENTS.md" ? [] : ["CLAUDE.md is neither a symlink to AGENTS.md nor an @AGENTS.md pointer"];
 }
 
+const taskId = (file) => /^TSK-\d+/.exec(file)?.[0] ?? file;
+const dependsOn = (text) =>
+  (/^depends-on:\s*\[([^\]]*)\]/m.exec(text)?.[1] ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+
+// Task 1 opens the chain (it is the assumption test, or the skeleton's head when the
+// evaluation already validated it), and every link points at a task that exists.
+function dependencyFailures(pendingDir, tasks) {
+  if (tasks.length === 0) return [];
+  const failures = [];
+  const ids = new Set(tasks.map(taskId));
+  const graph = [...tasks]
+    .sort((a, b) => Number(taskId(a).slice(4)) - Number(taskId(b).slice(4)))
+    .map((task) => ({ id: taskId(task), deps: dependsOn(readFileSync(join(pendingDir, task), "utf-8")) }));
+  const [first] = graph;
+  if (first && first.deps.length) failures.push(`${first.id} is task 1 and must have no depends-on, has ${first.deps.join(", ")}`);
+  for (const { id, deps } of graph) {
+    const unknown = deps.filter((dep) => !ids.has(dep));
+    if (unknown.length) failures.push(`${id} depends on unknown tasks: ${unknown.join(", ")}`);
+  }
+  if (graph.every(({ deps }) => deps.length === 0)) failures.push("no seeded task has a depends-on link");
+  return failures;
+}
+
 export function checkSandbox(dir = DEFAULT_DIR) {
   const failures = [];
   const base = readFileSync(join(dir, ".git", "sandbox-base"), "utf-8").trim();
@@ -77,8 +101,8 @@ export function checkSandbox(dir = DEFAULT_DIR) {
   const evaluation = join(dir, "docs", "evaluation.md");
   if (existsSync(evaluation)) {
     const text = readFileSync(evaluation, "utf-8");
-    if (!/^\*\*Feasibility:\*\*\s*(feasible with caveats|feasible|infeasible)\b/im.test(text)) failures.push("docs/evaluation.md has no Feasibility verdict line");
-    if (!/^\*\*Build:\*\*\s*(build with changes|build|don['’]t build)\b/im.test(text)) failures.push("docs/evaluation.md has no Build verdict line");
+    if (!/^\*\*Feasibility:\*\*[\s*`]*(feasible with caveats|feasible|infeasible)\b/im.test(text)) failures.push("docs/evaluation.md has no Feasibility verdict line");
+    if (!/^\*\*Build:\*\*[\s*`]*(build with changes|build|don['’]t build)\b/im.test(text)) failures.push("docs/evaluation.md has no Build verdict line");
     const missing = missingSections(text, EVALUATION_SECTIONS);
     if (missing.length) failures.push(`docs/evaluation.md lacks sections: ${missing.join(", ")}`);
   }
@@ -107,8 +131,7 @@ export function checkSandbox(dir = DEFAULT_DIR) {
   }
   const noOutcome = tasks.filter((task) => !/^\*\*Outcome:\*\*\s*\S/im.test(readFileSync(join(pendingDir, task), "utf-8")));
   if (noOutcome.length) failures.push(`tasks without an Outcome line: ${noOutcome.join(", ")}`);
-  const linked = tasks.filter((task) => /^depends-on:\s*\[\s*TSK-/m.test(readFileSync(join(pendingDir, task), "utf-8")));
-  if (tasks.length > 0 && linked.length === 0) failures.push("no seeded task has a depends-on link");
+  failures.push(...dependencyFailures(pendingDir, tasks));
 
   const changed = git(dir, ["status", "--porcelain", "--untracked-files=all"]).split("\n").filter(Boolean);
   return { ok: failures.length === 0, failures, changed };
@@ -120,7 +143,7 @@ function printExpectations() {
   ADRs        docs/adr/0001-….md onward, status accepted, no deny-listed library in any Decision
   docs        AGENTS.md, CLAUDE.md -> AGENTS.md (symlink or @AGENTS.md pointer), docs/overview.md with Problem, Success metric, Riskiest assumption, Kill criteria
   review      flowstate:kickstart-reviewer findings shown (by eye: it read the templates file)
-  tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, each with an Outcome line, at least one depends-on link; task 1 tests the riskiest assumption (by eye)
+  tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, each with an Outcome line; task 1 has no depends-on, every link resolves, at least one exists; task 1 tests the riskiest assumption (by eye)
 Shared learnings are off for this session (FLOWSTATE_SHARED=off), so the sandbox backlog stays out of the registry.
 `);
 }

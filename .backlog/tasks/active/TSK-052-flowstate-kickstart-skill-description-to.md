@@ -71,3 +71,9 @@ Length (progressive disclosure into `shared/`), honesty drift, ADR altitude, fir
 - [2026-10-17] Harness: Decision-only deny-list scan, @AGENTS.md pointer accepted, accepted status, both verdicts, product sections, Outcome lines, 3-8 tasks with a depends-on link; regexes case-insensitive; 9 node:test cases
 - [2026-10-17] Review #29 accepted as is (the reviewer runs before tasks exist); #17 (${CLAUDE_PLUGIN_ROOT} expanding in the agent body) is a by-eye check in the live run
 - [2026-10-17] Pending: live pnpm sandbox:kickstart run (criterion 7)
+- [2026-10-17] PR #6 review round 2 addressed: Build verdict drives checkpoint 1 (build proceed; build with changes folds the change into Scope; don't build recommends stop plus an explicit proceed-anyway question weighed against the goal); refuted riskiest assumption caps Build and recommends stop
+- [2026-10-17] Checkpoints 2 and 3 carry a one-line recommendation; task 1 gates every other task unless the evaluation validated the assumption; kill criteria proposed in grilling and written back with task 1's TSK ID after step 5; why now feeds Need, overview Problem and the Build verdict
+- [2026-10-17] Backlog offer moved to step 3 (after checkpoint 1): infeasible leaves no .backlog; declining still writes files and skips step 5; every Done-when covers the stop path; confirm block reports backlog, kill criteria, advice override and stop point
+- [2026-10-17] Reviewer: no seed-task rules, proposed status and pending task 1 expected, refuted assumption cap checked; inputs exclude CLAUDE.md, passed after merges
+- [2026-10-17] Harness: all evaluation headings, bold or backticked verdicts, short deny-list names, task 1 without depends-on, every link resolves, word-boundary and commit tests; brief proceeds past stop recommendations and creates the backlog; 14 node:test cases
+- [2026-10-17] SKILL.md 120 lines. Pending: live pnpm sandbox:kickstart run (criterion 7)
