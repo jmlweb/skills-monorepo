@@ -80,8 +80,9 @@ export function printCheck(result, passMessage) {
 }
 
 // Modes: (none) build + fresh sandbox + Claude + check; `setup` sandbox only;
-// `check` re-check the current sandbox. Returns the process exit code.
-export function runHarness({ pluginName, skill, args = "", dir, create, check, printExpectations, passMessage, mode }) {
+// `check` re-check the current sandbox. `env` adds variables to the Claude
+// session only. Returns the process exit code.
+export function runHarness({ pluginName, skill, args = "", env = {}, dir, create, check, printExpectations, passMessage, mode }) {
   const pluginDir = join(ROOT, "plugins", pluginName);
   if (mode === "check") {
     const result = check(dir);
@@ -97,7 +98,7 @@ export function runHarness({ pluginName, skill, args = "", dir, create, check, p
   printExpectations();
   if (mode === "setup") return 0;
   // --plugin-dir loads the source copy; the session would otherwise use the plugin cache (LRN-034).
-  spawnSync("claude", ["--plugin-dir", pluginDir, `/${pluginName}:${skill}${args ? ` ${args}` : ""}`], { cwd: dir, stdio: "inherit" });
+  spawnSync("claude", ["--plugin-dir", pluginDir, `/${pluginName}:${skill}${args ? ` ${args}` : ""}`], { cwd: dir, stdio: "inherit", env: { ...process.env, ...env } });
   const result = check(dir);
   printCheck(result, passMessage);
   return result.ok ? 0 : 1;

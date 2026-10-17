@@ -102,7 +102,7 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
 - [ ] `claude plugin validate plugins/<name>` passes (root `.` only checks the marketplace, LRN-009); plugin README command table updated
 - [ ] Skill mutates the working tree → its CLI steps preflighted on the fixture, then one
       live run via `pnpm sandbox:<skill>` ends in PASS (mistakes 17–19); harnesses today:
-      `sandbox:prune-tests`, `sandbox:deslop`
+      `sandbox:prune-tests`, `sandbox:deslop`, `sandbox:kickstart`
 
 **Release**
 - [ ] Working tree clean, on `main`, pulled

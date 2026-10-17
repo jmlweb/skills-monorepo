@@ -48,11 +48,11 @@ flowchart LR
 | ✨ **atlassian-polish** | `atlassian-setup` → `polish-atlassian` (preview → approve → write) |
 
 <details open>
-<summary><strong>🌊 flowstate</strong> — 20 skills</summary>
+<summary><strong>🌊 flowstate</strong> — 21 skills</summary>
 
 | Area | Skills |
 |------|--------|
-| Setup & navigation | `setup` · `guide` · `overview` |
+| Setup & navigation | `setup` · `kickstart` · `guide` · `overview` |
 | Tasks | `add-task` · `next-task` · `start-task` · `log-progress` · `complete-task` · `block-task` · `check-task` · `parallel` · `condense-tasks` |
 | Ideas | `idea` · `review-idea` |
 | Reports | `report` · `triage-report` |
@@ -153,7 +153,7 @@ pnpm sandbox:prune-tests  # Live /prune-tests run on a throwaway repo, then an i
 ```text
 .claude-plugin/           # Root marketplace definition
 plugins/
-├── flowstate/            # Backlog management (20 skills + CLI + hooks)
+├── flowstate/            # Backlog management (21 skills + CLI + hooks + agent)
 ├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests (10 skills + CLI + agent)
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/

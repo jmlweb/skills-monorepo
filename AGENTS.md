@@ -26,10 +26,12 @@ invariants below.
 ```
 .claude-plugin/marketplace.json   # marketplace definition; versions mirrored from plugins
 plugins/
-├── flowstate/                    # backlog manager: 20 skills + zero-dep TS CLI
+├── flowstate/                    # backlog manager: 21 skills + 1 agent + zero-dep TS CLI
 │   ├── .claude-plugin/plugin.json
 │   ├── SKILL.md                  # always-on context skill — carries a version: field
 │   ├── skills/<name>/SKILL.md    # one dir per slash command
+│   ├── agents/                   # kickstart-reviewer (read-only)
+│   ├── shared/                   # prose shared by skills (grilling, kickstart templates)
 │   ├── hooks/                    # hooks.json + bash hooks (need jq)
 │   ├── references/               # architecture.md, plugin-docs.md, templates.md
 │   ├── src/{bin,commands,core}/  # CLI source; colocated *.test.ts
