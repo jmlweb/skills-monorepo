@@ -40,3 +40,4 @@
 | LRN-034 | Plugin skills in a session load from the plugin cache, not from plugins/ | claude-code, plugins, testing | active | 2026-10-15 |
 | LRN-035 | Any CLI spawn with the real env writes to the shared registry | flowstate, testing, registry | active | 2026-10-16 |
 | LRN-036 | Registry identity needs realpath: macOS temp dirs alias /var and /private/var | flowstate, macos, paths | active | 2026-10-16 |
+| LRN-037 | String.replace treats $-patterns in a string replacement as commands | scripts, patching, javascript, flowstate, skills | active | 2026-10-17 |

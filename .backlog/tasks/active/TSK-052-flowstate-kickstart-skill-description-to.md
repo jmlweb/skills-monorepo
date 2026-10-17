@@ -53,6 +53,7 @@ Length (progressive disclosure into `shared/`), honesty drift, ADR altitude, fir
 
 ## Learnings
 
+- LRN-037: String.replace treats $-patterns in a string replacement as commands
 ## Progress Log
 
 - [2026-10-17] Created
