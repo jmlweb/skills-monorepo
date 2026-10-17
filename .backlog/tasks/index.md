@@ -5,13 +5,14 @@
 | Status | Count |
 |--------|-------|
 | Pending | 0 |
-| Active | 0 |
+| Active | 1 |
 | Blocked | 1 |
 | Complete | 50 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
+- TSK-052: flowstate kickstart skill: description to evaluated, documented, tasked project (P2)
 
 ## Pending Tasks
 
