@@ -66,3 +66,8 @@ Length (progressive disclosure into `shared/`), honesty drift, ADR altitude, fir
 - [2026-10-17] scripts/sandbox-kickstart.mjs + test (5 cases) + pnpm sandbox:kickstart; runHarness gained env, harness sets FLOWSTATE_SHARED=off to keep the sandbox backlog out of the registry
 - [2026-10-17] Gates: pnpm test, lint:skills 0/0, names:check, version:check, claude plugin validate . and plugins/flowstate all pass; bumped flowstate 2.15.1 -> 2.16.0
 - [2026-10-17] Pending: live pnpm sandbox:kickstart run (interactive, user-driven)
+- [2026-10-17] PR #6 review (request changes) addressed in f1230d0 plus the harness follow-up: product side added (grilling product frontier; evaluation Build verdict, need evidence, goal-specific viability, riskiest assumption with cheapest validation, kill criteria; overview product sections; task 1 tests the riskiest assumption, every task states its Outcome); reviewer gains evaluation-rubric and product-fit checks
+- [2026-10-17] Skill fixes: walk-up backlog outside the cwd treated as none; files written before checkpoint 2; write guard applies hunks with Edit; stop and infeasible exits defined; criteria phrased without apostrophes
+- [2026-10-17] Harness: Decision-only deny-list scan, @AGENTS.md pointer accepted, accepted status, both verdicts, product sections, Outcome lines, 3-8 tasks with a depends-on link; regexes case-insensitive; 9 node:test cases
+- [2026-10-17] Review #29 accepted as is (the reviewer runs before tasks exist); #17 (${CLAUDE_PLUGIN_ROOT} expanding in the agent body) is a by-eye check in the live run
+- [2026-10-17] Pending: live pnpm sandbox:kickstart run (criterion 7)

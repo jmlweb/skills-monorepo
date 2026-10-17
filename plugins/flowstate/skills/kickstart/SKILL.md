@@ -30,7 +30,7 @@ Read `${CLAUDE_PLUGIN_ROOT}/shared/kickstart-templates.md` before step 1: every 
 
 **Checkpoint.** A pause where the user answers approve, a list of changes, or stop. Changes are applied and the checkpoint is shown again. Stop goes straight to step 6, which reports what exists so far.
 
-Done when: `{{BACKLOG}}` resolves inside this project and the templates file has been read.
+Done when: `{{BACKLOG}}` came from the `env` source, `<cwd>/.backlog` or this run's `setup`, and the templates file has been read.
 
 ## Workflow
 

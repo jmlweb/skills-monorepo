@@ -28,6 +28,12 @@ export const DENY_LIST = [
   "pyqt", "tkinter", "streamlit", "numpy", "pandas",
 ];
 
+// Headings the templates require; matched case-insensitively so wording drift
+// in capitalisation is not a failure.
+export const EVALUATION_SECTIONS = ["Need", "Viability"];
+export const OVERVIEW_SECTIONS = ["Problem", "Success metric", "Riskiest assumption", "Kill criteria"];
+const missingSections = (text, sections) => sections.filter((s) => !new RegExp(`^## ${s}\\b`, "im").test(text));
+
 // The skill's own bound on seeded tasks.
 export const TASK_RANGE = { min: 3, max: 8 };
 
@@ -71,8 +77,15 @@ export function checkSandbox(dir = DEFAULT_DIR) {
   const evaluation = join(dir, "docs", "evaluation.md");
   if (existsSync(evaluation)) {
     const text = readFileSync(evaluation, "utf-8");
-    if (!/^\*\*Feasibility:\*\*\s*(feasible with caveats|feasible|infeasible)\b/m.test(text)) failures.push("docs/evaluation.md has no Feasibility verdict line");
-    if (!/^\*\*Build:\*\*\s*(build with changes|build|don't build)\b/m.test(text)) failures.push("docs/evaluation.md has no Build verdict line");
+    if (!/^\*\*Feasibility:\*\*\s*(feasible with caveats|feasible|infeasible)\b/im.test(text)) failures.push("docs/evaluation.md has no Feasibility verdict line");
+    if (!/^\*\*Build:\*\*\s*(build with changes|build|don['’]t build)\b/im.test(text)) failures.push("docs/evaluation.md has no Build verdict line");
+    const missing = missingSections(text, EVALUATION_SECTIONS);
+    if (missing.length) failures.push(`docs/evaluation.md lacks sections: ${missing.join(", ")}`);
+  }
+  const overview = join(dir, "docs", "overview.md");
+  if (existsSync(overview)) {
+    const missing = missingSections(readFileSync(overview, "utf-8"), OVERVIEW_SECTIONS);
+    if (missing.length) failures.push(`docs/overview.md lacks sections: ${missing.join(", ")}`);
   }
 
   const adrDir = join(dir, "docs", "adr");
@@ -82,7 +95,7 @@ export function checkSandbox(dir = DEFAULT_DIR) {
     const text = readFileSync(join(adrDir, adr), "utf-8");
     const leaked = DENY_LIST.filter((word) => mentions(decisionSection(text), word));
     if (leaked.length) failures.push(`docs/adr/${adr} Decision names a library or framework: ${leaked.join(", ")}`);
-    if (!/^\*\*Status:\*\*\s*accepted\b/m.test(text)) failures.push(`docs/adr/${adr} is not accepted`);
+    if (!/^\*\*Status:\*\*\s*accepted\b/im.test(text)) failures.push(`docs/adr/${adr} is not accepted`);
   }
 
   failures.push(...claudeMdFailures(dir));
@@ -92,6 +105,8 @@ export function checkSandbox(dir = DEFAULT_DIR) {
   if (tasks.length < TASK_RANGE.min || tasks.length > TASK_RANGE.max) {
     failures.push(`${tasks.length} tasks in .backlog/tasks/pending/, expected ${TASK_RANGE.min}-${TASK_RANGE.max}`);
   }
+  const noOutcome = tasks.filter((task) => !/^\*\*Outcome:\*\*\s*\S/im.test(readFileSync(join(pendingDir, task), "utf-8")));
+  if (noOutcome.length) failures.push(`tasks without an Outcome line: ${noOutcome.join(", ")}`);
   const linked = tasks.filter((task) => /^depends-on:\s*\[\s*TSK-/m.test(readFileSync(join(pendingDir, task), "utf-8")));
   if (tasks.length > 0 && linked.length === 0) failures.push("no seeded task has a depends-on link");
 
@@ -101,11 +116,11 @@ export function checkSandbox(dir = DEFAULT_DIR) {
 
 function printExpectations() {
   console.log(`Expected (the prompt auto-accepts every round and checkpoint):
-  evaluation  docs/evaluation.md with Feasibility and Build verdicts; names OrcaSlicer's native temperature tower generator (WebSearch results vary: check by eye)
+  evaluation  docs/evaluation.md with Feasibility and Build verdicts, Need and Viability sections; names OrcaSlicer's native temperature tower generator (WebSearch results vary: check by eye)
   ADRs        docs/adr/0001-….md onward, status accepted, no deny-listed library in any Decision
-  docs        AGENTS.md, CLAUDE.md -> AGENTS.md (symlink or @AGENTS.md pointer), docs/overview.md
+  docs        AGENTS.md, CLAUDE.md -> AGENTS.md (symlink or @AGENTS.md pointer), docs/overview.md with Problem, Success metric, Riskiest assumption, Kill criteria
   review      flowstate:kickstart-reviewer findings shown (by eye: it read the templates file)
-  tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, at least one depends-on link; task 1 tests the riskiest assumption (by eye)
+  tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, each with an Outcome line, at least one depends-on link; task 1 tests the riskiest assumption (by eye)
 Shared learnings are off for this session (FLOWSTATE_SHARED=off), so the sandbox backlog stays out of the registry.
 `);
 }
@@ -121,7 +136,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       create: createSandbox,
       check: checkSandbox,
       printExpectations,
-      passMessage: "no commit, evaluation with both verdicts, accepted ADRs with clean Decisions, AGENTS.md + overview, CLAUDE.md linked, 3-8 linked tasks",
+      passMessage: "no commit, evaluation with both verdicts + need/viability, accepted ADRs with clean Decisions, AGENTS.md, overview with product sections, CLAUDE.md linked, 3-8 linked tasks with outcomes",
       mode: process.argv[2],
     }),
   );

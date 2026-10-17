@@ -35,15 +35,30 @@ const EVALUATION = `# Evaluation: temp-tower
 **Feasibility:** feasible — G-code is plain text
 **Build:** build with changes — target PrusaSlicer only; OrcaSlicer covers its own users
 **Goal:** portfolio — linked from the CV by 2026-12-01
+
+## Need
+Forum threads ask for per-band temperatures.
+
+## Viability
+Shows G-code parsing to hiring managers.
 `;
 
-const task = (id, dependsOn = "") => `---\nid: ${id}\nstatus: pending\ndepends-on: [${dependsOn}]\n---\n`;
+const OVERVIEW = `# temp-tower
+
+## Problem
+## Success metric
+## Riskiest assumption
+## Kill criteria
+`;
+
+const task = (id, dependsOn = "") =>
+  `---\nid: ${id}\nstatus: pending\ndepends-on: [${dependsOn}]\n---\n\n**Outcome:** a user sees the bands\n`;
 
 // The end state a successful kickstart run leaves behind.
 function kickstarted(dir, { adr = ADR } = {}) {
   writeFiles(dir, {
     "docs/evaluation.md": EVALUATION,
-    "docs/overview.md": "# Overview\n",
+    "docs/overview.md": OVERVIEW,
     "docs/adr/0001-process-gcode-as-a-stream.md": adr,
     "AGENTS.md": "# AGENTS.md\n",
     ".backlog/tasks/pending/TSK-001-test-the-riskiest-assumption.md": task("TSK-001"),
@@ -135,5 +150,27 @@ test("flags too few tasks and tasks without any depends-on link", () => {
       ".backlog/tasks/pending/TSK-003-rewrite-every-band.md": task("TSK-003"),
     });
     assert.ok(checkSandbox(dir).failures.includes("no seeded task has a depends-on link"));
+  });
+});
+
+test("accepts capitalised verdicts and status and a typographic apostrophe", () => {
+  withSandbox((dir) => {
+    kickstarted(dir, { adr: ADR.replace("**Status:** accepted", "**Status:** Accepted") });
+    const evaluation = EVALUATION.replace("feasible —", "Feasible —").replace("build with changes —", "Don’t build —");
+    writeFileSync(join(dir, "docs", "evaluation.md"), evaluation);
+    assert.deepEqual(checkSandbox(dir).failures, []);
+  });
+});
+
+test("flags missing product sections and tasks without an Outcome line", () => {
+  withSandbox((dir) => {
+    kickstarted(dir);
+    writeFileSync(join(dir, "docs", "evaluation.md"), EVALUATION.replace("## Viability", "## Notes"));
+    writeFileSync(join(dir, "docs", "overview.md"), OVERVIEW.replace("## Kill criteria\n", ""));
+    writeFiles(dir, { ".backlog/tasks/pending/TSK-001-test-the-riskiest-assumption.md": "---\nid: TSK-001\ndepends-on: []\n---\n" });
+    const { failures } = checkSandbox(dir);
+    assert.ok(failures.includes("docs/evaluation.md lacks sections: Viability"));
+    assert.ok(failures.includes("docs/overview.md lacks sections: Kill criteria"));
+    assert.ok(failures.includes("tasks without an Outcome line: TSK-001-test-the-riskiest-assumption.md"));
   });
 });
