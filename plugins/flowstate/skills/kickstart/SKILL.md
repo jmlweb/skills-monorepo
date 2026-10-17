@@ -46,7 +46,7 @@ Done when: the grilling done condition holds and every frontier item above is an
 
 Apply the evaluation rubric from the templates file, including its refuted-assumption rule. Use WebSearch for the need evidence and the market scan, and for the riskiest-assumption validation when a search can run it. Write `docs/evaluation.md` (write guard applies), then show both verdicts, the gap, the viability answer and the riskiest assumption with its validation result.
 
-On `infeasible`, stop here and name the blocking constraint. Otherwise run **Checkpoint 1** with the recommendation the Build verdict sets. On `don't build`, ask the proceed-anyway question too, and continue only on an explicit yes. On an approved `build with changes`, fold the named change into Scope before step 3.
+On `infeasible`, stop here and name the blocking constraint. Otherwise run **Checkpoint 1** with the recommendation the Build verdict sets. On `don't build`, ask the proceed-anyway question too, and continue only on an explicit yes. On an approved `build with changes`, fold the named change into Scope before step 3. After a refuted assumption, the change (or the proceed-anyway answer) names the replacement assumption, which the docs carry as the riskiest assumption from here on.
 
 Done when: `docs/evaluation.md` exists, and the verdict is `infeasible` with its blocking constraint named, or the user stopped, or the user chose to proceed (with the change in Scope for `build with changes`).
 
@@ -58,7 +58,7 @@ When `{{BACKLOG}}` is absent, offer first, recommending yes: kickstart creates a
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" setup --project-name "{{PROJECT_NAME}}" --json true
 ```
 
-`{{BACKLOG}}` is the `root` it prints. On no, the files below are still written and step 5 is skipped.
+Phrase `{{PROJECT_NAME}}` without `"`, `$` or backticks: it sits inside double quotes. `{{BACKLOG}}` is the `root` it prints. On no, the files below are still written and step 5 proposes no tasks.
 
 Write, following the templates (write guard applies):
 
@@ -75,15 +75,15 @@ Done when: the backlog offer is answered, the ADRs, `AGENTS.md`, `CLAUDE.md` and
 
 Call the `Agent` tool with `subagent_type: "flowstate:kickstart-reviewer"`. Pass the goal statement (goal, users, scope, constraints, success metric, riskiest assumption) and, as they are on disk after every write-guard merge, the absolute paths of `docs/evaluation.md`, the ADRs, `AGENTS.md`, `docs/overview.md` and any written project skill; nothing else from this conversation, so the review stays independent.
 
-Show its findings with a recommendation for each (apply or reject, one reason). Apply the fixes the user accepts. When any fix touched an ADR, run the reviewer once more on the changed files and show its verdict; a third pass stays out of this run. **Checkpoint 3.** On approval, set each ADR's status to `accepted`. ADRs stay `proposed` when the user stops here.
+Show its findings with a recommendation for each (apply or reject, one reason). Apply the fixes the user accepts. When any fix touched an ADR, run the reviewer once more on the changed files and show its verdict; a third pass stays out of this run. **Checkpoint 3.** On approval, set each ADR's status to `accepted`. ADRs stay `proposed` when the user stops here. When an accepted fix changes the Build verdict, show checkpoint 1's recommendation for the new verdict before checkpoint 3; a stop there goes to step 6.
 
 Done when: the reviewer returned a verdict, accepted fixes are applied, and either the user approved checkpoint 3 and every ADR reads `accepted`, or the user stopped.
 
 ### 5. Seed tasks
 
-Skip this step when the user declined the backlog in step 3.
+When the user declined the backlog in step 3, propose no tasks: confirm the kill criteria, then write them and `pending: not tested, no backlog` into both docs, per the templates' declined-backlog rule, and go to step 6.
 
-Propose the tasks per the templates' seed-task rules: task 1 tests the riskiest assumption and every other task lists it in `depends-on`, unless the evaluation already validated the assumption, in which case there is no gate. The rest form a walking skeleton of user outcomes, 3–8 tasks in total. Each has priority, tags, 2–4 acceptance criteria and its `depends-on`. Propose in grilling rounds, one block per task, and close by confirming the kill criteria. Create the accepted tasks in dependency order, so each `depends-on` uses IDs already printed:
+Propose the tasks per the templates' seed-task rules: task 1 tests the riskiest assumption and every other task lists it in `depends-on`, unless the evaluation already validated the assumption, in which case there is no gate. Task 1 carries the strictly highest priority of the seeded tasks, because the gate is advisory. After a refuted assumption the user proceeded past, task 1 tests the replacement assumption, and both docs name the replacement (write guard applies). The rest form a walking skeleton of user outcomes, 3–8 tasks in total. Each has priority, tags, 2–4 acceptance criteria and its `depends-on`. Propose in grilling rounds, one block per task, and close by confirming the kill criteria. Create the accepted tasks in dependency order, so each `depends-on` uses IDs already printed:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}}" --priority {{P}} --tags "{{TAGS}}" --criteria '{{CRITERIA_JSON}}' --depends-on "{{IDS}}" --source "kickstart" --json true --body - <<'BODY'
@@ -91,16 +91,16 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create --title "{{TITLE}
 BODY
 ```
 
-`{{CRITERIA_JSON}}` sits inside single quotes, so phrase every criterion without the `'` character. Omit `--depends-on` for tasks with none. Then update `docs/evaluation.md` and `docs/overview.md` with the confirmed kill criteria and task 1's TSK ID (write guard applies).
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. `{{CRITERIA_JSON}}` is valid JSON inside single quotes, so phrase every criterion without `'`, `"` or `\`. Omit `--depends-on` for tasks with none. Then update `docs/evaluation.md` and `docs/overview.md` with the confirmed kill criteria and task 1's TSK ID (write guard applies).
 
-Done when: the step was skipped, or the user stopped, or the CLI printed a TSK ID for every accepted task, the user confirmed the kill criteria, and both docs carry them and task 1's ID.
+Done when: the backlog was declined and both docs carry the confirmed kill criteria and `pending: not tested, no backlog`, or the user stopped, or the CLI printed a TSK ID for every accepted task, the user confirmed the kill criteria, and both docs carry them and task 1's ID.
 
 ### 6. Confirm
 
 ```
 Kickstarted {{PROJECT}}
   Feasibility: {{VERDICT}} | Build: {{VERDICT}}{{, proceeded against the advice}} | Goal: {{GOAL}}
-  Riskiest assumption: {{ASSUMPTION}} — {{held | refuted | tested by TSK-XXX}}
+  Riskiest assumption: {{ASSUMPTION}} — {{held | refuted | tested by TSK-XXX | not tested, no backlog}}
   Kill criteria: {{CRITERIA}}
   Files:
     docs/evaluation.md

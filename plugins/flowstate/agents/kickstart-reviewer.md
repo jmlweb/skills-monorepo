@@ -48,6 +48,8 @@ Read every listed file, then check:
 6. **Testability.** `AGENTS.md` rules a second reader could not check against a diff.
 7. **Template shape.** An ADR missing Status, Context, Decision or Consequences.
    `proposed` is the expected Status at review time; the skill accepts ADRs after you.
+8. **Project skills.** A written project skill that is not a procedure the project
+   will repeat, or whose steps contradict an ADR or an `AGENTS.md` rule.
 
 ## Output
 

@@ -26,14 +26,17 @@ Ask these alongside goal, users, scope and constraints:
 
 - Both verdicts come first, the reasons after them.
 - **Feasibility** is `feasible`, `feasible with caveats` or `infeasible`. Infeasible
-  names the blocking constraint and is the only verdict that stops the run.
+  names the blocking constraint and is the only verdict that stops without asking to
+  proceed.
 - **Build** is `build`, `build with changes` or `don't build`, with one reason. It
   answers "should this exist", weighing need, why now, gap, viability for the goal and
   the riskiest-assumption result. "Build with changes" names the change (to the scope
   or to the assumption). "Don't build" is advice: the user may still proceed.
 - **Refuted assumption.** When the cheapest validation ran and the assumption failed,
-  Build is at most `build with changes` (the change replaces the assumption or narrows
-  the scope around it) or `don't build`, and checkpoint 1 recommends stop.
+  Build is at most `build with changes` or `don't build`. `build with changes` names a
+  replacement assumption (or the narrower scope that makes one hold); the replacement
+  then becomes the riskiest assumption in every doc, with result `pending: task 1`, and
+  task 1 tests it. The refuted original stays in the evaluation, marked `refuted`.
 - **Need** cites evidence the pain exists, describes the workaround and its cost, and
   states why now. Evidence without a source is marked `unverified: user to confirm`.
 - **Market**: every competitor claim carries a source link, or the
@@ -83,12 +86,14 @@ Why now: {{what changed, or "nothing changed"}}
 
 ## Riskiest assumption
 {{the assumption}} — validation: {{cheapest test}} — result: {{held | refuted | pending: task 1}}
+{{when an earlier assumption was refuted: "Replaces: {{original}} — refuted by {{evidence}}"}}
 
 ## Kill criteria
 {{observable result and date that means stop}}
 ```
 
-`pending: task 1` is replaced by the real ID (`pending: TSK-XXX`) once step 5 creates it.
+`pending: task 1` is replaced by the real ID (`pending: TSK-XXX`) once step 5 creates it,
+or by `pending: not tested, no backlog` when the user declined the backlog.
 
 ## Checkpoint recommendations
 
@@ -99,9 +104,13 @@ Each checkpoint opens with one recommendation the user accepts with "yes", per
   - `build`: proceed.
   - `build with changes`: proceed with the named change, folded into Scope before any
     project file is written, so it reaches `docs/overview.md`, the ADRs and the tasks.
-  - `don't build` (including every refuted assumption that ends there): stop. Then ask,
-    as its own question, whether to proceed anyway, and say whether the goal could
-    justify it (a learning or portfolio goal often does; a money goal rarely does).
+    After a refuted assumption, the change is the replacement assumption.
+  - `don't build`: stop. Then ask, as its own question, whether to proceed anyway, and
+    say whether the goal could justify it (a learning or portfolio goal often does; a
+    money goal rarely does). After a refuted assumption, proceeding needs a replacement
+    assumption, asked in the same question.
+- **Checkpoint 1 again**: when a review fix changes the Build verdict, the
+  recommendation for the new verdict is shown before checkpoint 3.
 - **Checkpoint 2**: approve, or the specific change (an ADR Decision that names a
   product, a rule nobody could check, an overview section left empty).
 - **Checkpoint 3**: approve when every accepted finding is applied, or the finding still
@@ -175,9 +184,12 @@ See `docs/adr/`. A change that contradicts an accepted ADR adds a new ADR first.
 
 ## Riskiest assumption
 {{the assumption and how task 1 tests it, or its validation result; task 1 becomes its TSK ID after step 5}}
+If refuted: stop per the kill criteria, or pivot by re-running `/flowstate:kickstart`
+with the new assumption.
 
 ## Kill criteria
-{{observable result and date that means stop}}
+{{observable result and date that means stop}}; checked first against task 1's result:
+a refuted assumption meets them unless the user pivots.
 
 ## Scope
 - In: {{capability}}
@@ -202,15 +214,24 @@ fixture refresh). Show name, one-line description and the steps. Write
   layer; "a user loads a sliced file and sees its temperature bands" is an outcome.
 - Task 1 is the cheapest test of the riskiest assumption, unless the evaluation already
   ran it and it held.
-- Task 1 gates the rest: every other task lists task 1 in its `depends-on`, so no
-  walking-skeleton work starts before the assumption is tested. When the evaluation
-  already validated the assumption, there is no gate and the skeleton's first task has
-  no dependency.
+- Task 1 gates the rest: every other task lists task 1 in its `depends-on`, and task 1
+  carries the strictly highest priority of the seeded tasks. The gate is advisory:
+  `depends-on` blocks nothing, `next-task` ranks priority above "unblocks others", and
+  `start-task` never checks dependencies, so the priority is what puts task 1 first.
+  When the evaluation already validated the assumption (result `held`), there is no
+  gate and the skeleton's first task has no dependency.
+- After a refuted assumption the user proceeded past, the replacement assumption gets
+  its own task 1 and gate. When `docs/evaluation.md` or `docs/overview.md` still shows
+  the original as the riskiest assumption, rewrite it to the replacement (write guard
+  applies).
 - The tasks after it form a walking skeleton: the thinnest end-to-end path a user can
   run, then tasks that thicken it. 3–8 tasks in total.
 - Close the round by restating the kill criteria and asking the user to confirm them.
   Then update `docs/evaluation.md` and `docs/overview.md` (write guard applies): the
   confirmed kill criteria, and task 1's real TSK ID in place of "task 1".
+- Declined backlog: propose no tasks, still confirm the kill criteria, and write them
+  plus `pending: not tested, no backlog` in place of `pending: task 1` and "task 1" in
+  both docs.
 
 Task body:
 
@@ -218,4 +239,5 @@ Task body:
 **Outcome:** {{what the user can do once this is done}}
 **Validates:** {{the assumption this tests, or "none"}}
 **Implements:** {{ADR-NNNN, …}}
+**If refuted:** {{task 1 only: stop per the kill criteria, or pivot by re-running /flowstate:kickstart with the new assumption}}
 ```

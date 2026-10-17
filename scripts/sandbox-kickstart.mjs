@@ -71,22 +71,46 @@ const taskId = (file) => /^TSK-\d+/.exec(file)?.[0] ?? file;
 const dependsOn = (text) =>
   (/^depends-on:\s*\[([^\]]*)\]/m.exec(text)?.[1] ?? "").split(",").map((id) => id.trim()).filter(Boolean);
 
+const byId = (a, b) => Number(taskId(a).slice(4)) - Number(taskId(b).slice(4));
+
+// An assumption the evaluation already validated leaves task 1 ungated.
+const assumptionHeld = (evaluation) => /\bresult:\s*[*`]*held\b/i.test(evaluation);
+
 // Task 1 opens the chain (it is the assumption test, or the skeleton's head when the
-// evaluation already validated it), and every link points at a task that exists.
-function dependencyFailures(pendingDir, tasks) {
+// evaluation already validated it), gates every later task unless the assumption held,
+// and every link points at a task that exists.
+function dependencyFailures(pendingDir, tasks, { gated }) {
   if (tasks.length === 0) return [];
   const failures = [];
   const ids = new Set(tasks.map(taskId));
   const graph = [...tasks]
-    .sort((a, b) => Number(taskId(a).slice(4)) - Number(taskId(b).slice(4)))
+    .sort(byId)
     .map((task) => ({ id: taskId(task), deps: dependsOn(readFileSync(join(pendingDir, task), "utf-8")) }));
-  const [first] = graph;
+  const [first, ...rest] = graph;
   if (first && first.deps.length) failures.push(`${first.id} is task 1 and must have no depends-on, has ${first.deps.join(", ")}`);
   for (const { id, deps } of graph) {
     const unknown = deps.filter((dep) => !ids.has(dep));
     if (unknown.length) failures.push(`${id} depends on unknown tasks: ${unknown.join(", ")}`);
   }
+  if (first && gated) {
+    const ungated = rest.filter(({ deps }) => !deps.includes(first.id)).map(({ id }) => id);
+    if (ungated.length) failures.push(`not gated on task 1 (${first.id}): ${ungated.join(", ")}`);
+  }
   if (graph.every(({ deps }) => deps.length === 0)) failures.push("no seeded task has a depends-on link");
+  return failures;
+}
+
+// Step 5 writes task 1's real ID back into both docs.
+function writeBackFailures(dir, tasks, evaluation) {
+  const failures = [];
+  if (/pending: task 1/i.test(evaluation)) failures.push('docs/evaluation.md still says "pending: task 1"');
+  const [first] = [...tasks].sort(byId);
+  if (!first) return failures;
+  const id = taskId(first);
+  for (const path of ["docs/evaluation.md", "docs/overview.md"]) {
+    const file = join(dir, path);
+    if (existsSync(file) && !readFileSync(file, "utf-8").includes(id)) failures.push(`${path} does not name task 1 (${id})`);
+  }
   return failures;
 }
 
@@ -98,9 +122,10 @@ export function checkSandbox(dir = DEFAULT_DIR) {
   for (const path of ["docs/evaluation.md", "docs/overview.md", "AGENTS.md"]) {
     if (!existsSync(join(dir, path))) failures.push(`${path} is missing`);
   }
-  const evaluation = join(dir, "docs", "evaluation.md");
-  if (existsSync(evaluation)) {
-    const text = readFileSync(evaluation, "utf-8");
+  const evaluationPath = join(dir, "docs", "evaluation.md");
+  const evaluation = existsSync(evaluationPath) ? readFileSync(evaluationPath, "utf-8") : "";
+  if (evaluation) {
+    const text = evaluation;
     if (!/^\*\*Feasibility:\*\*[\s*`]*(feasible with caveats|feasible|infeasible)\b/im.test(text)) failures.push("docs/evaluation.md has no Feasibility verdict line");
     if (!/^\*\*Build:\*\*[\s*`]*(build with changes|build|don['’]t build)\b/im.test(text)) failures.push("docs/evaluation.md has no Build verdict line");
     const missing = missingSections(text, EVALUATION_SECTIONS);
@@ -131,7 +156,8 @@ export function checkSandbox(dir = DEFAULT_DIR) {
   }
   const noOutcome = tasks.filter((task) => !/^\*\*Outcome:\*\*\s*\S/im.test(readFileSync(join(pendingDir, task), "utf-8")));
   if (noOutcome.length) failures.push(`tasks without an Outcome line: ${noOutcome.join(", ")}`);
-  failures.push(...dependencyFailures(pendingDir, tasks));
+  failures.push(...dependencyFailures(pendingDir, tasks, { gated: !assumptionHeld(evaluation) }));
+  if (evaluation) failures.push(...writeBackFailures(dir, tasks, evaluation));
 
   const changed = git(dir, ["status", "--porcelain", "--untracked-files=all"]).split("\n").filter(Boolean);
   return { ok: failures.length === 0, failures, changed };
@@ -143,7 +169,8 @@ function printExpectations() {
   ADRs        docs/adr/0001-….md onward, status accepted, no deny-listed library in any Decision
   docs        AGENTS.md, CLAUDE.md -> AGENTS.md (symlink or @AGENTS.md pointer), docs/overview.md with Problem, Success metric, Riskiest assumption, Kill criteria
   review      flowstate:kickstart-reviewer findings shown (by eye: it read the templates file)
-  tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, each with an Outcome line; task 1 has no depends-on, every link resolves, at least one exists; task 1 tests the riskiest assumption (by eye)
+  tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, each with an Outcome line; task 1 has no depends-on and gates the rest (unless the assumption held), every link resolves; task 1 tests the riskiest assumption (by eye)
+  write-back  docs/evaluation.md and docs/overview.md name task 1's TSK ID, no "pending: task 1" left
 Shared learnings are off for this session (FLOWSTATE_SHARED=off), so the sandbox backlog stays out of the registry.
 `);
 }

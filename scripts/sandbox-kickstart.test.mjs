@@ -66,6 +66,7 @@ const OVERVIEW = `# temp-tower
 ## Problem
 ## Success metric
 ## Riskiest assumption
+Sliced G-code exposes band heights; TSK-001 tests it.
 ## Kill criteria
 `;
 
@@ -247,5 +248,33 @@ test("flags a commit made in the sandbox", () => {
     git(dir, ["add", "-A"]);
     git(dir, ["commit", "-q", "-m", "chore: kickstart"]);
     assert.ok(checkSandbox(dir).failures.includes("a commit was made; kickstart must never commit"));
+  });
+});
+
+test("flags a missing step 5 write-back of task 1's ID", () => {
+  withSandbox((dir) => {
+    kickstarted(dir);
+    writeFileSync(join(dir, "docs", "evaluation.md"), EVALUATION.replace("pending: TSK-001", "pending: task 1"));
+    writeFileSync(join(dir, "docs", "overview.md"), OVERVIEW.replace("TSK-001 tests it", "task 1 tests it"));
+    const { failures } = checkSandbox(dir);
+    assert.ok(failures.includes('docs/evaluation.md still says "pending: task 1"'));
+    assert.ok(failures.includes("docs/evaluation.md does not name task 1 (TSK-001)"));
+    assert.ok(failures.includes("docs/overview.md does not name task 1 (TSK-001)"));
+  });
+});
+
+test("flags a later task not gated on task 1, unless the assumption held", () => {
+  const ungated = (dir) =>
+    writeFiles(dir, { ".backlog/tasks/pending/TSK-003-rewrite-every-band.md": task("TSK-003", "TSK-002") });
+  withSandbox((dir) => {
+    kickstarted(dir);
+    ungated(dir);
+    assert.ok(checkSandbox(dir).failures.includes("not gated on task 1 (TSK-001): TSK-003"));
+  });
+  withSandbox((dir) => {
+    kickstarted(dir);
+    ungated(dir);
+    writeFileSync(join(dir, "docs", "evaluation.md"), EVALUATION.replace("result: pending: TSK-001", "result: held (TSK-001 kept as skeleton head)"));
+    assert.ok(!checkSandbox(dir).failures.some((f) => f.startsWith("not gated")));
   });
 });
