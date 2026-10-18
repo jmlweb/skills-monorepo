@@ -1,6 +1,6 @@
 # AGENTS.md — Operating Manual
 
-Single source of agent guidance for this repo. `CLAUDE.md` is a symlink to this file.
+Single source of agent guidance for this repo. `CLAUDE.md` is a symlink to this file; edit `AGENTS.md` (writes to the link are refused).
 Read this fully before your first edit. When this file and your instincts disagree, this file wins.
 
 ## What this repo is
@@ -83,8 +83,9 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
 5. **Strict TS via `packages/shared-config/tsconfig.base.json`**: `strict`,
    `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, no unused locals/params.
    Do not loosen a flag to make an error go away.
-6. **Releases are tag-driven.** Pushing `plugins/<name>/v<semver>` triggers
-   `release.yml` → public GitHub Release. Tags are a publish action, not a bookkeeping one.
+6. **Two publish actions.** Pushing a bumped version to `main` ships it: Claude Code reads
+   the default branch and installs when the version changes, tag or not. Pushing
+   `plugins/<name>/v<semver>` triggers `release.yml` → public GitHub Release. Neither is bookkeeping.
 7. **Reserved names stay dead.** `plan` → `idea` and `init` → `setup` were renamed to avoid
    Claude Code's native `/plan` and `/init`. ID prefix `PLN` and dir `ideas/` stay as-is.
    Do not reintroduce the old names anywhere.

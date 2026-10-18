@@ -30,8 +30,11 @@ mistakes to avoid, the per-deliverable checklist, and the release mechanics.
    `task-update` (bit us in TSK-009).
 9. **Hand-edits the `version` field in `marketplace.json`.** → Only `pnpm version:sync`
    (or the bump script that calls it) writes versions there.
-10. **Pushes a tag as routine housekeeping.** → A `plugins/*/v*` tag push *publishes a
-    release*. Never create or push tags unless the user explicitly asked for a release.
+10. **Pushes a tag as routine housekeeping, or thinks an untagged bump is unreleased.** → A
+    `plugins/*/v*` tag push *publishes a GitHub Release*; create or push tags only when the
+    user asked for a release. A bumped version pushed to `main` already reaches users
+    (Claude Code installs default-branch HEAD when the version changes), so "it ships once
+    you tag" is wrong. Before pushing a range that holds a version bump, say it ships (LRN-039).
 11. **Writes a model-invoked skill description without trigger phrases** ("Manages tasks."). → Description
     is the invocation router; include quoted user phrases or the skill is dead weight.
 12. **Silently swallows fs errors** (`catch { return [] }`). → LRN-001. Distinguish
@@ -71,6 +74,39 @@ mistakes to avoid, the per-deliverable checklist, and the release mechanics.
     write a patch script with a quoted heredoc and run it as its own command.
 23. **Trims `git status --porcelain` output.** → The first line's leading space is part of
     the status code; `.trim()` shifts every path by one character. Use `.trimEnd()`.
+24. **Stores a command in a shell variable** (`F="node …/flowstate.js"; $F task-list`). → The
+    Bash tool runs zsh, which does not word-split `$F`: it execs one file named
+    `node /…` (ENOENT, ~40 wasted calls before 3cf6e73). Store one path and run `node "$F"`;
+    list several files inline, not in one string. Same shell: quote glob arguments
+    (`--include='*.md'`, since zsh aborts on no match) and never start a word with `=`
+    (`echo ===` fails with `=== not found`). LRN-038.
+25. **Gives a hook a tool beyond bash, coreutils and `jq`.** → `fd` in
+    `pre-commit-reminder.sh` broke every Bash call for users without it (6112cfc). Hooks
+    run on users' machines: `find`, `grep`, `sed`, `jq` only. Quote
+    `"${CLAUDE_PLUGIN_ROOT}"` in `hooks.json` commands; install paths can hold spaces.
+26. **Interpolates user text into a double-quoted CLI argument.** → `--title "{{TITLE}}"`
+    breaks or expands on a `$`, backtick or `"` in the user's words. See
+    `docs/writing-skills.md` § Shell values (kickstart PR #6, round 3).
+27. **Hands the user a step it can run itself** ("run this and paste the output", "you run
+    the two commit commands"). → Run local, reversible steps yourself: commits on request,
+    probes, a nested `claude -p` in a temp dir to check settings behaviour. Ask before publishing,
+    before anything on the AGENTS.md ask-first list, or for credentials. The user asked "why can't you do it by
+    yourself?" and "commit yourself".
+28. **Pushes without checking the remote.** → `git fetch`, then show
+    `git log --oneline origin/main..HEAD` before pushing. One push silently carried three
+    earlier unpushed commits; the user had to ask "sync with remote main first" by hand.
+29. **Leaves worktrees behind after merging parallel work.** → After merging a
+    `flowstate:parallel` branch, `git worktree remove` it and delete its branch, then
+    `git worktree prune`. The user asked for this cleanup in four separate sessions.
+30. **Picks the bump level from the last change only.** → Read every commit since the last
+    tag (`git log --oneline plugins/<name>/v<last>..HEAD -- plugins/<name>`). Any `feat`
+    means minor; v2.6.3 shipped as a patch while carrying an unreleased feature.
+31. **Lists one command per plugin in the root README.** → The root README lists every
+    skill of every plugin, like each plugin README does; a "first command to try" table
+    made dev-workflow look like a one-skill plugin (4c29a00).
+32. **Briefs worktree subagents with the generic `parallel` prompt only.** → On this machine
+    the rtk hook and the isolation guard refuse most git calls, and worktrees start without
+    node_modules and from a stale base. Add LRN-019's checklist to each subagent prompt.
 
 ## Quality bar per deliverable
 
@@ -100,12 +136,14 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
       Progress Log: `claude plugin eval plugins/flowstate --case '<glob>'` (manual, costs
       model calls; a case is `evals/<case>/prompt.md` plus `graders/*.md`, LRN-011)
 - [ ] `claude plugin validate plugins/<name>` passes (root `.` only checks the marketplace, LRN-009); plugin README command table updated
+- [ ] Root `README.md` lists the skill too (mistake 31)
 - [ ] Skill mutates the working tree → its CLI steps preflighted on the fixture, then one
       live run via `pnpm sandbox:<skill>` ends in PASS (mistakes 17–19); harnesses today:
       `sandbox:prune-tests`, `sandbox:deslop`, `sandbox:kickstart`
 
 **Release**
-- [ ] Working tree clean, on `main`, pulled
+- [ ] Working tree clean, on `main`, fetched and pulled; `git log --oneline origin/main..HEAD` shown
+- [ ] Bump level read from every commit since the last tag (mistake 30)
 - [ ] `pnpm typecheck && pnpm build && pnpm test` green *before* bumping
 - [ ] Bumped via `pnpm bump`; version identical in package.json, plugin.json, marketplace.json (+ SKILL.md for flowstate)
 - [ ] Commit message `chore: release <plugin> v<X.Y.Z>`; tag `plugins/<plugin>/v<X.Y.Z>`
@@ -128,6 +166,9 @@ git commit -m "chore: release <name> v<VERSION>"
 git tag plugins/<name>/v<VERSION>
 git push && git push origin plugins/<name>/v<VERSION>   # only after explicit user approval — this publishes
 ```
+
+`git push` alone already ships the bumped version to users (invariant 6); the tag adds the
+GitHub Release. Wait on CI with `gh run watch <id> --exit-status`, not `sleep` loops.
 
 Run `pnpm bump` without piping its output (`| head` can abort it via SIGPIPE, LRN-029).
 

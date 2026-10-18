@@ -190,6 +190,33 @@ The audit of 2026-10-08 found all eight existing "run setup first" pointers are 
 dependencies, so none needed removal. Re-run that classification for any pointer you
 add: the test is whether the skill's output would be wrong without setup.
 
+## Shell values in skill commands
+
+A skill's code block is a template the model fills with the user's words, then runs in
+zsh. The filled value is the risk, not the template.
+
+- A `{{VALUE}}` inside double quotes expands `$` and backticks and ends at `"`. Next to the
+  command, tell the model to phrase that value without `"`, `$` or backticks, or put it in
+  single quotes and phrase it without `'`.
+- A JSON argument (`--criteria '{{CRITERIA_JSON}}'`) sits in single quotes and must parse:
+  phrase each string without `'`, `"` or `\`.
+- Free text of any length goes through `--body -` and a quoted heredoc (`<<'BODY'`), where
+  nothing expands.
+- Write the full `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/<cli>.js"` command every time. zsh
+  does not word-split, so `F="node …"; $F` fails; if a step must abbreviate, store only the
+  path and run `node "$F"`.
+
+Done when: every `{{VALUE}}` in a command is in a heredoc, or has a phrasing rule beside it.
+
+## Menus in skill output
+
+When a reply lists numbered items (changes, findings) and then offers choices, label the
+choices with letters (`A`, `B`, `C`) or bold words. Two numbered lists in a row render as
+one, so a menu of 1-3 after five changes shows as 6-8 and the user's answer reads as out
+of range. Lead with a recommendation the user accepts with "yes" (`shared/grilling.md`).
+
+Done when: no menu follows a numbered list with numbers of its own.
+
 ## Calling other skills
 
 One convention, so a reader can tell an instruction from a suggestion:
@@ -215,3 +242,4 @@ slash-command suggestion, never a bare skill name.
 - [ ] Description follows the router shape; Rationalizations only on discipline skills
 - [ ] Setup pointers present only for hard dependencies
 - [ ] Skill calls follow the Skill-tool convention above
+- [ ] Every `{{VALUE}}` in a command is heredoc-fed or has a phrasing rule; menus use letters
