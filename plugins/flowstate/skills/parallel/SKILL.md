@@ -89,7 +89,7 @@ Done when: each selected task has its list of learnings and reports (possibly em
 
 ### 6. Launch Subagents
 
-Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`.
+Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`. Under `## Worktree Rules`, paste the text of `${CLAUDE_PLUGIN_ROOT}/shared/worktree-brief.md` with `{{BASE}}` set to the current branch, then the project's own worktree brief when its rules files define one.
 
 When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
 
@@ -114,14 +114,15 @@ Complete Task TSK-{{ID}}: {{TITLE}}
 ## Reserved Numbers                ← only if numbers were reserved
 - Use {{e.g. ADR 0007}} — other parallel tasks hold the neighbouring numbers
 
+## Worktree Rules                  ← always; see the launch step above
+
 ## Instructions
-1. Read project documentation (README, CLAUDE.md, etc.) first
-2. Apply the learnings above — they capture past mistakes and proven patterns
-3. Implement each acceptance criterion
-4. Verify changes work (build, lint, test as applicable)
-5. Leave the backlog directory and flowstate CLI to the coordinator, because other agents run in parallel
-6. Create a commit referencing TSK-{{ID}}
-7. End your final report with a `## Learnings` section: one entry per non-obvious root cause, undocumented behavior, gotcha, or reusable pattern you hit, each with Title, Tags, Context, Insight, Application. Skip routine work and anything obvious from the code. Write "None" if there are none.
+1. Follow the Worktree Rules, read project documentation (README, CLAUDE.md, etc.), then apply the learnings above — they capture past mistakes and proven patterns
+2. Implement each acceptance criterion
+3. Verify changes work (build, lint, test as applicable)
+4. Leave the backlog directory and flowstate CLI to the coordinator, because other agents run in parallel
+5. Create a commit referencing TSK-{{ID}}
+6. End your final report with a `## Learnings` section: one entry per non-obvious root cause, undocumented behavior, gotcha, or reusable pattern you hit, each with Title, Tags, Context, Insight, Application. Skip routine work and anything obvious from the code. Write "None" if there are none.
 ```
 
 Done when: every subagent has returned a report.

@@ -106,7 +106,8 @@ mistakes to avoid, the per-deliverable checklist, and the release mechanics.
     made dev-workflow look like a one-skill plugin (4c29a00).
 32. **Briefs worktree subagents with the generic `parallel` prompt only.** → On this machine
     the rtk hook and the isolation guard refuse most git calls, and worktrees start without
-    node_modules and from a stale base. Add LRN-019's checklist to each subagent prompt.
+    node_modules and from a stale base. `parallel` now pastes `shared/worktree-brief.md`
+    into each prompt; for this repo, also add LRN-019's checklist (`pnpm build`, stage `dist/`).
 
 ## Quality bar per deliverable
 
