@@ -40,7 +40,7 @@
       "name": "flowstate",
       "source": "./plugins/flowstate",
       "description": "Backlog management for Claude Code — tasks, ideas, reports, and learnings, all in plain files.",
-      "version": "2.16.0",
+      "version": "2.17.0",
       "keywords": [
         "backlog",
         "tasks",
