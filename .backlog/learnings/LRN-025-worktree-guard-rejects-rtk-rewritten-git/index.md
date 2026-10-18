@@ -1,7 +1,7 @@
 ---
 id: LRN-025
 title: Worktree guard rejects rtk-rewritten git; use /usr/bin/git
-status: active
+status: archived
 tags: [worktree, git, rtk]
 task: TSK-034
 created: 2026-10-09

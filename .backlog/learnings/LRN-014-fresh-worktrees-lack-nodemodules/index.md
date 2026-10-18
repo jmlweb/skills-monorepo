@@ -1,7 +1,7 @@
 ---
 id: LRN-014
 title: Fresh worktrees lack node_modules
-status: active
+status: archived
 tags: [tooling, worktree, testing]
 task: TSK-045
 created: 2026-10-08

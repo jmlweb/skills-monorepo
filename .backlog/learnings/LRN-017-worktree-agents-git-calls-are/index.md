@@ -1,7 +1,7 @@
 ---
 id: LRN-017
 title: Worktree agents' git calls are refused when the guard cannot prove the command is not git
-status: active
+status: archived
 tags: [worktree, rtk, git, tooling]
 task: TSK-038
 created: 2026-10-08

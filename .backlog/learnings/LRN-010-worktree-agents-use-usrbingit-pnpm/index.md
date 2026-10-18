@@ -1,7 +1,7 @@
 ---
 id: LRN-010
 title: Worktree agents: use /usr/bin/git, pnpm install first, hooks don't run
-status: active
+status: archived
 tags: [worktree, git, rtk, pnpm, tooling]
 task: TSK-030
 created: 2026-10-08

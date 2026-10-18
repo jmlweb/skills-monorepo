@@ -1,7 +1,7 @@
 ---
 id: LRN-021
 title: Worktree guard rejects compound or variable-driven Bash commands
-status: active
+status: archived
 tags: [worktree, tooling, parallel]
 task: TSK-047
 created: 2026-10-08

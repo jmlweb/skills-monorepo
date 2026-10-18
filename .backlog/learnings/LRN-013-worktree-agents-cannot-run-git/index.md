@@ -1,7 +1,7 @@
 ---
 id: LRN-013
 title: Worktree agents cannot run git through the rtk hook
-status: active
+status: archived
 tags: [tooling, worktree, rtk, git]
 task: TSK-044
 created: 2026-10-08

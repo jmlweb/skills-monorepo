@@ -1,7 +1,7 @@
 ---
 id: LRN-004
 title: Parallel worktree agents start from a stale base and lack git hooks
-status: active
+status: archived
 tags: [worktree, parallel, tooling, git]
 task: TSK-024
 created: 2026-10-08

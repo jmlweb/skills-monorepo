@@ -1,7 +1,7 @@
 ---
 id: LRN-008
 title: Worktree agents must call /usr/bin/git; RTK rewrite trips the isolation guard
-status: active
+status: archived
 tags: [worktree, parallel, rtk, git, tooling]
 task: TSK-032
 created: 2026-10-08

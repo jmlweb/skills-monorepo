@@ -1,7 +1,7 @@
 ---
 id: LRN-024
 title: Agent worktrees can branch from a stale commit missing tooling
-status: active
+status: archived
 tags: [worktree, tooling, lint-skills, parallel]
 task: TSK-034
 created: 2026-10-09
