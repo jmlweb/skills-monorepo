@@ -73,10 +73,10 @@ Emit a single recommendation **before** offering the menu, in this shape:
 
 Then list the override options:
 
-1. **Convert to task** — Create a backlog task from this report
-2. **Discard** — Not actionable
-3. **Needs more info** — Keep pending, note what's missing
-4. **Stop** — End the run now; this report and the rest of the queue stay pending
+- **A · Convert to task** — Create a backlog task from this report
+- **B · Discard** — Not actionable
+- **C · Needs more info** — Keep pending, note what's missing
+- **D · Stop** — End the run now; this report and the rest of the queue stay pending
 
 Ask the user to confirm the recommendation or pick a different option. A plain "yes" accepts the recommendation.
 

@@ -82,10 +82,10 @@ If the recommendation is **revise**, list the specific changes you'd make so the
 
 Then list the override options:
 
-1. **Approve** — Convert this idea into a backlog task
-2. **Discard** — This idea is not needed
-3. **Revise** — The idea needs changes
-4. **Stop** — End the run now; this idea and the rest of the queue stay pending
+- **A · Approve** — Convert this idea into a backlog task
+- **B · Discard** — This idea is not needed
+- **C · Revise** — The idea needs changes
+- **D · Stop** — End the run now; this idea and the rest of the queue stay pending
 
 Ask the user to confirm the recommendation or pick a different option. A plain "yes" accepts the recommendation.
 
