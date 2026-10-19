@@ -1,9 +1,11 @@
 ---
 id: PLN-027
 title: Optional GitHub Issues backend for tasks, ideas and reports
-status: pending
+status: approved
 created: 2026-10-17
 complexity: high
+reviewed: 2026-10-19
+task-id: TSK-057
 ---
 
 

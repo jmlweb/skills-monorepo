@@ -1,9 +1,11 @@
 ---
 id: PLN-029
 title: dev-workflow: Mermaid diagram in descriptions of complex PRs
-status: pending
+status: approved
 created: 2026-10-18
 complexity: low
+reviewed: 2026-10-19
+task-id: TSK-058
 ---
 
 ## Goal

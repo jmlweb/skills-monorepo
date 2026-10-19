@@ -3,8 +3,10 @@ id: RPT-010
 title: parallel skill leaves worktrees behind and doesn't prepare subagents for a stale base
 type: improvement
 severity: medium
-status: pending
+status: triaged
 created: 2026-10-18
+triaged: 2026-10-19
+task-id: TSK-055
 ---
 
 ## Description

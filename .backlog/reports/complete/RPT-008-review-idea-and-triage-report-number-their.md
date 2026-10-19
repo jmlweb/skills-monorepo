@@ -3,8 +3,10 @@ id: RPT-008
 title: review-idea and triage-report number their decision menus after a numbered list
 type: bug
 severity: medium
-status: pending
+status: triaged
 created: 2026-10-18
+triaged: 2026-10-19
+task-id: TSK-053
 ---
 
 ## Description

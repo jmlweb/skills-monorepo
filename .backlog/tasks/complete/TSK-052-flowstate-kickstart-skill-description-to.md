@@ -1,13 +1,14 @@
 ---
 id: TSK-052
 title: flowstate kickstart skill: description to evaluated, documented, tasked project
-status: active
+status: complete
 priority: P2
 tags: [flowstate, skills, agents]
 created: 2026-10-17
 source: idea/PLN-028
 depends-on: []
 started: 2026-10-17
+completed: 2026-10-19
 ---
 
 # flowstate kickstart skill: description to evaluated, documented, tasked project
@@ -46,7 +47,7 @@ Length (progressive disclosure into `shared/`), honesty drift, ADR altitude, fir
 - [x] Backlog creation goes through the CLI setup command, defaulting to public and mentioning the private option
 - [x] Skill never overwrites existing project files and falls back to a pointer CLAUDE.md when a symlink fails
 - [x] README command table, skills/guide/SKILL.md, root SKILL.md and routing evals (if needed) list kickstart
-- [ ] scripts/sandbox-kickstart.mjs and pnpm sandbox:kickstart run the temperature-tower brief, auto-accept checkpoints, and check ADRs, deny-list, CLAUDE.md symlink and tasks
+- [x] scripts/sandbox-kickstart.mjs and pnpm sandbox:kickstart run the temperature-tower brief, auto-accept checkpoints, and check ADRs, deny-list, CLAUDE.md symlink and tasks — evidence: checkSandbox on ~/projects/templatetower at kickstart commit b6ab55d → ok, no failures (2026-10-20) (2026-10-19)
 - [x] pnpm lint:skills, claude plugin validate . and claude plugin validate plugins/flowstate pass; flowstate bumped minor
 
 ## Notes
@@ -83,3 +84,5 @@ Length (progressive disclosure into `shared/`), honesty drift, ADR altitude, fir
 - [2026-10-17] Task 1 carries the strictly highest priority because depends-on is advisory (next-task ranks priority first, start-task ignores dependencies); task 1 body gains If refuted (stop per kill criteria or pivot by re-running kickstart); overview kill criteria checked against task 1's result
 - [2026-10-17] Reviewer gains a project-skill check; harness fails on leftover "pending: task 1", on docs missing task 1's ID, and on later tasks not gated on task 1 unless the result is held; 16 node:test cases
 - [2026-10-17] Found and fixed in-session: String.replace treats $` in a replacement string as "text before match" and duplicated SKILL.md; the patch now uses a replacer function. SKILL.md 121 lines. Pending: live pnpm sandbox:kickstart run (criterion 7)
+- [2026-10-19] Live run accepted: real project ~/projects/templatetower passes harness invariants at b6ab55d; later failures come from tasks completed after kickstart
+- [2026-10-19] Completed

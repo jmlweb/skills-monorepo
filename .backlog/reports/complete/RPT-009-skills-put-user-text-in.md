@@ -3,8 +3,10 @@ id: RPT-009
 title: Skills put user text in double-quoted CLI args without a phrasing rule
 type: improvement
 severity: medium
-status: pending
+status: triaged
 created: 2026-10-18
+triaged: 2026-10-19
+task-id: TSK-054
 ---
 
 ## Description
