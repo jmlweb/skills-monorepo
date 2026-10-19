@@ -171,6 +171,23 @@
         }
       ]
     },
+    "parallel": {
+      "positive": [
+        "run in parallel: TSK-001, TSK-002 and TSK-003",
+        "work on TSK-004 and TSK-005 at once in isolated worktrees",
+        "start these tasks together using subagents"
+      ],
+      "negative": [
+        {
+          "prompt": "start task TSK-030 and pick up the work",
+          "owner": "start-task"
+        },
+        {
+          "prompt": "what should I work on next, recommend a task",
+          "owner": "next-task"
+        }
+      ]
+    },
     "report": {
       "positive": [
         "found a bug in the index rebuild",
