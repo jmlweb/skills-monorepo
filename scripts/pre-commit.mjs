@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Runs before every git commit.
 // For each plugin with staged src/ changes, rebuilds dist/ and re-stages it.
+// When a skill or its routing cases are staged, runs the routing eval so a new skill
+// without cases fails here instead of in CI.
 
 import { execSync } from "node:child_process";
 import { readdirSync, existsSync, readFileSync } from "node:fs";
@@ -37,6 +39,19 @@ function stagePluginDist(pluginDir) {
 }
 
 const staged = getStagedFiles();
+
+const touchesRouting = staged.some((f) =>
+  /^plugins\/[^/]+\/(skills\/[^/]+\/SKILL\.md|evals\/routing\.json)$/.test(f),
+);
+
+if (touchesRouting) {
+  console.log("[pre-commit] Running routing eval.");
+  try {
+    execSync("node scripts/routing-eval.mjs", { cwd: root, stdio: "inherit" });
+  } catch {
+    process.exit(1);
+  }
+}
 
 const pluginsToBuild = readdirSync(pluginsDir, { withFileTypes: true })
   .filter((d) => d.isDirectory())
