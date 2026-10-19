@@ -8,7 +8,7 @@ effort: medium
 
 # Next Task
 
-When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group for `/flowstate:parallel` (user-invoked).
+When the highest-scoring candidates are independent (no shared files, no `depends-on` overlap), suggest up to 3 of them as a parallel group for `/flowstate:parallel`.
 
 ## Prerequisites
 
@@ -129,9 +129,9 @@ Done when: one of the two recommendation blocks is printed.
 
 ### 6. Handle Response
 
-- **`parallel` / `all` / `yes` (when a group was offered)**: Tell the user to run `/flowstate:parallel {{IDs}}` with the group's task IDs (the command is user-invoked)
+- **`parallel` / `all` / `yes` (when a group was offered)**: Call the Skill tool with `flowstate:parallel` and the group's task IDs
 - **Single ID or number** (top pick, group member, or any alternative): call the Skill tool with `flowstate:start-task` and that ID; it moves the task to active and begins implementation
-- **Comma-separated IDs**: Tell the user to run `/flowstate:parallel {{IDs}}` with those IDs
+- **Comma-separated IDs**: Call the Skill tool with `flowstate:parallel` and those IDs
 - **Question about a task**: Answer it, leaving every task where it is; the user can reply with an ID afterwards
 - **"no" / silence / unrelated**: end here; the user re-invokes when ready
 

@@ -143,7 +143,7 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:complete-task` | Re-runs the evidence for every ticked criterion, extracts learnings, then moves the task to done |
 | `/flowstate:block-task` | Block a task with a documented reason; suggests alternatives |
 | `/flowstate:check-task` | Does the declared status match the code? One task or the whole backlog |
-| 🙋 `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees |
+| `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees |
 | 🙋 `/flowstate:condense-tasks` | Shrink completed task files (drop notes, trim the log, compress prose). Runs in an isolated subagent so the loop stays out of your context |
 
 ### 🗺️ Ideas

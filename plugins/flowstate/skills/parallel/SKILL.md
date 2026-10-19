@@ -1,7 +1,6 @@
 ---
 name: parallel
-description: Runs independent backlog tasks at once in isolated worktrees via subagents.
-disable-model-invocation: true
+description: Runs independent backlog tasks at once in isolated worktrees via subagents. Use when the user says "run in parallel", "start these together", "work on TSK-001 and TSK-002 at once", or confirms a parallel group offered by next-task. Not for a single task (use start-task).
 argument-hint: [task IDs separated by comma]
 allowed-tools: [Read, "Bash(node:*)", "Bash(git:*)", Glob, Grep, Agent]
 model: sonnet

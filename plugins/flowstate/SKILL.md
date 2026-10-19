@@ -87,7 +87,7 @@ Never store `node <path>` in a shell variable and run `$F ...`: zsh does not wor
 | `/flowstate:review-idea` | User-only: review all pending ideas in order, or one by ID |
 | `/flowstate:report` | File a report (bug, finding, security) |
 | `/flowstate:triage-report` | User-only: triage all pending reports in order, or one by ID |
-| `/flowstate:parallel` | User-only: run multiple tasks in parallel |
+| `/flowstate:parallel` | Run multiple tasks in parallel |
 | `/flowstate:condense-tasks` | User-only: trim Notes and middle Progress Log entries from completed tasks |
 | `/flowstate:add-learning` | Document an insight or lesson learned |
 | `/flowstate:learnings` | Browse the learnings index |
