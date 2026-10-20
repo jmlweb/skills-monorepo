@@ -49,7 +49,15 @@ Any finding → list `file:line` and pattern, stop. The user removes the secret 
 
 Done when: the scan exits 0.
 
-### 3. Resolve template and scope
+### 3. Review the diff
+
+Dispatch `code-reviewer` (unavailable → `general-purpose`, same prompt) with `git diff origin/<base>...HEAD`, the `Finding format` and `Code Quality` sections of `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/checklists.md`, and the full `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/smells.md` pasted into the prompt (subagents don't inherit this skill's context). When the diff touches auth, env vars, payments or DB queries, also dispatch `security-reviewer` in parallel with the `Security` section. An agent that fails is noted as a gap; the run continues.
+
+Keep the Critical, Must Fix and Should Fix lines for step 6. Findings are for the user only: never pass them to `pr-writer` or put them in the PR body.
+
+Done when: every dispatched reviewer returned findings or a noted gap.
+
+### 4. Resolve template and scope
 
 - `--template <path>` given → use it; else:
 
@@ -68,7 +76,7 @@ Use `suggested` as the title scope; none → no scope.
 
 Done when: a template is read and its source is named.
 
-### 4. Gather inputs and write
+### 5. Gather inputs and write
 
 Collect: `git log --format='%h %s%n%b' origin/<base>..HEAD`, `git diff --stat origin/<base>...HEAD`, hunks of the riskiest files (`git diff --unified=3 origin/<base>...HEAD -- <file>`; cap at a few files), and a ticket id (`TSK-123`, `ABC-123`) from the branch name or commits.
 
@@ -78,13 +86,13 @@ Reply starts with `MISSING:` → fix the input and retry once. Otherwise split a
 
 Done when: a title and a body exist.
 
-### 5. Approve
+### 6. Approve
 
-Show the title, the body, base → head, and draft or ready. Ask: **create**, **edit** (apply the user's changes, show again) or **cancel**. Continue only on an explicit yes.
+Show the review findings from step 3 (or "no findings"), then the title, the body, base → head, and draft or ready. Ask: **fix first** (stop so the user fixes and re-runs), **create**, **edit** (apply the user's changes, show again) or **cancel**. Any Critical or Must Fix finding → offer **fix first** as the recommended option. Continue only on an explicit yes.
 
-Done when: the user answered create or cancel.
+Done when: the user answered fix first, create or cancel.
 
-### 6. Push and create
+### 7. Push and create
 
 Only after approval:
 
@@ -102,7 +110,7 @@ Push plainly to the feature branch only; a rejected push is reported and the run
 
 Done when: `gh pr create` prints the PR URL.
 
-### 7. Report
+### 8. Report
 
 ```
 PR #<n> — <title>
@@ -111,7 +119,7 @@ State: draft (or ready) · Base: <base> · Template: <repo|user|builtin>
 Next: /dev-workflow:pr-ready when CI and reviews need driving
 ```
 
-Done when: the block is printed with the URL from Step 6.
+Done when: the block is printed with the URL from step 7.
 
 ## Errors
 
