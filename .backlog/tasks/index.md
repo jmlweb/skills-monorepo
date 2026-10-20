@@ -13,7 +13,7 @@
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
 - TSK-053: Fix: review-idea and triage-report number their decision menus after a numbered list (P3)
-- TSK-056: dev-workflow: readme-media skill generates README screenshots and GIFs (P2) [BLOCKED: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd and ffmpeg installed; none are available unattended. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.]
+- TSK-056: dev-workflow: readme-media skill generates README screenshots and GIFs (P2) [BLOCKED: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd, ffmpeg and a logged-in claude on PATH. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.]
 
 ## Pending Tasks
 

@@ -8,7 +8,7 @@ created: 2026-10-19
 source: idea/PLN-030
 depends-on: []
 started: 2026-10-20
-blocked-by: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd and ffmpeg installed; none are available unattended. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.
+blocked-by: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd, ffmpeg and a logged-in claude on PATH. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.
 ---
 
 # dev-workflow: readme-media skill generates README screenshots and GIFs
@@ -49,3 +49,5 @@ Full plan: .backlog/ideas/complete/ (PLN-030).
 - [2026-10-20] criterion 5 — evidence: pnpm lint:skills → 0 errors 0 warnings; claude plugin validate plugins/dev-workflow → passed; claude plugin validate . → passed (2026-10-20)
 - [2026-10-20] criterion 6 — evidence: scripts/sandbox-readme-media.mjs + .test.mjs added, sandbox:readme-media in root package.json; node --test scripts/*.test.mjs → pass 120 fail 0 (2026-10-20)
 - [2026-10-20] Blocked: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd and ffmpeg installed; none are available unattended. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.
+- [2026-10-20] Blocked: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd, ffmpeg and a logged-in claude on PATH. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.
+- [2026-10-20] Plugin projects now record a live claude session running their slash commands instead of the standalone CLI; plugin tape template smoke-tested with vhs on /flowstate:overview (624 KB GIF)

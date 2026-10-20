@@ -44,4 +44,4 @@
 | LRN-038 | The Bash tool runs zsh: no word-splitting, nomatch globs abort, a leading = is a command lookup | shell, zsh, tooling, skills, flowstate | active | 2026-10-18 |
 | LRN-039 | A bumped version pushed to main ships to users; the tag only cuts the GitHub Release | release, marketplace, claude-code, versioning | active | 2026-10-18 |
 | LRN-040 | Stray package.json or lockfile in a parent dir breaks the suite; turbo drops TMPDIR | testing, tooling, turbo, vitest | active | 2026-10-20 |
-| LRN-041 | readme-media acceptance run needs a human session plus vhs, ttyd and ffmpeg | sandbox, skills, readme-media, testing | active | 2026-10-20 |
+| LRN-041 | readme-media acceptance run needs a human session plus vhs, ttyd, ffmpeg and claude | sandbox, skills, readme-media, testing | active | 2026-10-20 |

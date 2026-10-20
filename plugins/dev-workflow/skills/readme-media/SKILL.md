@@ -34,7 +34,7 @@ Read section 1 of the reference. Apply its table to the manifests in the project
 - Web app: the media is screenshots.
 - Unsupported (library, desktop, mobile): stop and give the reason from the reference.
 - Workspace root with no signal of its own: list the members that qualify, each with its type, and ask which one to document. The chosen member becomes the project root; the root itself is never documented.
-- Claude Code plugin: state that slash-command demos are out of scope and continue only with its standalone CLI.
+- Claude Code plugin: the media is a terminal GIF of a live `claude` session running the plugin's slash commands. A bundled CLI stays behind the skills; its commands appear only in hidden setup.
 
 Done when: the project root and its media type are fixed, or the run has stopped with a reason.
 
@@ -52,12 +52,14 @@ Show one block per shot:
 
 ```
 Shot A: <what it shows>
-  Run:     <commands typed, or URL visited>
+  Run:     <commands typed, slash commands and answers typed, or URL visited>
   Section: <doc heading it goes under>
   File:    docs/media/<slug>.gif or .png
 ```
 
-Commands in a shot are read-only or run against a scratch directory. A shot whose command would change the project, call the network or print secrets is replaced or dropped before you show the list.
+Commands in a shot are read-only or run against a scratch directory. A shot whose command would change the project, call the network or print secrets is replaced or dropped before you show the list. A plugin shot's `claude` session talks to its model; that traffic is expected, and the commands it runs follow the same rule.
+
+For a plugin, pick skills whose output fits on one screen. When a skill asks a question, list the answer the tape types. Note under the list that each recording is a real Claude session: it spends tokens, and every regeneration gives slightly different text.
 
 Ask the user to approve, edit or drop shots. Loop on this step until they approve. Nothing runs before approval: the approved list is the only authority for what executes.
 
@@ -75,7 +77,7 @@ Done when: every check for the media type succeeds.
 
 Run `mkdir -p <project root>/docs/media`. Read section 3 (GIF) or section 4 (screenshots) of the reference.
 
-- GIF: write one `docs/media/<slug>.tape` per shot from the template. Every shot runs inside a scratch directory created in the tape's hidden preamble, so state such as `setup` output never lands in the project tree. When the CLI is not on `PATH`, define it in that same hidden block so the visible command reads like the README's. Run `vhs docs/media/<slug>.tape` from the project root.
+- GIF: write one `docs/media/<slug>.tape` per shot from the template. Every shot runs inside a scratch directory created in the tape's hidden preamble, so state such as `setup` output never lands in the project tree. When the CLI is not on `PATH`, define it in that same hidden block so the visible command reads like the README's. For a plugin, use the Claude Code variant of the template. Run `vhs docs/media/<slug>.tape` from the project root.
 - Screenshots: ask the user for the start command and URL when step 1 could not infer them. Write `docs/media/<slug>.mjs` from the template, start the app, run the script, then stop the app.
 
 Done when: each approved shot has its generator source and its output file in `docs/media/`.

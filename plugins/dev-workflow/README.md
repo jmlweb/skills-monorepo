@@ -326,7 +326,7 @@ Records demo media for a README or doc and embeds it where it belongs. It never 
 ```
 
 **What it does:**
-- 🔍 Detects the project type: CLI/TUI → terminal GIF with [VHS](https://github.com/charmbracelet/vhs); web app → screenshots with [Playwright](https://playwright.dev)
+- 🔍 Detects the project type: CLI/TUI → terminal GIF with [VHS](https://github.com/charmbracelet/vhs); Claude Code plugin → GIF of its slash commands in a live `claude` session; web app → screenshots with [Playwright](https://playwright.dev)
 - 🗂️ At a workspace root, lists the members worth documenting and asks which one
 - 🎯 Proposes 2–5 shots tied to README sections; nothing runs until you approve the list
 - 🧰 Checks the tools with `command -v`; when one is missing it prints the install command and waits
@@ -334,7 +334,7 @@ Records demo media for a README or doc and embeds it where it belongs. It never 
 - ✅ Checks every output (last GIF frame, each screenshot) for blank or error screens and retries up to twice
 - 📝 Shows the README diff with alt-text embeds and the bytes added; applies it only after you say yes
 
-Media and its source (`.tape` or Playwright script) land in `docs/media/` next to the doc, so you can regenerate them. Libraries, desktop and mobile apps, and Claude Code slash-command demos are not supported yet. Templates and detection rules: [`references/readme-media.md`](references/readme-media.md).
+Media and its source (`.tape` or Playwright script) land in `docs/media/` next to the doc, so you can regenerate them. For a Claude Code plugin, the GIF records a live `claude` session running its slash commands. That spends tokens, and each regeneration gives slightly different text. Libraries, desktop and mobile apps are not supported yet. Templates and detection rules: [`references/readme-media.md`](references/readme-media.md).
 
 ---
 

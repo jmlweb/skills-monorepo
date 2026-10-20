@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Live test harness for /dev-workflow:readme-media. The acceptance target is
 // plugins/flowstate's README, so the sandbox is a throwaway workspace root
-// holding a copy of that plugin's README, manifest and compiled CLI: the skill
-// must pick the sub-project, record a GIF into its docs/media/ and embed it,
-// without touching the real repo. Needs vhs, ttyd and ffmpeg on PATH.
+// holding a loadable copy of that plugin (skills, manifest, compiled CLI): the skill
+// must pick the sub-project, record a GIF of its slash commands in a live
+// claude session into its docs/media/ and embed it, without touching the real
+// repo. Needs vhs, ttyd, ffmpeg and claude on PATH.
 //
 //   pnpm sandbox:readme-media          build, fresh sandbox, open Claude, check
 //   pnpm sandbox:readme-media setup    fresh sandbox only
@@ -25,7 +26,8 @@ const ROOT_FILES = {
   "README.md": "# Sandbox marketplace\n\nPlugins live under `plugins/`.\n",
 };
 
-const PROJECT_FILES = ["README.md", "package.json", "dist"];
+// The skills, hooks and manifest come along so `claude --plugin-dir` can load the copy.
+const PROJECT_FILES = ["README.md", "package.json", "SKILL.md", ".claude-plugin", "skills", "shared", "agents", "hooks", "references", "dist"];
 
 // The plugin copy is read from the repo, so the sandbox shows the current CLI.
 function projectFiles() {
@@ -93,10 +95,10 @@ export function checkSandbox(dir = DEFAULT_DIR) {
 
 function printExpectations() {
   console.log(`Expected run (answer the skill's questions as the user):
-  1. Detects a workspace root with no bin and lists ${PROJECT} as a CLI sub-project; pick it.
-  2. Proposes 2-5 shots of the standalone flowstate CLI; no slash-command demos.
-  3. Checks vhs, ttyd and ffmpeg with command -v and installs nothing.
-  4. Records in a scratch dir (flowstate setup never runs inside the sandbox tree).
+  1. Detects a workspace root with no bin and lists ${PROJECT} as a Claude Code plugin; pick it.
+  2. Proposes 2-5 shots of /flowstate:* slash commands in a live claude session, with the answers it types.
+  3. Checks vhs, ttyd, ffmpeg and claude with command -v and installs nothing.
+  4. Records in a scratch dir (hidden flowstate setup never runs inside the sandbox tree).
   5. Shows the README diff with the GIF embed; approve it.
   Pass: a GIF (under 2 MB) and its .tape in ${MEDIA}/, embedded in the README, nothing committed or staged.
 `);
