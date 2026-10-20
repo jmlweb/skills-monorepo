@@ -17,7 +17,8 @@
     "names:check": "node scripts/check-reserved-names.mjs",
     "sandbox:prune-tests": "node scripts/sandbox-prune-tests.mjs",
     "sandbox:deslop": "node scripts/sandbox-deslop.mjs",
-    "sandbox:kickstart": "node scripts/sandbox-kickstart.mjs"
+    "sandbox:kickstart": "node scripts/sandbox-kickstart.mjs",
+    "sandbox:readme-media": "node scripts/sandbox-readme-media.mjs"
   },
   "devDependencies": {
     "simple-git-hooks": "^2.14.0",

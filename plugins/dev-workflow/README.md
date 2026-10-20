@@ -29,9 +29,10 @@ flowchart LR
     DOC["/check-docs"] -. "before a release" .-> M
     HO["/agent-handoff"] -. "work spans repos" .-> OP
     PT["/prune-tests"] -. "suite slow or bloated" .-> CM
+    RM["/readme-media"] -. "README needs a demo" .-> CM
 ```
 
-> 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready`, `/agent-handoff` or `/prune-tests` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
+> 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready`, `/agent-handoff`, `/prune-tests` or `/readme-media` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
 
 | Skill | Use it when… | Writes anything? |
 |-------|--------------|------------------|
@@ -45,6 +46,7 @@ flowchart LR
 | 🤝 🙋 `/agent-handoff` | work spans several repos | Nothing (read-only) |
 | 📝 `/check-docs` | docs may have drifted from the code | Nothing until you approve each change |
 | 🧪 🙋 `/prune-tests` | the suite is slow or you suspect redundant tests | Only the items you approve, in the working tree; never commits |
+| 🎬 🙋 `/readme-media` | your README has no screenshots or demo GIF | GIFs or screenshots plus their sources in `docs/media/`; the README only after you approve the diff; never commits |
 
 ---
 
@@ -313,6 +315,29 @@ Finds tests that repeat what other tests already check, proposes rewrites that k
 
 ---
 
+### 🎬 `/readme-media` — Screenshots and GIFs for your README
+
+Records demo media for a README or doc and embeds it where it belongs. It never installs a tool and never commits.
+
+```bash
+/readme-media                      # README in the current directory
+/readme-media packages/cli         # one workspace member
+/readme-media docs/getting-started.md
+```
+
+**What it does:**
+- 🔍 Detects the project type: CLI/TUI → terminal GIF with [VHS](https://github.com/charmbracelet/vhs); web app → screenshots with [Playwright](https://playwright.dev)
+- 🗂️ At a workspace root, lists the members worth documenting and asks which one
+- 🎯 Proposes 2–5 shots tied to README sections; nothing runs until you approve the list
+- 🧰 Checks the tools with `command -v`; when one is missing it prints the install command and waits
+- 🧪 Records in a scratch directory, so demo commands never touch your tree
+- ✅ Checks every output (last GIF frame, each screenshot) for blank or error screens and retries up to twice
+- 📝 Shows the README diff with alt-text embeds and the bytes added; applies it only after you say yes
+
+Media and its source (`.tape` or Playwright script) land in `docs/media/` next to the doc, so you can regenerate them. Libraries, desktop and mobile apps, and Claude Code slash-command demos are not supported yet. Templates and detection rules: [`references/readme-media.md`](references/readme-media.md).
+
+---
+
 ## 🧰 CLI
 
 The skills call a bundled zero-dependency CLI for everything that must be deterministic. You can run it directly too: add `--json true` to any command for JSON output.
@@ -352,6 +377,7 @@ Exit codes: `0` clean, `1` findings or a failed verification, `2` error.
 | `/deslop` | Git |
 | `/check-docs` | Git |
 | `/prune-tests` | Git (clean working tree) + a supported test runner; coverage needs a coverage provider, Stryker is optional |
+| `/readme-media` | Git; GIFs need `vhs`, `ttyd` and `ffmpeg`; screenshots need Playwright with Chromium (`npx playwright install chromium`) |
 
 ## License
 
