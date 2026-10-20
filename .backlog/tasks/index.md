@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 4 |
+| Pending | 5 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 51 |
@@ -23,6 +23,7 @@
 | TSK-055 | Fix: parallel skill leaves worktrees behind after merge | P3 |  | 2026-10-19 |
 | TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | P2 |  | 2026-10-19 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | P3 |  | 2026-10-19 |
+| TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | P3 |  | 2026-10-20 |
 
 ## Recently Completed
 
