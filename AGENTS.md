@@ -60,9 +60,14 @@ node plugins/flowstate/dist/bin/flowstate.js <cmd> --json true   # run a CLI dir
 pnpm lint:skills         # skill quality bar (add --strict via node scripts/lint-skills.mjs --strict)
 claude plugin validate .   # marketplace + plugin schema validation
 pnpm sandbox:prune-tests   # live /prune-tests run on a throwaway repo: build, Claude, invariant check
+pnpm eval:live             # live `claude plugin eval` suite (flowstate, sonnet); appends to docs/metrics/evals.jsonl and commits it (--no-commit to skip)
 ```
 
 Live skill tests run in a sandbox harness, never by hand (playbook mistakes 17–19).
+
+Live evals run weekly from a local launchd job (`es.jmlweb.skills-evals`, Monday 09:00) on a
+clean `main`; the job skips with exit 3 otherwise. History lives in `docs/metrics/evals.jsonl`,
+one line per case plus a `"case": "*"` suite line per run.
 
 Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI — run
 `pnpm build` before it, or it tests stale code.
