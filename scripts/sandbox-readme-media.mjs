@@ -37,7 +37,7 @@ function projectFiles() {
     if (statSync(absolute).isDirectory()) {
       for (const name of readdirSync(absolute)) collect(join(relative, name));
     } else {
-      files[join(PROJECT, relative)] = readFileSync(absolute);
+      files[join(PROJECT, relative)] = { content: readFileSync(absolute), mode: statSync(absolute).mode };
     }
   };
   PROJECT_FILES.forEach(collect);

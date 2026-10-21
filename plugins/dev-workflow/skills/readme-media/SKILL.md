@@ -33,7 +33,7 @@ Read section 1 of the reference. Apply its table to the manifests in the project
 - CLI or TUI: the media is a terminal GIF.
 - Web app: the media is screenshots.
 - Unsupported (library, desktop, mobile): stop and give the reason from the reference.
-- Workspace root with no signal of its own: list the members that qualify, each with its type, and ask which one to document. The chosen member becomes the project root; the root itself is never documented.
+- Workspace root with no signal of its own: list the members that qualify, each with its type, and ask which one to document. With exactly one, state it and proceed. The chosen member becomes the project root; the root itself is never documented.
 - Claude Code plugin: the media is a terminal GIF of a live `claude` session running the plugin's slash commands. A bundled CLI stays behind the skills; its commands appear only in hidden setup.
 
 Done when: the project root and its media type are fixed, or the run has stopped with a reason.

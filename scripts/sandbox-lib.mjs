@@ -3,7 +3,7 @@
 // owns the throwaway git repo, the generic "skill left the tree clean" checks
 // and the build → sandbox → `claude --plugin-dir` → check flow.
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -21,10 +21,14 @@ export function git(dir, args, env = {}) {
   ).trimEnd(); // porcelain lines start with a meaningful space
 }
 
+// A value is the file's content, or { content, mode } when the copy must keep
+// its executable bit (plugin hooks fail with "Permission denied" otherwise).
 export function writeFiles(dir, files) {
-  for (const [path, content] of Object.entries(files)) {
+  for (const [path, value] of Object.entries(files)) {
+    const { content, mode } = typeof value === "object" && "content" in value ? value : { content: value };
     mkdirSync(dirname(join(dir, path)), { recursive: true });
     writeFileSync(join(dir, path), content);
+    if (mode !== undefined) chmodSync(join(dir, path), mode);
   }
 }
 

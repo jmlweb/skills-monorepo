@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, statSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { checkSandbox, createSandbox, MAX_GIF_BYTES, PROJECT } from "./sandbox-readme-media.mjs";
@@ -39,6 +39,7 @@ test("a fresh sandbox is a workspace root whose sub-project runs its CLI", () =>
     assert.match(help, /flowstate/i);
     assert.ok(existsSync(join(dir, PROJECT, ".claude-plugin", "plugin.json")), "plugin manifest copied");
     assert.ok(existsSync(join(dir, PROJECT, "skills", "add-task", "SKILL.md")), "skills copied");
+    assert.ok(statSync(join(dir, PROJECT, "hooks", "pre-commit-reminder.sh")).mode & 0o100, "hooks stay executable");
   });
 });
 

@@ -92,12 +92,12 @@ Output docs/media/<slug>.gif
 
 Set Shell "bash"
 Set FontSize 16
-Set Width 1200
-Set Height 800
+Set Width 1000
+Set Height 1000
 Set Padding 20
 Set TypingSpeed 40ms
 Set Theme "Catppuccin Mocha"
-Set PlaybackSpeed 2.0
+Set PlaybackSpeed 3.0
 
 Hide
 Type `unset CLAUDECODE CLAUDE_CODE_CHILD_SESSION CLAUDE_CODE_ENTRYPOINT; export PROJECT="$PWD" && cd "$(mktemp -d)" && git init -q`
@@ -117,7 +117,7 @@ Show
 Type "/myplugin:add-task Fix pagination off-by-one"
 Sleep 300ms
 Enter
-Wait+Screen@180s /yes/
+Wait+Screen@180s /· done /
 Sleep 2s
 Type "yes"
 Enter
@@ -133,11 +133,13 @@ Sleep 3s
   no permission prompt covers the output.
 - Seed the state a shot needs (the `setup` line) through the plugin's CLI in the hidden
   block; drop that line when the plugin has no CLI or the shot needs no state.
-- Each visible `Wait+Screen` regex is text the skill prints when that stage ends: its
-  question before a typed answer, its final output (a new ID, a table row) at the end.
-  Shots with no question drop the answer lines.
-- `PlaybackSpeed 2.0` halves model latency in the GIF. Raise it when the GIF breaks the
-  2 MB ceiling; raise `Height` when the output's top scrolls away in the last frame.
+- Each visible `Wait+Screen` regex matches fixed text, never model wording, which changes
+  between runs. Before a typed answer, wait for Claude Code's turn-end line (`· done `);
+  at the end, wait for output the skill's CLI prints (a new ID, a table row). Shots with
+  no question drop the answer lines.
+- `PlaybackSpeed 3.0` cuts model latency in the GIF. Raise it, or lower `Width`, when the
+  GIF breaks the 2 MB ceiling; raise `Height` when the output's top scrolls away in the
+  last frame.
 
 ## 4. Playwright script template (step 5)
 
