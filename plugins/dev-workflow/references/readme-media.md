@@ -84,8 +84,8 @@ Sleep 3s
 
 ### Claude Code plugin variant
 
-The hidden block opens `claude` with the plugin loaded, in a fresh scratch dir, and
-waits until the session is ready. The recording starts at an empty prompt.
+The hidden block copies the plugin and opens `claude` with it in a fresh scratch dir,
+then waits until the session is ready. The recording starts at an empty prompt.
 
 ```tape
 Output docs/media/<slug>.gif
@@ -100,11 +100,13 @@ Set Theme "Catppuccin Mocha"
 Set PlaybackSpeed 3.0
 
 Hide
-Type `unset CLAUDECODE CLAUDE_CODE_CHILD_SESSION CLAUDE_CODE_ENTRYPOINT; export PROJECT="$PWD" && cd "$(mktemp -d)" && git init -q`
+Type `unset CLAUDECODE CLAUDE_CODE_CHILD_SESSION CLAUDE_CODE_ENTRYPOINT; export MYPLUGIN_SHARED=off`
 Enter
-Type `node "$PROJECT/dist/bin/mycli.js" setup >/dev/null`
+Type `P="$(mktemp -d)/myplugin" && cp -R "$PWD" "$P" && cd "$(mktemp -d)" && git init -q`
 Enter
-Type `clear && claude --plugin-dir "$PROJECT" --permission-mode default --allowedTools 'Bash(node:*)' 'Read' --settings '{"statusLine":{"type":"command","command":"true"}}'`
+Type `node "$P/dist/bin/mycli.js" setup >/dev/null`
+Enter
+Type `clear && claude --plugin-dir "$P" --strict-mcp-config --permission-mode default --allowedTools 'Bash(node:*)' 'Read' --settings '{"statusLine":{"type":"command","command":"true"}}'`
 Enter
 Wait+Screen@30s /Yes, I trust this folder/
 Sleep 500ms
@@ -117,29 +119,37 @@ Show
 Type "/myplugin:add-task Fix pagination off-by-one"
 Sleep 300ms
 Enter
-Wait+Screen@180s /· done /
+Wait+Screen@180s / for (\d+m )?\d+s · done \d/
 Sleep 2s
 Type "yes"
 Enter
-Wait+Screen@180s /TSK-\d+/
-Sleep 3s
+Wait+Screen@180s /TSK-001-fix/
+Sleep 5s
 ```
 
 - The folder-trust dialog defaults to "No, exit", so the tape moves `Down` before `Enter`.
 - The `unset` keeps a parent Claude Code session's markers out of the child, which
   otherwise prints a transcript warning in the footer.
-- `--permission-mode default` and the blank `statusLine` keep the user's own mode, cost
-  and branch out of the GIF. `--allowedTools` copies the shot's skill `allowed-tools`, so
-  no permission prompt covers the output.
+- The plugin runs from a copy in a temp dir, so tool-call previews show a temp path
+  instead of the user's home directory.
+- Turn off any plugin feature that reads or writes outside the scratch dir (flowstate:
+  `FLOWSTATE_SHARED=off`, or other projects' learnings show up and the scratch backlog
+  registers in `~/.config`). The `MYPLUGIN_SHARED` line stands for that switch.
+- `--strict-mcp-config` loads no MCP servers; `--permission-mode default` and the blank
+  `statusLine` keep the user's mode, cost and branch out of the GIF. `--allowedTools`
+  copies the shot's skill `allowed-tools`, so no permission prompt covers the output.
 - Seed the state a shot needs (the `setup` line) through the plugin's CLI in the hidden
   block; drop that line when the plugin has no CLI or the shot needs no state.
-- Each visible `Wait+Screen` regex matches fixed text, never model wording, which changes
-  between runs. Before a typed answer, wait for Claude Code's turn-end line (`· done `);
-  at the end, wait for output the skill's CLI prints (a new ID, a table row). Shots with
-  no question drop the answer lines.
+- `Wait+Screen` sees only the visible screen, so anchor on text at the bottom: the
+  turn-end line (`Churned for 12s · done 2:54 AM`, matched by the regex above), or text
+  that exists only after the skill's CLI ran (the new task file's slug). Never anchor
+  on model wording or a heading that scrolls away.
+- A shot with no question drops the answer lines and ends on the turn-end wait. A shot
+  with a question ends on CLI output, because its first turn-end line is still on screen.
+- Every shot ends with `Sleep 5s` or more after its last `Wait`: the GIF's frames lag the
+  terminal, and a tape that stops at the `Wait` keeps a mid-turn last frame.
 - `PlaybackSpeed 3.0` cuts model latency in the GIF. Raise it, or lower `Width`, when the
-  GIF breaks the 2 MB ceiling; raise `Height` when the output's top scrolls away in the
-  last frame.
+  GIF breaks the 2 MB ceiling; raise `Height` when the output's top scrolls away.
 
 ## 4. Playwright script template (step 5)
 
