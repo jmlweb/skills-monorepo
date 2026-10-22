@@ -34,6 +34,8 @@ import {
   settingsSnippet,
 } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import { FileStore } from "../core/file-store.js";
+import type { BacklogStore } from "../core/store.js";
 import {
   isSharedEnabled,
   registerBacklog,
@@ -315,6 +317,8 @@ async function main(): Promise<void> {
 
     const resolved = resolveBacklog(process.cwd());
     const root = resolved.dir;
+    // Learnings, stats, index-rebuild and task-doctor still read the directory directly.
+    const store: BacklogStore = new FileStore(root);
     await registerForSharing(root);
 
     switch (command) {
@@ -337,7 +341,7 @@ async function main(): Promise<void> {
 
       case "task-create": {
         const body = await getBody(flags);
-        const result = await taskCreate(root, {
+        const result = await taskCreate(store, {
           title: required(flags, "title"),
           priority: validatePriority(required(flags, "priority")),
           tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
@@ -355,7 +359,7 @@ async function main(): Promise<void> {
       case "task-list": {
         const status = flags["status"] ? asTaskStatus(flags["status"]) : undefined;
         const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
-        const items = await taskList(root, status, limit);
+        const items = await taskList(store, status, limit);
         output(items, json);
         break;
       }
@@ -373,7 +377,7 @@ async function main(): Promise<void> {
           process.exit(1);
         }
         const to = toRaw as "active" | "complete" | "pending";
-        const result = await taskMove(root, id, to);
+        const result = await taskMove(store, id, to);
         if (json) {
           output(result, true);
         } else {
@@ -393,7 +397,7 @@ async function main(): Promise<void> {
           console.error("Usage: flowstate task-block <id> --reason <text>");
           process.exit(1);
         }
-        const result = await taskBlock(root, id, required(flags, "reason"));
+        const result = await taskBlock(store, id, required(flags, "reason"));
         output(result, json);
         break;
       }
@@ -415,7 +419,7 @@ async function main(): Promise<void> {
         const log = flags["log"] === "-" ? await readStdin() : flags["log"];
         const checkCriteria = parseCriteriaIndexes(flags["check"]);
         const result = await taskUpdate(
-          root,
+          store,
           id,
           updates,
           log,
@@ -432,14 +436,14 @@ async function main(): Promise<void> {
           console.error("Usage: flowstate task-unblock <id> [--resolution text]");
           process.exit(1);
         }
-        const result = await taskUnblock(root, id, flags["resolution"]);
+        const result = await taskUnblock(store, id, flags["resolution"]);
         output(result, json);
         break;
       }
 
       case "task-condense": {
         if (flags["all"] === "true") {
-          const results = await taskCondenseAll(root);
+          const results = await taskCondenseAll(store);
           output(results, json);
         } else {
           const id = positional[0];
@@ -447,7 +451,7 @@ async function main(): Promise<void> {
             console.error("Usage: flowstate task-condense <id> | flowstate task-condense --all");
             process.exit(1);
           }
-          const result = await taskCondense(root, id);
+          const result = await taskCondense(store, id);
           output(result, json);
         }
         break;
@@ -459,7 +463,7 @@ async function main(): Promise<void> {
           console.error("Usage: flowstate task-normalize <id>");
           process.exit(1);
         }
-        const result = await taskNormalize(root, id);
+        const result = await taskNormalize(store, id);
         output(result, json);
         break;
       }
@@ -475,7 +479,7 @@ async function main(): Promise<void> {
           console.error("Missing --body (use --body - to read from stdin)");
           process.exit(1);
         }
-        const result = await taskCompress(root, id, body);
+        const result = await taskCompress(store, id, body);
         output(result, json);
         if (!result.ok && !result.skippedReason) process.exit(2);
         break;
@@ -504,7 +508,7 @@ async function main(): Promise<void> {
 
       case "idea-create": {
         const body = await getBody(flags);
-        const result = await ideaCreate(root, {
+        const result = await ideaCreate(store, {
           title: required(flags, "title"),
           complexity: validateComplexity(required(flags, "complexity")),
           body,
@@ -527,7 +531,7 @@ async function main(): Promise<void> {
           status = statusRaw as IdeaListStatus;
         }
         const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
-        const result = await ideaList(root, {
+        const result = await ideaList(store, {
           ...(status !== undefined ? { status } : {}),
           ...(limit !== undefined ? { limit } : {}),
         });
@@ -542,7 +546,7 @@ async function main(): Promise<void> {
           process.exit(1);
         }
         const result = await ideaMove(
-          root,
+          store,
           id,
           required(flags, "status") as "approved" | "discarded",
           flags["task-id"],
@@ -553,7 +557,7 @@ async function main(): Promise<void> {
 
       case "report-create": {
         const body = await getBody(flags);
-        const result = await reportCreate(root, {
+        const result = await reportCreate(store, {
           title: required(flags, "title"),
           type: validateReportType(required(flags, "type")),
           severity: validateSeverity(required(flags, "severity")),
@@ -570,7 +574,7 @@ async function main(): Promise<void> {
           process.exit(1);
         }
         const result = await reportMove(
-          root,
+          store,
           id,
           required(flags, "status") as "triaged" | "discarded",
           flags["task-id"],

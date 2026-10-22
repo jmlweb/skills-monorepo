@@ -1,3 +1,4 @@
+import type { BacklogStore } from "../core/store.js";
 export interface TaskCondenseResult {
     readonly id: string;
     readonly path: string;
@@ -6,5 +7,5 @@ export interface TaskCondenseResult {
     readonly bytesAfter: number;
     readonly skippedReason?: string;
 }
-export declare function taskCondense(root: string, id: string): Promise<TaskCondenseResult>;
-export declare function taskCondenseAll(root: string): Promise<TaskCondenseResult[]>;
+export declare function taskCondense(store: BacklogStore, id: string): Promise<TaskCondenseResult>;
+export declare function taskCondenseAll(store: BacklogStore): Promise<TaskCondenseResult[]>;

@@ -6,6 +6,7 @@ import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
 import { taskCondense } from "./task-condense.js";
 import { taskMove } from "./task-move.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -20,7 +21,7 @@ afterEach(async () => {
 
 describe("taskCreate", () => {
   it("creates a task file in pending/", async () => {
-    const result = await taskCreate(tmp, {
+    const result = await taskCreate(new FileStore(tmp), {
       title: "Fix authentication bug",
       priority: "P2",
       tags: ["api", "auth"],
@@ -45,7 +46,7 @@ describe("taskCreate", () => {
   });
 
   it("increments ID for subsequent tasks", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "First task",
       priority: "P3",
       tags: [],
@@ -55,7 +56,7 @@ describe("taskCreate", () => {
       dependsOn: [],
     });
 
-    const result = await taskCreate(tmp, {
+    const result = await taskCreate(new FileStore(tmp), {
       title: "Second task",
       priority: "P1",
       tags: ["urgent"],
@@ -69,7 +70,7 @@ describe("taskCreate", () => {
   });
 
   it("updates the task index", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: ["api"],
@@ -88,7 +89,7 @@ describe("taskCreate", () => {
   });
 
   it("handles plan source", async () => {
-    const result = await taskCreate(tmp, {
+    const result = await taskCreate(new FileStore(tmp), {
       title: "From plan",
       priority: "P2",
       tags: [],
@@ -119,7 +120,7 @@ describe("taskCreate", () => {
     ].join("\n");
 
     const create = () =>
-      taskCreate(tmp, {
+      taskCreate(new FileStore(tmp), {
         title: "Idea task",
         priority: "P3",
         tags: [],
@@ -150,7 +151,7 @@ describe("taskCreate", () => {
     });
 
     it("keeps task-condense acting on the single Notes section", async () => {
-      const { id } = await taskCreate(tmp, {
+      const { id } = await taskCreate(new FileStore(tmp), {
         title: "Condense me",
         priority: "P3",
         tags: [],
@@ -159,8 +160,8 @@ describe("taskCreate", () => {
         source: "idea/IDE-001",
         dependsOn: [],
       });
-      await taskMove(tmp, id, "complete");
-      await taskCondense(tmp, id);
+      await taskMove(new FileStore(tmp), id, "complete");
+      await taskCondense(new FileStore(tmp), id);
       const dir = join(tmp, "tasks", "complete");
       const file = (await readdir(dir)).find((f) => f.startsWith(`${id}-`));
       const content = await readFile(join(dir, file!), "utf-8");

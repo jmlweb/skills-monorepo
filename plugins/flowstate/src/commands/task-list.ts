@@ -1,7 +1,6 @@
-import { join } from "node:path";
 import type { TaskStatus } from "../core/types.js";
-import { taskDir } from "../core/paths.js";
-import { listFiles, readEntity } from "../core/fs.js";
+import type { BacklogStore, TaskBucket } from "../core/store.js";
+import { BUCKETS } from "../core/store.js";
 
 export interface TaskListItem {
   readonly id: string;
@@ -17,44 +16,35 @@ export interface TaskListItem {
 }
 
 export async function taskList(
-  root: string,
+  store: BacklogStore,
   status?: TaskStatus,
   limit?: number,
 ): Promise<TaskListItem[]> {
-  const statuses: TaskStatus[] = status
-    ? [status]
-    : ["pending", "active", "complete"];
+  // Blocked tasks sit in the active bucket.
+  const buckets: readonly TaskBucket[] = !status
+    ? BUCKETS.task
+    : [status === "blocked" ? "active" : status];
 
   const items: TaskListItem[] = [];
 
-  for (const s of statuses) {
-    const dir = taskDir(root, s);
-    const files = await listFiles(dir);
+  for (const task of await store.list("task", buckets)) {
+    const fm = task.frontmatter;
 
-    for (const file of files) {
-      if (file.name === "index.md") continue;
-      const filePath = join(dir, file.name);
-      const doc = await readEntity(filePath);
-      const fm = doc.frontmatter as Record<string, unknown>;
+    // Filter blocked tasks when status=blocked
+    if (status === "blocked" && !fm["blocked-by"]) continue;
 
-      const item: TaskListItem = {
-        id: String(fm["id"] ?? ""),
-        title: String(fm["title"] ?? ""),
-        status: String(fm["status"] ?? s),
-        priority: String(fm["priority"] ?? ""),
-        tags: Array.isArray(fm["tags"]) ? fm["tags"] as string[] : [],
-        created: String(fm["created"] ?? ""),
-        started: fm["started"] ? String(fm["started"]) : undefined,
-        completed: fm["completed"] ? String(fm["completed"]) : undefined,
-        blockedBy: fm["blocked-by"] ? String(fm["blocked-by"]) : undefined,
-        path: filePath,
-      };
-
-      // Filter blocked tasks when status=blocked
-      if (status === "blocked" && !fm["blocked-by"]) continue;
-
-      items.push(item);
-    }
+    items.push({
+      id: String(fm["id"] ?? ""),
+      title: String(fm["title"] ?? ""),
+      status: String(fm["status"] ?? task.bucket),
+      priority: String(fm["priority"] ?? ""),
+      tags: Array.isArray(fm["tags"]) ? fm["tags"] as string[] : [],
+      created: String(fm["created"] ?? ""),
+      started: fm["started"] ? String(fm["started"]) : undefined,
+      completed: fm["completed"] ? String(fm["completed"]) : undefined,
+      blockedBy: fm["blocked-by"] ? String(fm["blocked-by"]) : undefined,
+      path: task.path,
+    });
   }
 
   items.sort((a, b) => a.priority.localeCompare(b.priority));

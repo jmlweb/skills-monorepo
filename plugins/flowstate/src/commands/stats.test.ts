@@ -7,6 +7,7 @@ import { taskCreate } from "./task-create.js";
 import { taskMove } from "./task-move.js";
 import { taskBlock } from "./task-block.js";
 import { setup } from "./setup.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -26,21 +27,21 @@ describe("stats", () => {
   });
 
   it("counts tasks by status", async () => {
-    await taskCreate(tmp, { title: "A", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
-    await taskCreate(tmp, { title: "B", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
-    await taskCreate(tmp, { title: "C", priority: "P1", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
-    await taskMove(tmp, "TSK-002", "active");
-    await taskMove(tmp, "TSK-003", "active");
-    await taskMove(tmp, "TSK-003", "complete");
+    await taskCreate(new FileStore(tmp), { title: "A", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskCreate(new FileStore(tmp), { title: "B", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskCreate(new FileStore(tmp), { title: "C", priority: "P1", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskMove(new FileStore(tmp), "TSK-002", "active");
+    await taskMove(new FileStore(tmp), "TSK-003", "active");
+    await taskMove(new FileStore(tmp), "TSK-003", "complete");
 
     const result = await stats(tmp);
     expect(result).toEqual({ pending: 1, active: 1, blocked: 0, complete: 1, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
   });
 
   it("counts blocked tasks separately", async () => {
-    await taskCreate(tmp, { title: "A", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
-    await taskMove(tmp, "TSK-001", "active");
-    await taskBlock(tmp, "TSK-001", "waiting");
+    await taskCreate(new FileStore(tmp), { title: "A", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting");
 
     const result = await stats(tmp);
     expect(result).toEqual({ pending: 0, active: 0, blocked: 1, complete: 0, pendingIdeas: 0, pendingReports: 0, learnings: 0 });

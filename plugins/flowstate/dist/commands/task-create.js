@@ -1,28 +1,7 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { today } from "../core/date.js";
-import { titleToSlug } from "../core/slug.js";
-import { taskDir, taskIndexPath } from "../core/paths.js";
-import { writeEntity } from "../core/fs.js";
-import { addTableRow, embedUnderDescription } from "../core/markdown.js";
-import { nextId } from "./next-id.js";
-export async function taskCreate(root, input) {
-    const id = await nextId(root, "task");
-    const slug = titleToSlug(input.title);
-    const filename = `${id}-${slug}.md`;
+import { embedUnderDescription } from "../core/markdown.js";
+export async function taskCreate(store, input) {
     const date = today();
-    const dir = taskDir(root, "pending");
-    const filePath = join(dir, filename);
-    const frontmatter = {
-        id,
-        title: input.title,
-        status: "pending",
-        priority: input.priority,
-        tags: [...input.tags],
-        created: date,
-        source: input.source,
-        "depends-on": [...input.dependsOn],
-    };
     const criteriaLines = input.criteria.length > 0
         ? input.criteria.map((c) => `- [ ] ${c}`).join("\n")
         : "";
@@ -45,26 +24,19 @@ ${notes ? `\n${notes}\n` : ""}
 ## Progress Log
 
 - [${date}] Created`;
-    await writeEntity(filePath, frontmatter, body);
-    // Update task index
-    await updateTaskIndex(root, id, input, date);
-    return { id, path: filePath };
-}
-async function updateTaskIndex(root, id, input, date) {
-    const indexPath = taskIndexPath(root);
-    let content = await readFile(indexPath, "utf-8");
-    const tags = input.tags.length > 0 ? input.tags.join(", ") : "";
-    const row = `| ${id} | ${input.title} | ${input.priority} | ${tags} | ${date} |`;
-    content = addTableRow(content, "Pending Tasks", row);
-    // Update stats
-    content = incrementStat(content, "Pending");
-    await writeFile(indexPath, content, "utf-8");
-}
-function incrementStat(content, label) {
-    const pattern = new RegExp(`\\| ${label} \\| (\\d+) \\|`);
-    const match = content.match(pattern);
-    if (!match)
-        return content;
-    const current = parseInt(match[1], 10);
-    return content.replace(pattern, `| ${label} | ${current + 1} |`);
+    const created = await store.create("task", {
+        title: input.title,
+        frontmatter: (id) => ({
+            id,
+            title: input.title,
+            status: "pending",
+            priority: input.priority,
+            tags: [...input.tags],
+            created: date,
+            source: input.source,
+            "depends-on": [...input.dependsOn],
+        }),
+        body,
+    });
+    return { id: created.id, path: created.path };
 }

@@ -6,6 +6,7 @@ import { ideaCreate } from "./idea-create.js";
 import { ideaMove } from "./idea-move.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -20,7 +21,7 @@ afterEach(async () => {
 
 describe("ideaCreate", () => {
   it("creates an idea in ideas/pending/", async () => {
-    const result = await ideaCreate(tmp, {
+    const result = await ideaCreate(new FileStore(tmp), {
       title: "Refactor auth module",
       complexity: "medium",
       body: "# Refactor auth module\n\n## Goal\n\nClean up auth.",
@@ -37,13 +38,13 @@ describe("ideaCreate", () => {
 
 describe("ideaMove", () => {
   it("moves idea to complete/ with approved status", async () => {
-    const { id } = await ideaCreate(tmp, {
+    const { id } = await ideaCreate(new FileStore(tmp), {
       title: "Refactor auth",
       complexity: "high",
       body: "Idea body",
     });
 
-    const result = await ideaMove(tmp, id, "approved", "TSK-001");
+    const result = await ideaMove(new FileStore(tmp), id, "approved", "TSK-001");
 
     expect(result.path).toContain("ideas/complete/");
     const doc = await readEntity(result.path);
@@ -54,13 +55,13 @@ describe("ideaMove", () => {
   });
 
   it("moves idea to complete/ with discarded status", async () => {
-    const { id } = await ideaCreate(tmp, {
+    const { id } = await ideaCreate(new FileStore(tmp), {
       title: "Bad idea",
       complexity: "low",
       body: "Nope",
     });
 
-    const result = await ideaMove(tmp, id, "discarded");
+    const result = await ideaMove(new FileStore(tmp), id, "discarded");
     const doc = await readEntity(result.path);
     const fm = doc.frontmatter as Record<string, unknown>;
     expect(fm["status"]).toBe("discarded");
@@ -68,6 +69,6 @@ describe("ideaMove", () => {
   });
 
   it("throws for non-existent idea", async () => {
-    await expect(ideaMove(tmp, "PLN-999", "approved")).rejects.toThrow("not found");
+    await expect(ideaMove(new FileStore(tmp), "PLN-999", "approved")).rejects.toThrow("not found");
   });
 });

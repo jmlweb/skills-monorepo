@@ -7,13 +7,14 @@ import { taskCreate } from "./task-create.js";
 import { taskMove } from "./task-move.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
 beforeEach(async () => {
   tmp = await mkdtemp(join(tmpdir(), "flowstate-test-"));
   await setup(tmp, "Test");
-  await taskCreate(tmp, {
+  await taskCreate(new FileStore(tmp), {
     title: "Fix bug",
     priority: "P2",
     tags: [],
@@ -30,7 +31,7 @@ afterEach(async () => {
 
 describe("taskBlock", () => {
   it("sets status to blocked and adds blocked-by", async () => {
-    const result = await taskBlock(tmp, "TSK-001", "waiting for API");
+    const result = await taskBlock(new FileStore(tmp), "TSK-001", "waiting for API");
 
     const doc = await readEntity(result.path);
     const fm = doc.frontmatter as Record<string, unknown>;
@@ -39,15 +40,15 @@ describe("taskBlock", () => {
   });
 
   it("adds a progress log entry", async () => {
-    const result = await taskBlock(tmp, "TSK-001", "waiting for API");
+    const result = await taskBlock(new FileStore(tmp), "TSK-001", "waiting for API");
 
     const doc = await readEntity(result.path);
     expect(doc.body).toContain("Blocked: waiting for API");
   });
 
   it("works on active tasks", async () => {
-    await taskMove(tmp, "TSK-001", "active");
-    const result = await taskBlock(tmp, "TSK-001", "dependency missing");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    const result = await taskBlock(new FileStore(tmp), "TSK-001", "dependency missing");
 
     const doc = await readEntity(result.path);
     const fm = doc.frontmatter as Record<string, unknown>;
@@ -57,7 +58,7 @@ describe("taskBlock", () => {
 
   it("throws for non-existent task", async () => {
     await expect(
-      taskBlock(tmp, "TSK-999", "reason"),
+      taskBlock(new FileStore(tmp), "TSK-999", "reason"),
     ).rejects.toThrow("not found");
   });
 });

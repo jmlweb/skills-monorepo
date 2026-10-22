@@ -6,6 +6,7 @@ import { learningCreate } from "./learning-create.js";
 import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -49,7 +50,7 @@ describe("learningCreate", () => {
   });
 
   it("does not fail when the target task has no Learnings section", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Legacy task",
       priority: "P2",
       tags: [],
@@ -85,7 +86,7 @@ describe("learningCreate", () => {
   });
 
   it("appends link to task when task specified", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],

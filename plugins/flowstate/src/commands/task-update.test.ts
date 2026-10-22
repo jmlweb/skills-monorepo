@@ -6,13 +6,14 @@ import { taskUpdate, parseEvidence } from "./task-update.js";
 import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
 beforeEach(async () => {
   tmp = await mkdtemp(join(tmpdir(), "flowstate-test-"));
   await setup(tmp, "Test");
-  await taskCreate(tmp, {
+  await taskCreate(new FileStore(tmp), {
     title: "Fix bug",
     priority: "P2",
     tags: [],
@@ -29,7 +30,7 @@ afterEach(async () => {
 
 describe("taskUpdate", () => {
   it("updates frontmatter fields", async () => {
-    const result = await taskUpdate(tmp, "TSK-001", {
+    const result = await taskUpdate(new FileStore(tmp), "TSK-001", {
       priority: "P1",
     });
 
@@ -39,8 +40,7 @@ describe("taskUpdate", () => {
   });
 
   it("adds a progress log entry", async () => {
-    const result = await taskUpdate(
-      tmp,
+    const result = await taskUpdate(new FileStore(tmp),
       "TSK-001",
       { priority: "P1" },
       "Escalated priority",
@@ -52,31 +52,31 @@ describe("taskUpdate", () => {
 
   it("rejects status as a key", async () => {
     await expect(
-      taskUpdate(tmp, "TSK-001", { status: "blocked" }),
+      taskUpdate(new FileStore(tmp), "TSK-001", { status: "blocked" }),
     ).rejects.toThrow(/Cannot set "status" via task-update/);
   });
 
   it("rejects blocked-by as a key", async () => {
     await expect(
-      taskUpdate(tmp, "TSK-001", { "blocked-by": "waiting for API" }),
+      taskUpdate(new FileStore(tmp), "TSK-001", { "blocked-by": "waiting for API" }),
     ).rejects.toThrow(/Cannot set "blocked-by" via task-update/);
   });
 
   it("throws for non-existent task", async () => {
     await expect(
-      taskUpdate(tmp, "TSK-999", { priority: "P1" }),
+      taskUpdate(new FileStore(tmp), "TSK-999", { priority: "P1" }),
     ).rejects.toThrow("not found");
   });
 
   const taskPath = async (): Promise<string> =>
-    (await taskUpdate(tmp, "TSK-001", {})).path;
+    (await taskUpdate(new FileStore(tmp), "TSK-001", {})).path;
 
   it("inserts the log entry into ## Progress Log, not at the end of the body", async () => {
     const path = await taskPath();
     const original = await readFile(path, "utf-8");
     await writeFile(path, `${original.trimEnd()}\n\n## Appendix\n\nTrailing section\n`);
 
-    await taskUpdate(tmp, "TSK-001", {}, "Investigated");
+    await taskUpdate(new FileStore(tmp), "TSK-001", {}, "Investigated");
 
     const doc = await readEntity(path);
     const logEntry = doc.body.indexOf("Investigated");
@@ -85,7 +85,7 @@ describe("taskUpdate", () => {
   });
 
   it("writes one dated bullet per non-empty line of a multi-line log", async () => {
-    const result = await taskUpdate(tmp, "TSK-001", {}, "Fixed parser\n\nNext: add tests\n");
+    const result = await taskUpdate(new FileStore(tmp), "TSK-001", {}, "Fixed parser\n\nNext: add tests\n");
 
     const doc = await readEntity(result.path);
     expect(doc.body).toMatch(
@@ -98,14 +98,14 @@ describe("taskUpdate", () => {
     const original = await readFile(path, "utf-8");
     await writeFile(path, original.replace("## Progress Log", "## Log"));
 
-    await expect(taskUpdate(tmp, "TSK-001", {}, "Investigated")).rejects.toMatchObject({
+    await expect(taskUpdate(new FileStore(tmp), "TSK-001", {}, "Investigated")).rejects.toMatchObject({
       name: "SectionNotFoundError",
       message: expect.stringContaining('"## Progress Log"'),
     });
   });
 
   it("ticks acceptance criteria by index", async () => {
-    const result = await taskUpdate(tmp, "TSK-001", {}, undefined, [1, 3]);
+    const result = await taskUpdate(new FileStore(tmp), "TSK-001", {}, undefined, [1, 3]);
 
     const doc = await readEntity(result.path);
     expect(doc.body).toContain("- [x] Reproduce\n- [ ] Fix\n- [x] Add test");
@@ -115,13 +115,13 @@ describe("taskUpdate", () => {
     const path = await taskPath();
     const before = await readFile(path, "utf-8");
 
-    await expect(taskUpdate(tmp, "TSK-001", {}, "Log", [9])).rejects.toThrow(/out of range/);
+    await expect(taskUpdate(new FileStore(tmp), "TSK-001", {}, "Log", [9])).rejects.toThrow(/out of range/);
 
     expect(await readFile(path, "utf-8")).toBe(before);
   });
 
   it("writes an inline evidence suffix on ticked criteria", async () => {
-    const result = await taskUpdate(tmp, "TSK-001", {}, undefined, [1, 3], {
+    const result = await taskUpdate(new FileStore(tmp), "TSK-001", {}, undefined, [1, 3], {
       3: "pnpm test → exit 0",
     });
 
@@ -136,7 +136,7 @@ describe("taskUpdate", () => {
     const before = await readFile(path, "utf-8");
 
     await expect(
-      taskUpdate(tmp, "TSK-001", {}, undefined, [1], { 2: "proof" }),
+      taskUpdate(new FileStore(tmp), "TSK-001", {}, undefined, [1], { 2: "proof" }),
     ).rejects.toMatchObject({ name: "InvalidArgumentError" });
 
     expect(await readFile(path, "utf-8")).toBe(before);
