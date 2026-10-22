@@ -25,6 +25,11 @@ describe("ideaList", () => {
     expect(results).toEqual([]);
   });
 
+  it("reads a backlog with no ideas/ folder as having no ideas", async () => {
+    await rm(join(tmp, "ideas"), { recursive: true });
+    expect(await ideaList(new FileStore(tmp), { status: "all" })).toEqual([]);
+  });
+
   it("lists pending ideas by default", async () => {
     await ideaCreate(new FileStore(tmp), { title: "Idea A", complexity: "low", body: "body a" });
     await ideaCreate(new FileStore(tmp), { title: "Idea B", complexity: "medium", body: "body b" });

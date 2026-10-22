@@ -1,5 +1,6 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { basename, join } from "node:path";
+import { existsSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import type { EntityType } from "./types.js";
 import { ENTITY_PREFIXES } from "./types.js";
 import { ENTITY_DIRS, ideaDir, reportDir, taskDir, taskIndexPath } from "./paths.js";
@@ -29,6 +30,7 @@ export class FileStore implements BacklogStore {
     const entities: StoredEntity[] = [];
     for (const bucket of buckets) {
       const dir = this.dir(type, bucket);
+      if (this.isMissingTypeFolder(type, dir)) continue;
       for (const file of await listFiles(dir)) {
         if (file.name === "index.md") continue;
         entities.push(await this.read(type, bucket, join(dir, file.name)));
@@ -44,6 +46,7 @@ export class FileStore implements BacklogStore {
   ): Promise<StoredEntity | undefined> {
     for (const bucket of buckets) {
       const dir = this.dir(type, bucket);
+      if (this.isMissingTypeFolder(type, dir)) continue;
       const fileName = await findEntityFile(dir, id);
       if (fileName) return this.read(type, bucket, join(dir, fileName));
     }
@@ -72,6 +75,12 @@ export class FileStore implements BacklogStore {
     if (path !== entity.path) await moveFile(entity.path, path);
     if (entity.type === "task") await indexRebuild(this.root, "tasks");
     return { ...entity, bucket: to, frontmatter, body, path };
+  }
+
+  // Backlogs set up before ideas or reports existed lack that folder, and git drops it
+  // when empty, so it reads as "none yet". A missing tasks/ or root still throws (LRN-001).
+  private isMissingTypeFolder(type: StoredType, dir: string): boolean {
+    return type !== "task" && existsSync(this.root) && !existsSync(dirname(dir));
   }
 
   private dir(type: StoredType, bucket: TaskBucket): string {

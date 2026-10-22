@@ -40,7 +40,8 @@ describe("taskUpdate", () => {
   });
 
   it("adds a progress log entry", async () => {
-    const result = await taskUpdate(new FileStore(tmp),
+    const result = await taskUpdate(
+      new FileStore(tmp),
       "TSK-001",
       { priority: "P1" },
       "Escalated priority",

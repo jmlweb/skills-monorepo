@@ -7,6 +7,7 @@ export declare class FileStore implements BacklogStore {
     find<T extends StoredType>(type: T, id: string, buckets: readonly BucketOf<T>[]): Promise<StoredEntity | undefined>;
     create(type: StoredType, input: CreateInput): Promise<StoredEntity>;
     save(entity: StoredEntity, frontmatter: Readonly<Record<string, unknown>>, body: string, to?: TaskBucket): Promise<StoredEntity>;
+    private isMissingTypeFolder;
     private dir;
     private read;
     private addTaskIndexRow;

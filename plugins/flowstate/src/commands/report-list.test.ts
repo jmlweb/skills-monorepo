@@ -65,6 +65,11 @@ describe("reportList", () => {
     expect(results.map((r) => r.id)).toEqual(["RPT-001"]);
   });
 
+  it("reads a backlog set up before reports existed as having no reports", async () => {
+    await rm(join(tmp, "reports"), { recursive: true });
+    expect(await reportList(new FileStore(tmp), { status: "all" })).toEqual([]);
+  });
+
   it("throws when the backlog itself is missing instead of reading as empty", async () => {
     await expect(reportList(new FileStore(join(tmp, "nope")))).rejects.toThrow();
   });
