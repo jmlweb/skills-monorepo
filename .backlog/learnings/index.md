@@ -43,3 +43,4 @@
 | LRN-037 | String.replace treats $-patterns in a string replacement as commands | scripts, patching, javascript, flowstate, skills | active | 2026-10-17 |
 | LRN-038 | The Bash tool runs zsh: no word-splitting, nomatch globs abort, a leading = is a command lookup | shell, zsh, tooling, skills, flowstate | active | 2026-10-18 |
 | LRN-039 | A bumped version pushed to main ships to users; the tag only cuts the GitHub Release | release, marketplace, claude-code, versioning | active | 2026-10-18 |
+| LRN-040 | A blocked task can sit in tasks/pending, so status does not say where a task lives | flowstate, store, tasks | active | 2026-10-22 |

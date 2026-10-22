@@ -4,8 +4,8 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
-| Active | 1 |
+| Pending | 5 |
+| Active | 2 |
 | Blocked | 1 |
 | Complete | 51 |
 
@@ -13,6 +13,7 @@
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
 - TSK-053: Fix: review-idea and triage-report number their decision menus after a numbered list (P3)
+- TSK-057: Optional GitHub Issues backend for tasks, ideas and reports (P2)
 
 ## Pending Tasks
 
@@ -21,7 +22,6 @@
 | TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | P3 |  | 2026-10-19 |
 | TSK-055 | Fix: parallel skill leaves worktrees behind after merge | P3 |  | 2026-10-19 |
 | TSK-056 | dev-workflow: readme-media skill generates README screenshots and GIFs | P2 |  | 2026-10-19 |
-| TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | P2 |  | 2026-10-19 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | P3 |  | 2026-10-19 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | P3 |  | 2026-10-20 |
 
