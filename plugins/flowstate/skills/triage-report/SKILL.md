@@ -18,15 +18,15 @@ With an identifier, the run triages that one report. Without one, the run triage
 
 ## Prerequisites
 
-Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/reports/pending/` has reports. If empty, inform the user and stop. Write every CLI call as the full `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" ...` command; never put `node <path>` in a shell variable (zsh does not word-split it).
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). List the pending reports with `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-list --json true`; each entry carries its `path`. If the list is empty, inform the user and stop. Write every CLI call as the full `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" ...` command; never put `node <path>` in a shell variable (zsh does not word-split it).
 
 ## Workflow
 
 ### 1. Identify Reports
 
-With `$ARGUMENTS`: resolve that one report in `{{BACKLOG}}/reports/pending/`. The queue holds only that report.
+With `$ARGUMENTS`: resolve that one report in the `report-list` output. The queue holds only that report.
 
-Without `$ARGUMENTS`: the queue holds every file in `{{BACKLOG}}/reports/pending/`, sorted by the frontmatter `severity` (critical → high → medium → low), then by ID ascending.
+Without `$ARGUMENTS`: the queue holds every report in the `report-list` output, sorted by `severity` (critical → high → medium → low), then by ID ascending.
 
 Done when: the queue holds one or more pending report files, in run order.
 
@@ -52,7 +52,7 @@ Done when: the summary block is printed.
 Before recommending, gather evidence. Skip steps that don't apply to the report type.
 
 - **Reproduce / locate**: grep the codebase for symbols, error messages, or file paths mentioned in the report. Confirm the affected code still exists and the issue is plausible.
-- **Check for duplicates**: scan `{{BACKLOG}}/tasks/pending/` and `{{BACKLOG}}/tasks/active/` for tasks with overlapping title, tags, or source. Note any matches.
+- **Check for duplicates**: scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` (pending and active entries) for tasks with overlapping title, tags, or source. Note any matches.
 - **Cross-reference learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for related insights that explain the behavior or suggest a fix. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 - **Assess completeness**: does the report contain enough to act on (repro steps, expected vs actual, scope)? List what's missing if not.
 

@@ -21,7 +21,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Identify Candidates
 
-If `$ARGUMENTS` provided, parse comma-separated IDs and validate each exists in `tasks/pending/` or `tasks/active/` and is not blocked.
+If `$ARGUMENTS` provided, parse comma-separated IDs and validate each appears in `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` with status `pending` or `active` (not `blocked`).
 
 If no argument:
 - List all pending non-blocked tasks
@@ -82,7 +82,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL
 
 Distribute results to subagents by tag overlap: include a learning in a subagent's prompt if its tags or reasons reference terms from that task's title or tags. A single learning may appear in multiple prompts if relevant. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 
-Also scan `{{BACKLOG}}/reports/pending/` once for any reports related to the selected tasks' scope.
+Also scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-list --json true` once for any reports related to the selected tasks' scope.
 
 Done when: each selected task has its list of learnings and reports (possibly empty).
 

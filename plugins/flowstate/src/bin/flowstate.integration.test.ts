@@ -299,6 +299,22 @@ describe("CLI integration", () => {
     expect(complete[0]!.status).toBe("approved");
   });
 
+  it("report-list lists pending reports and supports --status filter", () => {
+    run("setup", "--project-name", "IntTest");
+    run("report-create", "--title", "First report", "--type", "bug", "--severity", "high", "--body", "x");
+    run("report-create", "--title", "Second report", "--type", "finding", "--severity", "low", "--body", "x");
+    run("report-move", "RPT-002", "--status", "triaged", "--task-id", "TSK-001");
+
+    const pending = runJson("report-list") as { id: string; severity: string }[];
+    expect(pending.map((r) => r.id)).toEqual(["RPT-001"]);
+    expect(pending[0]!.severity).toBe("high");
+
+    expect(runJson("report-list", "--status", "all")).toHaveLength(2);
+    const complete = runJson("report-list", "--status", "complete") as { id: string; status: string }[];
+    expect(complete.map((r) => [r.id, r.status])).toEqual([["RPT-002", "triaged"]]);
+    expect(run("report-list").split("\n")).toHaveLength(1);
+  });
+
   it("learning-list filters archived by default and supports --status / --include-archived", async () => {
     run("setup", "--project-name", "IntTest");
     runJson("learning-create", "--title", "Active one", "--tags", "x", "--body", "active");

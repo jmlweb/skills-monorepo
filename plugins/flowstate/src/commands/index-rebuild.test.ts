@@ -7,6 +7,7 @@ import { taskCreate } from "./task-create.js";
 import { taskMove } from "./task-move.js";
 import { learningCreate } from "./learning-create.js";
 import { setup } from "./setup.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -21,9 +22,9 @@ afterEach(async () => {
 
 describe("indexRebuild", () => {
   it("rebuilds task index from disk state", async () => {
-    await taskCreate(tmp, { title: "A", priority: "P1", tags: ["api"], description: "", criteria: [], source: "manual", dependsOn: [] });
-    await taskCreate(tmp, { title: "B", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
-    await taskMove(tmp, "TSK-001", "active");
+    await taskCreate(new FileStore(tmp), { title: "A", priority: "P1", tags: ["api"], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskCreate(new FileStore(tmp), { title: "B", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
 
     await indexRebuild(tmp, "tasks");
 

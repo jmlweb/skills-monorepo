@@ -1,27 +1,16 @@
-import { join } from "node:path";
-import { reportDir } from "../core/paths.js";
-import { ensureDir, findEntityFile, readEntity, writeEntity, moveFile } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
-export async function reportMove(root, id, status, taskId) {
-    const pendingDir = reportDir(root, "pending");
-    const fileName = await findEntityFile(pendingDir, id);
-    if (!fileName) {
+export async function reportMove(store, id, status, taskId) {
+    const report = await store.find("report", id, ["pending"]);
+    if (!report) {
         throw new EntityNotFoundError(id, "reports/pending");
     }
-    const sourcePath = join(pendingDir, fileName);
-    const doc = await readEntity(sourcePath);
-    const fm = { ...doc.frontmatter };
+    const fm = { ...report.frontmatter };
     fm["status"] = status;
     fm["triaged"] = today();
     if (taskId) {
         fm["task-id"] = taskId;
     }
-    await writeEntity(sourcePath, fm, doc.body);
-    const destDir = reportDir(root, "complete");
-    const destPath = join(destDir, fileName);
-    // Backlogs set up before reports existed have no reports/ folder.
-    await ensureDir(destDir);
-    await moveFile(sourcePath, destPath);
-    return { path: destPath };
+    const moved = await store.save(report, fm, report.body, "complete");
+    return { path: moved.path };
 }

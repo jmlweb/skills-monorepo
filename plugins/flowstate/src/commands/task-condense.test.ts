@@ -9,6 +9,7 @@ import { taskUpdate } from "./task-update.js";
 import { setup } from "./setup.js";
 import { readEntity, writeEntity } from "../core/fs.js";
 import { replaceSection } from "../core/markdown.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -22,7 +23,7 @@ afterEach(async () => {
 });
 
 async function createCompleteTask(id: string, title: string): Promise<string> {
-  await taskCreate(tmp, {
+  await taskCreate(new FileStore(tmp), {
     title,
     priority: "P2",
     tags: [],
@@ -31,8 +32,8 @@ async function createCompleteTask(id: string, title: string): Promise<string> {
     source: "manual",
     dependsOn: [],
   });
-  await taskMove(tmp, id, "active");
-  await taskMove(tmp, id, "complete");
+  await taskMove(new FileStore(tmp), id, "active");
+  await taskMove(new FileStore(tmp), id, "complete");
   return join(tmp, "tasks", "complete");
 }
 
@@ -45,7 +46,7 @@ describe("taskCondense", () => {
     const body = replaceSection(doc.body, "Notes", "Some scratchpad notes\nMore intermediate thoughts");
     await writeEntity(filePath, doc.frontmatter as Record<string, unknown>, body);
 
-    const result = await taskCondense(tmp, "TSK-001");
+    const result = await taskCondense(new FileStore(tmp), "TSK-001");
     expect(result.condensed).toBe(true);
     expect(result.bytesAfter).toBeLessThan(result.bytesBefore);
 
@@ -61,15 +62,15 @@ describe("taskCondense", () => {
     const filePath = join(tmp, "tasks", "complete", "TSK-001-fix.md");
 
     // Inject middle progress log entries
-    await taskUpdate(tmp, "TSK-001", {}, "Working on it");
-    await taskUpdate(tmp, "TSK-001", {}, "Hit a snag");
-    await taskUpdate(tmp, "TSK-001", {}, "Fixed snag");
+    await taskUpdate(new FileStore(tmp), "TSK-001", {}, "Working on it");
+    await taskUpdate(new FileStore(tmp), "TSK-001", {}, "Hit a snag");
+    await taskUpdate(new FileStore(tmp), "TSK-001", {}, "Fixed snag");
 
     const before = await readEntity(filePath);
     expect(before.body).toContain("Working on it");
     expect(before.body).toContain("Hit a snag");
 
-    const result = await taskCondense(tmp, "TSK-001");
+    const result = await taskCondense(new FileStore(tmp), "TSK-001");
     expect(result.condensed).toBe(true);
 
     const after = await readEntity(filePath);
@@ -83,7 +84,7 @@ describe("taskCondense", () => {
   it("skips already-lean tasks", async () => {
     await createCompleteTask("TSK-001", "Fix");
 
-    const result = await taskCondense(tmp, "TSK-001");
+    const result = await taskCondense(new FileStore(tmp), "TSK-001");
     expect(result.condensed).toBe(false);
     expect(result.skippedReason).toBe("already lean");
   });
@@ -95,16 +96,16 @@ describe("taskCondense", () => {
     const body = replaceSection(doc.body, "Notes", "stuff to drop");
     await writeEntity(filePath, doc.frontmatter as Record<string, unknown>, body);
 
-    const first = await taskCondense(tmp, "TSK-001");
+    const first = await taskCondense(new FileStore(tmp), "TSK-001");
     expect(first.condensed).toBe(true);
 
-    const second = await taskCondense(tmp, "TSK-001");
+    const second = await taskCondense(new FileStore(tmp), "TSK-001");
     expect(second.condensed).toBe(false);
     expect(second.skippedReason).toBe("already condensed");
   });
 
   it("rejects non-complete tasks", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Pending one",
       priority: "P3",
       tags: [],
@@ -113,11 +114,11 @@ describe("taskCondense", () => {
       source: "manual",
       dependsOn: [],
     });
-    await expect(taskCondense(tmp, "TSK-001")).rejects.toThrow("not found");
+    await expect(taskCondense(new FileStore(tmp), "TSK-001")).rejects.toThrow("not found");
   });
 
   it("throws for non-existent task", async () => {
-    await expect(taskCondense(tmp, "TSK-999")).rejects.toThrow("not found");
+    await expect(taskCondense(new FileStore(tmp), "TSK-999")).rejects.toThrow("not found");
   });
 });
 
@@ -132,7 +133,7 @@ describe("taskCondenseAll", () => {
     const body1 = replaceSection(doc1.body, "Notes", "noise");
     await writeEntity(path1, doc1.frontmatter as Record<string, unknown>, body1);
 
-    const results = await taskCondenseAll(tmp);
+    const results = await taskCondenseAll(new FileStore(tmp));
     expect(results).toHaveLength(2);
     const condensed = results.filter((r) => r.condensed);
     expect(condensed).toHaveLength(1);
@@ -140,7 +141,7 @@ describe("taskCondenseAll", () => {
   });
 
   it("returns empty array when no complete tasks", async () => {
-    const results = await taskCondenseAll(tmp);
+    const results = await taskCondenseAll(new FileStore(tmp));
     expect(results).toEqual([]);
   });
 });

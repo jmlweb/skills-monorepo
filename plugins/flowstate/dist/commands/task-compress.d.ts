@@ -1,3 +1,4 @@
+import type { BacklogStore } from "../core/store.js";
 export interface TaskCompressResult {
     readonly id: string;
     readonly path: string;
@@ -7,4 +8,4 @@ export interface TaskCompressResult {
     readonly errors: readonly string[];
     readonly skippedReason?: string;
 }
-export declare function taskCompress(root: string, id: string, newBody: string): Promise<TaskCompressResult>;
+export declare function taskCompress(store: BacklogStore, id: string, newBody: string): Promise<TaskCompressResult>;

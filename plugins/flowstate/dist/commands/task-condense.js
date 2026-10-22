@@ -1,51 +1,39 @@
-import { join } from "node:path";
-import { taskDir } from "../core/paths.js";
-import { findEntityFile, readEntity, writeEntity, listFiles } from "../core/fs.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
 import { replaceSection, hasSection, appendToSection, appendToBody } from "../core/markdown.js";
 const MIN_PROGRESS_LOG_ENTRIES_TO_TRIM = 4;
 const MIN_NOTES_CONTENT_LENGTH = 1;
-export async function taskCondense(root, id) {
-    const dir = taskDir(root, "complete");
-    const fileName = await findEntityFile(dir, id);
-    if (!fileName) {
+export async function taskCondense(store, id) {
+    const task = await store.find("task", id, ["complete"]);
+    if (!task) {
         throw new EntityNotFoundError(id, "tasks/complete");
     }
-    const filePath = join(dir, fileName);
-    return condenseFile(filePath, id);
+    return condenseTask(store, task, id);
 }
-export async function taskCondenseAll(root) {
-    const dir = taskDir(root, "complete");
-    const files = await listFiles(dir);
+export async function taskCondenseAll(store) {
     const results = [];
-    for (const file of files) {
-        if (file.name === "index.md")
-            continue;
-        const filePath = join(dir, file.name);
-        const doc = await readEntity(filePath);
-        const fm = doc.frontmatter;
-        const id = String(fm["id"] ?? "");
+    for (const task of await store.list("task", ["complete"])) {
+        const id = String(task.frontmatter["id"] ?? "");
         if (!id)
             continue;
-        results.push(await condenseFile(filePath, id));
+        results.push(await condenseTask(store, task, id));
     }
     return results;
 }
-async function condenseFile(filePath, id) {
-    const doc = await readEntity(filePath);
-    const fm = { ...doc.frontmatter };
-    // Heal-on-read: file is in tasks/complete/, so status must be "complete".
+async function condenseTask(store, task, id) {
+    const filePath = task.path;
+    const fm = { ...task.frontmatter };
+    // Heal-on-read: task is in the complete bucket, so status must be "complete".
     // Normalize any drifted value (e.g. "completed", "done", "pending") so
     // downstream tooling and indexes stay consistent.
     const statusHealed = fm["status"] !== "complete";
     if (statusHealed) {
         fm["status"] = "complete";
     }
-    const bytesBefore = Buffer.byteLength(doc.body, "utf-8");
+    const bytesBefore = Buffer.byteLength(task.body, "utf-8");
     if (fm["condensed"] === true || fm["condensed"] === "true") {
         if (statusHealed) {
-            await writeEntity(filePath, fm, doc.body);
+            await store.save(task, fm, task.body);
         }
         return {
             id,
@@ -56,7 +44,7 @@ async function condenseFile(filePath, id) {
             skippedReason: "already condensed",
         };
     }
-    let body = doc.body;
+    let body = task.body;
     let changed = false;
     if (hasSection(body, "Notes")) {
         const notesContent = extractSection(body, "Notes");
@@ -78,7 +66,7 @@ async function condenseFile(filePath, id) {
     }
     if (!changed) {
         if (statusHealed) {
-            await writeEntity(filePath, fm, body);
+            await store.save(task, fm, body);
         }
         return {
             id,
@@ -96,9 +84,9 @@ async function condenseFile(filePath, id) {
         body = appendToBody(body, `- [${today()}] Condensed`);
     }
     fm["condensed"] = true;
-    await writeEntity(filePath, fm, body);
-    const after = await readEntity(filePath);
-    const bytesAfter = Buffer.byteLength(after.body, "utf-8");
+    await store.save(task, fm, body);
+    const after = await store.find("task", id, ["complete"]);
+    const bytesAfter = Buffer.byteLength(after?.body ?? body, "utf-8");
     return { id, path: filePath, condensed: true, bytesBefore, bytesAfter };
 }
 function extractSection(content, heading) {

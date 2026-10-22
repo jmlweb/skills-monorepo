@@ -1,3 +1,4 @@
-export declare function reportMove(root: string, id: string, status: "triaged" | "discarded", taskId?: string): Promise<{
+import type { BacklogStore } from "../core/store.js";
+export declare function reportMove(store: BacklogStore, id: string, status: "triaged" | "discarded", taskId?: string): Promise<{
     path: string;
 }>;

@@ -92,7 +92,7 @@ Done when: the outcome is "create" or "skip", with the matched LRN ID when skipp
 
 ### 3. Link to Active Task (no prompt unless ambiguous)
 
-Check `{{BACKLOG}}/tasks/active/`:
+List active tasks with `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true`:
 
 - **Exactly 1 active task** → link automatically (`--task TSK-XXX`).
 - **Multiple active tasks** → ask which one (or none) this relates to.

@@ -1,3 +1,4 @@
-export declare function taskUnblock(root: string, id: string, resolution?: string): Promise<{
+import type { BacklogStore } from "../core/store.js";
+export declare function taskUnblock(store: BacklogStore, id: string, resolution?: string): Promise<{
     path: string;
 }>;

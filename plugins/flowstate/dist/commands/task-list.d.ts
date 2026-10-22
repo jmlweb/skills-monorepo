@@ -1,4 +1,5 @@
 import type { TaskStatus } from "../core/types.js";
+import type { BacklogStore } from "../core/store.js";
 export interface TaskListItem {
     readonly id: string;
     readonly title: string;
@@ -11,4 +12,4 @@ export interface TaskListItem {
     readonly blockedBy: string | undefined;
     readonly path: string;
 }
-export declare function taskList(root: string, status?: TaskStatus, limit?: number): Promise<TaskListItem[]>;
+export declare function taskList(store: BacklogStore, status?: TaskStatus, limit?: number): Promise<TaskListItem[]>;

@@ -8,6 +8,7 @@ import { taskMove } from "./task-move.js";
 import { taskBlock } from "./task-block.js";
 import { setup } from "./setup.js";
 import { readEntity, writeEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -21,7 +22,7 @@ afterEach(async () => {
 });
 
 async function createTask(title: string): Promise<void> {
-  await taskCreate(tmp, {
+  await taskCreate(new FileStore(tmp), {
     title,
     priority: "P2",
     tags: [],
@@ -49,7 +50,7 @@ describe("taskDoctor", () => {
   it("returns clean result when all tasks are consistent", async () => {
     await createTask("Pending one");
     await createTask("Active one");
-    await taskMove(tmp, "TSK-002", "active");
+    await taskMove(new FileStore(tmp), "TSK-002", "active");
 
     const result = await taskDoctor(tmp);
     expect(result.scanned).toBe(2);
@@ -58,8 +59,8 @@ describe("taskDoctor", () => {
 
   it("fixes a complete task whose frontmatter says pending", async () => {
     await createTask("Drifted");
-    await taskMove(tmp, "TSK-001", "active");
-    await taskMove(tmp, "TSK-001", "complete");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "complete");
     await injectStatus("complete", "TSK-001-drifted.md", "pending");
 
     const result = await taskDoctor(tmp);
@@ -74,8 +75,8 @@ describe("taskDoctor", () => {
 
   it("maps synonyms to canonical (done -> complete)", async () => {
     await createTask("Synonym");
-    await taskMove(tmp, "TSK-001", "active");
-    await taskMove(tmp, "TSK-001", "complete");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "complete");
     await injectStatus("complete", "TSK-001-synonym.md", "done");
 
     const result = await taskDoctor(tmp);
@@ -85,7 +86,7 @@ describe("taskDoctor", () => {
 
   it("maps wip -> active in active/ folder", async () => {
     await createTask("Working");
-    await taskMove(tmp, "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
     await injectStatus("active", "TSK-001-working.md", "wip");
 
     const result = await taskDoctor(tmp);
@@ -95,8 +96,8 @@ describe("taskDoctor", () => {
 
   it("preserves blocked status when blocked-by is set", async () => {
     await createTask("Blocked");
-    await taskMove(tmp, "TSK-001", "active");
-    await taskBlock(tmp, "TSK-001", "waiting on api");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting on api");
     // Now manually drift: set status to "active" while blocked-by is present.
     await injectStatus("active", "TSK-001-blocked.md", "active");
 
@@ -117,8 +118,8 @@ describe("taskDoctor", () => {
 
   it("dry-run reports without writing", async () => {
     await createTask("DryRun");
-    await taskMove(tmp, "TSK-001", "active");
-    await taskMove(tmp, "TSK-001", "complete");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "complete");
     const path = await injectStatus("complete", "TSK-001-dryrun.md", "done");
 
     const result = await taskDoctor(tmp, { dryRun: true });
@@ -130,8 +131,8 @@ describe("taskDoctor", () => {
 
   it("is idempotent — second run reports no fixes", async () => {
     await createTask("Idempotent");
-    await taskMove(tmp, "TSK-001", "active");
-    await taskMove(tmp, "TSK-001", "complete");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "complete");
     await injectStatus("complete", "TSK-001-idempotent.md", "completed");
 
     const first = await taskDoctor(tmp);
@@ -143,8 +144,8 @@ describe("taskDoctor", () => {
 
   it("handles uppercase / whitespace in status field", async () => {
     await createTask("Loud");
-    await taskMove(tmp, "TSK-001", "active");
-    await taskMove(tmp, "TSK-001", "complete");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "complete");
     await injectStatus("complete", "TSK-001-loud.md", "  DONE  ");
 
     const result = await taskDoctor(tmp);

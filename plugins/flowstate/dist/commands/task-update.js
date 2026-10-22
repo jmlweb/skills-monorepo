@@ -1,10 +1,7 @@
-import { join } from "node:path";
-import { taskDir } from "../core/paths.js";
-import { findEntityFile, readEntity, writeEntity } from "../core/fs.js";
+import { BUCKETS } from "../core/store.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError, InvalidArgumentError, SectionNotFoundError, } from "../core/errors.js";
 import { appendToSection, hasSection, tickCriteria } from "../core/markdown.js";
-const SEARCH_DIRS = ["pending", "active", "complete"];
 export function parseEvidence(value) {
     if (value === undefined)
         return {};
@@ -28,17 +25,9 @@ export function parseEvidence(value) {
     }
     return result;
 }
-export async function taskUpdate(root, id, updates, log, checkCriteria = [], evidence = {}) {
-    let filePath;
-    for (const status of SEARCH_DIRS) {
-        const dir = taskDir(root, status);
-        const found = await findEntityFile(dir, id);
-        if (found) {
-            filePath = join(dir, found);
-            break;
-        }
-    }
-    if (!filePath) {
+export async function taskUpdate(store, id, updates, log, checkCriteria = [], evidence = {}) {
+    const task = await store.find("task", id, BUCKETS.task);
+    if (!task) {
         throw new EntityNotFoundError(id, "tasks/{pending,active,complete}");
     }
     const REJECTED_KEYS = ["status", "blocked-by"];
@@ -52,12 +41,11 @@ export async function taskUpdate(root, id, updates, log, checkCriteria = [], evi
             throw new InvalidArgumentError(`--evidence key "${key}" is not in --check. Evidence can only be attached to criteria ticked in the same call.`);
         }
     }
-    const doc = await readEntity(filePath);
-    const fm = { ...doc.frontmatter };
+    const fm = { ...task.frontmatter };
     for (const [key, value] of Object.entries(updates)) {
         fm[key] = value;
     }
-    let body = doc.body;
+    let body = task.body;
     if (checkCriteria.length > 0) {
         if (!hasSection(body, "Acceptance Criteria")) {
             throw new SectionNotFoundError(id, "Acceptance Criteria");
@@ -77,6 +65,6 @@ export async function taskUpdate(root, id, updates, log, checkCriteria = [], evi
             body = appendToSection(body, "Progress Log", `- [${date}] ${line}`);
         }
     }
-    await writeEntity(filePath, fm, body);
-    return { path: filePath };
+    const saved = await store.save(task, fm, body);
+    return { path: saved.path };
 }
