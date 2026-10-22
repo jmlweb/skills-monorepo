@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 5 |
+| Pending | 7 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 51 |
@@ -24,6 +24,8 @@
 | TSK-056 | dev-workflow: readme-media skill generates README screenshots and GIFs | P2 |  | 2026-10-19 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | P3 |  | 2026-10-19 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | P3 |  | 2026-10-20 |
+| TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | P3 | flowstate, cli, index | 2026-10-22 |
+| TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | P4 | flowstate, cli | 2026-10-22 |
 
 ## Recently Completed
 
