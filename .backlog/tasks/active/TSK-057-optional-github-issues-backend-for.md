@@ -38,6 +38,7 @@ Approach: Phase 1 introduces a BacklogStore seam (FileStore extraction, commands
 ## Learnings
 
 - LRN-040: A blocked task can sit in tasks/pending, so status does not say where a task lives
+- LRN-041: task-block leaves tasks/index.md stale, which fails pnpm backlog:check in CI
 ## Progress Log
 
 - [2026-10-19] Created
@@ -46,3 +47,4 @@ Approach: Phase 1 introduces a BacklogStore seam (FileStore extraction, commands
 - [2026-10-22] criterion 2 — evidence: pnpm typecheck → 0 errors with every task/idea/report command taking BacklogStore; learning commands still take root; pnpm vitest run → 331 passed (2026-10-22)
 - [2026-10-22] criterion 4 — evidence: pnpm vitest run src/plugin.test.ts src/commands/report-list.test.ts → 7 passed; the skills test flags 20 folder-read lines in the HEAD~1 skills and 0 now; pnpm lint:skills → 0 errors (2026-10-22)
 - [2026-10-22] Blocked: Phase 1 (criteria 1, 2, 4) landed on hustle/maintainer/task-2026-10-22. Phase 2 remains: criteria 3, 5-11 need the gh wrapper, GithubStore, resolveStore backend selection, setup --github, GitHub-mode compress/condense/stats/doctor/hook, stub-gh contract tests and docs. Too large for one unattended run; split Phase 2 into its own task.
+- [2026-10-22] FileStore.list/find read a missing ideas/ or reports/ folder as empty (old backlogs; skills now call report-list); tests in idea-list.test.ts and report-list.test.ts → pass (2026-10-22)

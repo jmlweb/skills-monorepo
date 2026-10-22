@@ -44,3 +44,4 @@
 | LRN-038 | The Bash tool runs zsh: no word-splitting, nomatch globs abort, a leading = is a command lookup | shell, zsh, tooling, skills, flowstate | active | 2026-10-18 |
 | LRN-039 | A bumped version pushed to main ships to users; the tag only cuts the GitHub Release | release, marketplace, claude-code, versioning | active | 2026-10-18 |
 | LRN-040 | A blocked task can sit in tasks/pending, so status does not say where a task lives | flowstate, store, tasks | active | 2026-10-22 |
+| LRN-041 | task-block leaves tasks/index.md stale, which fails pnpm backlog:check in CI | flowstate, backlog, ci | active | 2026-10-22 |

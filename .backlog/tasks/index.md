@@ -5,15 +5,15 @@
 | Status | Count |
 |--------|-------|
 | Pending | 5 |
-| Active | 2 |
-| Blocked | 1 |
+| Active | 1 |
+| Blocked | 2 |
 | Complete | 51 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
 - TSK-053: Fix: review-idea and triage-report number their decision menus after a numbered list (P3)
-- TSK-057: Optional GitHub Issues backend for tasks, ideas and reports (P2)
+- TSK-057: Optional GitHub Issues backend for tasks, ideas and reports (P2) [BLOCKED: Phase 1 (criteria 1, 2, 4) landed on hustle/maintainer/task-2026-10-22. Phase 2 remains: criteria 3, 5-11 need the gh wrapper, GithubStore, resolveStore backend selection, setup --github, GitHub-mode compress/condense/stats/doctor/hook, stub-gh contract tests and docs. Too large for one unattended run; split Phase 2 into its own task.]
 
 ## Pending Tasks
 
