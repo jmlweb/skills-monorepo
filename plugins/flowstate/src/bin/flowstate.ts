@@ -20,6 +20,8 @@ import type { IdeaListStatus } from "../commands/idea-list.js";
 import { ideaMove } from "../commands/idea-move.js";
 import { reportCreate } from "../commands/report-create.js";
 import { reportMove } from "../commands/report-move.js";
+import { reportList } from "../commands/report-list.js";
+import type { ReportListStatus } from "../commands/report-list.js";
 import { learningCreate } from "../commands/learning-create.js";
 import { learningSearch } from "../commands/learning-search.js";
 import { learningList } from "../commands/learning-list.js";
@@ -80,6 +82,7 @@ Commands:
   idea-list          List ideas (pending by default)
   idea-move          Approve or discard an idea
   report-create      Create a new report
+  report-list        List reports (pending by default)
   report-move        Triage or discard a report
   learning-create    Create a new learning
   learning-search    Search learnings by tags/query
@@ -133,6 +136,8 @@ const COMMAND_HELP: Record<string, string> = {
     "Usage: flowstate idea-move <id> --status <approved|discarded> [--task-id <id>]",
   "report-create":
     "Usage: flowstate report-create --title <text> --type <bug|finding|improvement|security> --severity <low|medium|high|critical> [--body <text|->]",
+  "report-list":
+    "Usage: flowstate report-list [--status <pending|complete|all>] [--limit <n>]\n  Default: pending only.",
   "report-move":
     "Usage: flowstate report-move <id> --status <triaged|discarded> [--task-id <id>]",
   "learning-create":
@@ -562,6 +567,28 @@ async function main(): Promise<void> {
           type: validateReportType(required(flags, "type")),
           severity: validateSeverity(required(flags, "severity")),
           body,
+        });
+        output(result, json);
+        break;
+      }
+
+      case "report-list": {
+        const VALID_REPORT_STATUS = ["pending", "complete", "all"] as const;
+        const statusRaw = flags["status"];
+        let status: ReportListStatus | undefined;
+        if (statusRaw !== undefined) {
+          if (!VALID_REPORT_STATUS.includes(statusRaw as ReportListStatus)) {
+            console.error(
+              `Invalid --status value: "${statusRaw}". Must be one of: ${VALID_REPORT_STATUS.join(", ")}`,
+            );
+            process.exit(1);
+          }
+          status = statusRaw as ReportListStatus;
+        }
+        const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+        const result = await reportList(store, {
+          ...(status !== undefined ? { status } : {}),
+          ...(limit !== undefined ? { limit } : {}),
         });
         output(result, json);
         break;

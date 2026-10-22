@@ -23,7 +23,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Identify Task(s)
 
-If `$ARGUMENTS` provided, find the task in `tasks/pending/`, `tasks/active/`, or `tasks/complete/`.
+If `$ARGUMENTS` provided, find the task in `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` (every status) and read the file at its `path`.
 
 If `$ARGUMENTS` is `pending` or `active`, batch-check only that status group.
 

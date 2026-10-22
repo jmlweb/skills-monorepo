@@ -20,7 +20,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Identify Task
 
-If `$ARGUMENTS` provided, find matching file in `{{BACKLOG}}/tasks/active/`. If not there, check `{{BACKLOG}}/tasks/pending/` (a task can be completed without having been started) — if found there, confirm with the user before proceeding. If found nowhere, say so and stop.
+If `$ARGUMENTS` provided, find the matching task in `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true` and read the file at its `path`. If not there, check `task-list --status pending --json true` (a task can be completed without having been started) — if found there, confirm with the user before proceeding. If found nowhere, say so and stop.
 
 If no argument, list active tasks and ask which to complete.
 

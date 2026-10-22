@@ -59,6 +59,7 @@ Never store `node <path>` in a shell variable and run `$F ...`: zsh does not wor
 | `flowstate idea-list [--status <pending\|complete\|all>]` | List ideas (pending by default) |
 | `flowstate idea-move <id> --status <approved\|discarded> [--task-id <TSK-XXX>]` | Move idea |
 | `flowstate report-create --title <t> --type <t> --severity <s> --body -` | Create report |
+| `flowstate report-list [--status <pending\|complete\|all>]` | List reports (pending by default) |
 | `flowstate report-move <id> --status <triaged\|discarded> [--task-id <TSK-XXX>]` | Move report |
 | `flowstate learning-create --title <t> --tags <csv> --body - [--task <TSK-XXX>]` | Create learning |
 | `flowstate learning-search [--tags <csv>] [--query <text>] [--limit <n>] [--scope local\|all]` | Search active learnings by tags/keywords; `all` (default) includes registered sibling backlogs |
