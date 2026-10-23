@@ -8,6 +8,7 @@ import { taskMove } from "./task-move.js";
 import { taskBlock } from "./task-block.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -22,7 +23,7 @@ afterEach(async () => {
 
 describe("taskUnblock", () => {
   it("restores active status for started task", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],
@@ -31,10 +32,10 @@ describe("taskUnblock", () => {
       source: "manual",
       dependsOn: [],
     });
-    await taskMove(tmp, "TSK-001", "active");
-    await taskBlock(tmp, "TSK-001", "waiting");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting");
 
-    const result = await taskUnblock(tmp, "TSK-001", "API ready");
+    const result = await taskUnblock(new FileStore(tmp), "TSK-001", "API ready");
 
     const doc = await readEntity(result.path);
     const fm = doc.frontmatter as Record<string, unknown>;
@@ -44,7 +45,7 @@ describe("taskUnblock", () => {
   });
 
   it("restores pending status for unstarted task", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],
@@ -53,9 +54,9 @@ describe("taskUnblock", () => {
       source: "manual",
       dependsOn: [],
     });
-    await taskBlock(tmp, "TSK-001", "waiting");
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting");
 
-    const result = await taskUnblock(tmp, "TSK-001");
+    const result = await taskUnblock(new FileStore(tmp), "TSK-001");
 
     const doc = await readEntity(result.path);
     const fm = doc.frontmatter as Record<string, unknown>;

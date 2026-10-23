@@ -7,6 +7,7 @@ import { taskUpdate } from "./task-update.js";
 import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -21,7 +22,7 @@ afterEach(async () => {
 
 describe("taskMove", () => {
   it("moves task from pending to active", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: ["api"],
@@ -31,7 +32,7 @@ describe("taskMove", () => {
       dependsOn: [],
     });
 
-    const result = await taskMove(tmp, "TSK-001", "active");
+    const result = await taskMove(new FileStore(tmp), "TSK-001", "active");
     expect(result.path).toContain("tasks/active/TSK-001");
 
     const doc = await readEntity(result.path);
@@ -42,7 +43,7 @@ describe("taskMove", () => {
   });
 
   it("moves task from active to complete", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],
@@ -51,8 +52,8 @@ describe("taskMove", () => {
       source: "manual",
       dependsOn: [],
     });
-    await taskMove(tmp, "TSK-001", "active");
-    const result = await taskMove(tmp, "TSK-001", "complete");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    const result = await taskMove(new FileStore(tmp), "TSK-001", "complete");
 
     expect(result.path).toContain("tasks/complete/TSK-001");
 
@@ -63,7 +64,7 @@ describe("taskMove", () => {
   });
 
   it("updates task index stats", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],
@@ -72,7 +73,7 @@ describe("taskMove", () => {
       source: "manual",
       dependsOn: [],
     });
-    await taskMove(tmp, "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
 
     const index = await readFile(
       join(tmp, "tasks", "index.md"),
@@ -83,7 +84,7 @@ describe("taskMove", () => {
   });
 
   it("adds to Recently Completed on complete", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],
@@ -92,8 +93,8 @@ describe("taskMove", () => {
       source: "manual",
       dependsOn: [],
     });
-    await taskMove(tmp, "TSK-001", "active");
-    await taskMove(tmp, "TSK-001", "complete");
+    await taskMove(new FileStore(tmp), "TSK-001", "active");
+    await taskMove(new FileStore(tmp), "TSK-001", "complete");
 
     const index = await readFile(
       join(tmp, "tasks", "index.md"),
@@ -104,14 +105,14 @@ describe("taskMove", () => {
   });
 
   it("throws for non-existent task", async () => {
-    await expect(taskMove(tmp, "TSK-999", "active")).rejects.toThrow(
+    await expect(taskMove(new FileStore(tmp), "TSK-999", "active")).rejects.toThrow(
       "not found",
     );
   });
 
   it("keeps correct index counts after completing multiple tasks in rapid succession", async () => {
     for (let i = 0; i < 3; i++) {
-      await taskCreate(tmp, {
+      await taskCreate(new FileStore(tmp), {
         title: `Task ${i + 1}`,
         priority: "P3",
         tags: [],
@@ -124,10 +125,10 @@ describe("taskMove", () => {
     // Sequential on purpose: back-to-back CLI invocations never overlap inside one
     // process, and concurrent moves race on the index rebuild (readdir vs rename).
     for (const id of ["TSK-001", "TSK-002", "TSK-003"]) {
-      await taskMove(tmp, id, "active");
+      await taskMove(new FileStore(tmp), id, "active");
     }
     for (const id of ["TSK-001", "TSK-002", "TSK-003"]) {
-      await taskMove(tmp, id, "complete");
+      await taskMove(new FileStore(tmp), id, "complete");
     }
 
     const index = await readFile(
@@ -140,7 +141,7 @@ describe("taskMove", () => {
   });
 
   it("reports ticked criteria without evidence when completing", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],
@@ -149,9 +150,9 @@ describe("taskMove", () => {
       source: "manual",
       dependsOn: [],
     });
-    await taskUpdate(tmp, "TSK-001", {}, undefined, [1, 2], { 2: "pnpm test → exit 0" });
+    await taskUpdate(new FileStore(tmp), "TSK-001", {}, undefined, [1, 2], { 2: "pnpm test → exit 0" });
 
-    const result = await taskMove(tmp, "TSK-001", "complete");
+    const result = await taskMove(new FileStore(tmp), "TSK-001", "complete");
 
     expect(result.unverifiedCriteria).toEqual([1]);
     const doc = await readEntity(result.path);
@@ -159,7 +160,7 @@ describe("taskMove", () => {
   });
 
   it("omits unverifiedCriteria for non-complete moves", async () => {
-    await taskCreate(tmp, {
+    await taskCreate(new FileStore(tmp), {
       title: "Fix bug",
       priority: "P2",
       tags: [],
@@ -168,7 +169,7 @@ describe("taskMove", () => {
       source: "manual",
       dependsOn: [],
     });
-    const result = await taskMove(tmp, "TSK-001", "active");
+    const result = await taskMove(new FileStore(tmp), "TSK-001", "active");
     expect(result.unverifiedCriteria).toBeUndefined();
   });
 });

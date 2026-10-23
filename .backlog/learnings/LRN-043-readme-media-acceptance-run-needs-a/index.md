@@ -1,5 +1,5 @@
 ---
-id: LRN-041
+id: LRN-043
 title: readme-media acceptance run needs a human session plus vhs, ttyd, ffmpeg and claude
 status: active
 tags: [sandbox, skills, readme-media, testing]

@@ -1,3 +1,4 @@
+import type { BacklogStore } from "../core/store.js";
 export type IdeaListStatus = "pending" | "complete" | "all";
 export interface IdeaListInput {
     readonly status?: IdeaListStatus;
@@ -13,4 +14,4 @@ export interface IdeaListItem {
     readonly taskId: string | undefined;
     readonly path: string;
 }
-export declare function ideaList(root: string, input?: IdeaListInput): Promise<IdeaListItem[]>;
+export declare function ideaList(store: BacklogStore, input?: IdeaListInput): Promise<IdeaListItem[]>;

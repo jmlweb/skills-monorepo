@@ -16,15 +16,15 @@ Idea identifier (optional): $ARGUMENTS — accepts `PLN-001`, `001`, or `1`. Wit
 
 ## Prerequisites
 
-Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). Verify `{{BACKLOG}}/ideas/pending/` has ideas. If empty, inform the user and stop. Write every CLI call as the full `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" ...` command; never put `node <path>` in a shell variable (zsh does not word-split it).
+Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" path` and call its output `{{BACKLOG}}` (it errors when no backlog exists). List the pending ideas with `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-list --status pending --json true`; each entry carries its `path`. If the list is empty, inform the user and stop. Write every CLI call as the full `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" ...` command; never put `node <path>` in a shell variable (zsh does not word-split it).
 
 ## Workflow
 
 ### 1. Identify Ideas
 
-With `$ARGUMENTS`: resolve that one idea in `{{BACKLOG}}/ideas/pending/`. The queue holds only that idea.
+With `$ARGUMENTS`: resolve that one idea in the `idea-list` output. The queue holds only that idea.
 
-Without `$ARGUMENTS`: the queue holds every file in `{{BACKLOG}}/ideas/pending/`, sorted by ID ascending (oldest first).
+Without `$ARGUMENTS`: the queue holds every idea in the `idea-list` output, sorted by ID ascending (oldest first).
 
 Done when: the queue holds one or more pending idea files, in run order.
 
@@ -58,7 +58,7 @@ Before recommending, audit the idea against the actual codebase. Skip steps that
 - **Files exist & are accurate**: verify every path under "Files to Modify" exists. Check the relevant code matches what the idea assumes (function names, signatures, surrounding logic).
 - **Approach soundness**: read each step critically. Are there missing steps (tests, migrations, types, docs)? Steps that won't compile or contradict existing patterns?
 - **Risk gaps**: high/medium-complexity ideas with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
-- **Conflicts with active work**: scan `{{BACKLOG}}/tasks/active/` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
+- **Conflicts with active work**: scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
 - **Related learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for prior insights that should shape the approach. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 
 Surface only the conclusions, in the next step.

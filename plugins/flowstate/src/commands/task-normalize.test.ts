@@ -6,6 +6,7 @@ import { taskCreate } from "./task-create.js";
 import { taskNormalize } from "./task-normalize.js";
 import { setup } from "./setup.js";
 import { EntityNotFoundError } from "../core/errors.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -20,7 +21,7 @@ afterEach(async () => {
 
 describe("taskNormalize", () => {
   it("merges duplicate Notes into the first and is idempotent", async () => {
-    const { id, path } = await taskCreate(tmp, {
+    const { id, path } = await taskCreate(new FileStore(tmp), {
       title: "Dup notes",
       priority: "P3",
       tags: [],
@@ -39,7 +40,7 @@ describe("taskNormalize", () => {
       "utf-8",
     );
 
-    const first = await taskNormalize(tmp, id);
+    const first = await taskNormalize(new FileStore(tmp), id);
     expect(first.changed).toBe(true);
 
     const content = await readFile(path, "utf-8");
@@ -48,11 +49,11 @@ describe("taskNormalize", () => {
     expect(content).toContain("## Acceptance Criteria\n\n- [ ] A");
     expect(content).toContain("## Learnings");
 
-    expect((await taskNormalize(tmp, id)).changed).toBe(false);
+    expect((await taskNormalize(new FileStore(tmp), id)).changed).toBe(false);
   });
 
   it("throws for an unknown task", async () => {
-    await expect(taskNormalize(tmp, "TSK-999")).rejects.toBeInstanceOf(
+    await expect(taskNormalize(new FileStore(tmp), "TSK-999")).rejects.toBeInstanceOf(
       EntityNotFoundError,
     );
   });

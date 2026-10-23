@@ -36,8 +36,8 @@ Full plan: .backlog/ideas/complete/ (PLN-030).
 
 ## Learnings
 
-- LRN-040: Stray package.json or lockfile in a parent dir breaks the suite; turbo drops TMPDIR
-- LRN-041: readme-media acceptance run needs a human session plus vhs, ttyd and ffmpeg
+- LRN-042: Stray package.json or lockfile in a parent dir breaks the suite; turbo drops TMPDIR
+- LRN-043: readme-media acceptance run needs a human session plus vhs, ttyd and ffmpeg
 ## Progress Log
 
 - [2026-10-19] Created

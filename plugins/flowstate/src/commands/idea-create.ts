@@ -1,10 +1,6 @@
-import { join } from "node:path";
 import type { Complexity } from "../core/types.js";
+import type { BacklogStore } from "../core/store.js";
 import { today } from "../core/date.js";
-import { titleToSlug } from "../core/slug.js";
-import { ideaDir } from "../core/paths.js";
-import { writeEntity } from "../core/fs.js";
-import { nextId } from "./next-id.js";
 
 export interface IdeaCreateInput {
   readonly title: string;
@@ -13,23 +9,19 @@ export interface IdeaCreateInput {
 }
 
 export async function ideaCreate(
-  root: string,
+  store: BacklogStore,
   input: IdeaCreateInput,
 ): Promise<{ id: string; path: string }> {
-  const id = await nextId(root, "idea");
-  const slug = titleToSlug(input.title);
-  const filename = `${id}-${slug}.md`;
-  const dir = ideaDir(root, "pending");
-  const filePath = join(dir, filename);
-
-  const frontmatter: Record<string, unknown> = {
-    id,
+  const created = await store.create("idea", {
     title: input.title,
-    status: "pending",
-    created: today(),
-    complexity: input.complexity,
-  };
-
-  await writeEntity(filePath, frontmatter, `\n${input.body}`);
-  return { id, path: filePath };
+    frontmatter: (id) => ({
+      id,
+      title: input.title,
+      status: "pending",
+      created: today(),
+      complexity: input.complexity,
+    }),
+    body: `\n${input.body}`,
+  });
+  return { id: created.id, path: created.path };
 }

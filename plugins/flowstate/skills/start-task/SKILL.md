@@ -20,7 +20,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Identify Task
 
-If `$ARGUMENTS` provided, find the matching file in `{{BACKLOG}}/tasks/pending/`. If it is not there but exists in `{{BACKLOG}}/tasks/active/`, the task is already started — skip Step 4 (no move) and go to Step 5. If found nowhere, say so and stop.
+If `$ARGUMENTS` provided, find the matching task in `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status pending --json true` and read the file at its `path`. If it is not there but is listed by `task-list --status active --json true`, the task is already started — skip Step 4 (no move) and go to Step 5. If found nowhere, say so and stop.
 
 If no argument, list all pending non-blocked tasks and ask which to start.
 
@@ -42,8 +42,8 @@ Before moving the task, gather relevant context automatically:
    node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{TASK_TAGS}}" --query "{{TASK_TITLE}} {{TASK_DESCRIPTION_FIRST_LINE}}" --limit 3 --json true
    ```
    The CLI returns only active learnings, scored by tag match and keyword relevance. Use the `title`, `tags`, and `reasons` fields to summarize relevance. Only read the full learning file if the user asks for details. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
-2. **Active tasks**: Read `{{BACKLOG}}/tasks/active/` to list what else is in progress — helps the user understand current workload and spot potential overlaps.
-3. **Pending reports**: Scan `{{BACKLOG}}/reports/pending/` titles for anything related to this task's scope — avoids working on something with a known open issue.
+2. **Active tasks**: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true` to list what else is in progress — helps the user understand current workload and spot potential overlaps.
+3. **Pending reports**: scan the titles from `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-list --json true` for anything related to this task's scope — avoids working on something with a known open issue.
 
 With no matching learnings or reports, say nothing about them.
 

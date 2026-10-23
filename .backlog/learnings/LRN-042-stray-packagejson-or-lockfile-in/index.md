@@ -1,5 +1,5 @@
 ---
-id: LRN-040
+id: LRN-042
 title: Stray package.json or lockfile in a parent dir breaks the suite; turbo drops TMPDIR
 status: active
 tags: [testing, tooling, turbo, vitest]

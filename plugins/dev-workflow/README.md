@@ -153,8 +153,9 @@ Turns the current branch into a pull request. The description is written from yo
 **What it does:**
 - 🛫 Preflight: `gh` authenticated, not on the base branch, commits ahead, no PR already open (then it points you to `/pr-ready`)
 - 🔐 Scans every commit in `<base>...HEAD` for secrets and sensitive files; stops on findings
+- 🔎 Reviews the diff with `code-reviewer` (plus `security-reviewer` for auth, env, payments or DB changes) and recommends fixing Critical or Must Fix findings first
 - 🧩 Resolves the template (see below) and suggests a Conventional Commits scope for the title
-- 👀 Shows title and body and waits for you to approve, edit or cancel
+- 👀 Shows the findings, title and body and waits for you to fix first, approve, edit or cancel
 - 📤 Only then runs `git push -u` and `gh pr create --draft`
 - 🔒 Never force-pushes, never creates anything before you say yes
 

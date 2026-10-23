@@ -4,9 +4,9 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 5 |
+| Pending | 6 |
 | Active | 1 |
-| Blocked | 2 |
+| Blocked | 3 |
 | Complete | 51 |
 
 ## Active Tasks
@@ -14,6 +14,7 @@
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
 - TSK-053: Fix: review-idea and triage-report number their decision menus after a numbered list (P3)
 - TSK-056: dev-workflow: readme-media skill generates README screenshots and GIFs (P2) [BLOCKED: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd, ffmpeg and a logged-in claude on PATH. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.]
+- TSK-057: Optional GitHub Issues backend for tasks, ideas and reports (P2) [BLOCKED: Phase 1 (criteria 1, 2, 4) landed on hustle/maintainer/task-2026-10-22. Phase 2 remains: criteria 3, 5-11 need the gh wrapper, GithubStore, resolveStore backend selection, setup --github, GitHub-mode compress/condense/stats/doctor/hook, stub-gh contract tests and docs. Too large for one unattended run; split Phase 2 into its own task.]
 
 ## Pending Tasks
 
@@ -21,9 +22,10 @@
 |----|-------|----------|------|---------|
 | TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | P3 |  | 2026-10-19 |
 | TSK-055 | Fix: parallel skill leaves worktrees behind after merge | P3 |  | 2026-10-19 |
-| TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | P2 |  | 2026-10-19 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | P3 |  | 2026-10-19 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | P3 |  | 2026-10-20 |
+| TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | P3 | flowstate, cli, index | 2026-10-22 |
+| TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | P4 | flowstate, cli | 2026-10-22 |
 
 ## Recently Completed
 

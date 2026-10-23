@@ -22,7 +22,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 Parse `$ARGUMENTS` for task ID (first word if it matches TSK-XXX, XXX, or a number).
 
-If no ID, check for active tasks and ask which to block. Look in both `tasks/active/` and `tasks/pending/`.
+If no ID, check for active tasks and ask which to block. List both groups with `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true` and `task-list --status pending --json true`.
 
 Done when: a single task ID is resolved.
 

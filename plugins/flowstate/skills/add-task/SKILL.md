@@ -20,9 +20,9 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Read Current State
 
-Read `{{BACKLOG}}/tasks/index.md` to understand the current backlog.
+Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` to understand the current backlog.
 
-Done when: the index has been read.
+Done when: the task list has been read.
 
 ### 2. Gather Task Information
 

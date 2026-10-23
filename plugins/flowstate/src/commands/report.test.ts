@@ -6,6 +6,7 @@ import { reportCreate } from "./report-create.js";
 import { reportMove } from "./report-move.js";
 import { setup } from "./setup.js";
 import { readEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -20,7 +21,7 @@ afterEach(async () => {
 
 describe("reportCreate", () => {
   it("creates a report in reports/pending/", async () => {
-    const result = await reportCreate(tmp, {
+    const result = await reportCreate(new FileStore(tmp), {
       title: "Auth token leak",
       type: "security",
       severity: "critical",
@@ -36,7 +37,7 @@ describe("reportCreate", () => {
 
   it("creates reports/pending/ when the backlog lacks it", async () => {
     await rm(join(tmp, "reports"), { recursive: true, force: true });
-    const result = await reportCreate(tmp, {
+    const result = await reportCreate(new FileStore(tmp), {
       title: "Old backlog",
       type: "finding",
       severity: "low",
@@ -48,14 +49,14 @@ describe("reportCreate", () => {
 
 describe("reportMove", () => {
   it("moves report to complete/ with triaged status", async () => {
-    const { id } = await reportCreate(tmp, {
+    const { id } = await reportCreate(new FileStore(tmp), {
       title: "Bug found",
       type: "bug",
       severity: "high",
       body: "Details",
     });
 
-    const result = await reportMove(tmp, id, "triaged", "TSK-001");
+    const result = await reportMove(new FileStore(tmp), id, "triaged", "TSK-001");
     const doc = await readEntity(result.path);
     const fm = doc.frontmatter as Record<string, unknown>;
     expect(fm["status"]).toBe("triaged");
@@ -63,14 +64,14 @@ describe("reportMove", () => {
   });
 
   it("moves report to complete/ with discarded status when no task is linked", async () => {
-    const { id } = await reportCreate(tmp, {
+    const { id } = await reportCreate(new FileStore(tmp), {
       title: "Duplicate",
       type: "bug",
       severity: "low",
       body: "Already reported elsewhere",
     });
 
-    const result = await reportMove(tmp, id, "discarded");
+    const result = await reportMove(new FileStore(tmp), id, "discarded");
     const doc = await readEntity(result.path);
     const fm = doc.frontmatter as Record<string, unknown>;
     expect(fm["status"]).toBe("discarded");
@@ -79,7 +80,7 @@ describe("reportMove", () => {
   });
 
   it("creates reports/complete/ when the backlog lacks it", async () => {
-    const { id } = await reportCreate(tmp, {
+    const { id } = await reportCreate(new FileStore(tmp), {
       title: "Old backlog",
       type: "bug",
       severity: "low",
@@ -87,7 +88,7 @@ describe("reportMove", () => {
     });
     await rm(join(tmp, "reports", "complete"), { recursive: true, force: true });
 
-    const result = await reportMove(tmp, id, "discarded");
+    const result = await reportMove(new FileStore(tmp), id, "discarded");
     expect(result.path).toContain("/reports/complete/");
   });
 });

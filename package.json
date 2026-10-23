@@ -15,6 +15,7 @@
     "version:check": "node scripts/check-version-consistency.mjs",
     "backlog:check": "node scripts/check-backlog-integrity.mjs",
     "names:check": "node scripts/check-reserved-names.mjs",
+    "eval:live": "node scripts/eval-live.mjs",
     "sandbox:prune-tests": "node scripts/sandbox-prune-tests.mjs",
     "sandbox:deslop": "node scripts/sandbox-deslop.mjs",
     "sandbox:kickstart": "node scripts/sandbox-kickstart.mjs",

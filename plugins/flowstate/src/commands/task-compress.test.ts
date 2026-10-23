@@ -7,6 +7,7 @@ import { taskCreate } from "./task-create.js";
 import { taskMove } from "./task-move.js";
 import { setup } from "./setup.js";
 import { readEntity, writeEntity } from "../core/fs.js";
+import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
 
@@ -20,7 +21,7 @@ afterEach(async () => {
 });
 
 async function makeCompleteTaskWithBody(id: string, body: string): Promise<string> {
-  await taskCreate(tmp, {
+  await taskCreate(new FileStore(tmp), {
     title: "Fix",
     priority: "P2",
     tags: [],
@@ -29,8 +30,8 @@ async function makeCompleteTaskWithBody(id: string, body: string): Promise<strin
     source: "manual",
     dependsOn: [],
   });
-  await taskMove(tmp, id, "active");
-  await taskMove(tmp, id, "complete");
+  await taskMove(new FileStore(tmp), id, "active");
+  await taskMove(new FileStore(tmp), id, "complete");
   const filePath = join(tmp, "tasks", "complete", `${id}-fix.md`);
   const doc = await readEntity(filePath);
   await writeEntity(filePath, doc.frontmatter as Record<string, unknown>, body);
@@ -61,7 +62,7 @@ describe("taskCompress", () => {
     const filePath = await makeCompleteTaskWithBody("TSK-001", withEvidence);
     const compressed = withEvidence.replace("We absolutely need to make sure that we really fix", "Fix");
 
-    const result = await taskCompress(tmp, "TSK-001", compressed);
+    const result = await taskCompress(new FileStore(tmp), "TSK-001", compressed);
     expect(result.errors).toEqual([]);
     expect(result.ok).toBe(true);
     expect((await readEntity(filePath)).body).toContain(
@@ -69,7 +70,7 @@ describe("taskCompress", () => {
     );
 
     const stripped = withEvidence.replace(" — evidence: pnpm test → exit 0 (2026-04-29)", "");
-    const rejected = await taskCompress(tmp, "TSK-001", stripped);
+    const rejected = await taskCompress(new FileStore(tmp), "TSK-001", stripped);
     expect(rejected.ok).toBe(false);
   });
 
@@ -91,7 +92,7 @@ describe("taskCompress", () => {
       "See https://example.com/docs, run `npm test`.",
     ].join("\n");
 
-    const result = await taskCompress(tmp, "TSK-001", compressed);
+    const result = await taskCompress(new FileStore(tmp), "TSK-001", compressed);
     expect(result.errors).toEqual([]);
     expect(result.ok).toBe(true);
     expect(result.bytesAfter).toBeLessThan(result.bytesBefore);
@@ -106,7 +107,7 @@ describe("taskCompress", () => {
     const filePath = await makeCompleteTaskWithBody("TSK-001", ORIG_BODY);
     const broken = ORIG_BODY.replace("- Crit one", "- Crit uno").slice(0, -10);
 
-    const result = await taskCompress(tmp, "TSK-001", broken);
+    const result = await taskCompress(new FileStore(tmp), "TSK-001", broken);
     expect(result.ok).toBe(false);
     expect(result.errors.some((e) => e.includes("Acceptance Criteria"))).toBe(true);
 
@@ -118,7 +119,7 @@ describe("taskCompress", () => {
   it("rejects when ID is missing in compressed body", async () => {
     await makeCompleteTaskWithBody("TSK-001", ORIG_BODY);
     const broken = ORIG_BODY.replace("TSK-042", "the bug").slice(0, -5);
-    const result = await taskCompress(tmp, "TSK-001", broken);
+    const result = await taskCompress(new FileStore(tmp), "TSK-001", broken);
     expect(result.ok).toBe(false);
     expect(result.errors.some((e) => e.includes("missing ID"))).toBe(true);
   });
@@ -129,7 +130,7 @@ describe("taskCompress", () => {
     const fm = { ...(doc.frontmatter as Record<string, unknown>), compressed: true };
     await writeEntity(filePath, fm, doc.body);
 
-    const result = await taskCompress(tmp, "TSK-001", "anything");
+    const result = await taskCompress(new FileStore(tmp), "TSK-001", "anything");
     expect(result.ok).toBe(false);
     expect(result.skippedReason).toBe("already compressed");
   });

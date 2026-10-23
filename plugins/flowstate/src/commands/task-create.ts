@@ -1,12 +1,7 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import type { Priority } from "../core/types.js";
+import type { BacklogStore } from "../core/store.js";
 import { today } from "../core/date.js";
-import { titleToSlug } from "../core/slug.js";
-import { taskDir, taskIndexPath } from "../core/paths.js";
-import { writeEntity } from "../core/fs.js";
-import { addTableRow, embedUnderDescription } from "../core/markdown.js";
-import { nextId } from "./next-id.js";
+import { embedUnderDescription } from "../core/markdown.js";
 
 export interface TaskCreateInput {
   readonly title: string;
@@ -24,26 +19,10 @@ export interface TaskCreateResult {
 }
 
 export async function taskCreate(
-  root: string,
+  store: BacklogStore,
   input: TaskCreateInput,
 ): Promise<TaskCreateResult> {
-  const id = await nextId(root, "task");
-  const slug = titleToSlug(input.title);
-  const filename = `${id}-${slug}.md`;
   const date = today();
-  const dir = taskDir(root, "pending");
-  const filePath = join(dir, filename);
-
-  const frontmatter: Record<string, unknown> = {
-    id,
-    title: input.title,
-    status: "pending",
-    priority: input.priority,
-    tags: [...input.tags],
-    created: date,
-    source: input.source,
-    "depends-on": [...input.dependsOn],
-  };
 
   const criteriaLines =
     input.criteria.length > 0
@@ -71,37 +50,20 @@ ${notes ? `\n${notes}\n` : ""}
 
 - [${date}] Created`;
 
-  await writeEntity(filePath, frontmatter, body);
+  const created = await store.create("task", {
+    title: input.title,
+    frontmatter: (id) => ({
+      id,
+      title: input.title,
+      status: "pending",
+      priority: input.priority,
+      tags: [...input.tags],
+      created: date,
+      source: input.source,
+      "depends-on": [...input.dependsOn],
+    }),
+    body,
+  });
 
-  // Update task index
-  await updateTaskIndex(root, id, input, date);
-
-  return { id, path: filePath };
-}
-
-async function updateTaskIndex(
-  root: string,
-  id: string,
-  input: TaskCreateInput,
-  date: string,
-): Promise<void> {
-  const indexPath = taskIndexPath(root);
-  let content = await readFile(indexPath, "utf-8");
-
-  const tags = input.tags.length > 0 ? input.tags.join(", ") : "";
-  const row = `| ${id} | ${input.title} | ${input.priority} | ${tags} | ${date} |`;
-  content = addTableRow(content, "Pending Tasks", row);
-
-  // Update stats
-  content = incrementStat(content, "Pending");
-
-  await writeFile(indexPath, content, "utf-8");
-}
-
-function incrementStat(content: string, label: string): string {
-  const pattern = new RegExp(`\\| ${label} \\| (\\d+) \\|`);
-  const match = content.match(pattern);
-  if (!match) return content;
-  const current = parseInt(match[1]!, 10);
-  return content.replace(pattern, `| ${label} | ${current + 1} |`);
+  return { id: created.id, path: created.path };
 }

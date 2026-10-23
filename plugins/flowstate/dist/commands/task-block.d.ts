@@ -1,3 +1,4 @@
-export declare function taskBlock(root: string, id: string, reason: string): Promise<{
+import type { BacklogStore } from "../core/store.js";
+export declare function taskBlock(store: BacklogStore, id: string, reason: string): Promise<{
     path: string;
 }>;

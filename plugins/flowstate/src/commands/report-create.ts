@@ -1,10 +1,6 @@
-import { join } from "node:path";
 import type { ReportType, Severity } from "../core/types.js";
+import type { BacklogStore } from "../core/store.js";
 import { today } from "../core/date.js";
-import { titleToSlug } from "../core/slug.js";
-import { reportDir } from "../core/paths.js";
-import { ensureDir, writeEntity } from "../core/fs.js";
-import { nextId } from "./next-id.js";
 
 export interface ReportCreateInput {
   readonly title: string;
@@ -14,26 +10,20 @@ export interface ReportCreateInput {
 }
 
 export async function reportCreate(
-  root: string,
+  store: BacklogStore,
   input: ReportCreateInput,
 ): Promise<{ id: string; path: string }> {
-  const id = await nextId(root, "report");
-  const slug = titleToSlug(input.title);
-  const filename = `${id}-${slug}.md`;
-  const dir = reportDir(root, "pending");
-  const filePath = join(dir, filename);
-
-  const frontmatter: Record<string, unknown> = {
-    id,
+  const created = await store.create("report", {
     title: input.title,
-    type: input.type,
-    severity: input.severity,
-    status: "pending",
-    created: today(),
-  };
-
-  // Backlogs set up before reports existed have no reports/ folder.
-  await ensureDir(dir);
-  await writeEntity(filePath, frontmatter, `\n${input.body}`);
-  return { id, path: filePath };
+    frontmatter: (id) => ({
+      id,
+      title: input.title,
+      type: input.type,
+      severity: input.severity,
+      status: "pending",
+      created: today(),
+    }),
+    body: `\n${input.body}`,
+  });
+  return { id: created.id, path: created.path };
 }

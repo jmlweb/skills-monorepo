@@ -1,6 +1,4 @@
-import { join } from "node:path";
-import { taskDir } from "../core/paths.js";
-import { findEntityFile, readEntity, writeEntity } from "../core/fs.js";
+import type { BacklogStore } from "../core/store.js";
 import { EntityNotFoundError } from "../core/errors.js";
 import {
   validateCompression,
@@ -20,21 +18,19 @@ export interface TaskCompressResult {
 }
 
 export async function taskCompress(
-  root: string,
+  store: BacklogStore,
   id: string,
   newBody: string,
 ): Promise<TaskCompressResult> {
-  const dir = taskDir(root, "complete");
-  const fileName = await findEntityFile(dir, id);
-  if (!fileName) {
+  const task = await store.find("task", id, ["complete"]);
+  if (!task) {
     throw new EntityNotFoundError(id, "tasks/complete");
   }
-  const filePath = join(dir, fileName);
-  const doc = await readEntity(filePath);
-  const fm = { ...(doc.frontmatter as Record<string, unknown>) };
+  const filePath = task.path;
+  const fm = { ...task.frontmatter };
 
   if (fm["compressed"] === true || fm["compressed"] === "true") {
-    const bytes = Buffer.byteLength(doc.body, "utf-8");
+    const bytes = Buffer.byteLength(task.body, "utf-8");
     return {
       id,
       path: filePath,
@@ -46,7 +42,7 @@ export async function taskCompress(
     };
   }
 
-  const validation: CompressValidationResult = validateCompression(doc.body, newBody, {
+  const validation: CompressValidationResult = validateCompression(task.body, newBody, {
     protectedSections: PROTECTED_SECTIONS,
   });
 
@@ -62,7 +58,7 @@ export async function taskCompress(
   }
 
   fm["compressed"] = true;
-  await writeEntity(filePath, fm, newBody);
+  await store.save(task, fm, newBody);
 
   return {
     id,

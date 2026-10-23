@@ -1,25 +1,16 @@
-import { join } from "node:path";
 import { today } from "../core/date.js";
-import { titleToSlug } from "../core/slug.js";
-import { reportDir } from "../core/paths.js";
-import { ensureDir, writeEntity } from "../core/fs.js";
-import { nextId } from "./next-id.js";
-export async function reportCreate(root, input) {
-    const id = await nextId(root, "report");
-    const slug = titleToSlug(input.title);
-    const filename = `${id}-${slug}.md`;
-    const dir = reportDir(root, "pending");
-    const filePath = join(dir, filename);
-    const frontmatter = {
-        id,
+export async function reportCreate(store, input) {
+    const created = await store.create("report", {
         title: input.title,
-        type: input.type,
-        severity: input.severity,
-        status: "pending",
-        created: today(),
-    };
-    // Backlogs set up before reports existed have no reports/ folder.
-    await ensureDir(dir);
-    await writeEntity(filePath, frontmatter, `\n${input.body}`);
-    return { id, path: filePath };
+        frontmatter: (id) => ({
+            id,
+            title: input.title,
+            type: input.type,
+            severity: input.severity,
+            status: "pending",
+            created: today(),
+        }),
+        body: `\n${input.body}`,
+    });
+    return { id: created.id, path: created.path };
 }
