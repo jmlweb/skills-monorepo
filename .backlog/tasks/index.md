@@ -6,14 +6,13 @@
 |--------|-------|
 | Pending | 6 |
 | Active | 1 |
-| Blocked | 3 |
-| Complete | 51 |
+| Blocked | 2 |
+| Complete | 52 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
 - TSK-053: Fix: review-idea and triage-report number their decision menus after a numbered list (P3)
-- TSK-056: dev-workflow: readme-media skill generates README screenshots and GIFs (P2) [BLOCKED: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd, ffmpeg and a logged-in claude on PATH. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.]
 - TSK-057: Optional GitHub Issues backend for tasks, ideas and reports (P2) [BLOCKED: Phase 1 (criteria 1, 2, 4) landed on hustle/maintainer/task-2026-10-22. Phase 2 remains: criteria 3, 5-11 need the gh wrapper, GithubStore, resolveStore backend selection, setup --github, GitHub-mode compress/condense/stats/doctor/hook, stub-gh contract tests and docs. Too large for one unattended run; split Phase 2 into its own task.]
 
 ## Pending Tasks
@@ -31,6 +30,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-056 | dev-workflow: readme-media skill generates README screenshots and GIFs | 2026-10-23 |
 | TSK-052 | flowstate kickstart skill: description to evaluated, documented, tasked project | 2026-10-19 |
 | TSK-051 | flowstate: shared learnings across projects, on by default | 2026-10-16 |
 | TSK-035 | Audit atlassian-polish skills against writing rules | 2026-10-15 |
@@ -40,4 +40,3 @@
 | TSK-034 | Audit dev-workflow skills against writing rules | 2026-10-11 |
 | TSK-025 | dev-workflow: deslop skill | 2026-10-09 |
 | TSK-031 | Add flowstate guide skill mapping the flows | 2026-10-09 |
-| TSK-036 | Add GLOSSARY.md and fix entity-name drift | 2026-10-09 |

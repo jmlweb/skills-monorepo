@@ -1,14 +1,14 @@
 ---
 id: TSK-056
 title: dev-workflow: readme-media skill generates README screenshots and GIFs
-status: blocked
+status: complete
 priority: P2
 tags: []
 created: 2026-10-19
 source: idea/PLN-030
 depends-on: []
 started: 2026-10-20
-blocked-by: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd, ffmpeg and a logged-in claude on PATH. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.
+completed: 2026-10-23
 ---
 
 # dev-workflow: readme-media skill generates README screenshots and GIFs
@@ -29,8 +29,8 @@ Full plan: .backlog/ideas/complete/ (PLN-030).
 - [x] dev-workflow README and root README updated (command table, skill counts, catalog description)
 - [x] pnpm lint:skills, claude plugin validate plugins/dev-workflow and claude plugin validate . pass
 - [x] scripts/sandbox-readme-media.mjs, its node:test file and sandbox:readme-media script added
-- [ ] Acceptance run via sandbox on plugins/flowstate README lands a GIF in plugins/flowstate/docs/media/
-- [ ] dev-workflow bumped to a minor version via pnpm bump
+- [x] Acceptance run via sandbox on plugins/flowstate README lands a GIF in plugins/flowstate/docs/media/ — evidence: pnpm sandbox:readme-media check → PASS; sandbox plugins/flowstate/docs/media/ holds overview.gif (919 KB), next-task.gif (460 KB), add-task.gif (1.43 MB) plus tapes, README embeds all three; last frames show finished turns, no home paths (2026-10-23)
+- [x] dev-workflow bumped to a minor version via pnpm bump — evidence: dev-workflow 1.7.0 → 1.8.0 (main already shipped 1.7.0) in d3a9a6d; vitest 145 pass, node --test 124 pass, lint:skills 0 errors, claude plugin validate . passed (2026-10-23)
 
 ## Notes
 
@@ -51,3 +51,6 @@ Full plan: .backlog/ideas/complete/ (PLN-030).
 - [2026-10-20] Blocked: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd and ffmpeg installed; none are available unattended. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.
 - [2026-10-20] Blocked: Criterion 7 needs a human-driven pnpm sandbox:readme-media run (interactive claude session approving shot list and diff) with vhs, ttyd, ffmpeg and a logged-in claude on PATH. Criterion 8 (pnpm bump minor) is held until that run passes, since a bumped version merged to main ships the skill.
 - [2026-10-20] Plugin projects now record a live claude session running their slash commands instead of the standalone CLI; plugin tape template smoke-tested with vhs on /flowstate:overview (624 KB GIF)
+- [2026-10-23] Unblocked
+- [2026-10-23] Merged origin/main; renumbered this branch's learnings LRN-040/041 to LRN-042/043 after main took those IDs
+- [2026-10-23] Completed
