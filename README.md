@@ -21,7 +21,7 @@
 | Plugin | Description | Status |
 |--------|-------------|:------:|
 | 🌊 [**flowstate**](./plugins/flowstate/) | Backlog management — tasks, ideas, reports & learnings in plain markdown | ✅ Stable |
-| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, doc audits and test pruning | ✅ Stable |
+| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, doc audits, test pruning and README media | ✅ Stable |
 | ✨ [**atlassian-polish**](./plugins/atlassian-polish/) | Rewrite Jira issues and Confluence pages into scannable, human-friendly content | 🧪 New |
 
 > 🔭 More plugins coming soon. Contributions welcome!
@@ -61,7 +61,7 @@ flowchart LR
 </details>
 
 <details open>
-<summary><strong>🛠️ dev-workflow</strong> — 10 skills</summary>
+<summary><strong>🛠️ dev-workflow</strong> — 11 skills</summary>
 
 | Skill | What it does |
 |-------|--------------|
@@ -75,6 +75,7 @@ flowchart LR
 | `agent-handoff` | Per-repo prompts for multi-repo agent work, and report reconciliation |
 | `check-docs` | Audits docs for drift and structure |
 | `prune-tests` | Finds redundant tests; deletes or rewrites only what you approve |
+| `readme-media` | Records README screenshots and terminal GIFs, embedded after you approve |
 
 </details>
 
@@ -146,6 +147,7 @@ pnpm typecheck      # Type-check all plugins (no emit)
 pnpm lint:skills    # Lint every SKILL.md against the house rules
 pnpm version:sync   # Sync plugin.json versions → marketplace.json
 pnpm sandbox:prune-tests  # Live /prune-tests run on a throwaway repo, then an invariant check
+pnpm sandbox:readme-media # Live /readme-media run on a copy of flowstate, then a media check
 ```
 
 ### Repository structure
@@ -154,7 +156,7 @@ pnpm sandbox:prune-tests  # Live /prune-tests run on a throwaway repo, then an i
 .claude-plugin/           # Root marketplace definition
 plugins/
 ├── flowstate/            # Backlog management (21 skills + CLI + hooks + agent)
-├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests (10 skills + CLI + agent)
+├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests (11 skills + CLI + agent)
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
 └── shared-config/        # Shared TypeScript base config

@@ -45,3 +45,5 @@
 | LRN-039 | A bumped version pushed to main ships to users; the tag only cuts the GitHub Release | release, marketplace, claude-code, versioning | active | 2026-10-18 |
 | LRN-040 | A blocked task can sit in tasks/pending, so status does not say where a task lives | flowstate, store, tasks | active | 2026-10-22 |
 | LRN-041 | task-block leaves tasks/index.md stale, which fails pnpm backlog:check in CI | flowstate, backlog, ci | active | 2026-10-22 |
+| LRN-042 | Stray package.json or lockfile in a parent dir breaks the suite; turbo drops TMPDIR | testing, tooling, turbo, vitest | active | 2026-10-20 |
+| LRN-043 | readme-media acceptance run needs a human session plus vhs, ttyd, ffmpeg and claude | sandbox, skills, readme-media, testing | active | 2026-10-20 |
