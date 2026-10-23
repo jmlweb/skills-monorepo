@@ -54,6 +54,8 @@ claude plugin install flowstate@jmlweb
 
 That's it. You're managing a backlog. 🎉
 
+![Running /flowstate:overview to see pending and active tasks in a Claude Code session](docs/media/overview.gif)
+
 ---
 
 ## 📦 Installation
@@ -146,6 +148,8 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees |
 | 🙋 `/flowstate:condense-tasks` | Shrink completed task files (drop notes, trim the log, compress prose). Runs in an isolated subagent so the loop stays out of your context |
 
+![Asking /flowstate:next-task what to start and getting a parallel-safe pair](docs/media/next-task.gif)
+
 ### 🗺️ Ideas
 
 | Command | Description |
@@ -216,6 +220,8 @@ Claude suggests Flowstate commands when relevant — you don't always need to in
 ### 🗣️ Questions in rounds, not one by one
 
 `idea` and `add-task` ask everything that is open **in a single round**. Each question comes with a recommended answer, so replying *"yes"* accepts the lot; override one with `Q2: P2`. Facts the repo can answer are looked up, never asked.
+
+![Grooming a task with /flowstate:add-task and accepting every proposal with yes](docs/media/add-task.gif)
 
 ### 🧾 Done means proven
 
