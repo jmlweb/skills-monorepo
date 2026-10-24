@@ -44,7 +44,7 @@ Done when: a non-empty reason string exists.
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-block {{ID}} --reason "{{REASON}}"
 ```
 
-The CLI sets `status: blocked` and `blocked-by` and adds a progress log entry; the task file stays in its directory.
+Phrase `{{REASON}}` without `"`, `$` or backticks: it sits inside double quotes. The CLI sets `status: blocked` and `blocked-by` and adds a progress log entry; the task file stays in its directory.
 
 Done when: the CLI reports the task as blocked.
 
@@ -58,7 +58,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TI
 BODY
 ```
 
-Dependency, External and Clarification blockers yield no reusable insight; skip this step for them.
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. Dependency, External and Clarification blockers yield no reusable insight; skip this step for them.
 
 Done when: a learning ID exists (Technical blocker) or the blocker category is not Technical.
 
@@ -87,6 +87,6 @@ When the user asks to unblock a task ("unblock TSK-XXX", "blocker resolved"), sk
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-unblock {{ID}} --resolution "{{TEXT}}"
 ```
 
-`{{TEXT}}` is how the blocker was resolved, from `$ARGUMENTS` or asked. Then print `Unblocked TSK-{{ID}}: {{TEXT}}` and suggest `/flowstate:start-task TSK-{{ID}}`.
+`{{TEXT}}` is how the blocker was resolved, from `$ARGUMENTS` or asked; phrase it without `"`, `$` or backticks: it sits inside double quotes. Then print `Unblocked TSK-{{ID}}: {{TEXT}}` and suggest `/flowstate:start-task TSK-{{ID}}`.
 
 Done when: the CLI reports the task unblocked and the confirmation line is printed.

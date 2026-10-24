@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 5 |
 | Active | 1 |
 | Blocked | 2 |
-| Complete | 52 |
+| Complete | 53 |
 
 ## Active Tasks
 
@@ -19,7 +19,6 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | P3 |  | 2026-10-19 |
 | TSK-055 | Fix: parallel skill leaves worktrees behind after merge | P3 |  | 2026-10-19 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | P3 |  | 2026-10-19 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | P3 |  | 2026-10-20 |
@@ -30,6 +29,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | 2026-10-24 |
 | TSK-056 | dev-workflow: readme-media skill generates README screenshots and GIFs | 2026-10-23 |
 | TSK-052 | flowstate kickstart skill: description to evaluated, documented, tasked project | 2026-10-19 |
 | TSK-051 | flowstate: shared learnings across projects, on by default | 2026-10-16 |
@@ -39,4 +39,3 @@
 | TSK-033 | Audit flowstate and repo-local skills against writing rules | 2026-10-11 |
 | TSK-034 | Audit dev-workflow skills against writing rules | 2026-10-11 |
 | TSK-025 | dev-workflow: deslop skill | 2026-10-09 |
-| TSK-031 | Add flowstate guide skill mapping the flows | 2026-10-09 |

@@ -48,14 +48,15 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-create \
   --tags "{{TAGS}}" \
   --criteria '{{CRITERIA_JSON}}' \
   --source manual \
-  --depends-on "{{DEPS}}" \
+  --depends-on "{{DEP_IDS}}" \
   --body - <<'BODY'
 {{DESCRIPTION}}
 BODY
 ```
 
+- Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes.
 - `{{CRITERIA_JSON}}` is a JSON array of strings, e.g. `'["criterion 1","criterion 2"]'`
-- `{{DEPS}}` is comma-separated task IDs, e.g. `TSK-001,TSK-002`. Omit the `--depends-on` flag entirely if there are no dependencies; omit `--criteria` if none were gathered.
+- `{{DEP_IDS}}` is comma-separated task IDs, e.g. `TSK-001,TSK-002`. Omit the `--depends-on` flag entirely if there are no dependencies; omit `--criteria` if none were gathered.
 
 The CLI assigns the ID, creates the task file, and updates `tasks/index.md`.
 

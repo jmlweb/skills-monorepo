@@ -53,7 +53,7 @@ Before recommending, gather evidence. Skip steps that don't apply to the report 
 
 - **Reproduce / locate**: grep the codebase for symbols, error messages, or file paths mentioned in the report. Confirm the affected code still exists and the issue is plausible.
 - **Check for duplicates**: scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` (pending and active entries) for tasks with overlapping title, tags, or source. Note any matches.
-- **Cross-reference learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for related insights that explain the behavior or suggest a fix. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
+- **Cross-reference learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` (phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes) for related insights that explain the behavior or suggest a fix. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 - **Assess completeness**: does the report contain enough to act on (repro steps, expected vs actual, scope)? List what's missing if not.
 
 Surface only the conclusions, in the next step.
@@ -98,7 +98,7 @@ BODY
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --status triaged --task-id TSK-{{NEW_ID}}
 ```
 
-The CLI handles frontmatter updates, file moves, and index updates.
+Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. The CLI handles frontmatter updates, file moves, and index updates.
 
 - Priority: derive automatically from severity (critical→P1, high→P2, medium→P3, low→P4). Apply silently. Surface it in the confirm output so the user can override if needed.
 - Acceptance criteria: derive from the report (e.g., "Bug no longer reproduces"). Pass as a JSON array: `--criteria '["criterion 1","criterion 2"]'`
