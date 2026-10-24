@@ -64,7 +64,7 @@ Before creating, search for similar existing learnings to avoid duplicates:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --scope local --json true
 ```
 
-Decide based on top match score (`reasons` array explains why each result matched):
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. Decide based on top match score (`reasons` array explains why each result matched):
 
 - **Top score ≥ 5** → likely duplicate.
   - In **auto-draft mode**: skip creation without asking. Say `Skipped — duplicate of LRN-{{ID}}: {{TITLE}}` and stop.
@@ -108,7 +108,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TI
 BODY
 ```
 
-`{{LEARNING_CONTENT}}` uses three headings, in this order: `## Context`, `## Insight`, `## Application`.
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. `{{LEARNING_CONTENT}}` uses three headings, in this order: `## Context`, `## Insight`, `## Application`.
 
 The CLI assigns the ID, creates the directory, and updates the index. Omit `--task` when no task is linked.
 

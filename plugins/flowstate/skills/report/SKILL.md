@@ -64,7 +64,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-create --title "{{TITL
 BODY
 ```
 
-`{{REPORT_CONTENT}}` is one `## <Field>` section per field gathered in Step 2 (for example `## Summary`, `## Steps to Reproduce`), in that order. The CLI assigns the ID and places the file in `reports/pending/`.
+Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. `{{REPORT_CONTENT}}` is one `## <Field>` section per field gathered in Step 2 (for example `## Summary`, `## Steps to Reproduce`), in that order. The CLI assigns the ID and places the file in `reports/pending/`.
 
 Done when: the CLI prints the new RPT ID.
 

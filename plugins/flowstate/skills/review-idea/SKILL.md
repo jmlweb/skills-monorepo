@@ -59,7 +59,7 @@ Before recommending, audit the idea against the actual codebase. Skip steps that
 - **Approach soundness**: read each step critically. Are there missing steps (tests, migrations, types, docs)? Steps that won't compile or contradict existing patterns?
 - **Risk gaps**: high/medium-complexity ideas with an empty or trivial Risks section are a red flag — propose at least one concrete risk grounded in the code.
 - **Conflicts with active work**: scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true` and recent commits (`git log --oneline -20`) for overlapping changes that could collide.
-- **Related learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` for prior insights that should shape the approach. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
+- **Related learnings**: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{TITLE}}" --limit 3 --json true` (phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes) for prior insights that should shape the approach. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 
 Surface only the conclusions, in the next step.
 
@@ -107,7 +107,7 @@ BODY
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status approved --task-id TSK-{{NEW_ID}}
 ```
 
-The CLI handles frontmatter updates, file moves, and index updates.
+Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. `{{CRITERIA_JSON}}` is valid JSON inside single quotes, so phrase every criterion without `'`, `"` or `\`. The CLI handles frontmatter updates, file moves, and index updates.
 
 - Priority: derive automatically from complexity (low→P3, medium→P2, high→P2). Apply silently. Surface it in the confirm output so the user can override if needed.
 - Acceptance criteria: derive from the Approach steps. Pass as a JSON array: `--criteria '["criterion 1","criterion 2"]'`
