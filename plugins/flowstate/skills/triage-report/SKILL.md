@@ -98,7 +98,7 @@ BODY
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-move RPT-{{ID}} --status triaged --task-id TSK-{{NEW_ID}}
 ```
 
-Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. The CLI handles frontmatter updates, file moves, and index updates.
+Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. `{{CRITERIA_JSON}}` is valid JSON inside single quotes, so phrase every criterion without `'`, `"` or `\`. The CLI handles frontmatter updates, file moves, and index updates.
 
 - Priority: derive automatically from severity (critical→P1, high→P2, medium→P3, low→P4). Apply silently. Surface it in the confirm output so the user can override if needed.
 - Acceptance criteria: derive from the report (e.g., "Bug no longer reproduces"). Pass as a JSON array: `--criteria '["criterion 1","criterion 2"]'`

@@ -101,7 +101,7 @@ Done when: the report block is printed.
 ### 6. Offer Fixes
 
 - `/flowstate:complete-task` if fully implemented
-- Tick criteria that are met in code through the CLI, naming the file or test that proves each one (the CLI owns checkboxes, frontmatter and `index.md`):
+- Tick criteria that are met in code through the CLI, naming the file or test that proves each one (the CLI owns checkboxes, frontmatter and `index.md`). The evidence JSON sits inside single quotes, so phrase `{{FILE_OR_TEST}}` and `{{WHAT_IT_SHOWS}}` without `'`, `"` or `\`:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --check {{N1,N2}} --evidence '{"{{N1}}":"{{FILE_OR_TEST}} → {{WHAT_IT_SHOWS}}"}'

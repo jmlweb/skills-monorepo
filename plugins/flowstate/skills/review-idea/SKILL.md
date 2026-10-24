@@ -107,7 +107,7 @@ BODY
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-move PLN-{{ID}} --status approved --task-id TSK-{{NEW_ID}}
 ```
 
-Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. The CLI handles frontmatter updates, file moves, and index updates.
+Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. `{{CRITERIA_JSON}}` is valid JSON inside single quotes, so phrase every criterion without `'`, `"` or `\`. The CLI handles frontmatter updates, file moves, and index updates.
 
 - Priority: derive automatically from complexity (low→P3, medium→P2, high→P2). Apply silently. Surface it in the confirm output so the user can override if needed.
 - Acceptance criteria: derive from the Approach steps. Pass as a JSON array: `--criteria '["criterion 1","criterion 2"]'`

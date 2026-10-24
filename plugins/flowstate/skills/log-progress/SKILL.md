@@ -69,7 +69,7 @@ On edit, apply the user's changes and show the draft again. On cancel, stop with
 
 ### 5. Apply via CLI
 
-Each non-empty stdin line becomes its own dated bullet. Drop `--check` and `--evidence` when nothing is ticked. `--evidence` is a JSON object keyed by criterion number; every key must also be in `--check`.
+Each non-empty stdin line becomes its own dated bullet. Drop `--check` and `--evidence` when nothing is ticked. `--evidence` is a JSON object keyed by criterion number; every key must also be in `--check`. It sits inside single quotes, so phrase `{{COMMAND}}` and `{{RESULT}}` without `'`, `"` or `\`.
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --log - --check {{N1,N2}} --evidence '{"{{N1}}":"{{COMMAND}} → {{RESULT}}"}' <<'LOG'
