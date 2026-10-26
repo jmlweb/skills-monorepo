@@ -42,3 +42,25 @@ describe("skills", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("parallel skill", () => {
+  const collectStep = async () => {
+    const skill = await readFile(join(root, "skills/parallel/SKILL.md"), "utf-8");
+    return skill.slice(skill.indexOf("### 7. Collect Results"), skill.indexOf("## Error Handling"));
+  };
+
+  it("offers to remove each merged worktree and its branch", async () => {
+    const step = await collectStep();
+    expect(step).toMatch(/merged/i);
+    expect(step).toMatch(/\boffer\b/i);
+    expect(step).toContain("git worktree remove");
+    expect(step).toContain("git branch -d");
+    expect(step).toContain("git worktree prune");
+  });
+
+  // rtk rewrites and the isolation guard exist only on the author's machine.
+  it("keeps machine-specific workarounds out of the published skill", async () => {
+    const skill = await readFile(join(root, "skills/parallel/SKILL.md"), "utf-8");
+    expect(skill).not.toMatch(/\brtk\b|\bguard\b|\/usr\/bin\/git/i);
+  });
+});
