@@ -23,10 +23,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 If `$ARGUMENTS` provided, parse comma-separated IDs and validate each appears in `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` with status `pending` or `active` (not `blocked`).
 
-If no argument:
-- List all pending non-blocked tasks
-- Parse file references from each task
-- Identify independent groups (no overlapping files)
+If no argument, list all pending non-blocked tasks, parse file references from each, and identify independent groups (no overlapping files).
 
 Done when: a list of validated, non-blocked task IDs exists.
 
@@ -50,9 +47,7 @@ Recommended groups:
 Which tasks? (comma-separated)
 ```
 
-Skip the question when `$ARGUMENTS` already named the tasks.
-
-Done when: the user has named the tasks to run, or `$ARGUMENTS` did.
+Done when: the user has named the tasks to run, or `$ARGUMENTS` did (then skip the question).
 
 ### 4. Start All Selected Tasks
 
@@ -62,9 +57,7 @@ For each selected task, activate it via CLI:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active
 ```
 
-The CLI handles frontmatter updates, file moves, and index updates.
-
-Then commit the moves when `{{BACKLOG}}` is inside the repo's tracked tree (it ends in `.backlog` and is not git-ignored). Worktrees branch from `HEAD`, so uncommitted moves leave subagents with stale `pending/` copies and cause merge conflicts later. A private backlog (outside the repo or git-ignored) is shared by every worktree and needs no commit; skip it. The pathspec keeps unrelated staged work out of this commit:
+The CLI handles frontmatter updates, file moves, and index updates. Then commit the moves when `{{BACKLOG}}` is inside the repo's tracked tree (it ends in `.backlog` and is not git-ignored). Worktrees branch from `HEAD`, so uncommitted moves leave subagents with stale `pending/` copies and cause merge conflicts later. A private backlog (outside the repo or git-ignored) is shared by every worktree and needs no commit; skip it. The pathspec keeps unrelated staged work out of this commit:
 
 ```bash
 git add "{{BACKLOG}}" && git commit -m "chore(backlog): start {{IDS}}" -- "{{BACKLOG}}"
@@ -80,17 +73,13 @@ Run a single combined search using all unique tags and titles from the selected 
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL_UNIQUE_TAGS}}" --query "{{ALL_TITLES_CONCATENATED}}" --limit 5 --json true
 ```
 
-Phrase `{{ALL_UNIQUE_TAGS}}` and `{{ALL_TITLES_CONCATENATED}}` without `"`, `$` or backticks: they sit inside double quotes. Distribute results to subagents by tag overlap: include a learning in a subagent's prompt if its tags or reasons reference terms from that task's title or tags. A single learning may appear in multiple prompts if relevant. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
-
-Also scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-list --json true` once for any reports related to the selected tasks' scope.
+Phrase `{{ALL_UNIQUE_TAGS}}` and `{{ALL_TITLES_CONCATENATED}}` without `"`, `$` or backticks: they sit inside double quotes. Distribute results to subagents by tag overlap: include a learning in a subagent's prompt if its tags or reasons reference terms from that task's title or tags. A single learning may appear in multiple prompts if relevant. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them. Also scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-list --json true` once for any reports related to the selected tasks' scope.
 
 Done when: each selected task has its list of learnings and reports (possibly empty).
 
 ### 6. Launch Subagents
 
-Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`. Under `## Worktree Rules`, paste the text of `${CLAUDE_PLUGIN_ROOT}/shared/worktree-brief.md` with `{{BASE}}` set to the current branch, then the project's own worktree brief when its rules files define one.
-
-When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
+Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`. Under `## Worktree Rules`, paste the text of `${CLAUDE_PLUGIN_ROOT}/shared/worktree-brief.md` with `{{BASE}}` set to the current branch, then the project's own worktree brief when its rules files define one. When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
 
 **Subagent prompt:**
 
@@ -141,7 +130,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TI
 BODY
 ```
 
-Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. Then report, ending when every selected task has a row and every `## Learnings` entry has an LRN ID or was skipped as None:
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. Then report:
 
 ```
 ## Parallel Execution Complete
@@ -149,8 +138,18 @@ Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside
 | Task | Result | Branch/Worktree |
 |------|--------|-----------------|
 
-Next: review each worktree, then /flowstate:complete-task (succeeded) or /flowstate:block-task (failed).
+Next: review and merge each branch, then /flowstate:complete-task (succeeded) or /flowstate:block-task (failed).
 ```
+
+Once a task branch is merged (`git branch --merged` lists it), offer to remove its worktree and branch. On a yes, run each command on its own, then check `git worktree list`:
+
+```bash
+git worktree remove "{{WORKTREE_PATH}}"
+git branch -d {{BRANCH}}
+git worktree prune
+```
+
+Done when: every selected task has a row, every `## Learnings` entry has an LRN ID or was skipped as None, and every merged branch got the cleanup offer.
 
 ## Error Handling
 
