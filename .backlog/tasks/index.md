@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 9 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 53 |
@@ -25,6 +25,9 @@
 | TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | P3 | flowstate, cli, index | 2026-10-22 |
 | TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | P4 | flowstate, cli | 2026-10-22 |
 | TSK-062 | Fix: CLI arg parsers store true for flag values that are empty or start with -- | P3 |  | 2026-10-24 |
+| TSK-063 | Fix: report-move and idea-move accept any --status value | P3 |  | 2026-10-26 |
+| TSK-064 | Fix: task-update --set writes unvalidated values, including id and priority | P3 |  | 2026-10-26 |
+| TSK-065 | Fix: list commands accept a negative or non-numeric --limit | P4 |  | 2026-10-26 |
 
 ## Recently Completed
 
