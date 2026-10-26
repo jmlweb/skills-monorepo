@@ -79,9 +79,7 @@ Done when: each selected task has its list of learnings and reports (possibly em
 
 ### 6. Launch Subagents
 
-Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`. Under `## Worktree Rules`, paste the text of `${CLAUDE_PLUGIN_ROOT}/shared/worktree-brief.md` with `{{BASE}}` set to the current branch, then the project's own worktree brief when its rules files define one.
-
-When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
+Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`. Under `## Worktree Rules`, paste the text of `${CLAUDE_PLUGIN_ROOT}/shared/worktree-brief.md` with `{{BASE}}` set to the current branch, then the project's own worktree brief when its rules files define one. When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
 
 **Subagent prompt:**
 
@@ -132,7 +130,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TI
 BODY
 ```
 
-Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. Then report, ending when every selected task has a row and every `## Learnings` entry has an LRN ID or was skipped as None:
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. Then report:
 
 ```
 ## Parallel Execution Complete
@@ -150,6 +148,8 @@ git worktree remove "{{WORKTREE_PATH}}"
 git branch -d {{BRANCH}}
 git worktree prune
 ```
+
+Done when: every selected task has a row, every `## Learnings` entry has an LRN ID or was skipped as None, and every merged branch got the cleanup offer.
 
 ## Error Handling
 
