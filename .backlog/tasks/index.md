@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 7 |
 | Active | 1 |
 | Blocked | 2 |
-| Complete | 54 |
+| Complete | 55 |
 
 ## Active Tasks
 
@@ -19,7 +19,6 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | P3 |  | 2026-10-19 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | P3 |  | 2026-10-20 |
 | TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | P3 | flowstate, cli, index | 2026-10-22 |
 | TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | P4 | flowstate, cli | 2026-10-22 |
@@ -32,6 +31,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | 2026-10-28 |
 | TSK-055 | Fix: parallel skill leaves worktrees behind after merge | 2026-10-26 |
 | TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | 2026-10-24 |
 | TSK-056 | dev-workflow: readme-media skill generates README screenshots and GIFs | 2026-10-23 |
@@ -41,4 +41,3 @@
 | TSK-049 | Triage all pending reports sequentially when triage-report gets no argument | 2026-10-15 |
 | TSK-050 | dev-workflow prune-tests skill for redundant tests | 2026-10-15 |
 | TSK-033 | Audit flowstate and repo-local skills against writing rules | 2026-10-11 |
-| TSK-034 | Audit dev-workflow skills against writing rules | 2026-10-11 |

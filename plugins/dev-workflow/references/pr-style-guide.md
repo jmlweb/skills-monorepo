@@ -42,10 +42,40 @@ The template decides the sections. See "Template semantics" below. Inside a sect
 Sections the template names differently follow the same spirit: answer the heading's question
 directly and nothing else.
 
+## Diagrams
+
+A picture of how the parts interact saves a reviewer from rebuilding the flow out of bullets.
+Most PRs need none.
+
+- **When:** add one diagram only if the inputs show at least one of: three or more components
+  or modules that call or feed each other; a new or changed multi-step flow, lifecycle or
+  state machine; a new dependency across packages or services. Skip it for renames, dependency
+  bumps, docs-only, test-only, config-only and single-function changes. In doubt, leave it out.
+- **Where:** inside the section that answers "what changed" or "approach" (`## What changed`
+  in the built-in template); in a custom template, the closest section of that kind. A
+  template with no such section gets no diagram. Never add a section for it.
+- **Shape:** one fenced `mermaid` block, after one sentence saying what it shows. Use
+  `flowchart`, `sequenceDiagram` or `stateDiagram-v2`, whichever fits. About 12 nodes or
+  fewer. Labels name behaviors or components, not file paths. Draw only what changed plus the
+  minimum context to read it, and only edges the commits or hunks show.
+- **Safe syntax:** every node label in double quotes; no raw `()`, `:`, `;` or `#` outside
+  quotes; simple alphanumeric node IDs; no styling, `classDef` or click handlers.
+
+Example:
+
+```mermaid
+flowchart LR
+  skill["open-pr skill"] -->|"commits, diff stat, hunks"| writer["pr-writer agent"]
+  writer -->|"title and body"| approve["user approval"]
+  approve -->|"approved"| create["gh pr create"]
+```
+
 ## Things to leave out
 
 - File-by-file changelogs.
-- Restating the diff ("added function X to file Y").
+- Restating the diff ("added function X to file Y"). A diagram that follows "Diagrams" above
+  shows interactions, not lines, so it does not count as restating the diff; one that maps
+  files does.
 - Marketing tone: "robust", "seamless", "powerful", "significantly improves".
 - Emoji, unless the repo's template already uses them.
 - Process narrative ("first I tried", "after some investigation").
@@ -119,3 +149,5 @@ If an input you need is missing (no template or no commit log), reply with only
 - No file-by-file list, no restated diff, no hype words.
 - Every command in the testing section can be pasted and run as written.
 - Every claim traces back to the inputs.
+- A diagram is present only when a "When" criterion holds, and it follows the shape and
+  safe-syntax rules under "Diagrams".

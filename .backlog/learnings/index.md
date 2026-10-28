@@ -49,3 +49,4 @@
 | LRN-043 | readme-media acceptance run needs a human session plus vhs, ttyd, ffmpeg and claude | sandbox, skills, readme-media, testing | active | 2026-10-20 |
 | LRN-044 | Lint double-quoted skill placeholders per section, skipping fences and heredocs | lint-skills, skills, shell | active | 2026-10-24 |
 | LRN-045 | parallel SKILL.md body sits at the 150-line lint ceiling | skills, lint, flowstate | active | 2026-10-26 |
+| LRN-046 | Check a Mermaid block renders locally with mmdc and system Chrome | mermaid, dev-workflow, pr-writer, testing | active | 2026-10-28 |
