@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 7 |
+| Pending | 10 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 55 |
@@ -26,6 +26,9 @@
 | TSK-063 | Fix: report-move and idea-move accept any --status value | P3 |  | 2026-10-26 |
 | TSK-064 | Fix: task-update --set writes unvalidated values, including id and priority | P3 |  | 2026-10-26 |
 | TSK-065 | Fix: list commands accept a negative or non-numeric --limit | P4 |  | 2026-10-26 |
+| TSK-066 | Fix: md-to-adf silently drops table cells beyond the header width | P3 |  | 2026-10-28 |
+| TSK-067 | Fix: md-to-adf turns a fenced code block inside a list item into inline text | P3 |  | 2026-10-28 |
+| TSK-068 | Fix: md-to-adf truncates link URLs that contain parentheses | P4 |  | 2026-10-28 |
 
 ## Recently Completed
 
