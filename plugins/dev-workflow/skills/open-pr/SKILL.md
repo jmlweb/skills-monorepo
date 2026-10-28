@@ -78,7 +78,7 @@ Done when: a template is read and its source is named.
 
 ### 5. Gather inputs and write
 
-Collect: `git log --format='%h %s%n%b' origin/<base>..HEAD`, `git diff --stat origin/<base>...HEAD`, hunks of the riskiest files (`git diff --unified=3 origin/<base>...HEAD -- <file>`; cap at a few files), and a ticket id (`TSK-123`, `ABC-123`) from the branch name or commits.
+Collect: `git log --format='%h %s%n%b' origin/<base>..HEAD`, `git diff --stat origin/<base>...HEAD`, hunks of at most 5 files: the riskiest, spread across the areas the diff stat touches (`git diff --unified=3 origin/<base>...HEAD -- <file>`), and a ticket id (`TSK-123`, `ABC-123`) from the branch name or commits.
 
 Invoke the `Agent` tool with `subagent_type: "dev-workflow:pr-writer"` and a prompt carrying the template text, commit log, diff stat, hunks, suggested scope and ticket.
 
