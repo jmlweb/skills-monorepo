@@ -21,13 +21,13 @@ Approach: add a Diagrams section to pr-style-guide.md (when, where, shape, safe 
 
 ## Acceptance Criteria
 
-- [x] pr-style-guide.md has a Diagrams section (when, where, shape, safe syntax)
-- [x] Self-check and Things to leave out updated for diagrams
-- [x] pr-writer.md decides on a diagram, with user-instruction veto
-- [x] open-pr and pr-ready hunk gathering have an explicit numeric cap
-- [x] dev-workflow README /open-pr section mentions the diagram
-- [x] pnpm lint:skills and claude plugin validate . pass
-- [x] Sanity run: complex branch gets a diagram that renders, trivial branch gets none
+- [x] pr-style-guide.md has a Diagrams section (when, where, shape, safe syntax) — evidence: pnpm vitest run src/pr-writer.test.ts → Diagrams section test passes (2026-10-28)
+- [x] Self-check and Things to leave out updated for diagrams — evidence: pnpm vitest run src/pr-writer.test.ts → self-check and leave-out test passes (2026-10-28)
+- [x] pr-writer.md decides on a diagram, with user-instruction veto — evidence: pnpm vitest run src/pr-writer.test.ts → agent veto test passes (2026-10-28)
+- [x] open-pr and pr-ready hunk gathering have an explicit numeric cap — evidence: pnpm vitest run src/pr-writer.test.ts → shared cap of 5 files test passes (2026-10-28)
+- [x] dev-workflow README /open-pr section mentions the diagram — evidence: pnpm vitest run src/pr-writer.test.ts → README test passes (2026-10-28)
+- [x] pnpm lint:skills and claude plugin validate . pass — evidence: pnpm lint:skills → 0 errors, 0 warnings; claude plugin validate . → Validation passed (2026-10-28)
+- [x] Sanity run: complex branch gets a diagram that renders, trivial branch gets none — evidence: pr-writer on PR #6 inputs → 9-node flowchart, mmdc 11.12.0 renders clean; on 6be928a deps bump → no diagram (2026-10-28)
 
 ## Notes
 
