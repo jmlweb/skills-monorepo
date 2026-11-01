@@ -21,7 +21,9 @@ type PackageJson = {
     readonly dependencies?: Readonly<Record<string, string>>;
     readonly devDependencies?: Readonly<Record<string, string>>;
 };
-export declare function detectPackageManager(hasFile: (name: string) => boolean): RunnerReport["packageManager"];
-export declare function detectRunner(pkg: PackageJson, hasFile: (name: string) => boolean): RunnerReport;
+type PackageManager = RunnerReport["packageManager"];
+type HasFile = (name: string) => boolean;
+export declare function detectPackageManager(levels: Iterable<HasFile>): PackageManager;
+export declare function detectRunner(pkg: PackageJson, hasFile: HasFile, pm?: PackageManager): RunnerReport;
 export declare function detectRunnerInDir(root: string): RunnerReport;
 export {};
