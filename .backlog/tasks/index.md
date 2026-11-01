@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 10 |
+| Pending | 13 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 55 |
@@ -29,6 +29,9 @@
 | TSK-066 | Fix: md-to-adf silently drops table cells beyond the header width | P3 |  | 2026-10-28 |
 | TSK-067 | Fix: md-to-adf turns a fenced code block inside a list item into inline text | P3 |  | 2026-10-28 |
 | TSK-068 | Fix: md-to-adf truncates link URLs that contain parentheses | P4 |  | 2026-10-28 |
+| TSK-069 | Fix: scan-secrets skips every file when git diff paths lack the b/ prefix | P2 |  | 2026-11-01 |
+| TSK-070 | Fix: on-test-failure hook never fires: wrong event and nonexistent exit_code field | P3 |  | 2026-11-01 |
+| TSK-071 | Fix: pre-commit-reminder hook emits invalid JSON when an active task title holds a double quote | P4 |  | 2026-11-01 |
 
 ## Recently Completed
 
