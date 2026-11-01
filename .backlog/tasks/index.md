@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 10 |
+| Pending | 9 |
 | Active | 1 |
 | Blocked | 2 |
-| Complete | 55 |
+| Complete | 56 |
 
 ## Active Tasks
 
@@ -19,7 +19,6 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | P3 |  | 2026-10-20 |
 | TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | P3 | flowstate, cli, index | 2026-10-22 |
 | TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | P4 | flowstate, cli | 2026-10-22 |
 | TSK-062 | Fix: CLI arg parsers store true for flag values that are empty or start with -- | P3 |  | 2026-10-24 |
@@ -34,6 +33,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | 2026-11-01 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | 2026-10-28 |
 | TSK-055 | Fix: parallel skill leaves worktrees behind after merge | 2026-10-26 |
 | TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | 2026-10-24 |
@@ -43,4 +43,3 @@
 | TSK-035 | Audit atlassian-polish skills against writing rules | 2026-10-15 |
 | TSK-049 | Triage all pending reports sequentially when triage-report gets no argument | 2026-10-15 |
 | TSK-050 | dev-workflow prune-tests skill for redundant tests | 2026-10-15 |
-| TSK-033 | Audit flowstate and repo-local skills against writing rules | 2026-10-11 |

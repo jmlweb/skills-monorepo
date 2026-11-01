@@ -50,3 +50,4 @@
 | LRN-044 | Lint double-quoted skill placeholders per section, skipping fences and heredocs | lint-skills, skills, shell | active | 2026-10-24 |
 | LRN-045 | parallel SKILL.md body sits at the 150-line lint ceiling | skills, lint, flowstate | active | 2026-10-26 |
 | LRN-046 | Check a Mermaid block renders locally with mmdc and system Chrome | mermaid, dev-workflow, pr-writer, testing | active | 2026-10-28 |
+| LRN-047 | Package-manager detection must walk ancestors once, not per lockfile | dev-workflow, testing, tooling | active | 2026-11-01 |

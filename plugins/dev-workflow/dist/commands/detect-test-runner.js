@@ -8,11 +8,21 @@ export const Runner = {
     UNKNOWN: "unknown",
 };
 const COVERAGE_PROVIDERS = ["@vitest/coverage-v8", "@vitest/coverage-istanbul"];
-export function detectPackageManager(hasFile) {
-    if (hasFile("pnpm-lock.yaml"))
-        return "pnpm";
-    if (hasFile("yarn.lock"))
-        return "yarn";
+// Checked in this order within one directory when several lockfiles coexist.
+const LOCKFILES = [
+    ["pnpm-lock.yaml", "pnpm"],
+    ["yarn.lock", "yarn"],
+    ["package-lock.json", "npm"],
+];
+const lockfileManager = (hasFile) => LOCKFILES.find(([lockfile]) => hasFile(lockfile))?.[1] ?? null;
+// `levels` runs from the package dir outward, so the nearest lockfile wins and a
+// workspace-root lockfile only counts when nothing closer has one.
+export function detectPackageManager(levels) {
+    for (const hasFile of levels) {
+        const manager = lockfileManager(hasFile);
+        if (manager)
+            return manager;
+    }
     return "npm";
 }
 function execPrefix(pm) {
@@ -24,9 +34,8 @@ function execPrefix(pm) {
 }
 // Placeholders {file} and {dir} are filled by the caller per test file, so a
 // path is never spliced into a shell string.
-export function detectRunner(pkg, hasFile) {
+export function detectRunner(pkg, hasFile, pm = detectPackageManager([hasFile])) {
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
-    const pm = detectPackageManager(hasFile);
     const exec = execPrefix(pm);
     const stryker = "@stryker-mutator/core" in deps || hasFile("stryker.conf.json") || hasFile("stryker.config.mjs");
     const coverageProvider = COVERAGE_PROVIDERS.find((p) => p in deps) ?? null;
@@ -96,17 +105,12 @@ export function detectRunnerInDir(root) {
         throw new TestCommandError(`No package.json in ${root}.`);
     }
     const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+    const levels = ancestorsOf(root).map((dir) => (name) => existsSync(join(dir, name)));
     // Lockfiles sit at the workspace root, above a package that is tested alone.
-    return detectRunner(pkg, (name) => existsInAncestors(root, name));
+    const hasFileInAncestors = (name) => levels.some((hasFile) => hasFile(name));
+    return detectRunner(pkg, hasFileInAncestors, detectPackageManager(levels));
 }
-function existsInAncestors(start, name) {
-    let dir = start;
-    for (;;) {
-        if (existsSync(join(dir, name)))
-            return true;
-        const parent = dirname(dir);
-        if (parent === dir)
-            return false;
-        dir = parent;
-    }
+function ancestorsOf(start) {
+    const parent = dirname(start);
+    return parent === start ? [start] : [start, ...ancestorsOf(parent)];
 }
