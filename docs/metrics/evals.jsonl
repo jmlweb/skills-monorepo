@@ -14,3 +14,11 @@
 {"date":"2026-10-20T00:52:47.344Z","claudeVersion":"2.1.304","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"overview-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1065,"errors":[]}
 {"date":"2026-10-20T00:52:47.344Z","claudeVersion":"2.1.304","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"report-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1037,"errors":[]}
 {"date":"2026-10-20T00:52:47.344Z","claudeVersion":"2.1.304","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"*","casesPassed":7,"casesTotal":7,"passRate":1,"costUsd":0.8206,"partial":false}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"add-learning-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.0948,"errors":["timed out after 120s","timed out after 120s"]}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"add-task-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1069,"errors":[]}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"check-task-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1189,"errors":[]}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"idea-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1527,"errors":[]}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"next-task-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1092,"errors":[]}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"overview-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1061,"errors":[]}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"report-fires","runs":3,"passed":3,"passRate":1,"costUsd":0.1064,"errors":[]}
+{"date":"2026-11-02T08:10:09.150Z","claudeVersion":"2.1.316","plugin":"flowstate","pluginVersion":"2.18.2","model":"sonnet","case":"*","casesPassed":7,"casesTotal":7,"passRate":1,"costUsd":0.795,"partial":false}
