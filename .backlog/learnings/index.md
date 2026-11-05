@@ -51,3 +51,4 @@
 | LRN-045 | parallel SKILL.md body sits at the 150-line lint ceiling | skills, lint, flowstate | active | 2026-10-26 |
 | LRN-046 | Check a Mermaid block renders locally with mmdc and system Chrome | mermaid, dev-workflow, pr-writer, testing | active | 2026-10-28 |
 | LRN-047 | Package-manager detection must walk ancestors once, not per lockfile | dev-workflow, testing, tooling | active | 2026-11-01 |
+| LRN-048 | Pin git diff output before parsing it: user config rewrites headers and paths | dev-workflow, git, scan-secrets | active | 2026-11-05 |

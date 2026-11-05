@@ -1,9 +1,18 @@
 import { execFileSync } from "node:child_process";
 import { GitError, InvalidArgumentError } from "./errors.js";
 const MAX_BUFFER = 64 * 1024 * 1024;
+// User config must not change the output we parse: quotePath would octal-escape
+// non-ASCII names, and diff.noprefix / diff.mnemonicPrefix / diff.external would
+// change or replace the `+++ b/<path>` headers scanDiff relies on.
+const PINNED_CONFIG = ["-c", "core.quotePath=false"];
+const PINNED_DIFF_FORMAT = [
+    "--src-prefix=a/",
+    "--dst-prefix=b/",
+    "--no-ext-diff",
+];
 function runGit(cwd, args) {
     try {
-        return execFileSync("git", args, {
+        return execFileSync("git", [...PINNED_CONFIG, ...args], {
             cwd,
             encoding: "utf-8",
             maxBuffer: MAX_BUFFER,
@@ -30,6 +39,7 @@ export function getStagedDiff(cwd) {
         "--cached",
         "--unified=0",
         "--no-color",
+        ...PINNED_DIFF_FORMAT,
         "--diff-filter=AM",
     ]);
 }
@@ -57,6 +67,7 @@ export function getRangeDiff(cwd, range) {
         "diff",
         "--unified=0",
         "--no-color",
+        ...PINNED_DIFF_FORMAT,
         "--diff-filter=AM",
         range,
         "--",

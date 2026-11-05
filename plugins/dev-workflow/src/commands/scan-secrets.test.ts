@@ -72,6 +72,29 @@ describe("scanFilenames", () => {
 });
 
 describe("scanDiff", () => {
+  const stripeLine = '+const key = "sk_live_xxxxxxxxxxxxxxxxxx"';
+
+  it("keeps added lines when the header has no b/ prefix", () => {
+    const diff = ["+++ src/pay.ts", "@@ -0,0 +1,1 @@", stripeLine].join("\n");
+    expect(scanDiff(diff)).toEqual([
+      expect.objectContaining({ file: "src/pay.ts", pattern: "stripe live key" }),
+    ]);
+  });
+
+  it("drops the trailing tab git appends to a header path with spaces", () => {
+    const diff = ["+++ b/src/my pay.ts\t", "@@ -0,0 +1,1 @@", stripeLine].join("\n");
+    expect(scanDiff(diff)[0]!.file).toBe("src/my pay.ts");
+  });
+
+  it("unquotes a C-quoted header path with octal escapes", () => {
+    const diff = [
+      '+++ "b/src/caf\\303\\251 \\"x\\".ts"',
+      "@@ -0,0 +1,1 @@",
+      stripeLine,
+    ].join("\n");
+    expect(scanDiff(diff)[0]!.file).toBe('src/café "x".ts');
+  });
+
   it("detects stripe live key with line number", () => {
     const diff = [
       "diff --git a/src/pay.ts b/src/pay.ts",
