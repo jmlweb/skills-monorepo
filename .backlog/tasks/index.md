@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 11 |
+| Pending | 14 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 57 |
@@ -30,6 +30,9 @@
 | TSK-068 | Fix: md-to-adf truncates link URLs that contain parentheses | P4 |  | 2026-10-28 |
 | TSK-070 | Fix: on-test-failure hook never fires: wrong event and nonexistent exit_code field | P3 |  | 2026-11-01 |
 | TSK-071 | Fix: pre-commit-reminder hook emits invalid JSON when an active task title holds a double quote | P4 |  | 2026-11-01 |
+| TSK-072 | Fix: test-static-scan drops a test whose body holds a quote inside a regex literal | P3 |  | 2026-11-05 |
+| TSK-073 | Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears | P3 |  | 2026-11-05 |
+| TSK-074 | Fix: task-doctor plain output prints [object Object] for each fixed task | P4 |  | 2026-11-05 |
 
 ## Recently Completed
 
