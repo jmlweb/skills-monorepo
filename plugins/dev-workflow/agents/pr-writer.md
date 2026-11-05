@@ -34,8 +34,11 @@ If the template or the commit log is missing, reply with only `MISSING: <what>`.
    comments are instructions you follow and strip, `optional` sections are dropped when they
    do not apply, other sections stay (`N/A` if empty), checklists are copied verbatim and
    never ticked.
-3. Write the title as `type(scope): description`.
-4. Run the style guide's self-check before replying.
+3. Decide on a diagram with the style guide's "Diagrams" section: add one only when a "When"
+   criterion holds and the template has a "what changed" or "approach" section. The user's
+   extra instructions win: "no diagram" or similar means none.
+4. Write the title as `type(scope): description`.
+5. Run the style guide's self-check before replying.
 
 ## Output
 

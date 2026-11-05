@@ -57,7 +57,7 @@ Options:
 Already done but not ticked? Run /flowstate:log-progress {{ID}} to tick them with evidence.
 ```
 
-On option 1, ask for a one-line reason and log it before moving:
+On option 1, ask for a one-line reason and log it before moving. Phrase `{{REASON}}` without `"`, `$` or backticks: it sits inside double quotes.
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update {{ID}} --log "Completed with unproven criteria {{N,...}}: {{REASON}}"
@@ -73,7 +73,7 @@ Gather learning candidates from two sources, then create each one silently, deri
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --similar-to "{{TITLE}}" --tags "{{TAGS}}" --limit 5 --scope local --json true
 ```
 
-A top `score` of 5 or more means a duplicate: say `Skipped — duplicate of LRN-{{ID}}` and move to the next candidate.
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. A top `score` of 5 or more means a duplicate: say `Skipped — duplicate of LRN-{{ID}}` and move to the next candidate.
 
 **3a. From the task file's Learnings section** — each entry becomes a full learning (expand the one-line entry into Context / Insight / Application using the task body and tags).
 
@@ -87,7 +87,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-create --title "{{TI
 BODY
 ```
 
-List every captured learning in the confirm output (Step 5) so the user can edit or delete it. With no candidates, skip silently.
+Phrase `{{TITLE}}` and `{{TAGS}}` without `"`, `$` or backticks: they sit inside double quotes. List every captured learning in the confirm output (Step 5) so the user can edit or delete it. With no candidates, skip silently.
 
 Done when: each candidate has an LRN ID, or there are none.
 

@@ -39,6 +39,7 @@ const SEVERITY = {
   'plugin-root-path': 'warn',
   'cli-contract': 'error',
   'readme-drift': 'error',
+  'shell-quoted-text': 'error',
 }
 
 // Exemptions live here, never in skill frontmatter. Key: repo-relative path, value: rule ids.
@@ -86,6 +87,83 @@ export function parseHelpCommands(helpText) {
     if (match) commands.push(match[1])
   }
   return commands
+}
+
+// Placeholders holding an ID or a path never carry `"`, `$` or backticks, so double quotes are safe for them.
+const SAFE_PLACEHOLDER = /(^|_)(IDS?|PATH|DIR|FILE|BACKLOG)$/
+const COMMAND_LIKE = /^(node|git)\s|(^|\s)--[a-z]/
+// The sentence docs/writing-skills.md asks for beside the command, e.g. "Phrase `{{TITLE}}` without `"`, `$` or backticks".
+const PHRASING_RULE = /without `"`/
+
+/** Placeholder names that sit inside double quotes in one shell command; single-quoted text is skipped. */
+export function doubleQuotedPlaceholders(command) {
+  const names = []
+  let quote = null
+  for (let i = 0; i < command.length; i++) {
+    const char = command[i]
+    if (quote === null && (char === '"' || char === "'")) quote = char
+    else if (char === quote) quote = null
+    else if (quote === '"' && command.startsWith('{{', i)) {
+      const match = /^\{\{([A-Z0-9_-]+)\}\}/.exec(command.slice(i))
+      if (match) names.push(match[1])
+    }
+  }
+  return names
+}
+
+/** Splits a skill body into heading-delimited sections of shell commands and prose lines. */
+function commandSections(body) {
+  const sections = [{ commands: [], prose: [] }]
+  let fence = null
+  let heredocEnd = null
+  let pending = ''
+  for (const line of body) {
+    const current = sections[sections.length - 1]
+    if (heredocEnd !== null) {
+      if (line.trim() === heredocEnd) heredocEnd = null
+      continue
+    }
+    if (/^\s*```/.test(line)) {
+      fence = fence === null ? line.trim().slice(3) : null
+      if (fence === null && pending) current.commands.push(pending)
+      pending = ''
+      continue
+    }
+    if (fence !== null) {
+      const heredoc = /<<-?\s*['"]?(\w+)['"]?/.exec(line)
+      const logical = pending + line.replace(/<<-?\s*['"]?\w+['"]?.*$/, '')
+      if (heredoc) heredocEnd = heredoc[1]
+      if (!heredoc && /\\\s*$/.test(line)) {
+        pending = logical.replace(/\\\s*$/, ' ')
+        continue
+      }
+      pending = ''
+      if (COMMAND_LIKE.test(logical.trim())) current.commands.push(logical.trim())
+      continue
+    }
+    if (/^#{1,6}\s/.test(line)) {
+      sections.push({ commands: [], prose: [] })
+      continue
+    }
+    current.prose.push(line)
+    for (const span of line.matchAll(/`([^`]+)`/g)) {
+      if (COMMAND_LIKE.test(span[1].trim())) current.commands.push(span[1].trim())
+    }
+  }
+  return sections
+}
+
+/** Free-text placeholders in double quotes need a phrasing rule beside them, or must move to a heredoc. */
+function unguardedPlaceholders(body) {
+  const unguarded = new Set()
+  for (const { commands, prose } of commandSections(body)) {
+    for (const name of commands.flatMap(doubleQuotedPlaceholders)) {
+      if (SAFE_PLACEHOLDER.test(name)) continue
+      const guarded = prose.some((line) => line.includes(`{{${name}}}`) && PHRASING_RULE.test(line))
+      if (!guarded) unguarded.add(name)
+    }
+  }
+  return [...unguarded]
 }
 
 function listDirs(path) {
@@ -198,6 +276,13 @@ function lintSkill(root, target, getHelp) {
       if (bodyText.includes(`\${CLAUDE_PLUGIN_ROOT}/${dirName}/`)) continue
       add('plugin-root-path', `"${path}" must be written as \${CLAUDE_PLUGIN_ROOT}/${path}`)
     }
+  }
+
+  for (const name of unguardedPlaceholders(body)) {
+    add(
+      'shell-quoted-text',
+      `{{${name}}} sits inside double quotes: add "Phrase \`{{${name}}}\` without \`"\`, \`$\` or backticks" beside the command, or pass it via \`--body -\``,
+    )
   }
 
   if (target.plugin) {

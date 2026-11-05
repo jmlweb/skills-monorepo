@@ -196,6 +196,64 @@ test("readme-drift: accepts bare /name headings and ignores prose and descriptio
   assert.deepEqual(lintRepo(sandbox), []);
 });
 
+const CMD = 'node "${CLAUDE_PLUGIN_ROOT}/dist/bin/demo.js" do-it';
+const PHRASING = 'Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes.';
+
+test("shell-quoted-text: error for a free-text placeholder in double quotes", () => {
+  seed({ body: `# Demo\n\n### 1. Step\n\n\`\`\`bash\n${CMD} --title "{{TITLE}}"\n\`\`\`\n` });
+  const findings = lintRepo(sandbox);
+  assert.deepEqual(rules(findings), ["shell-quoted-text"]);
+  assert.equal(findings[0].severity, "error");
+  assert.match(findings[0].message, /\{\{TITLE\}\}/);
+});
+
+test("shell-quoted-text: ID and path placeholders are safe", () => {
+  const args = '--id "{{ID}}" --ids "TSK-{{IDS}}" --task "{{TSK_ID}}" --dir "{{BACKLOG}}" --to "{{ABSOLUTE_PATH}}"';
+  seed({ body: `# Demo\n\n\`\`\`bash\n${CMD} ${args}\n\`\`\`\n` });
+  assert.deepEqual(lintRepo(sandbox), []);
+});
+
+test("shell-quoted-text: a phrasing rule in the same section suppresses it", () => {
+  seed({ body: `# Demo\n\n### 1. Step\n\n\`\`\`bash\n${CMD} --title "{{TITLE}}"\n\`\`\`\n\n${PHRASING}\n` });
+  assert.deepEqual(lintRepo(sandbox), []);
+});
+
+test("shell-quoted-text: a phrasing rule in another section does not count", () => {
+  seed({
+    body: `# Demo\n\n### 1. Step\n\n${PHRASING}\n\n### 2. Step\n\n\`\`\`bash\n${CMD} --title "{{TITLE}}"\n\`\`\`\n`,
+  });
+  assert.deepEqual(rules(lintRepo(sandbox)), ["shell-quoted-text"]);
+});
+
+test("shell-quoted-text: a heading inside a fence does not split the section", () => {
+  seed({
+    body: `# Demo\n\n### 1. Step\n\n\`\`\`bash\n${CMD} --title "{{TITLE}}"\n\`\`\`\n\n\`\`\`\n## Output "{{TITLE}}"\n\`\`\`\n\n${PHRASING}\n`,
+  });
+  assert.deepEqual(lintRepo(sandbox), []);
+});
+
+test("shell-quoted-text: heredoc bodies, single quotes and output blocks are ignored", () => {
+  const block = [
+    "```bash",
+    `${CMD} --criteria '{{CRITERIA_JSON}}' \\`,
+    "  --body - <<'BODY'",
+    'Said "{{QUOTE}}" here',
+    "BODY",
+    "```",
+    "",
+    "```",
+    '## Results for "{{TERM}}"',
+    "```",
+  ].join("\n");
+  seed({ body: `# Demo\n\n${block}\n` });
+  assert.deepEqual(lintRepo(sandbox), []);
+});
+
+test("shell-quoted-text: inline commands are checked one span at a time", () => {
+  seed({ body: '# Demo\n\nRun `do-it --similar-to "{{TITLE}}" --limit 5`. Never type `"` alone.\n' });
+  assert.deepEqual(rules(lintRepo(sandbox)), ["shell-quoted-text"]);
+});
+
 test("--strict promotes warnings to errors", () => {
   seed({ body: `${"line\n".repeat(151)}` });
   assert.equal(lintRepo(sandbox)[0].severity, "warn");

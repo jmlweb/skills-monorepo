@@ -38,7 +38,7 @@ Before exploring code, gather backlog context:
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{FEATURE_DESCRIPTION}}" --limit 3 --json true
    ```
-   The CLI returns only active learnings, scored by keyword relevance. Use `title` and `reasons` to assess relevance. Read the full learning file only for high-scoring matches that directly affect the idea. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
+   Phrase `{{FEATURE_DESCRIPTION}}` without `"`, `$` or backticks: it sits inside double quotes. The CLI returns only active learnings, scored by keyword relevance. Use `title` and `reasons` to assess relevance. Read the full learning file only for high-scoring matches that directly affect the idea. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 2. **Active tasks**: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true` — the idea should account for work already in progress to avoid conflicts or duplication.
 3. **Pending reports**: scan the titles from `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-list --json true` for related bugs or findings that the idea should address or acknowledge.
 
@@ -64,7 +64,7 @@ node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" idea-create --title "{{TITLE}
 BODY
 ```
 
-`{{IDEA_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
+Phrase `{{TITLE}}` without `"`, `$` or backticks: it sits inside double quotes. `{{IDEA_CONTENT}}` is the body only (the CLI writes the frontmatter). Use these sections, in this order — `/flowstate:review-idea` parses them:
 
 ```markdown
 

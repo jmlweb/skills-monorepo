@@ -65,7 +65,7 @@ Run a single learning search covering the whole group (top pick + any parallel c
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --tags "{{ALL_GROUP_TAGS}}" --query "{{ALL_GROUP_TITLES_AND_FIRST_LINES}}" --limit 5 --json true
 ```
 
-The CLI returns only active learnings, scored by tag match and keyword relevance. Use `title` and `reasons` to summarize relevance. Attribute each learning to the task(s) whose tags/title it overlaps with. Only read the full learning file if the user asks for details. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
+Phrase `{{ALL_GROUP_TAGS}}` and `{{ALL_GROUP_TITLES_AND_FIRST_LINES}}` without `"`, `$` or backticks: they sit inside double quotes. The CLI returns only active learnings, scored by tag match and keyword relevance. Use `title` and `reasons` to summarize relevance. Attribute each learning to the task(s) whose tags/title it overlaps with. Only read the full learning file if the user asks for details. Results whose `source` is not `local` belong to another project: read them from their `backlog` path, never edit or archive them.
 
 Also scan `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" report-list --json true` once for anything related to any task in the group.
 

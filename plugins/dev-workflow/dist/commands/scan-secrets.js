@@ -57,8 +57,7 @@ export function scanDiff(diff) {
     let newLineNo = 0;
     for (const rawLine of diff.split("\n")) {
         if (rawLine.startsWith("+++ ")) {
-            const path = rawLine.slice(4);
-            currentFile = path.startsWith("b/") ? path.slice(2) : "";
+            currentFile = headerPath(rawLine.slice(4));
             continue;
         }
         if (rawLine.startsWith("--- "))
@@ -95,6 +94,42 @@ export function scanDiff(diff) {
         }
     }
     return findings;
+}
+// Any header we do not recognise still yields a path, so its added lines are
+// scanned instead of silently skipped. Git appends a tab to unquoted paths
+// that contain a space.
+function headerPath(rawHeader) {
+    const rawPath = rawHeader.endsWith("\t") ? rawHeader.slice(0, -1) : rawHeader;
+    const path = rawPath.startsWith('"') ? unquoteGitPath(rawPath) : rawPath;
+    if (path === "/dev/null")
+        return "";
+    return path.startsWith("b/") ? path.slice(2) : path;
+}
+const C_ESCAPES = {
+    a: 7, b: 8, t: 9, n: 10, v: 11, f: 12, r: 13, '"': 34, "\\": 92,
+};
+// Git C-quotes paths with special characters; octal escapes are raw UTF-8 bytes.
+function unquoteGitPath(quoted) {
+    const body = quoted.endsWith('"') ? quoted.slice(1, -1) : quoted.slice(1);
+    const bytes = [];
+    for (let i = 0; i < body.length; i++) {
+        const char = body[i];
+        if (char !== "\\") {
+            bytes.push(...Buffer.from(char, "utf-8"));
+            continue;
+        }
+        const octal = /^[0-7]{3}/.exec(body.slice(i + 1));
+        if (octal) {
+            bytes.push(parseInt(octal[0], 8));
+            i += 3;
+            continue;
+        }
+        const next = body[i + 1];
+        if (next !== undefined)
+            bytes.push(C_ESCAPES[next] ?? next.charCodeAt(0));
+        i += 1;
+    }
+    return Buffer.from(bytes).toString("utf-8");
 }
 export function scanSecrets(files, diff) {
     return {

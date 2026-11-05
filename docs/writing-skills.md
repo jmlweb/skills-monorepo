@@ -206,6 +206,10 @@ zsh. The filled value is the risk, not the template.
   does not word-split, so `F="node …"; $F` fails; if a step must abbreviate, store only the
   path and run `node "$F"`.
 
+`pnpm lint:skills` enforces the first rule (`shell-quoted-text`): a double-quoted
+placeholder whose name does not end in `ID`, `IDS`, `PATH`, `DIR`, `FILE` or `BACKLOG` needs a
+line in the same section naming it and saying ``without `"` ``.
+
 Done when: every `{{VALUE}}` in a command is in a heredoc, or has a phrasing rule beside it.
 
 ## Menus in skill output

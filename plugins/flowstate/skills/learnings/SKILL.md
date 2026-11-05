@@ -26,6 +26,8 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" learning-search --query "{{SEARCH_TERM}}" --limit 10 --json true
 ```
 
+Phrase `{{SEARCH_TERM}}` without `"`, `$` or backticks: it sits inside double quotes.
+
 - **Exactly 1 result** → skip the table; jump directly to Step 2 (Drill Down) and display the full document.
 - **Multiple results** → present:
 

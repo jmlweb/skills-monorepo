@@ -47,3 +47,8 @@
 | LRN-041 | task-block leaves tasks/index.md stale, which fails pnpm backlog:check in CI | flowstate, backlog, ci | active | 2026-10-22 |
 | LRN-042 | Stray package.json or lockfile in a parent dir breaks the suite; turbo drops TMPDIR | testing, tooling, turbo, vitest | active | 2026-10-20 |
 | LRN-043 | readme-media acceptance run needs a human session plus vhs, ttyd, ffmpeg and claude | sandbox, skills, readme-media, testing | active | 2026-10-20 |
+| LRN-044 | Lint double-quoted skill placeholders per section, skipping fences and heredocs | lint-skills, skills, shell | active | 2026-10-24 |
+| LRN-045 | parallel SKILL.md body sits at the 150-line lint ceiling | skills, lint, flowstate | active | 2026-10-26 |
+| LRN-046 | Check a Mermaid block renders locally with mmdc and system Chrome | mermaid, dev-workflow, pr-writer, testing | active | 2026-10-28 |
+| LRN-047 | Package-manager detection must walk ancestors once, not per lockfile | dev-workflow, testing, tooling | active | 2026-11-01 |
+| LRN-048 | Pin git diff output before parsing it: user config rewrites headers and paths | dev-workflow, git, scan-secrets | active | 2026-11-05 |

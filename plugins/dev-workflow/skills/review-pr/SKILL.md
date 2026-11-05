@@ -75,7 +75,7 @@ Each agent applies the relevant section of `${CLAUDE_PLUGIN_ROOT}/skills/review-
 3. **PR body or linked GitHub issue** (`gh issue view <n> --json title,body`): the acceptance criteria or requirements section.
 4. **Nothing found** → skip the Spec axis and write "no spec available" in the report.
 
-Dispatch a `general-purpose` Agent (plugin skills cannot be a `subagent_type`) with the spec text, the diff, and `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/spec-brief.md` pasted into the prompt. It returns lines in the same `path:line: <severity>: <finding>` format, each quoting the criterion. If it fails, note the gap. The spec source works without flowstate installed.
+Dispatch a `general-purpose` Agent with `model: "sonnet"` (plugin skills cannot be a `subagent_type`; an unpinned model inherits the caller's) with the spec text, the diff, and `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/spec-brief.md` pasted into the prompt. It returns lines in the same `path:line: <severity>: <finding>` format, each quoting the criterion. If it fails, note the gap. The spec source works without flowstate installed.
 
 Done when: every dispatched agent has returned findings or a noted gap.
 

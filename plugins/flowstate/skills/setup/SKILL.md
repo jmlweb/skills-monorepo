@@ -42,7 +42,7 @@ Done when: the choice is public, `--private`, or `--dir <path>`.
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" setup --project-name "{{PROJECT_NAME}}" [--private | --dir "{{PATH}}"]
 ```
 
-This creates the full directory structure, index files, and templates in one step. For a private backlog the output includes `settingsFile` and `settingsSnippet`.
+Phrase `{{PROJECT_NAME}}` without `"`, `$` or backticks: it sits inside double quotes. This creates the full directory structure, index files, and templates in one step. For a private backlog the output includes `settingsFile` and `settingsSnippet`.
 
 Done when: the CLI exits 0 and prints `root`.
 
