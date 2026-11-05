@@ -3,9 +3,19 @@ import { GitError, InvalidArgumentError } from "./errors.js";
 
 const MAX_BUFFER = 64 * 1024 * 1024;
 
+// User config must not change the output we parse: quotePath would octal-escape
+// non-ASCII names, and diff.noprefix / diff.mnemonicPrefix / diff.external would
+// change or replace the `+++ b/<path>` headers scanDiff relies on.
+const PINNED_CONFIG = ["-c", "core.quotePath=false"] as const;
+const PINNED_DIFF_FORMAT = [
+  "--src-prefix=a/",
+  "--dst-prefix=b/",
+  "--no-ext-diff",
+] as const;
+
 function runGit(cwd: string, args: readonly string[]): string {
   try {
-    return execFileSync("git", args, {
+    return execFileSync("git", [...PINNED_CONFIG, ...args], {
       cwd,
       encoding: "utf-8",
       maxBuffer: MAX_BUFFER,
@@ -33,6 +43,7 @@ export function getStagedDiff(cwd: string): string {
     "--cached",
     "--unified=0",
     "--no-color",
+    ...PINNED_DIFF_FORMAT,
     "--diff-filter=AM",
   ]);
 }
@@ -65,6 +76,7 @@ export function getRangeDiff(cwd: string, range: string): string {
     "diff",
     "--unified=0",
     "--no-color",
+    ...PINNED_DIFF_FORMAT,
     "--diff-filter=AM",
     range,
     "--",

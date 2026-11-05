@@ -138,3 +138,60 @@ describe("staged-only default", () => {
     expect(getStagedFiles(repo)).toEqual(["plugins/bar/src/b.ts"]);
   });
 });
+
+describe("diff header format ignores user config", () => {
+  const scanStaged = () => scanSecrets(getStagedFiles(repo), getStagedDiff(repo));
+  const scanRange = () =>
+    scanSecrets(getRangeFiles(repo, "main...HEAD"), getRangeDiff(repo, "main...HEAD"));
+
+  for (const [key, value] of [
+    ["diff.noprefix", "true"],
+    ["diff.mnemonicPrefix", "true"],
+  ] as const) {
+    it(`finds a staged secret with ${key}=${value}`, async () => {
+      git("config", key, value);
+      await write("src/config.ts", `export const key = "${fakeStripeKey}";\n`);
+      git("add", "src/config.ts");
+
+      expect(scanStaged().findings).toEqual([
+        expect.objectContaining({ file: "src/config.ts", pattern: "stripe live key" }),
+      ]);
+    });
+
+    it(`finds a committed secret in a range with ${key}=${value}`, async () => {
+      git("config", key, value);
+      await commit("src/config.ts", `export const key = "${fakeStripeKey}";\n`);
+
+      expect(scanRange().findings).toEqual([
+        expect.objectContaining({ file: "src/config.ts", pattern: "stripe live key" }),
+      ]);
+    });
+  }
+
+  it("finds a staged secret in a non-ASCII file name under default core.quotePath", async () => {
+    await write("src/café.ts", `export const key = "${fakeStripeKey}";\n`);
+    git("add", "src/café.ts");
+
+    expect(getStagedFiles(repo)).toEqual(["src/café.ts"]);
+    expect(scanStaged().findings).toEqual([
+      expect.objectContaining({ file: "src/café.ts", pattern: "stripe live key" }),
+    ]);
+  });
+
+  it("finds a committed secret in a non-ASCII file name across a range", async () => {
+    await commit("src/café.ts", `export const key = "${fakeStripeKey}";\n`);
+
+    expect(getRangeFiles(repo, "main...HEAD")).toEqual(["src/café.ts"]);
+    expect(scanRange().findings).toEqual([
+      expect.objectContaining({ file: "src/café.ts", pattern: "stripe live key" }),
+    ]);
+  });
+
+  it("ignores an external diff driver", async () => {
+    git("config", "diff.external", "true");
+    await write("src/config.ts", `export const key = "${fakeStripeKey}";\n`);
+    git("add", "src/config.ts");
+
+    expect(scanStaged().findings).toHaveLength(1);
+  });
+});
