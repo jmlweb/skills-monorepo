@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 14 |
+| Pending | 15 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 57 |
@@ -33,6 +33,7 @@
 | TSK-072 | Fix: test-static-scan drops a test whose body holds a quote inside a regex literal | P3 |  | 2026-11-05 |
 | TSK-073 | Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears | P3 |  | 2026-11-05 |
 | TSK-074 | Fix: task-doctor plain output prints [object Object] for each fixed task | P4 |  | 2026-11-05 |
+| TSK-075 | Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn | P3 | tokens, agents, upstream | 2026-11-05 |
 
 ## Recently Completed
 
