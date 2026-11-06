@@ -6,7 +6,7 @@ A title states intent and only the diff states impact, so classify before readin
 
 ## 1. Find the release mechanism
 
-Check the repo for this evidence, top to bottom:
+List tracked files with `git ls-files` and read the CI workflows it shows. Then check for this evidence, top to bottom:
 
 | Evidence | Mechanism | What sets the version |
 |----------|-----------|-----------------------|
