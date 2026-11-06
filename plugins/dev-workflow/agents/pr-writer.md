@@ -21,6 +21,7 @@ what to keep and cut, and how to interpret the template. Follow it exactly.
 - Commit log for `base..HEAD`
 - Diff stat and key hunks
 - Suggested scope for the title, if any
+- Required title type, if any: it comes from the diff's semver impact and overrides the commits
 - Linked ticket or `TSK-xxx`, if any
 - Existing PR title and body, when rewriting an open PR
 - Extra instructions from the user, if any

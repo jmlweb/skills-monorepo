@@ -18,6 +18,7 @@
     "eval:live": "node scripts/eval-live.mjs",
     "sandbox:prune-tests": "node scripts/sandbox-prune-tests.mjs",
     "sandbox:deslop": "node scripts/sandbox-deslop.mjs",
+    "sandbox:harden": "node scripts/sandbox-harden.mjs",
     "sandbox:kickstart": "node scripts/sandbox-kickstart.mjs",
     "sandbox:readme-media": "node scripts/sandbox-readme-media.mjs"
   },

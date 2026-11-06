@@ -140,7 +140,7 @@ Every box checked, or the deliverable isn't done. "Looks right" is not a criteri
 - [ ] Root `README.md` lists the skill too (mistake 31)
 - [ ] Skill mutates the working tree → its CLI steps preflighted on the fixture, then one
       live run via `pnpm sandbox:<skill>` ends in PASS (mistakes 17–19); harnesses today:
-      `sandbox:prune-tests`, `sandbox:deslop`, `sandbox:kickstart`
+      `sandbox:prune-tests`, `sandbox:deslop`, `sandbox:harden`, `sandbox:kickstart`
 
 **Release**
 - [ ] Working tree clean, on `main`, fetched and pulled; `git log --oneline origin/main..HEAD` shown

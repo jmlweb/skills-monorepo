@@ -75,6 +75,7 @@ flowchart LR
 | `agent-handoff` | Per-repo prompts for multi-repo agent work, and report reconciliation |
 | `check-docs` | Audits docs for drift and structure |
 | `prune-tests` | Finds redundant tests; deletes or rewrites only what you approve |
+| `harden` | Attacks code with the bugs the repo has shipped; proves each with a failing test before fixing |
 | `readme-media` | Records README screenshots and terminal GIFs, embedded after you approve |
 
 </details>

@@ -109,9 +109,10 @@ Done when: each fixable thread has a posted reply and is resolved.
 Rewrite the PR body through the template, not a hardcoded shape.
 
 1. Resolve it: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" find-pr-template --user-dir "${CLAUDE_PLUGIN_DATA}" --json true`. `path` null (several repo templates) → ask which of `candidates`. Read the file.
-2. Gather `git log --format='%h %s%n%b' origin/<base>..HEAD`, `git diff --stat origin/<base>...HEAD`, hunks of at most 5 files (the riskiest, spread across the areas the diff stat touches), and any ticket id.
-3. Invoke the `Agent` tool with `subagent_type: "dev-workflow:pr-writer"`, passing the template, those inputs and the current title and body. It keeps linked issues and breaking-change notes and drops filler, file lists and changelogs of the diff.
-4. Show old vs new body (and the new title, only if it changed). Ask before `gh pr edit <id> --body-file -`.
+2. Follow `${CLAUDE_PLUGIN_ROOT}/shared/semver-impact.md` for `origin/<base>...HEAD` with the current PR title. On `major`, wait for the user to confirm before step 4.
+3. Gather `git log --format='%h %s%n%b' origin/<base>..HEAD`, `git diff --stat origin/<base>...HEAD`, hunks of at most 5 files (the riskiest, spread across the areas the diff stat touches), and any ticket id.
+4. Invoke the `Agent` tool with `subagent_type: "dev-workflow:pr-writer"`, passing the template, those inputs, the required title type and the current title and body. It keeps linked issues and breaking-change notes and drops filler, file lists and changelogs of the diff.
+5. Show old vs new body (and the new title, only if it changed). Ask before `gh pr edit <id> --body-file -`, adding `--title` for a new title.
 
 Done when: the user approved or declined the new body.
 
