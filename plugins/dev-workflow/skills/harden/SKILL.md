@@ -17,7 +17,7 @@ Attack named code on purpose, using the bugs this repo has already shipped as th
 `$ARGUMENTS`:
 
 - Files, modules or symbols → audit those.
-- `recent` → what changed since the last release marker (latest tag, else latest release commit).
+- `recent` → what changed since the latest tag, else the latest commit whose subject starts with `release` or `chore: release`. Neither exists → ask for a base.
 - Empty → propose at most 10 targets, ranked by how many past fixes touched them, and wait for the user to pick.
 
 ## Prerequisites
@@ -36,9 +36,9 @@ Find the test command, then every other gate (lint, typecheck, build):
 2. CI workflows, then `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, then manifest scripts and the `Makefile`.
 3. Nothing found → ask the user for the test command. Without one, this skill stops: an unproven bug is a guess.
 
-Run the suite once. Failures already there are named as baseline and left alone.
+Run the suite once and print its pass and fail counts. Failures already there are named as baseline and left alone. Then re-run `git status --porcelain`: files the run generated get reported, and the user decides before the audit continues.
 
-Done when: the test command is known and the suite's baseline result is recorded.
+Done when: the test command is known, the baseline counts are printed and the tree is clean.
 
 ### 2. Derive the bug classes
 
@@ -98,7 +98,7 @@ One block per target:
 Then:
 
 - Gates: each command with its result.
-- Failure-mode rows: one proposed row per confirmed bug, in the format of `${CLAUDE_PLUGIN_ROOT}/references/failure-modes.md`, traced to the old fix it repeats. The user decides where they go.
+- Failure-mode rows: one proposed row per confirmed bug class, in the format of `${CLAUDE_PLUGIN_ROOT}/references/failure-modes.md`, traced to the old fix it repeats. A bug from a `generic` class has no trace, so it gets no row. The user decides where they go.
 - Commits: one `fix:` per target with a real bug and one `test:` for the rest. Staging and committing wait for the user; suggest `/dev-workflow:commit`.
 
-Done when: the blocks are printed and `git status --porcelain` shows only test files and the fixes reported.
+Done when: the blocks are printed and every path in `git status --porcelain` appears in a block.

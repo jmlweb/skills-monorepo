@@ -21,6 +21,8 @@ Several rows match → use the one CI runs and name the others. When commit mess
 
 No row matches → write `Release: undetermined`, skip every statement about what the title would publish, and mark the verdict `advisory`.
 
+Done when: one mechanism is named, or `Release: undetermined` is written.
+
 ## 2. Find the public surface
 
 Use what the repo declares:
@@ -36,9 +38,11 @@ Use what the repo declares:
 
 No evidence, or nothing outside the repo consumes it → write `Surface: undetermined` and mark the verdict `advisory`.
 
+Done when: the surface is listed, or `Surface: undetermined` is written.
+
 ## 3. Classify from the diff
 
-Read the diff without test files, then the test diff on its own. The most severe matching row wins.
+Read `git diff <range>`, using the repo's test paths to split it: source first, then tests on their own (`git diff <range> -- <test paths>`). The most severe matching row wins.
 
 | Diff contains | Impact | Required title |
 |---------------|--------|----------------|
@@ -56,6 +60,8 @@ Cross-checks that catch a mislabel:
 
 When the repo's commit rules define other types, map the impact onto them. A title with no type gets the impact only.
 
+Done when: one impact is chosen and each cross-check has been applied.
+
 ## 4. Check drift
 
 For each public name added, removed or renamed in the diff:
@@ -64,6 +70,8 @@ For each public name added, removed or renamed in the diff:
 - Removed or renamed: `git grep -n <name> -- '*.md'` finds no stale mention.
 
 Stop at names from this diff. For a wider audit, suggest `/dev-workflow:check-docs`.
+
+Done when: each public name in the diff has been checked.
 
 ## 5. Report the verdict
 
@@ -76,6 +84,6 @@ Drift: <findings|none>
 ```
 
 - Mismatch → the required type replaces the proposed one.
-- `major` → stop and ask the user to confirm the breaking change before any push or title, even when the verdict is advisory or the title already declares it.
+- `major` → the run waits for the user to confirm the breaking change before any push or title, even when the verdict is advisory or the title already declares it.
 
 Done when: the block is printed with every field filled.

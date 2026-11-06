@@ -7,11 +7,11 @@
 //   pnpm sandbox:harden setup    fresh sandbox only
 //   pnpm sandbox:harden check    re-check the current sandbox
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { createGitSandbox, git, gitInvariantFailures, runHarness, sandboxDir, suiteFailures } from "./sandbox-lib.mjs";
+import { createGitSandbox, git, gitInvariantFailures, runHarness, sandboxBase, sandboxDir, suiteFailures } from "./sandbox-lib.mjs";
 
 export const DEFAULT_DIR = sandboxDir("harden");
 export const TARGET = "src/stats.mjs";
@@ -71,17 +71,17 @@ export function createSandbox(dir = DEFAULT_DIR) {
   ]);
 }
 
-const testFiles = (changed) => changed.map((line) => line.slice(3)).filter((path) => path.startsWith("test/"));
+const pathsOf = (changed) => changed.map((line) => line.slice(3));
 
 // The attack tests must fail on the source as committed, or they prove nothing.
 function attackFailsOnOriginalSource(dir) {
   const copy = mkdtempSync(join(tmpdir(), "harden-proof-"));
   try {
     cpSync(dir, copy, { recursive: true });
-    git(copy, ["checkout", "HEAD", "--", "src"]);
+    git(copy, ["checkout", sandboxBase(dir), "--", "src"]);
     // An inherited NODE_TEST_CONTEXT makes a nested `node --test` exit 0 on failure.
     const { NODE_TEST_CONTEXT: _nested, ...env } = process.env;
-    return spawnSync("node", ["--test"], { cwd: copy, encoding: "utf-8", env }).status !== 0;
+    return spawnSync("node", ["--test"], { cwd: copy, encoding: "utf-8", env }).status === 1;
   } finally {
     rmSync(copy, { recursive: true, force: true });
   }
@@ -97,17 +97,17 @@ function percentageRejectsZero(dir) {
 // Invariants that hold however many extra attack tests the run keeps.
 export function checkSandbox(dir = DEFAULT_DIR) {
   const { failures, changed } = gitInvariantFailures(dir, { untrackedPrefix: "test/" });
-  const outside = changed.map((line) => line.slice(3)).filter((p) => p !== TARGET && !p.startsWith("test/"));
+  const outside = pathsOf(changed).filter((p) => p !== TARGET && !p.startsWith("test/"));
   if (outside.length) failures.push(`files outside ${TARGET} and test/ changed: ${outside.join(", ")}`);
-  const tests = testFiles(changed);
-  if (tests.length === 0) {
+  if (!pathsOf(changed).some((p) => p.startsWith("test/"))) {
     failures.push("no attack test was written");
   } else if (!attackFailsOnOriginalSource(dir)) {
     failures.push("attack tests pass on the original source; they do not prove the bug");
   }
   if (!percentageRejectsZero(dir)) failures.push("percentage(1, 0) still does not throw RangeError");
-  const originalTests = git(dir, ["show", `HEAD:${TEST_FILE}`]).split("\n");
-  const currentTests = readFileSync(join(dir, TEST_FILE), "utf-8").split("\n");
+  const originalTests = git(dir, ["show", `${sandboxBase(dir)}:${TEST_FILE}`]).split("\n");
+  const testPath = join(dir, TEST_FILE);
+  const currentTests = existsSync(testPath) ? readFileSync(testPath, "utf-8").split("\n") : [];
   const removed = originalTests.filter((line) => line && !currentTests.includes(line));
   if (removed.length) failures.push(`existing test lines changed: ${removed.join(" | ")}`);
   failures.push(...suiteFailures(dir));

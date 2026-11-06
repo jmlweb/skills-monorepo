@@ -60,6 +60,23 @@ test("flags a test that would pass on the original source", () => {
   });
 });
 
+test("flags an attack test with no fix", () => {
+  withSandbox((dir) => {
+    writeFileSync(join(dir, "test/attack.test.mjs"), ATTACK_TEST);
+    const { failures } = checkSandbox(dir);
+    assert.ok(failures.some((f) => f.includes("still does not throw")));
+  });
+});
+
+test("flags a deleted existing test file", () => {
+  withSandbox((dir) => {
+    rmSync(join(dir, "test/stats.test.mjs"));
+    writeFileSync(join(dir, "test/attack.test.mjs"), ATTACK_TEST);
+    fixPercentage(dir);
+    assert.ok(checkSandbox(dir).failures.some((f) => f.includes("existing test lines changed")));
+  });
+});
+
 test("flags a weakened existing assertion", () => {
   withSandbox((dir) => {
     writeFileSync(join(dir, "test/attack.test.mjs"), ATTACK_TEST);

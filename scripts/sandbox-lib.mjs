@@ -51,13 +51,15 @@ export function createGitSandbox(dir, commits) {
   return head;
 }
 
+export const sandboxBase = (dir) => readFileSync(join(dir, BASE_FILE), "utf-8").trim();
+
 // Generic invariants for a skill that edits the working tree but must not
 // commit, stage or leave scratch files. `allowedPrefix` limits which paths it
 // may touch (e.g. "test/"). `untrackedPrefix` admits new files under one path,
 // for a skill whose output includes them.
 export function gitInvariantFailures(dir, { allowedPrefix = "", untrackedPrefix = null } = {}) {
   const failures = [];
-  const base = readFileSync(join(dir, BASE_FILE), "utf-8").trim();
+  const base = sandboxBase(dir);
   if (git(dir, ["rev-parse", "HEAD"]) !== base) failures.push("a commit was made; the skill must never commit");
   const staged = git(dir, ["diff", "--cached", "--name-only"]);
   if (staged) failures.push(`files are staged: ${staged.split("\n").join(", ")}`);
