@@ -51,17 +51,23 @@ export function createGitSandbox(dir, commits) {
   return head;
 }
 
+export const sandboxBase = (dir) => readFileSync(join(dir, BASE_FILE), "utf-8").trim();
+
 // Generic invariants for a skill that edits the working tree but must not
 // commit, stage or leave scratch files. `allowedPrefix` limits which paths it
-// may touch (e.g. "test/").
-export function gitInvariantFailures(dir, { allowedPrefix = "" } = {}) {
+// may touch (e.g. "test/"). `untrackedPrefix` admits new files under one path,
+// for a skill whose output includes them.
+export function gitInvariantFailures(dir, { allowedPrefix = "", untrackedPrefix = null } = {}) {
   const failures = [];
-  const base = readFileSync(join(dir, BASE_FILE), "utf-8").trim();
+  const base = sandboxBase(dir);
   if (git(dir, ["rev-parse", "HEAD"]) !== base) failures.push("a commit was made; the skill must never commit");
   const staged = git(dir, ["diff", "--cached", "--name-only"]);
   if (staged) failures.push(`files are staged: ${staged.split("\n").join(", ")}`);
   const status = git(dir, ["status", "--porcelain"]).split("\n").filter(Boolean);
-  const untracked = status.filter((line) => line.startsWith("??")).map((line) => line.slice(3));
+  const untracked = status
+    .filter((line) => line.startsWith("??"))
+    .map((line) => line.slice(3))
+    .filter((path) => untrackedPrefix === null || !path.startsWith(untrackedPrefix));
   if (untracked.length) failures.push(`untracked files left behind: ${untracked.join(", ")}`);
   const outside = status.map((line) => line.slice(3)).filter((path) => !path.startsWith(allowedPrefix));
   if (outside.length) failures.push(`files outside ${allowedPrefix || "the allowed paths"} changed: ${outside.join(", ")}`);

@@ -30,9 +30,10 @@ flowchart LR
     HO["/agent-handoff"] -. "work spans repos" .-> OP
     PT["/prune-tests"] -. "suite slow or bloated" .-> CM
     RM["/readme-media"] -. "README needs a demo" .-> CM
+    HD["/harden"] -. "before trusting new code" .-> CM
 ```
 
-> 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready`, `/agent-handoff`, `/prune-tests` or `/readme-media` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
+> 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready`, `/agent-handoff`, `/prune-tests`, `/readme-media` or `/harden` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
 
 | Skill | Use it when… | Writes anything? |
 |-------|--------------|------------------|
@@ -46,6 +47,7 @@ flowchart LR
 | 🤝 🙋 `/agent-handoff` | work spans several repos | Nothing (read-only) |
 | 📝 `/check-docs` | docs may have drifted from the code | Nothing until you approve each change |
 | 🧪 🙋 `/prune-tests` | the suite is slow or you suspect redundant tests | Only the items you approve, in the working tree; never commits |
+| 🛡️ 🙋 `/harden` | code needs a real edge-case audit | Attack tests and fixes in the working tree; never commits |
 | 🎬 🙋 `/readme-media` | your README has no screenshots or demo GIF | GIFs or screenshots plus their sources in `docs/media/`; the README only after you approve the diff; never commits |
 
 ---
@@ -340,6 +342,32 @@ Media and its source (`.tape` or Playwright script) land in `docs/media/` next t
 
 ---
 
+### 🛡️ `/harden` — Attack code with the bugs you already shipped
+
+Audits named code for the bug classes your repo has really shipped. Every bug is proven with a failing test before anything is fixed. It never commits.
+
+```bash
+/harden src/parser.ts     # named files, modules or symbols
+/harden recent            # what changed since the last release
+/harden                   # proposes up to 10 targets for you to pick
+```
+
+**What it does:**
+- 🔍 Finds your test, lint and build commands from CI, agent instructions and manifests, in any stack; asks when it cannot
+- 📜 Derives bug classes from your failure-mode table, `.backlog` reports and `fix:` history; a [generic list](references/harden-attacks.md) is only the fallback
+- 🧪 Writes each attack test first and keeps the failing output as proof
+- 🔧 Fixes minimally; a fix that would change a public signature or documented behaviour stops for your decision
+- 🚫 Leaves existing assertions, thresholds and suppressions as they are
+- 📋 Proposes one [failure-mode row](references/failure-modes.md) per confirmed bug, traced to the commit it repeats
+
+---
+
+## 🚢 Semver gate
+
+`/open-pr`, `/pr-ready` and `/commit` judge a change's semver impact from the real diff, not from its title. They report a mismatch and stop for your confirmation before a breaking change. The release mechanism (semantic-release, Changesets, release-please, GoReleaser, tags, manual) is discovered from the repo; when it cannot be determined, the verdict says so and is only advisory. Procedure: [`shared/semver-impact.md`](shared/semver-impact.md).
+
+---
+
 ## 🧰 CLI
 
 The skills call a bundled zero-dependency CLI for everything that must be deterministic. You can run it directly too: add `--json true` to any command for JSON output.
@@ -355,7 +383,7 @@ node plugins/dev-workflow/dist/bin/dev-workflow.js <command> [flags]
 | `detect-packages` | `/changeset` | Lists workspace packages touched by staged files |
 | `changeset-name` | `/changeset` | Generates an unused `adjective-noun-verb` changeset name |
 | `find-pr-template` | `/open-pr`, `/pr-ready` | Resolves the PR template: repo, then `--user-dir`, then built-in |
-| `detect-test-runner` | `/prune-tests` | Detects vitest, jest or `node --test`, with test, suite, coverage and shuffle commands, and whether Stryker is installed |
+| `detect-test-runner` | `/prune-tests`, `/harden` | Detects vitest, jest or `node --test`, with test, suite, coverage and shuffle commands, and whether Stryker is installed |
 | `test-static-scan` | `/prune-tests` | Finds assertion-free, trivial, skipped, duplicate, parameterisable and sleepy tests |
 | `test-verify-rewrite` | `/prune-tests` | Swaps in a rewritten test file, runs it N times, restores the original, and checks cases, assertions, timing and coverage (`--claim lines\|time\|fold`, `--coverage-command`) |
 | `coverage-subsets` | `/prune-tests` | Finds test files whose coverage (Istanbul JSON or LCOV) is a subset of another's |
@@ -379,6 +407,7 @@ Exit codes: `0` clean, `1` findings or a failed verification, `2` error.
 | `/deslop` | Git |
 | `/check-docs` | Git |
 | `/prune-tests` | Git (clean working tree) + a supported test runner; coverage needs a coverage provider, Stryker is optional |
+| `/harden` | Git (clean working tree) + a test command it can discover or you provide |
 | `/readme-media` | Git; GIFs need `vhs`, `ttyd` and `ffmpeg`; screenshots need Playwright with Chromium (`npx playwright install chromium`) |
 
 ## License

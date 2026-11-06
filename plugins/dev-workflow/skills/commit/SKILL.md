@@ -37,15 +37,16 @@ Done when: staged changes exist and the scan is clean or confirmed by the user.
 
 ### 2. Draft Commit Message
 
-When `$ARGUMENTS` holds a message, use it as drafted. Otherwise:
+When `$ARGUMENTS` holds a message, use it as drafted and start at item 5. Otherwise:
 
 1. Analyze the staged diff semantically
 2. Pick a type from the `commit-basics.md` table
 3. Take the scope from `commit-basics.md` → *Scope Detection*. When the project uses task IDs, a task ID from the branch name (`task/TASK-042`), modified files or the argument is the scope instead
 4. Write the description per the *Conventional Commits Format* rules
-5. Show the full drafted message to the user for approval
+5. Staged changes touch the public surface (`${CLAUDE_PLUGIN_ROOT}/shared/semver-impact.md` section 2): follow that file for `--cached`, with the message as the proposed title, and show the verdict. A mismatch replaces the type; `major` waits for confirmation
+6. Show the full drafted message to the user for approval
 
-Done when: the user has approved a message.
+Done when: the user has approved a message, and any `major` verdict is confirmed.
 
 ### 3. Execute
 

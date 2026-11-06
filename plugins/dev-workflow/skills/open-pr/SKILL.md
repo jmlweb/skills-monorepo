@@ -53,11 +53,19 @@ Done when: the scan exits 0.
 
 Dispatch `code-reviewer` (unavailable → `general-purpose`, same prompt) with `git diff origin/<base>...HEAD`, the `Finding format` and `Code Quality` sections of `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/checklists.md`, and the full `${CLAUDE_PLUGIN_ROOT}/skills/review-pr/assets/smells.md` pasted into the prompt (subagents don't inherit this skill's context). When the diff touches auth, env vars, payments or DB queries, also dispatch `security-reviewer` in parallel with the `Security` section. An agent that fails is noted as a gap; the run continues.
 
-Keep the Critical, Must Fix and Should Fix lines for step 6. Findings are for the user only: never pass them to `pr-writer` or put them in the PR body.
+Keep the Critical, Must Fix and Should Fix lines for step 7. Findings are for the user only: never pass them to `pr-writer` or put them in the PR body.
 
 Done when: every dispatched reviewer returned findings or a noted gap.
 
-### 4. Resolve template and scope
+### 4. Judge semver impact
+
+Follow `${CLAUDE_PLUGIN_ROOT}/shared/semver-impact.md` for the range `origin/<base>...HEAD`. No title exists yet, so its cross-check compares the branch's commit types with the diff.
+
+`major` → show the verdict and wait for the user to confirm the breaking change or stop.
+
+Done when: the verdict block is printed, and a `major` is confirmed.
+
+### 5. Resolve template and scope
 
 - `--template <path>` given → use it; else:
 
@@ -76,23 +84,23 @@ Use `suggested` as the title scope; none → no scope.
 
 Done when: a template is read and its source is named.
 
-### 5. Gather inputs and write
+### 6. Gather inputs and write
 
 Collect: `git log --format='%h %s%n%b' origin/<base>..HEAD`, `git diff --stat origin/<base>...HEAD`, hunks of at most 5 files: the riskiest, spread across the areas the diff stat touches (`git diff --unified=3 origin/<base>...HEAD -- <file>`), and a ticket id (`TSK-123`, `ABC-123`) from the branch name or commits.
 
-Invoke the `Agent` tool with `subagent_type: "dev-workflow:pr-writer"` and a prompt carrying the template text, commit log, diff stat, hunks, suggested scope and ticket.
+Invoke the `Agent` tool with `subagent_type: "dev-workflow:pr-writer"` and a prompt carrying the template text, commit log, diff stat, hunks, suggested scope, ticket and the required title type from step 4.
 
 Reply starts with `MISSING:` → fix the input and retry once. Otherwise split at the `---` line into title and body.
 
 Done when: a title and a body exist.
 
-### 6. Approve
+### 7. Approve
 
-Show the review findings from step 3 (or "no findings"), then the title, the body, base → head, and draft or ready. Ask: **fix first** (stop so the user fixes and re-runs), **create**, **edit** (apply the user's changes, show again) or **cancel**. Any Critical or Must Fix finding → offer **fix first** as the recommended option. Continue only on an explicit yes.
+Show the review findings from step 3 (or "no findings"), the verdict from step 4, then the title, the body, base → head, and draft or ready. Ask: **fix first** (stop so the user fixes and re-runs), **create**, **edit** (apply the user's changes, show again) or **cancel**. Any Critical or Must Fix finding → offer **fix first** as the recommended option. Continue only on an explicit yes.
 
 Done when: the user answered fix first, create or cancel.
 
-### 7. Push and create
+### 8. Push and create
 
 Only after approval:
 
@@ -110,7 +118,7 @@ Push plainly to the feature branch only; a rejected push is reported and the run
 
 Done when: `gh pr create` prints the PR URL.
 
-### 8. Report
+### 9. Report
 
 ```
 PR #<n> — <title>
@@ -119,7 +127,7 @@ State: draft (or ready) · Base: <base> · Template: <repo|user|builtin>
 Next: /dev-workflow:pr-ready when CI and reviews need driving
 ```
 
-Done when: the block is printed with the URL from step 7.
+Done when: the block is printed with the URL from step 8.
 
 ## Errors
 
