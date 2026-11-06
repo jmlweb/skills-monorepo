@@ -26,7 +26,9 @@ Reuse the repo's existing section when it has one (commonly "named mistakes", "f
 
 ## Examples
 
+From this plugin's home repo, jmlweb/skills-monorepo:
+
 | Failure mode | Prevention rule | Trace |
 |---|---|---|
-| **Hook needs a tool users lack.** A hook called `fd`, which broke every Bash call for users without it. | Hooks use only bash, coreutils and `jq`. | `6112cfc` |
-| **Pushes without checking the remote.** One push silently carried three earlier unpushed commits. | Run `git fetch` and show `git log --oneline origin/main..HEAD` before pushing. | named mistake 28 in this repo's `docs/agent-playbook.md` |
+| **Hook needs a tool users lack.** A hook called `fd`, which broke every Bash call for users without it. | Hooks use only bash, coreutils and `jq`. | commit `6112cfc` there |
+| **Pushes without checking the remote.** One push silently carried three earlier unpushed commits. | Run `git fetch` and show `git log --oneline origin/main..HEAD` before pushing. | named mistake 28 in its `docs/agent-playbook.md` |
