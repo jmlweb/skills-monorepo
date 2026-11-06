@@ -129,7 +129,7 @@ async function main(): Promise<number> {
         "  scan-secrets     Scan staged changes (or --range <base>...HEAD) for secrets and sensitive files",
         "  detect-scope     Suggest a Conventional Commits scope from staged files (or --range <base>...HEAD) and branch",
         "  detect-packages  List workspace packages touched by staged files",
-        "  changeset-name   Generate an unused adjective-noun-verb name for .changeset/",
+        "  changeset-slug   Generate an unused adjective-noun-verb name for .changeset/",
         "  find-pr-template Resolve the PR template: repo, then --user-dir, then built-in",
         "  detect-test-runner   Detect the test runner, its command and coverage support",
         "  test-static-scan     Find assertion-free, trivial, skipped, duplicate and sleepy tests",
@@ -201,7 +201,7 @@ async function main(): Promise<number> {
         }
         return EXIT_CLEAN;
       }
-      case "changeset-name": {
+      case "changeset-slug": {
         const dir = flags["dir"] ?? ".changeset";
         const existing = listChangesetNames(cwd, dir);
         const name = generateUniqueChangesetName((n) => !existing.has(n));
