@@ -21,7 +21,7 @@ Resolve the backlog directory: run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowsta
 
 ### 1. Identify Candidates
 
-If `$ARGUMENTS` provided, parse comma-separated IDs and validate each appears in `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` with status `pending` or `active` (not `blocked`).
+First run the resume check: when `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --status active --json true` lists a task without `blockedBy`, or `git worktree list --porcelain` shows an entry beyond the main checkout, read `${CLAUDE_PLUGIN_ROOT}/shared/parallel-resume.md` and follow it before choosing candidates, since an interrupted run leaves active tasks and worktrees behind. If `$ARGUMENTS` provided, parse comma-separated IDs and validate each appears in `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-list --json true` with status `pending` or `active` (not `blocked`).
 
 If no argument, list all pending non-blocked tasks, parse file references from each, and identify independent groups (no overlapping files).
 
@@ -57,7 +57,7 @@ For each selected task, activate it via CLI:
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-move {{ID}} --to active
 ```
 
-The CLI handles frontmatter updates, file moves, and index updates. Then commit the moves when `{{BACKLOG}}` is inside the repo's tracked tree (it ends in `.backlog` and is not git-ignored). Worktrees branch from `HEAD`, so uncommitted moves leave subagents with stale `pending/` copies and cause merge conflicts later. A private backlog (outside the repo or git-ignored) is shared by every worktree and needs no commit; skip it. The pathspec keeps unrelated staged work out of this commit:
+The CLI handles frontmatter updates, file moves, and index updates; a task relaunched by the resume check is already active and skips this move. Then commit the moves when `{{BACKLOG}}` is inside the repo's tracked tree (it ends in `.backlog` and is not git-ignored). Worktrees branch from `HEAD`, so uncommitted moves leave subagents with stale `pending/` copies and cause merge conflicts later. A private backlog (outside the repo or git-ignored) is shared by every worktree and needs no commit; skip it. The pathspec keeps unrelated staged work out of this commit:
 
 ```bash
 git add "{{BACKLOG}}" && git commit -m "chore(backlog): start {{IDS}}" -- "{{BACKLOG}}"
@@ -79,7 +79,7 @@ Done when: each selected task has its list of learnings and reports (possibly em
 
 ### 6. Launch Subagents
 
-Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`. Under `## Worktree Rules`, paste the text of `${CLAUDE_PLUGIN_ROOT}/shared/worktree-brief.md` with `{{BASE}}` set to the current branch, then the project's own worktree brief when its rules files define one. When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
+Launch ALL subagents with the Agent tool in a **single message**, each with `isolation: "worktree"`. Under `## Worktree Rules`, paste the text of `${CLAUDE_PLUGIN_ROOT}/shared/worktree-brief.md` with `{{BASE}}` set to the current branch and `{{ID}}` to the task, then the project's own worktree brief when its rules files define one. When several tasks each create sequentially numbered files (ADRs, migrations), reserve the numbers up front and state each subagent's number in its prompt, since otherwise they all pick the same next number.
 
 **Subagent prompt:**
 
