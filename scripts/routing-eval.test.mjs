@@ -110,6 +110,16 @@ test("negative prompt whose owner is not in the top 3 fails", () => {
   assert.ok(failures.some((f) => f.includes("did not place owner epsilon in top 3")));
 });
 
+test("external owner skips the owner checks but still fails when the skill ranks first", () => {
+  const cases = clone(passing);
+  cases.skills.alpha.negative[0] = { prompt: "rotate database credentials", owner: "run", external: true };
+  assert.deepEqual(evaluatePlugin(skills, cases).failures, []);
+  cases.skills.alpha.negative[0] = { prompt: "deploy staging server", owner: "run", external: true };
+  const { failures } = evaluatePlugin(skills, cases);
+  assert.ok(failures.some((f) => f.includes('negative "deploy staging server" ranked this skill first')));
+  assert.ok(!failures.some((f) => f.includes("unknown owner")));
+});
+
 test("near-duplicate descriptions are reported as collisions", () => {
   const twins = [
     { name: "one", description: "Create a new backlog task for the user", modelInvoked: true },
