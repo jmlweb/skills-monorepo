@@ -125,13 +125,14 @@ export function main(argv, env = process.env) {
     process.stdout.write(`github.com\n  ✓ Logged in to github.com account stub (keyring)\n`);
     return;
   }
+  // Every other subcommand talks to the API, which gh refuses without a login.
+  if (!state.auth) fail("To get started with GitHub CLI, please run:  gh auth login\nAlternatively, populate the GH_TOKEN environment variable with a GitHub API authentication token.", 4);
 
   if (group === "repo" && action === "view") {
     const target = positional[0];
     if (target !== undefined && target !== state.repo) {
       fail(`GraphQL: Could not resolve to a Repository with the name '${target}'. (repository)`);
     }
-    if (!state.auth) fail("To get started with GitHub CLI, please run:  gh auth login");
     process.stdout.write(JSON.stringify({ nameWithOwner: state.repo }) + "\n");
     return;
   }

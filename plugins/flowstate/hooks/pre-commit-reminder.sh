@@ -9,6 +9,27 @@ COMMAND=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty')
 # Only trigger on git commit commands
 printf '%s' "$COMMAND" | grep -qE '\bgit[[:space:]]+commit\b' || exit 0
 
+emit() { # $1 = "  - ID: title\n" lines
+  # Titles are raw user text (quotes, backslashes); jq --arg escapes them, a heredoc did not.
+  jq -n --arg tasks "$1" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      additionalContext: ("Before committing — active tasks in backlog:\n" + $tasks + "Consider if this commit completes any of them (/flowstate:complete-task).")
+    }
+  }'
+}
+
+# GitHub mode: active tasks are issues, so the CLI lists them. The hook must stay quiet
+# and quick, so any failure (no gh, no auth, no network, no backlog dir) exits 0 silently.
+if [ "$(printf '%s' "${FLOWSTATE_BACKEND:-}" | tr '[:upper:]' '[:lower:]')" = "github" ]; then
+  CLI="$(dirname "$0")/../dist/bin/flowstate.js"
+  ACTIVE_JSON=$(node "$CLI" task-list --status active --json true 2>/dev/null) || exit 0
+  TASKS=$(printf '%s' "$ACTIVE_JSON" | jq -r '.[] | "  - \(.id): \(.title)"' 2>/dev/null) || exit 0
+  [ -n "$TASKS" ] || exit 0
+  emit "${TASKS}"$'\n'
+  exit 0
+fi
+
 # Same resolution rule as the CLI (src/core/paths.ts): FLOWSTATE_BACKLOG_DIR
 # (absolute, or relative to the project root), else the nearest .backlog/ walking
 # up. CLAUDE_PROJECT_DIR is deliberately not used: Bash tool calls don't get it.
@@ -46,10 +67,4 @@ for f in "$BACKLOG_DIR"/*.md; do
   TASKS="${TASKS}  - ${ID}: ${TITLE}"$'\n'
 done
 
-# Titles are raw user text (quotes, backslashes); jq --arg escapes them, a heredoc did not.
-jq -n --arg tasks "$TASKS" '{
-  hookSpecificOutput: {
-    hookEventName: "PreToolUse",
-    additionalContext: ("Before committing — active tasks in backlog:\n" + $tasks + "Consider if this commit completes any of them (/flowstate:complete-task).")
-  }
-}'
+emit "$TASKS"

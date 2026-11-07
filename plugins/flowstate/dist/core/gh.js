@@ -14,7 +14,11 @@ export function classifyGhFailure(args, stderr, repo) {
 }
 function repoFromArgs(args) {
     const idx = args.findIndex((a) => a === "--repo" || a === "-R");
-    return idx === -1 ? undefined : args[idx + 1];
+    if (idx !== -1)
+        return args[idx + 1];
+    // `gh repo view <owner/name>` names the repo positionally.
+    const positional = args[0] === "repo" && args[1] === "view" ? args[2] : undefined;
+    return positional !== undefined && !positional.startsWith("-") ? positional : undefined;
 }
 export function createGhRunner(config = {}) {
     const timeout = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
