@@ -1,3 +1,4 @@
+import type { BacklogStore } from "../core/store.js";
 export interface BacklogStats {
     readonly pending: number;
     readonly active: number;
@@ -7,4 +8,4 @@ export interface BacklogStats {
     readonly pendingReports: number;
     readonly learnings: number;
 }
-export declare function stats(root: string): Promise<BacklogStats>;
+export declare function stats(store: BacklogStore, root: string): Promise<BacklogStats>;

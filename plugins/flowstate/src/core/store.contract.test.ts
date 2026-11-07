@@ -4,6 +4,8 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { setup } from "../commands/setup.js";
 import { FileStore } from "./file-store.js";
+import { GithubStore } from "./github-store.js";
+import { openStubGh } from "./github-stub.test-support.js";
 import type { BacklogStore, StoredType } from "./store.js";
 
 // Every backend must pass this suite. A new backend adds one entry here.
@@ -22,6 +24,14 @@ const BACKENDS: readonly Backend[] = [
         store: new FileStore(dir),
         close: () => rm(dir, { recursive: true, force: true }),
       };
+    },
+  },
+  {
+    // Runs against scripts/gh-stub.mjs on PATH, never the network.
+    name: "GithubStore",
+    open: async () => {
+      const stub = await openStubGh();
+      return { store: new GithubStore(stub.repo, stub.gh), close: stub.close };
     },
   },
 ];

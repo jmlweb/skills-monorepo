@@ -1,9 +1,8 @@
-import { taskDir, ideaDir, reportDir, learningsDir } from "../core/paths.js";
-import { listFiles, readEntity } from "../core/fs.js";
+import { learningsDir } from "../core/paths.js";
+import { listLearningFiles } from "../core/fs.js";
+import type { BacklogStore } from "../core/store.js";
 import { BUCKETS, taskStatusOf } from "../core/store.js";
 import type { TaskStatus } from "../core/types.js";
-import { join } from "node:path";
-import { readdir } from "node:fs/promises";
 
 export interface BacklogStats {
   readonly pending: number;
@@ -15,28 +14,19 @@ export interface BacklogStats {
   readonly learnings: number;
 }
 
-export async function stats(root: string): Promise<BacklogStats> {
+// Tasks, ideas and reports come through the store (files or GitHub Issues); learnings
+// are counted from the backlog directory in every mode.
+export async function stats(store: BacklogStore, root: string): Promise<BacklogStats> {
   const counts: Record<TaskStatus, number> = { pending: 0, active: 0, blocked: 0, complete: 0 };
 
-  const [taskStatuses, pendingIdeas, pendingReports, learnings] = await Promise.all([
-    Promise.all(
-      BUCKETS.task.map(async (bucket) => {
-        const dir = taskDir(root, bucket);
-        const files = (await listFiles(dir)).filter((f) => f.name !== "index.md");
-        return Promise.all(
-          files.map(async (file) => {
-            const doc = await readEntity(join(dir, file.name));
-            return taskStatusOf(bucket, doc.frontmatter as Record<string, unknown>);
-          }),
-        );
-      }),
-    ),
-    listFiles(ideaDir(root, "pending")).then((f) => f.length),
-    listFiles(reportDir(root, "pending")).then((f) => f.length),
-    readdir(learningsDir(root)).then((e) => e.filter((n) => n.startsWith("LRN-")).length).catch(() => 0),
+  const [tasks, pendingIdeas, pendingReports, learnings] = await Promise.all([
+    store.list("task", BUCKETS.task),
+    store.list("idea", ["pending"]).then((items) => items.length),
+    store.list("report", ["pending"]).then((items) => items.length),
+    listLearningFiles(learningsDir(root)).then((names) => names.length),
   ]);
 
-  for (const status of taskStatuses.flat()) counts[status] += 1;
+  for (const task of tasks) counts[taskStatusOf(task.bucket, task.frontmatter)] += 1;
 
   return { ...counts, pendingIdeas, pendingReports, learnings };
 }

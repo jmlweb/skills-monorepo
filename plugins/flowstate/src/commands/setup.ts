@@ -29,7 +29,7 @@ _No active tasks._
 |----|-------|-----------|
 `;
 
-const LEARNINGS_INDEX_TEMPLATE = (name: string) => `# ${name} - Learnings Index
+export const LEARNINGS_INDEX_TEMPLATE = (name: string) => `# ${name} - Learnings Index
 
 > Consult a learning's full document before starting related work.
 
