@@ -5,9 +5,9 @@
 | Status | Count |
 |--------|-------|
 | Pending | 1 |
-| Active | 20 |
+| Active | 19 |
 | Blocked | 1 |
-| Complete | 59 |
+| Complete | 60 |
 
 ## Active Tasks
 
@@ -26,7 +26,6 @@
 - TSK-072: Fix: test-static-scan drops a test whose body holds a quote inside a regex literal (P3)
 - TSK-073: Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears (P2)
 - TSK-074: Fix: task-doctor plain output prints [object Object] for each fixed task (P4)
-- TSK-075: Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn (P3)
 - TSK-076: Decide where a gated production protocol lives (P3)
 - TSK-077: dev-workflow verify-ui skill with a measuring subagent (P2)
 - TSK-078: flowstate groom-tasks skill for relevance and priority (P2)
@@ -45,6 +44,7 @@
 |----|-------|-----------|
 | TSK-053 | Fix: review-idea and triage-report number their decision menus after a numbered list | 2026-11-07 |
 | TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | 2026-11-07 |
+| TSK-075 | Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn | 2026-11-07 |
 | TSK-069 | Fix: scan-secrets skips every file when git diff paths lack the b/ prefix | 2026-11-05 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | 2026-11-01 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | 2026-10-28 |
@@ -52,4 +52,3 @@
 | TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | 2026-10-24 |
 | TSK-056 | dev-workflow: readme-media skill generates README screenshots and GIFs | 2026-10-23 |
 | TSK-052 | flowstate kickstart skill: description to evaluated, documented, tasked project | 2026-10-19 |
-| TSK-051 | flowstate: shared learnings across projects, on by default | 2026-10-16 |
