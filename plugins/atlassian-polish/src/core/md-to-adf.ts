@@ -19,6 +19,7 @@ const ITEM_RE = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
 const TASK_RE = /^\[( |x|X)\]\s+(.*)$/;
 const HEADING_RE = /^(#{1,6})\s+(.*)$/;
 const FENCE_RE = /^\s*```\s*([\w+-]*)\s*$/;
+const CLOSE_FENCE_RE = /^\s*```\s*$/;
 const RULE_RE = /^\s*([-*_])(\s*\1){2,}\s*$/;
 const TABLE_SEP_RE = /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/;
 
@@ -138,24 +139,10 @@ function parseBlocks(lines: readonly Line[], ctx: Ctx): AdfNode[] {
       continue;
     }
 
-    const fence = FENCE_RE.exec(line.text);
-    if (fence) {
-      let j = i + 1;
-      const body: string[] = [];
-      while (j < lines.length && !/^\s*```\s*$/.test(lines[j]!.text)) {
-        body.push(lines[j]!.text);
-        j++;
-      }
-      if (j >= lines.length) {
-        throw new MarkdownConversionError("unclosed code fence", line.no);
-      }
-      const code = body.join("\n");
-      out.push({
-        type: "codeBlock",
-        ...(fence[1] ? { attrs: { language: fence[1] } } : {}),
-        ...(code ? { content: [{ type: "text", text: code }] } : {}),
-      });
-      i = j + 1;
+    if (FENCE_RE.test(line.text)) {
+      const { node, next } = parseFence(lines, i);
+      out.push(node);
+      i = next;
       continue;
     }
 
@@ -220,6 +207,38 @@ function parseBlocks(lines: readonly Line[], ctx: Ctx): AdfNode[] {
   return out;
 }
 
+/**
+ * Reads a fenced block opened at `start`. Body lines lose at most the opening
+ * fence's indent (CommonMark), so a fence nested in a list keeps its own indentation.
+ */
+function parseFence(
+  lines: readonly Line[],
+  start: number,
+): { node: AdfNode; next: number } {
+  const open = lines[start]!;
+  const lang = FENCE_RE.exec(open.text)![1];
+  const strip = indentOf(open.text);
+  const body: string[] = [];
+  let i = start + 1;
+  while (i < lines.length && !CLOSE_FENCE_RE.test(lines[i]!.text)) {
+    const raw = lines[i]!.text;
+    body.push(raw.slice(Math.min(strip, indentOf(raw))));
+    i++;
+  }
+  if (i >= lines.length) {
+    throw new MarkdownConversionError("unclosed code fence", open.no);
+  }
+  const code = body.join("\n");
+  return {
+    node: {
+      type: "codeBlock",
+      ...(lang ? { attrs: { language: lang } } : {}),
+      ...(code ? { content: [{ type: "text", text: code }] } : {}),
+    },
+    next: i + 1,
+  };
+}
+
 type ListKind = "bullet" | "ordered" | "task";
 
 function itemKind(text: string): ListKind {
@@ -277,6 +296,12 @@ function parseList(
       const indent = indentOf(next.text);
       if (indent > base && ITEM_RE.test(next.text)) {
         const sub = parseList(lines, i, indent, ctx);
+        nested.push(sub.node);
+        i = sub.next;
+        continue;
+      }
+      if (indent > base && FENCE_RE.test(next.text)) {
+        const sub = parseFence(lines, i);
         nested.push(sub.node);
         i = sub.next;
         continue;
@@ -356,11 +381,29 @@ function splitRow(text: string): string[] {
   return cells;
 }
 
+/**
+ * A row wider than its header is most often an unescaped `|`; GFM would drop the
+ * extra cells, but this converter writes real Jira descriptions, so it refuses
+ * instead. Trailing empty cells (a stray `|`) carry nothing and are ignored.
+ */
+function fitRow(cells: readonly string[], width: number, no: number): string[] {
+  let end = cells.length;
+  while (end > width && cells[end - 1] === "") end--;
+  if (end > width) {
+    throw new MarkdownConversionError(
+      `table row has ${end} cells but the header has ${width}; escape literal pipes as \\| or add header columns`,
+      no,
+    );
+  }
+  return cells.slice(0, end);
+}
+
 function parseTable(
   lines: readonly Line[],
   start: number,
 ): { node: AdfNode; next: number } {
   const header = splitRow(lines[start]!.text);
+  const width = header.length;
   const rows: string[][] = [];
   let i = start + 2;
   while (
@@ -368,10 +411,9 @@ function parseTable(
     !isBlank(lines[i]!) &&
     lines[i]!.text.includes("|")
   ) {
-    rows.push(splitRow(lines[i]!.text));
+    rows.push(fitRow(splitRow(lines[i]!.text), width, lines[i]!.no));
     i++;
   }
-  const width = header.length;
   const toRow = (cells: readonly string[], kind: string): AdfNode => ({
     type: "tableRow",
     content: Array.from({ length: width }, (_, c) => {
@@ -416,6 +458,46 @@ const isAlnum = (c: string | undefined): boolean =>
  */
 function codeMarks(marks: readonly Mark[]): Mark[] {
   return [...marks.filter((m) => m.type === "link"), { type: "code" }];
+}
+
+const LINK_OPEN_RE = /^\[([^\]]+)\]\(/;
+const LINK_CLOSE_RE = /^(?:\s+"[^"]*")?\)/;
+const LINK_FALLBACK_RE = /^\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/;
+
+interface LinkMatch {
+  readonly label: string;
+  readonly href: string;
+  /** Characters consumed from the source, including the closing `)`. */
+  readonly length: number;
+}
+
+/**
+ * CommonMark lets a destination hold balanced parentheses (`/wiki/Foo_(bar)`),
+ * so the destination ends at the first unmatched `)` or whitespace. When the
+ * balanced scan finds no closing `)`, the pre-existing first-`)` regex applies,
+ * so unbalanced input keeps its old reading.
+ */
+function matchLink(s: string): LinkMatch | undefined {
+  const open = LINK_OPEN_RE.exec(s);
+  if (!open) return undefined;
+  const start = open[0].length;
+  let depth = 0;
+  let i = start;
+  for (; i < s.length; i++) {
+    const c = s[i]!;
+    if (/\s/.test(c)) break;
+    if (c === "(") depth++;
+    else if (c === ")") {
+      if (depth === 0) break;
+      depth--;
+    }
+  }
+  const close = LINK_CLOSE_RE.exec(s.slice(i));
+  if (i > start && depth === 0 && close) {
+    return { label: open[1]!, href: s.slice(start, i), length: i + close[0].length };
+  }
+  const legacy = LINK_FALLBACK_RE.exec(s);
+  return legacy ? { label: legacy[1]!, href: legacy[2]!, length: legacy[0].length } : undefined;
 }
 
 function parseInline(src: string, marks: readonly Mark[]): AdfNode[] {
@@ -481,27 +563,27 @@ function parseInline(src: string, marks: readonly Mark[]): AdfNode[] {
     }
 
     if (c === "[" && !hasLink) {
-      const m = /^\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/.exec(src.slice(i));
-      if (m?.[2]!.startsWith("mention:")) {
+      const m = matchLink(src.slice(i));
+      if (m?.href.startsWith("mention:")) {
         // [@Name](mention:<accountId>) → real ADF mention; plain text can't notify.
         flush();
-        const name = m[1]!.replace(/^@/, "");
+        const name = m.label.replace(/^@/, "");
         out.push({
           type: "mention",
-          attrs: { id: m[2]!.slice("mention:".length), text: `@${name}` },
+          attrs: { id: m.href.slice("mention:".length), text: `@${name}` },
         });
-        i += m[0].length;
+        i += m.length;
         continue;
       }
       if (m) {
         flush();
         out.push(
-          ...parseInline(m[1]!, [
+          ...parseInline(m.label, [
             ...marks,
-            { type: "link", attrs: { href: m[2]! } },
+            { type: "link", attrs: { href: m.href } },
           ]),
         );
-        i += m[0].length;
+        i += m.length;
         continue;
       }
     }

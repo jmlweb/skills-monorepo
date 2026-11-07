@@ -54,13 +54,15 @@ MD
 ```
 
 It converts headings, paragraphs, bullet/numbered lists (nesting ≤ 2 levels), tables, fenced
-code, blockquotes, rules, inline code/bold/italic/strike, links, bare URLs and mentions
+code (also indented under a bullet or numbered item, as a `codeBlock` inside the `listItem`),
+blockquotes, rules, inline code/bold/italic/strike, links, bare URLs and mentions
 (`[@Name](mention:<accountId>)` → ADF `mention` node; mentioned people get notified).
 ADF does not auto-link bare issue keys: always pass `--jira-base <site URL> --projects
 <PREFIX,…>` so keys of those projects become `inlineCard` smart links (code spans and
 existing links are left alone). Exit 2 with a
 `line N:` message on input it can't convert (unclosed fence, content nested under a checklist
-item); fix the Markdown, don't drop the content. Node shape it emits, for reference:
+item, a table row with more cells than the header); fix the Markdown, don't drop the content.
+Node shape it emits, for reference:
 
 ```json
 {"type":"taskList","attrs":{"localId":"<uuid>"},"content":[
@@ -70,8 +72,13 @@ item); fix the Markdown, don't drop the content. Node shape it emits, for refere
 
 - `- [ ]` → `state: "TODO"`, `- [x]` → `"DONE"`. Every `localId` is a fresh UUID.
 - `taskItem` holds inline nodes directly (text, code-marked text), not a `paragraph`.
+- Links: `[text](url)` and `[text](url "title")` become a `link` mark (the title is dropped);
+  the URL may hold balanced parentheses, as in `/wiki/Foo_(bar)`.
 - Tables: `tableHeader`/`tableCell` each wrap a `paragraph`. Links are a `link` mark. `code`
-  never combines with bold/italic; the converter drops the other marks there.
+  never combines with bold/italic; the converter drops the other marks there. The header sets
+  the column count: a shorter body row is padded with empty cells, a row with extra non-empty
+  cells (usually an unescaped `|`) is an exit-2 error naming the line; trailing empty cells
+  are ignored.
 - Check: the tool's returned Markdown shows `- [ ] …` unescaped. `\[ \]` means it was stored as
   literal text. Confluence uses `<ac:task-list>` (section 3); not affected.
 

@@ -65,6 +65,25 @@ describe("markdownToAdf", () => {
     ]);
   });
 
+  it("keeps balanced parentheses in a link destination", () => {
+    const [p] = convert('See [docs](https://x.y/a_(b)) and [t](https://x.y/c_(d) "title") now');
+    expect(p?.content).toEqual([
+      t("See "),
+      { type: "text", text: "docs", marks: [{ type: "link", attrs: { href: "https://x.y/a_(b)" } }] },
+      t(" and "),
+      { type: "text", text: "t", marks: [{ type: "link", attrs: { href: "https://x.y/c_(d)" } }] },
+      t(" now"),
+    ]);
+  });
+
+  it("reads an unbalanced link destination up to the first ) as before", () => {
+    const [p] = convert("[a](https://x.y/(b) tail");
+    expect(p?.content).toEqual([
+      { type: "text", text: "a", marks: [{ type: "link", attrs: { href: "https://x.y/(b" } }] },
+      t(" tail"),
+    ]);
+  });
+
   it("turns [@Name](mention:<id>) into a mention node, in lists too", () => {
     const [list] = convert("- Owners: [@Ana López](mention:712020:abc), [Bo](mention:42)");
     expect(list?.content?.[0]?.content?.[0]?.content).toEqual([
@@ -251,6 +270,26 @@ describe("markdownToAdf", () => {
     ]);
   });
 
+  it("refuses a table row wider than its header, naming the row's line", () => {
+    expect(() => convert("| a | b |\n|---|---|\n| 1 | 2 | 3 |")).toThrow(
+      /^line 3: table row has 3 cells but the header has 2/,
+    );
+  });
+
+  it("ignores trailing empty cells and pads short rows", () => {
+    const [table] = convert("| a | b |\n|---|---|\n| 1 | 2 | |\n| 3 |");
+    expect(table?.content?.slice(1)).toEqual([
+      row("tableCell", [[t("1")], [t("2")]]),
+      {
+        type: "tableRow",
+        content: [
+          { type: "tableCell", attrs: {}, content: [{ type: "paragraph", content: [t("3")] }] },
+          { type: "tableCell", attrs: {}, content: [{ type: "paragraph" }] },
+        ],
+      },
+    ]);
+  });
+
   it("converts fenced code, blockquotes and rules", () => {
     expect(convert("```ts\nconst a = 1;\n```\n\n> note\n\n---")).toEqual([
       {
@@ -268,6 +307,39 @@ describe("markdownToAdf", () => {
 
   it("throws on an unclosed code fence with the opening line number", () => {
     expect(() => convert("a\n\n```\nnever closed")).toThrow(/line 3/);
+  });
+
+  it("turns a fence nested in a bullet item into a codeBlock with newlines kept", () => {
+    const [list, after] = convert(
+      "- item\n  ```sh\n  one\n\n    two\n  ```\n- next\n\nafter",
+    );
+    expect(list).toEqual({
+      type: "bulletList",
+      content: [
+        {
+          type: "listItem",
+          content: [
+            { type: "paragraph", content: [t("item")] },
+            {
+              type: "codeBlock",
+              attrs: { language: "sh" },
+              content: [{ type: "text", text: "one\n\n  two" }],
+            },
+          ],
+        },
+        { type: "listItem", content: [{ type: "paragraph", content: [t("next")] }] },
+      ],
+    });
+    expect(JSON.stringify(list)).not.toContain("`");
+    expect(after).toEqual({ type: "paragraph", content: [t("after")] });
+  });
+
+  it("throws on an unclosed fence nested in a list item at the fence line", () => {
+    expect(() => convert("- item\n  ```\n  code")).toThrow(/^line 2: unclosed code fence/);
+  });
+
+  it("refuses a fence under a checklist item rather than inlining it", () => {
+    expect(() => convert("- [ ] a\n  ```\n  x\n  ```")).toThrow(/^line 1/);
   });
 });
 
