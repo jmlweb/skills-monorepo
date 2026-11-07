@@ -66,3 +66,5 @@
 | LRN-060 | Probe a plugin hook end to end with a nested claude -p --plugin-dir in a scratch repo | claude-code, hooks, testing, plugins | active | 2026-11-07 |
 | LRN-061 | Declare the few switch flags that may appear bare; every other flag must carry a value | cli, args, flowstate, dev-workflow, atlassian-polish | active | 2026-11-07 |
 | LRN-062 | Compare CLI-printed paths by suffix in integration tests: the CLI prints realpath | flowstate, testing, macos, paths | active | 2026-11-07 |
+| LRN-063 | A server-assigned ID backend keeps the ID out of the stored payload and derives it on read | flowstate, store, github, design | active | 2026-11-07 |
+| LRN-064 | A stub for an external CLI must mirror its global preconditions, not only the happy subcommands | testing, gh, hooks, stubs | active | 2026-11-07 |

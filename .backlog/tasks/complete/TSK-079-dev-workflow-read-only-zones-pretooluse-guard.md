@@ -1,13 +1,14 @@
 ---
 id: TSK-079
 title: dev-workflow read-only zones PreToolUse guard
-status: active
+status: complete
 priority: P2
 tags: [dev-workflow, hooks]
 created: 2026-11-06
 source: idea/PLN-033
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # dev-workflow read-only zones PreToolUse guard
@@ -55,7 +56,7 @@ Ship a `PreToolUse` hook in `dev-workflow` that blocks file edits inside zones a
 - [x] The config itself is an implicit zone, and the broken-config message tells the reader to fix the file by hand
 - [x] Hook stdin fields and exit 2 behaviour are confirmed against official docs — evidence: hooks page: file_path always absolute for Edit/Write, exit 2 blocks PreToolUse with stderr as reason; permissions page: notebook_path for NotebookEdit; live claude -p probe blocked dist/x.js (2026-11-07)
 - [x] README documents the config format, the implicit zone, that config is always read from CLAUDE_PROJECT_DIR, and that this is not a security boundary because Bash can still write
-- [ ] AGENTS.md map updated, plugin description and keywords checked, claude plugin validate . passes and the version is set with pnpm bump
+- [x] AGENTS.md map updated, plugin description and keywords checked, claude plugin validate . passes and the version is set with pnpm bump — evidence: dev-workflow released as v1.11.0 (tag pushed); plugin validate passed (2026-11-07)
 
 ## Notes
 
@@ -68,3 +69,4 @@ Ship a `PreToolUse` hook in `dev-workflow` that blocks file edits inside zones a
 - [2026-11-07] Started
 - [2026-11-07] Merged a46c7fa into main (README conflicts with verify-ui resolved as union). plugin validate passed, version:sync in sync. AGENTS.md map updated. Bump pending the coordinated release.
 - [2026-11-07] Fresh-context review follow-up in 2635661: hook fails closed on unexpected errors (.catch exits 2), paths canonicalised through realpath with case folding on darwin/win32, session directory inside a larger repository becomes the match root, trailing-slash globs and [!a] classes supported.
+- [2026-11-07] Completed

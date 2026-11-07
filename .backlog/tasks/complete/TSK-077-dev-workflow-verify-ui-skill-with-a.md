@@ -1,13 +1,14 @@
 ---
 id: TSK-077
 title: dev-workflow verify-ui skill with a measuring subagent
-status: active
+status: complete
 priority: P2
 tags: [dev-workflow, skill, ui]
 created: 2026-11-06
 source: idea/PLN-031
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # dev-workflow verify-ui skill with a measuring subagent
@@ -41,7 +42,7 @@ Add a model-invoked `dev-workflow:verify-ui` skill and a `ui-auditor` agent. Tog
 - [x] skills/verify-ui/SKILL.md takes scope from the argument or git diff, starts or probes the dev server, delegates to the agent, relays the table as-is and surfaces skipped checks
 - [x] Missing docs/verify-ui.md or missing chrome-devtools MCP stops with an actionable message, never a clean report
 - [x] Routing cases added to evals/routing.json including a Not for run case, and README command table updated — evidence: routing.json 3 positive + 3 negative incl. external run owner; README rows (2026-11-07)
-- [ ] pnpm lint:skills and claude plugin validate . pass and the version is set with pnpm bump
+- [x] pnpm lint:skills and claude plugin validate . pass and the version is set with pnpm bump — evidence: dev-workflow released as v1.11.0 (tag pushed) (2026-11-07)
 
 ## Notes
 
@@ -54,3 +55,4 @@ Add a model-invoked `dev-workflow:verify-ui` skill and a `ui-auditor` agent. Tog
 - [2026-11-06] Created
 - [2026-11-07] Started
 - [2026-11-07] Merged 58aad2e into main (root README conflict on the tree comment resolved: 22 flowstate skills, 12 dev-workflow skills). lint:skills 0/0, routing-eval dev-workflow 1.000, plugin validate passed. Bump pending the coordinated release.
+- [2026-11-07] Completed

@@ -1,13 +1,14 @@
 ---
 id: TSK-080
 title: flowstate parallel resume and next-task automation labels
-status: active
+status: complete
 priority: P2
 tags: [flowstate, skill, parallel]
 created: 2026-11-07
 source: idea/PLN-035
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # flowstate parallel resume and next-task automation labels
@@ -69,7 +70,7 @@ A checkpoint file would duplicate state and could drift from it. Task status, Pr
 - [x] Resume steps live in shared/parallel-resume.md, referenced through CLAUDE_PLUGIN_ROOT by an inline sentence in parallel step 1 with no added lines — evidence: shared/parallel-resume.md referenced from parallel step 1; parallel body 149 lines (2026-11-07)
 - [x] next-task shows Automatable, Needs review and Blocked labels on its shown rows (up to 8), read through each task path; Blocked means an unresolved depends-on only; the Automatable filter sits in the step 3 group rule, not in parallel — evidence: next-task body 140 lines, labels in step 2 and Label column, Automatable rule in step 3 (2026-11-07)
 - [x] plugins/flowstate/README.md notes resume behaviour
-- [ ] pnpm lint:skills and claude plugin validate . pass, and the version is set with pnpm bump
+- [x] pnpm lint:skills and claude plugin validate . pass, and the version is set with pnpm bump — evidence: flowstate bumped to 2.19.0 with pnpm bump (2026-11-07)
 
 ## Notes
 
@@ -82,3 +83,4 @@ A checkpoint file would duplicate state and could drift from it. Task status, Pr
 - [2026-11-07] Created
 - [2026-11-07] Started
 - [2026-11-07] Merged 788125e into main. lint:skills 0/0, routing-eval flowstate 0.974, plugin validate passed. Bump pending the coordinated release.
+- [2026-11-07] Completed

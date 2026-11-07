@@ -4,24 +4,19 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 1 |
-| Active | 4 |
+| Pending | 0 |
+| Active | 0 |
 | Blocked | 1 |
-| Complete | 75 |
+| Complete | 80 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
-- TSK-077: dev-workflow verify-ui skill with a measuring subagent (P2)
-- TSK-078: flowstate groom-tasks skill for relevance and priority (P2)
-- TSK-079: dev-workflow read-only zones PreToolUse guard (P2)
-- TSK-080: flowstate parallel resume and next-task automation labels (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-081 | GitHub Issues backend phase 2: GithubStore, backend selection and setup | P2 | flowstate, store, github | 2026-11-07 |
 
 ## Recently Completed
 

@@ -1,13 +1,14 @@
 ---
 id: TSK-078
 title: flowstate groom-tasks skill for relevance and priority
-status: active
+status: complete
 priority: P2
 tags: [flowstate, skill, grooming]
 created: 2026-11-06
 source: idea/PLN-032
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # flowstate groom-tasks skill for relevance and priority
@@ -53,7 +54,7 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 - [x] Obsolete tasks are listed as proposals for the user to close, the skill never deletes a task, and the reason is logged before any task-move to complete
 - [x] index-rebuild --type tasks runs after a bulk apply
 - [x] guide/SKILL.md, plugins/flowstate/SKILL.md, plugins/flowstate/README.md, AGENTS.md line 29 and README.md lines 51 and 159 are updated for the new skill — evidence: guide, flowstate SKILL.md, README, AGENTS.md:29, root README updated in merge of 39f0d11 (2026-11-07)
-- [ ] pnpm lint:skills and claude plugin validate . pass and the version is set with pnpm bump
+- [x] pnpm lint:skills and claude plugin validate . pass and the version is set with pnpm bump — evidence: flowstate bumped to 2.19.0 with pnpm bump (2026-11-07)
 
 ## Notes
 
@@ -65,3 +66,4 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 - [2026-11-07] The GitHub Issues backend risk now points at TSK-081: TSK-057 was split and closed
 - [2026-11-07] Started
 - [2026-11-07] Merged worktree branch 39f0d11 into main. lint:skills 0/0, routing-eval flowstate 0.974, claude plugin validate passed. Bump pending the coordinated release.
+- [2026-11-07] Completed
