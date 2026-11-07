@@ -44,15 +44,15 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 
 ## Acceptance Criteria
 
-- [ ] skills/groom-tasks/SKILL.md exists with disable-model-invocation true, model sonnet and effort medium, and reads task state only through the CLI
-- [ ] Open tasks load from task-list for pending and active, and the skill filters --tag and --priority itself from the JSON output
-- [ ] Each task is assessed against the code, and proposals appear in one table with task, current priority, proposed change and one-line evidence, with unchanged rows counted not listed
-- [ ] Rows are chosen through lettered choices and only approved rows are applied
-- [ ] Priority rows apply through task-update --set and --log with proposals restricted to P1-P4, and spec rows apply as a --log note only
-- [ ] A row that fails with SectionNotFoundError for a missing Progress Log is reported as failed and the remaining rows still apply
-- [ ] Obsolete tasks are listed as proposals for the user to close, the skill never deletes a task, and the reason is logged before any task-move to complete
-- [ ] index-rebuild --type tasks runs after a bulk apply
-- [ ] guide/SKILL.md, plugins/flowstate/SKILL.md, plugins/flowstate/README.md, AGENTS.md line 29 and README.md lines 51 and 159 are updated for the new skill
+- [x] skills/groom-tasks/SKILL.md exists with disable-model-invocation true, model sonnet and effort medium, and reads task state only through the CLI — evidence: skills/groom-tasks/SKILL.md frontmatter: disable-model-invocation true, sonnet, medium; state via task-list only (2026-11-07)
+- [x] Open tasks load from task-list for pending and active, and the skill filters --tag and --priority itself from the JSON output
+- [x] Each task is assessed against the code, and proposals appear in one table with task, current priority, proposed change and one-line evidence, with unchanged rows counted not listed
+- [x] Rows are chosen through lettered choices and only approved rows are applied
+- [x] Priority rows apply through task-update --set and --log with proposals restricted to P1-P4, and spec rows apply as a --log note only
+- [x] A row that fails with SectionNotFoundError for a missing Progress Log is reported as failed and the remaining rows still apply
+- [x] Obsolete tasks are listed as proposals for the user to close, the skill never deletes a task, and the reason is logged before any task-move to complete
+- [x] index-rebuild --type tasks runs after a bulk apply
+- [x] guide/SKILL.md, plugins/flowstate/SKILL.md, plugins/flowstate/README.md, AGENTS.md line 29 and README.md lines 51 and 159 are updated for the new skill — evidence: guide, flowstate SKILL.md, README, AGENTS.md:29, root README updated in merge of 39f0d11 (2026-11-07)
 - [ ] pnpm lint:skills and claude plugin validate . pass and the version is set with pnpm bump
 
 ## Notes
@@ -64,3 +64,4 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 - [2026-11-06] Created
 - [2026-11-07] The GitHub Issues backend risk now points at TSK-081: TSK-057 was split and closed
 - [2026-11-07] Started
+- [2026-11-07] Merged worktree branch 39f0d11 into main. lint:skills 0/0, routing-eval flowstate 0.974, claude plugin validate passed. Bump pending the coordinated release.
