@@ -43,7 +43,9 @@ For each pending non-blocked task:
 | Tag affinity | Low | Shares tags with recently completed tasks |
 | Age | Low | Older tasks get slight preference |
 
-Done when: every pending non-blocked task has a score.
+Then label the eight highest-scoring tasks (the rows step 5 can show) by reading each one through its `path` from the list output, since the JSON carries no `depends-on` or criteria: **Blocked** when `depends-on` names a task that is not complete; **Needs review** when a criterion needs manual testing, visual judgment or external data; **Automatable** otherwise (clear criteria, code only). A Blocked task keeps its row with the label and leaves the top pick and the group.
+
+Done when: every pending non-blocked task has a score and the eight highest carry a label.
 
 ### 3. Detect Parallel Group
 
@@ -52,10 +54,11 @@ Take the top-scoring candidate plus the next 1–2 highest-scoring ones and chec
 - No task in the group lists another task in the group via `depends-on`
 - No shared file references — parse each task's Description and Acceptance Criteria for path-like tokens (e.g. `src/foo.ts`, `packages/x/`, `*.json`) and require disjoint sets. When a task gives only directory hints, treat any overlap (same directory or ancestor) as a conflict
 - Tags and scope don't obviously collide on the same module (e.g. two tasks both tagged `auth` editing the same area is a conflict even if exact paths differ)
+- Every member is labelled Automatable, because the group runs unattended in `/flowstate:parallel`; a Needs review task is offered alone, where the user watches it through `/flowstate:start-task`
 
 Shrink the group from 3 → 2 → 1 until it satisfies the rules. If only the top pick survives, fall through to the single-pick presentation.
 
-Done when: the group size is 1, 2 or 3 and satisfies all three rules.
+Done when: the group size is 1, 2 or 3 and satisfies all four rules.
 
 ### 4. Load Context
 
@@ -84,10 +87,10 @@ Done when: one learning search and one reports scan have run.
 ### Parallel Group ({{N}} tasks)
 These are independent and can run together via `/flowstate:parallel`:
 
-| ID | Title | Priority | Tags |
-|----|-------|----------|------|
-| TSK-{{ID1}} | {{TITLE1}} | {{P1}} | {{TAGS1}} |
-| TSK-{{ID2}} | {{TITLE2}} | {{P2}} | {{TAGS2}} |
+| ID | Title | Priority | Label | Tags |
+|----|-------|----------|-------|------|
+| TSK-{{ID1}} | {{TITLE1}} | {{P1}} | Automatable | {{TAGS1}} |
+| TSK-{{ID2}} | {{TITLE2}} | {{P2}} | Automatable | {{TAGS2}} |
 
 Why this group: {{REASONING — priorities, no file overlap, unblocks others, etc.}}
 
@@ -95,8 +98,8 @@ Why this group: {{REASONING — priorities, no file overlap, unblocks others, et
 - LRN-XXX (TSK-{{ID}}): {{TITLE}} — {{key insight}}
 
 ### Alternatives (top 5)
-| ID | Title | Priority | Notes |
-|----|-------|----------|-------|
+| ID | Title | Priority | Label | Notes |
+|----|-------|----------|-------|-------|
 
 Reply:
 - `parallel` / `all` / `yes` — start all {{N}} via `/flowstate:parallel`
@@ -110,20 +113,20 @@ Reply:
 ## Next Task Recommendation
 
 ### Top Pick: TSK-{{ID}}
-**{{TITLE}}** ({{PRIORITY}}, tags: {{TAGS}})
+**{{TITLE}}** ({{PRIORITY}}, {{LABEL}}, tags: {{TAGS}})
 Why: {{REASONING}}
 
 ### Relevant Learnings          ← only if matches found
 - LRN-XXX: {{TITLE}} — {{key insight}}
 
 ### Alternatives (top 5)
-| ID | Title | Priority | Notes |
-|----|-------|----------|-------|
+| ID | Title | Priority | Label | Notes |
+|----|-------|----------|-------|-------|
 
 Reply with a task ID/number to start it, or anything else to keep browsing.
 ```
 
-Show up to 5 alternatives in both forms; when more exist, add "… and N more pending."
+Show up to 5 alternatives in both forms; when more exist, add "… and N more pending." Every shown row carries its step 2 label; a Blocked row names the unresolved `depends-on` in Notes. The labels are advisory, so the user confirms the group.
 
 Done when: one of the two recommendation blocks is printed.
 

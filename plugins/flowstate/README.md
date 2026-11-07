@@ -139,13 +139,13 @@ Use `/reload-plugins` after making changes.
 | Command | Description |
 |---------|-------------|
 | `/flowstate:add-task` | Groom a request into a task: one round of proposals (title, criteria, priority, tags, dependencies) where *"yes"* accepts all |
-| `/flowstate:next-task` | Recommends what to start — scored by priority, unblocked status and what it unblocks. Suggests a parallel-safe group of up to 3 when tasks don't overlap |
+| `/flowstate:next-task` | Recommends what to start — scored by priority, unblocked status and what it unblocks. Labels each row Automatable, Needs review or Blocked, and suggests a parallel-safe group of up to 3 Automatable tasks when they don't overlap |
 | `/flowstate:start-task` | Pending → active. Surfaces relevant learnings, active tasks and known bugs first |
 | `/flowstate:log-progress` | Dated progress entries + ticks criteria **with evidence**. Handy before `/clear` |
 | `/flowstate:complete-task` | Re-runs the evidence for every ticked criterion, extracts learnings, then moves the task to done |
 | `/flowstate:block-task` | Block a task with a documented reason; suggests alternatives |
 | `/flowstate:check-task` | Does the declared status match the code? One task or the whole backlog |
-| `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees |
+| `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees. Resumes an interrupted run from the active tasks and leftover worktrees before starting new ones |
 | 🙋 `/flowstate:condense-tasks` | Shrink completed task files (drop notes, trim the log, compress prose). Runs in an isolated subagent so the loop stays out of your context |
 
 ![Asking /flowstate:next-task what to start and getting a parallel-safe pair](docs/media/next-task.gif)
@@ -252,6 +252,8 @@ Run independent tasks simultaneously in isolated git worktrees:
 ```
 
 Each subagent works in isolation. Overlap detection prevents conflicts. Results are collected when all tasks finish.
+
+**Interrupted?** Run `/flowstate:parallel` again. There is no checkpoint file: the skill reads the active tasks and `git worktree list`, matches each leftover worktree to its task through the `chore: start TSK-NNN` marker commit every subagent makes first, and classifies it as merged, unmerged commits, uncommitted changes or marker-only. You choose per task — merge, relaunch, or return it to pending — and nothing is removed without your approval. Worktrees that match no task (another session's, or detached) are listed with their `git status --short` and left alone.
 
 ---
 
