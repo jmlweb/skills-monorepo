@@ -60,3 +60,5 @@
 | LRN-054 | Worktree isolation guard inspects command text: any payload mentioning git is refused | tooling, worktree, agents, isolation-guard | active | 2026-11-07 |
 | LRN-055 | Matching a worktree branch to a task through BASE..branch needs a merged-branch fallback | flowstate, parallel, git, resume | active | 2026-11-07 |
 | LRN-056 | A marker commit breaks merge --ff-only base sync; worktree briefs rebase instead | worktree, parallel, git, flowstate | active | 2026-11-07 |
+| LRN-057 | Agent tools entries for an absent MCP server are dropped silently when any other tool resolves | claude-code, plugin-agents, mcp, tools | active | 2026-11-07 |
+| LRN-058 | Routing eval negative cases with a built-in owner need external: true and prompts free of description tokens | routing, evals, skills, tf-idf | active | 2026-11-07 |

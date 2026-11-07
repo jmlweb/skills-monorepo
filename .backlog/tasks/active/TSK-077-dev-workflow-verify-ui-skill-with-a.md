@@ -35,19 +35,22 @@ Add a model-invoked `dev-workflow:verify-ui` skill and a `ui-auditor` agent. Tog
 
 ## Acceptance Criteria
 
-- [ ] docs/verify-ui.md contract format documented in plugins/dev-workflow/references/verify-ui-contract.md and kept generic
-- [ ] agents/ui-auditor.md measures with chrome-devtools MCP tools and evaluate_script, checks console errors, has no Bash, never edits files and returns the delta table
-- [ ] MCP tool names in the agent tools field verified against plugin agent behaviour, including a server that is absent or named differently
-- [ ] skills/verify-ui/SKILL.md takes scope from the argument or git diff, starts or probes the dev server, delegates to the agent, relays the table as-is and surfaces skipped checks
-- [ ] Missing docs/verify-ui.md or missing chrome-devtools MCP stops with an actionable message, never a clean report
-- [ ] Routing cases added to evals/routing.json including a Not for run case, and README command table updated
+- [x] docs/verify-ui.md contract format documented in plugins/dev-workflow/references/verify-ui-contract.md and kept generic — evidence: references/verify-ui-contract.md 210 lines (2026-11-07)
+- [x] agents/ui-auditor.md measures with chrome-devtools MCP tools and evaluate_script, checks console errors, has no Bash, never edits files and returns the delta table
+- [x] MCP tool names in the agent tools field verified against plugin agent behaviour, including a server that is absent or named differently — evidence: sub-agents.md tools table, errors.md zero-tools rule, components.md ignored mcpServers field; claude mcp list shows chrome-devtools (2026-11-07)
+- [x] skills/verify-ui/SKILL.md takes scope from the argument or git diff, starts or probes the dev server, delegates to the agent, relays the table as-is and surfaces skipped checks
+- [x] Missing docs/verify-ui.md or missing chrome-devtools MCP stops with an actionable message, never a clean report
+- [x] Routing cases added to evals/routing.json including a Not for run case, and README command table updated — evidence: routing.json 3 positive + 3 negative incl. external run owner; README rows (2026-11-07)
 - [ ] pnpm lint:skills and claude plugin validate . pass and the version is set with pnpm bump
 
 ## Notes
 
 ## Learnings
 
+- LRN-057: Agent tools entries for an absent MCP server are dropped silently when any other tool resolves
+- LRN-058: Routing eval negative cases with a built-in owner need external: true and prompts free of description tokens
 ## Progress Log
 
 - [2026-11-06] Created
 - [2026-11-07] Started
+- [2026-11-07] Merged 58aad2e into main (root README conflict on the tree comment resolved: 22 flowstate skills, 12 dev-workflow skills). lint:skills 0/0, routing-eval dev-workflow 1.000, plugin validate passed. Bump pending the coordinated release.
