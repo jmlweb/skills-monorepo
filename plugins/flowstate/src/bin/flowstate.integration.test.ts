@@ -318,6 +318,36 @@ describe("CLI integration", () => {
     expect(json[0]!.body).toContain("line a\n\nline b");
   });
 
+  it.each([
+    ["task-create", ["--priority", "P2", "--description", "x"], ".backlog/tasks/pending"],
+    ["idea-create", ["--complexity", "low", "--body", "x"], ".backlog/ideas/pending"],
+    ["report-create", ["--type", "bug", "--severity", "low", "--body", "x"], ".backlog/reports/pending"],
+    ["learning-create", ["--tags", "x", "--body", "x"], ".backlog/learnings"],
+  ])("%s rejects a title holding a newline and writes nothing", async (command, extra, dir) => {
+    run("setup", "--project-name", "IntTest");
+    const result = spawnSync("node", [CLI, command, "--title", "Line one\nline two", ...extra], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid title: it must be a single line/);
+    expect((await readdir(join(tmp, dir))).filter((f) => /^(TSK|PLN|RPT|LRN)-/.test(f))).toEqual([]);
+  });
+
+  it("learning-update rejects a title holding a newline and keeps the old one", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("learning-create", "--title", "Old title", "--tags", "x", "--body", "x");
+    const result = spawnSync("node", [CLI, "learning-update", "LRN-001", "--title", "New\ntitle"], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid title: it must be a single line/);
+    expect(await readFile(join(tmp, ".backlog/learnings/LRN-001-old-title/index.md"), "utf-8")).toContain("title: Old title");
+  });
+
   it("task-doctor plain output prints one tab-separated row per fix", async () => {
     run("setup", "--project-name", "IntTest");
     run("task-create", "--title", "Drifted", "--priority", "P2", "--description", "x");

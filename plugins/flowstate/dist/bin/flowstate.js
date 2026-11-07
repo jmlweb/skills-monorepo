@@ -25,7 +25,7 @@ import { learningList } from "../commands/learning-list.js";
 import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { learningCompress } from "../commands/learning-compress.js";
-import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, } from "../core/types.js";
+import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, validateTitle, } from "../core/types.js";
 import { resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
 import { FileStore } from "../core/file-store.js";
@@ -274,7 +274,7 @@ async function main() {
             case "task-create": {
                 const body = await getBody(flags);
                 const result = await taskCreate(store, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     priority: validatePriority(required(flags, "priority")),
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
                     description: body || flags["description"] || "",
@@ -423,7 +423,7 @@ async function main() {
             case "idea-create": {
                 const body = await getBody(flags);
                 const result = await ideaCreate(store, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     complexity: validateComplexity(required(flags, "complexity")),
                     body,
                 });
@@ -462,7 +462,7 @@ async function main() {
             case "report-create": {
                 const body = await getBody(flags);
                 const result = await reportCreate(store, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     type: validateReportType(required(flags, "type")),
                     severity: validateSeverity(required(flags, "severity")),
                     body,
@@ -502,7 +502,7 @@ async function main() {
             case "learning-create": {
                 const body = await getBody(flags);
                 const result = await learningCreate(root, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
                     body,
                     task: flags["task"],
@@ -572,7 +572,7 @@ async function main() {
                 }
                 const body = flags["body"] ? await getBody(flags) : undefined;
                 const updateInput = {
-                    ...(flags["title"] !== undefined ? { title: flags["title"] } : {}),
+                    ...(flags["title"] !== undefined ? { title: validateTitle(flags["title"]) } : {}),
                     ...(flags["tags"] !== undefined ? { tags: flags["tags"].split(",").map((t) => t.trim()) } : {}),
                     ...(body !== undefined ? { body } : {}),
                 };

@@ -4,6 +4,7 @@ export declare function tickCriteria(body: string, indexes: readonly number[], e
 /** 1-based numbers of ticked criteria that carry no evidence suffix. */
 export declare function unverifiedCriteria(body: string): number[];
 export declare function appendToBody(body: string, entry: string): string;
+export declare function tableRow(cells: readonly string[]): string;
 export declare function addTableRow(content: string, heading: string, row: string): string;
 export declare function removeTableRow(content: string, heading: string, predicate: (row: string) => boolean): string;
 export declare function replaceSection(content: string, heading: string, newContent: string): string;

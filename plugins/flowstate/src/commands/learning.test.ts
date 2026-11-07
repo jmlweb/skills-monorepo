@@ -49,6 +49,17 @@ describe("learningCreate", () => {
     expect(index).toContain("| LRN-001 | Always test edge cases |");
   });
 
+  it("escapes a pipe in the title in the learnings index row", async () => {
+    await learningCreate(tmp, {
+      title: "zsh: $F | head aborts",
+      tags: ["shell"],
+      body: "Content",
+    });
+
+    const index = await readFile(join(tmp, "learnings", "index.md"), "utf-8");
+    expect(index).toContain("| LRN-001 | zsh: $F \\| head aborts | shell | active |");
+  });
+
   it("does not fail when the target task has no Learnings section", async () => {
     await taskCreate(new FileStore(tmp), {
       title: "Legacy task",

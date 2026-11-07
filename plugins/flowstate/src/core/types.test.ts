@@ -6,6 +6,7 @@ import {
   validateSeverity,
   validateIdeaDecision,
   validateReportDecision,
+  validateTitle,
 } from "./types.js";
 import { InvalidArgumentError } from "./errors.js";
 
@@ -51,6 +52,17 @@ describe("validateSeverity", () => {
 
   it("throws InvalidArgumentError for unknown values", () => {
     expect(() => validateSeverity("catastrophic")).toThrow(InvalidArgumentError);
+  });
+});
+
+describe("validateTitle", () => {
+  it("returns a single-line title unchanged, pipes included", () => {
+    expect(validateTitle("Fix a | b")).toBe("Fix a | b");
+  });
+
+  it.each(["Line one\nline two", "Carriage\rreturn", "trailing\n"])("rejects %j", (v) => {
+    expect(() => validateTitle(v)).toThrow(InvalidArgumentError);
+    expect(() => validateTitle(v)).toThrow(/single line/);
   });
 });
 

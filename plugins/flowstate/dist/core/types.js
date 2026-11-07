@@ -39,6 +39,14 @@ export const validateSeverity = (v) => {
     }
     return v;
 };
+// Titles live on one frontmatter line and in one index-table row; a line break would
+// truncate the stored title and break the row.
+export const validateTitle = (v) => {
+    if (/[\r\n]/.test(v)) {
+        throw new InvalidArgumentError("Invalid title: it must be a single line. Put the extra lines in --description or --body.");
+    }
+    return v;
+};
 const IDEA_DECISIONS = new Set(["approved", "discarded"]);
 const REPORT_DECISIONS = new Set(["triaged", "discarded"]);
 export const validateIdeaDecision = (v) => {

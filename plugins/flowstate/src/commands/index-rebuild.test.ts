@@ -52,6 +52,19 @@ describe("indexRebuild", () => {
     expect(index).toContain("| TSK-001 | A | P1 |");
   });
 
+  it("escapes pipes in pending and completed task rows", async () => {
+    await taskCreate(new FileStore(tmp), { title: "Pending a | b", priority: "P1", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskCreate(new FileStore(tmp), { title: "Done c | d", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskMove(new FileStore(tmp), "TSK-002", "complete");
+
+    await indexRebuild(tmp, "tasks");
+
+    const index = await readFile(join(tmp, "tasks", "index.md"), "utf-8");
+    expect(index).toContain("| TSK-001 | Pending a \\| b | P1 |  |");
+    expect(index).toContain("| TSK-002 | Done c \\| d |");
+    expect(index).not.toMatch(/\| Pending a \| b \|/);
+  });
+
   it("handles empty backlog", async () => {
     await indexRebuild(tmp, "tasks");
 

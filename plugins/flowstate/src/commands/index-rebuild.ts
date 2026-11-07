@@ -2,7 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { taskDir, taskIndexPath, learningsIndexPath, learningsDir } from "../core/paths.js";
 import { listFiles, readEntity } from "../core/fs.js";
-import { updateStatsTable, replaceSection } from "../core/markdown.js";
+import { updateStatsTable, replaceSection, tableRow } from "../core/markdown.js";
 import type { TaskBucket } from "../core/store.js";
 import { taskStatusOf } from "../core/store.js";
 import type { TaskStatus } from "../core/types.js";
@@ -91,7 +91,7 @@ async function rebuildTaskIndex(root: string): Promise<void> {
   // Rebuild Pending Tasks table
   const pendingHeader = `| ID | Title | Priority | Tags | Created |\n|----|-------|----------|------|---------|`;
   const pendingRows = pending
-    .map((t) => `| ${t.id} | ${t.title} | ${t.priority} | ${t.tags.join(", ")} | ${t.created} |`)
+    .map((t) => tableRow([t.id, t.title, t.priority, t.tags.join(", "), t.created]))
     .join("\n");
   const pendingContent = pendingRows
     ? `${pendingHeader}\n${pendingRows}`
@@ -104,7 +104,7 @@ async function rebuildTaskIndex(root: string): Promise<void> {
     .sort((a, b) => (b.completed ?? "").localeCompare(a.completed ?? ""))
     .slice(0, 10);
   const completeRows = recentComplete
-    .map((t) => `| ${t.id} | ${t.title} | ${t.completed ?? "" } |`)
+    .map((t) => tableRow([t.id, t.title, t.completed ?? ""]))
     .join("\n");
   const completeContent = completeRows
     ? `${completeHeader}${completeRows}`
@@ -162,7 +162,7 @@ async function rebuildLearningsIndex(root: string): Promise<void> {
       const tags = Array.isArray(fm["tags"]) ? (fm["tags"] as string[]).join(", ") : "";
       const status = fm["status"] ? String(fm["status"]) : "active";
       rows.push(
-        `| ${fm["id"]} | ${fm["title"]} | ${tags} | ${status} | ${fm["created"]} |`,
+        tableRow([String(fm["id"]), String(fm["title"]), tags, status, String(fm["created"])]),
       );
     } catch {
       // Skip invalid entries
