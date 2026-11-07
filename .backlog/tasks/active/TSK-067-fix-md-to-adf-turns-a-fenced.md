@@ -1,12 +1,13 @@
 ---
 id: TSK-067
 title: Fix: md-to-adf turns a fenced code block inside a list item into inline text
-status: pending
+status: active
 priority: P3
 tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-019
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: md-to-adf turns a fenced code block inside a list item into inline text
@@ -31,3 +32,4 @@ Repro: `printf -- '- item\n  ```\n  code\n  ```\n' | node plugins/atlassian-poli
 ## Progress Log
 
 - [2026-10-28] Created
+- [2026-11-07] Started

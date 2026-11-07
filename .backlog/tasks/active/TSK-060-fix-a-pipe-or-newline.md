@@ -1,12 +1,13 @@
 ---
 id: TSK-060
 title: Fix: A pipe or newline in an entity title corrupts frontmatter and index tables
-status: pending
+status: active
 priority: P3
 tags: [flowstate, cli, index]
 created: 2026-10-22
 source: report/RPT-012
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: A pipe or newline in an entity title corrupts frontmatter and index tables
@@ -36,3 +37,4 @@ Validate titles at the CLI boundary (reject newlines). Escape `|` as `\|` in one
 
 - [2026-10-22] Created
 - [2026-11-07] Line reference refreshed: the task-create row writer moved to core/file-store.ts:102 in the BacklogStore extraction
+- [2026-11-07] Started

@@ -1,12 +1,13 @@
 ---
 id: TSK-062
 title: Fix: CLI arg parsers store true for flag values that are empty or start with --
-status: pending
+status: active
 priority: P3
 tags: [flowstate, dev-workflow, atlassian-polish, cli]
 created: 2026-10-24
 source: report/RPT-014
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: CLI arg parsers store true for flag values that are empty or start with --
@@ -34,3 +35,4 @@ Related but distinct: TSK-054 (skill phrasing rule for quoted args), TSK-060 (pi
 ## Progress Log
 
 - [2026-10-24] Created
+- [2026-11-07] Started

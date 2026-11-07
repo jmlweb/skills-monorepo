@@ -1,12 +1,13 @@
 ---
 id: TSK-075
 title: Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn
-status: pending
+status: active
 priority: P3
 tags: [tokens, agents, upstream]
 created: 2026-11-05
 source: manual
 depends-on: []
+started: 2026-11-07
 ---
 
 # Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn
@@ -43,3 +44,4 @@ The caveman repo is not owned by jmlweb, so the upstream change goes through a f
 
 - [2026-11-05] Created
 - [2026-11-07] Checked 2026-11-07: upstream main and installed caveman 4.0.1 have no model field on cavecrew-builder, and that is intentional. The maintainer closed the equivalent PR JuliusBrussee/caveman#756 on 2026-08-29 because a pin overrides the documented model policy. caveman 4.0.1 tests show a CAVECREW_BUILDER_MODEL override that inserts the model line, so criteria 1 and 2 likely no longer apply; decide before starting.
+- [2026-11-07] Started

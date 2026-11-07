@@ -1,12 +1,13 @@
 ---
 id: TSK-072
 title: Fix: test-static-scan drops a test whose body holds a quote inside a regex literal
-status: pending
+status: active
 priority: P3
 tags: [dev-workflow, test-static-scan]
 created: 2026-11-05
 source: report/RPT-024
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: test-static-scan drops a test whose body holds a quote inside a regex literal
@@ -29,3 +30,4 @@ See RPT-024. `findClosing` and `skipString` in `plugins/dev-workflow/src/core/te
 ## Progress Log
 
 - [2026-11-05] Created
+- [2026-11-07] Started

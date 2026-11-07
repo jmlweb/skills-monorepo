@@ -1,12 +1,13 @@
 ---
 id: TSK-076
 title: Decide where a gated production protocol lives
-status: pending
+status: active
 priority: P3
 tags: [flowstate, kickstart]
 created: 2026-11-06
 source: idea/PLN-034
 depends-on: []
+started: 2026-11-07
 ---
 
 # Decide where a gated production protocol lives
@@ -46,3 +47,4 @@ Decide how the gated production protocol from `subbuteo` reaches other projects,
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-07] Started

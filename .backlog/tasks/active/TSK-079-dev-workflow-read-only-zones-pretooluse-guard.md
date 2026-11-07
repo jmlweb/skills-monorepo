@@ -1,12 +1,13 @@
 ---
 id: TSK-079
 title: dev-workflow read-only zones PreToolUse guard
-status: pending
+status: active
 priority: P2
 tags: [dev-workflow, hooks]
 created: 2026-11-06
 source: idea/PLN-033
 depends-on: []
+started: 2026-11-07
 ---
 
 # dev-workflow read-only zones PreToolUse guard
@@ -63,3 +64,4 @@ Ship a `PreToolUse` hook in `dev-workflow` that blocks file edits inside zones a
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-07] Started

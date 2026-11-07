@@ -1,12 +1,13 @@
 ---
 id: TSK-077
 title: dev-workflow verify-ui skill with a measuring subagent
-status: pending
+status: active
 priority: P2
 tags: [dev-workflow, skill, ui]
 created: 2026-11-06
 source: idea/PLN-031
 depends-on: []
+started: 2026-11-07
 ---
 
 # dev-workflow verify-ui skill with a measuring subagent
@@ -49,3 +50,4 @@ Add a model-invoked `dev-workflow:verify-ui` skill and a `ui-auditor` agent. Tog
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-07] Started

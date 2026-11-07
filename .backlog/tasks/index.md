@@ -4,39 +4,39 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 21 |
-| Active | 0 |
+| Pending | 1 |
+| Active | 20 |
 | Blocked | 1 |
 | Complete | 59 |
 
 ## Active Tasks
 
 - TSK-023: atlassian-polish: verify md-to-adf with a real Jira write (P2) [BLOCKED: No Jira access in this environment; real CF-620 write cannot be run here. Resume where Atlassian access exists.]
+- TSK-060: Fix: A pipe or newline in an entity title corrupts frontmatter and index tables (P3)
+- TSK-061: Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object (P4)
+- TSK-062: Fix: CLI arg parsers store true for flag values that are empty or start with -- (P3)
+- TSK-063: Fix: report-move and idea-move accept any --status value (P2)
+- TSK-064: Fix: task-update --set writes unvalidated values, including id and priority (P2)
+- TSK-065: Fix: list commands accept a negative or non-numeric --limit (P4)
+- TSK-066: Fix: md-to-adf silently drops table cells beyond the header width (P3)
+- TSK-067: Fix: md-to-adf turns a fenced code block inside a list item into inline text (P3)
+- TSK-068: Fix: md-to-adf truncates link URLs that contain parentheses (P4)
+- TSK-070: Fix: on-test-failure hook never fires: wrong event and nonexistent exit_code field (P3)
+- TSK-071: Fix: pre-commit-reminder hook emits invalid JSON when an active task title holds a double quote (P4)
+- TSK-072: Fix: test-static-scan drops a test whose body holds a quote inside a regex literal (P3)
+- TSK-073: Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears (P2)
+- TSK-074: Fix: task-doctor plain output prints [object Object] for each fixed task (P4)
+- TSK-075: Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn (P3)
+- TSK-076: Decide where a gated production protocol lives (P3)
+- TSK-077: dev-workflow verify-ui skill with a measuring subagent (P2)
+- TSK-078: flowstate groom-tasks skill for relevance and priority (P2)
+- TSK-079: dev-workflow read-only zones PreToolUse guard (P2)
+- TSK-080: flowstate parallel resume and next-task automation labels (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | P3 | flowstate, cli, index | 2026-10-22 |
-| TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | P4 | flowstate, cli | 2026-10-22 |
-| TSK-062 | Fix: CLI arg parsers store true for flag values that are empty or start with -- | P3 | flowstate, dev-workflow, atlassian-polish, cli | 2026-10-24 |
-| TSK-063 | Fix: report-move and idea-move accept any --status value | P2 | flowstate, cli | 2026-10-26 |
-| TSK-064 | Fix: task-update --set writes unvalidated values, including id and priority | P2 | flowstate, cli | 2026-10-26 |
-| TSK-065 | Fix: list commands accept a negative or non-numeric --limit | P4 | flowstate, cli | 2026-10-26 |
-| TSK-066 | Fix: md-to-adf silently drops table cells beyond the header width | P3 | atlassian-polish, adf, md-to-adf | 2026-10-28 |
-| TSK-067 | Fix: md-to-adf turns a fenced code block inside a list item into inline text | P3 | atlassian-polish, adf, md-to-adf | 2026-10-28 |
-| TSK-068 | Fix: md-to-adf truncates link URLs that contain parentheses | P4 | atlassian-polish, adf, md-to-adf | 2026-10-28 |
-| TSK-070 | Fix: on-test-failure hook never fires: wrong event and nonexistent exit_code field | P3 | flowstate, hooks | 2026-11-01 |
-| TSK-071 | Fix: pre-commit-reminder hook emits invalid JSON when an active task title holds a double quote | P4 | flowstate, hooks | 2026-11-01 |
-| TSK-072 | Fix: test-static-scan drops a test whose body holds a quote inside a regex literal | P3 | dev-workflow, test-static-scan | 2026-11-05 |
-| TSK-073 | Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears | P2 | flowstate, cli, store | 2026-11-05 |
-| TSK-074 | Fix: task-doctor plain output prints [object Object] for each fixed task | P4 | flowstate, cli | 2026-11-05 |
-| TSK-075 | Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn | P3 | tokens, agents, upstream | 2026-11-05 |
-| TSK-076 | Decide where a gated production protocol lives | P3 | flowstate, kickstart | 2026-11-06 |
-| TSK-077 | dev-workflow verify-ui skill with a measuring subagent | P2 | dev-workflow, skill, ui | 2026-11-06 |
-| TSK-078 | flowstate groom-tasks skill for relevance and priority | P2 | flowstate, skill, grooming | 2026-11-06 |
-| TSK-079 | dev-workflow read-only zones PreToolUse guard | P2 | dev-workflow, hooks | 2026-11-06 |
-| TSK-080 | flowstate parallel resume and next-task automation labels | P2 | flowstate, skill, parallel | 2026-11-07 |
 | TSK-081 | GitHub Issues backend phase 2: GithubStore, backend selection and setup | P2 | flowstate, store, github | 2026-11-07 |
 
 ## Recently Completed

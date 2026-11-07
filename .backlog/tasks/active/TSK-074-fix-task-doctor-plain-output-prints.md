@@ -1,12 +1,13 @@
 ---
 id: TSK-074
 title: Fix: task-doctor plain output prints [object Object] for each fixed task
-status: pending
+status: active
 priority: P4
 tags: [flowstate, cli]
 created: 2026-11-05
 source: report/RPT-026
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: task-doctor plain output prints [object Object] for each fixed task
@@ -28,3 +29,4 @@ See RPT-026. `output()` stringifies nested arrays of objects as `[object Object]
 ## Progress Log
 
 - [2026-11-05] Created
+- [2026-11-07] Started

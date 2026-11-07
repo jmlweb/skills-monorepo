@@ -1,12 +1,13 @@
 ---
 id: TSK-064
 title: Fix: task-update --set writes unvalidated values, including id and priority
-status: pending
+status: active
 priority: P2
 tags: [flowstate, cli]
 created: 2026-10-26
 source: report/RPT-016
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: task-update --set writes unvalidated values, including id and priority
@@ -29,3 +30,4 @@ From RPT-016. `plugins/flowstate/src/commands/task-update.ts:46` rejects only `s
 
 - [2026-10-26] Created
 - [2026-11-07] Raised P3 to P2: silently corrupts backlog state, approved by the user 2026-11-07
+- [2026-11-07] Started

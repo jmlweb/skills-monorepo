@@ -1,12 +1,13 @@
 ---
 id: TSK-073
 title: Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears
-status: pending
+status: active
 priority: P2
 tags: [flowstate, cli, store]
 created: 2026-11-05
 source: report/RPT-025
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears
@@ -30,3 +31,4 @@ See RPT-025. `task-block` leaves a blocked pending task in `tasks/pending/` (LRN
 
 - [2026-11-05] Created
 - [2026-11-07] Raised P3 to P2: silently corrupts backlog state, approved by the user 2026-11-07
+- [2026-11-07] Started

@@ -1,12 +1,13 @@
 ---
 id: TSK-080
 title: flowstate parallel resume and next-task automation labels
-status: pending
+status: active
 priority: P2
 tags: [flowstate, skill, parallel]
 created: 2026-11-07
 source: idea/PLN-035
 depends-on: []
+started: 2026-11-07
 ---
 
 # flowstate parallel resume and next-task automation labels
@@ -77,3 +78,4 @@ A checkpoint file would duplicate state and could drift from it. Task status, Pr
 ## Progress Log
 
 - [2026-11-07] Created
+- [2026-11-07] Started

@@ -1,12 +1,13 @@
 ---
 id: TSK-063
 title: Fix: report-move and idea-move accept any --status value
-status: pending
+status: active
 priority: P2
 tags: [flowstate, cli]
 created: 2026-10-26
 source: report/RPT-015
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: report-move and idea-move accept any --status value
@@ -31,3 +32,4 @@ Distinct from TSK-062 (empty or `--`-prefixed values).
 
 - [2026-10-26] Created
 - [2026-11-07] Raised P3 to P2: silently corrupts backlog state, approved by the user 2026-11-07
+- [2026-11-07] Started

@@ -1,12 +1,13 @@
 ---
 id: TSK-066
 title: Fix: md-to-adf silently drops table cells beyond the header width
-status: pending
+status: active
 priority: P3
 tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-018
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: md-to-adf silently drops table cells beyond the header width
@@ -31,3 +32,4 @@ Repro: `printf '| a | b |\n|---|---|\n| 1 | 2 | 3 |\n' | node plugins/atlassian-
 ## Progress Log
 
 - [2026-10-28] Created
+- [2026-11-07] Started

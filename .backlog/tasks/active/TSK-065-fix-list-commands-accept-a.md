@@ -1,12 +1,13 @@
 ---
 id: TSK-065
 title: Fix: list commands accept a negative or non-numeric --limit
-status: pending
+status: active
 priority: P4
 tags: [flowstate, cli]
 created: 2026-10-26
 source: report/RPT-017
 depends-on: []
+started: 2026-11-07
 ---
 
 # Fix: list commands accept a negative or non-numeric --limit
@@ -27,3 +28,4 @@ From RPT-017. `plugins/flowstate/src/bin/flowstate.ts:366`, `:538`, `:588`, `:63
 ## Progress Log
 
 - [2026-10-26] Created
+- [2026-11-07] Started
