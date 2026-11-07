@@ -169,8 +169,10 @@ export function evaluatePlugin(skills, cases, options = {}) {
       }
     }
 
-    for (const { prompt, owner } of negative) {
-      if (!names.has(owner)) {
+    for (const { prompt, owner, external } of negative) {
+      // An external owner (a built-in skill such as `run`) is not in the index, so only the
+      // "this skill must not win" half of the check applies.
+      if (!external && !names.has(owner)) {
         failures.push(`${name}: negative "${prompt}" names unknown owner "${owner}"`);
         continue;
       }
@@ -178,7 +180,7 @@ export function evaluatePlugin(skills, cases, options = {}) {
       if (ranking[0] === name) {
         failures.push(`${name}: negative "${prompt}" ranked this skill first (owner: ${owner})`);
       }
-      if (!ranking.slice(0, TOP_N).includes(owner)) {
+      if (!external && !ranking.slice(0, TOP_N).includes(owner)) {
         failures.push(`${name}: negative "${prompt}" did not place owner ${owner} in top ${TOP_N} (got ${ranking.slice(0, TOP_N).join(", ")})`);
       }
     }

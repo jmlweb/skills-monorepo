@@ -119,6 +119,28 @@
           "owner": "ci-triage"
         }
       ]
+    },
+    "verify-ui": {
+      "positive": [
+        "verify the UI",
+        "check the UI in the browser after my header change",
+        "audit the UI change against docs/verify-ui.md, does the page still match the contract"
+      ],
+      "negative": [
+        {
+          "prompt": "start the dev server and show me the app",
+          "owner": "run",
+          "external": true
+        },
+        {
+          "prompt": "review this pull request and give me a merge recommendation",
+          "owner": "review-pr"
+        },
+        {
+          "prompt": "why is CI red on my branch",
+          "owner": "ci-triage"
+        }
+      ]
     }
   }
 }

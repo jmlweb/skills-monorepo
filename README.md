@@ -61,7 +61,7 @@ flowchart LR
 </details>
 
 <details open>
-<summary><strong>🛠️ dev-workflow</strong> — 11 skills</summary>
+<summary><strong>🛠️ dev-workflow</strong> — 12 skills</summary>
 
 | Skill | What it does |
 |-------|--------------|
@@ -77,6 +77,7 @@ flowchart LR
 | `prune-tests` | Finds redundant tests; deletes or rewrites only what you approve |
 | `harden` | Attacks code with the bugs the repo has shipped; proves each with a failing test before fixing |
 | `readme-media` | Records README screenshots and terminal GIFs, embedded after you approve |
+| `verify-ui` | Measures a UI change in Chrome against `docs/verify-ui.md`; FAIL / PENDING / KNOWN / PASS table |
 
 </details>
 
@@ -157,7 +158,7 @@ pnpm sandbox:readme-media # Live /readme-media run on a copy of flowstate, then 
 .claude-plugin/           # Root marketplace definition
 plugins/
 ├── flowstate/            # Backlog management (22 skills + CLI + hooks + agent)
-├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests (11 skills + CLI + agent)
+├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests, UI checks (12 skills + CLI + 2 agents)
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
 └── shared-config/        # Shared TypeScript base config

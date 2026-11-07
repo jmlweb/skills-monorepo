@@ -31,6 +31,7 @@ flowchart LR
     PT["/prune-tests"] -. "suite slow or bloated" .-> CM
     RM["/readme-media"] -. "README needs a demo" .-> CM
     HD["/harden"] -. "before trusting new code" .-> CM
+    VU["/verify-ui"] -. "UI changed" .-> CM
 ```
 
 > 💡 Commands are namespaced (`/dev-workflow:commit`); the short form (`/commit`) works while no other plugin claims the name. 🙋 = **you run it**: Claude never starts `/pr-ready`, `/agent-handoff`, `/prune-tests`, `/readme-media` or `/harden` on its own; the rest it can also pick up from phrases like *"commit this"* or *"why is CI red?"*.
@@ -49,6 +50,7 @@ flowchart LR
 | 🧪 🙋 `/prune-tests` | the suite is slow or you suspect redundant tests | Only the items you approve, in the working tree; never commits |
 | 🛡️ 🙋 `/harden` | code needs a real edge-case audit | Attack tests and fixes in the working tree; never commits |
 | 🎬 🙋 `/readme-media` | your README has no screenshots or demo GIF | GIFs or screenshots plus their sources in `docs/media/`; the README only after you approve the diff; never commits |
+| 🖥️ `/verify-ui` | you changed components, styles or pages and want the browser to confirm it | Nothing; fixes only when you ask after reading the table |
 
 ---
 
@@ -362,6 +364,29 @@ Audits named code for the bug classes your repo has really shipped. Every bug is
 
 ---
 
+### 🖥️ `/verify-ui` — Measure a UI change in a real browser
+
+Checks the running app against your project's `docs/verify-ui.md` contract and returns a delta table. A read-only `ui-auditor` agent drives Chrome through the [chrome-devtools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp); the skill starts the dev server, picks the scope and relays the table unchanged.
+
+```bash
+/verify-ui                       # surfaces matched by the current git diff
+/verify-ui Home, Pricing         # named surfaces
+/verify-ui src/components/nav/** # surfaces whose Scope matches the globs
+```
+
+**What it does:**
+- 📄 Reads `docs/verify-ui.md`: base URL and start command, surfaces, viewports, invariants with expected values, and the `Pending` and `Known` lists. Missing contract → stops and points at the format
+- 🧭 Scopes the run from your argument or the diff; a diff that matches nothing measures every surface and says so
+- 🚀 Probes the base URL and runs the contract's start command only when the app is down
+- 📏 Measures what the browser computed (`getComputedStyle`, element counts, bounding boxes, console errors) rather than reading the CSS
+- 🧾 Returns rows as `FAIL`, `PENDING` (expected gap, in progress), `KNOWN` (accepted) or `PASS`, so the one real regression is not buried in noise
+- ⏭️ Lists every check it could not run; a narrowed run never reads as clean
+- 🚫 Stops with an actionable message when the chrome-devtools MCP server is absent; it never reports without a browser
+
+Contract format with a worked example: [`references/verify-ui-contract.md`](references/verify-ui-contract.md).
+
+---
+
 ## 🚢 Semver gate
 
 `/open-pr`, `/pr-ready` and `/commit` judge a change's semver impact from the real diff, not from its title. They report a mismatch and stop for your confirmation before a breaking change. The release mechanism (semantic-release, Changesets, release-please, GoReleaser, tags, manual) is discovered from the repo; when it cannot be determined, the verdict says so and is only advisory. Procedure: [`shared/semver-impact.md`](shared/semver-impact.md).
@@ -409,6 +434,7 @@ Exit codes: `0` clean, `1` findings or a failed verification, `2` error.
 | `/prune-tests` | Git (clean working tree) + a supported test runner; coverage needs a coverage provider, Stryker is optional |
 | `/harden` | Git (clean working tree) + a test command it can discover or you provide |
 | `/readme-media` | Git; GIFs need `vhs`, `ttyd` and `ffmpeg`; screenshots need Playwright with Chromium (`npx playwright install chromium`) |
+| `/verify-ui` | Git + `docs/verify-ui.md` + the `chrome-devtools` MCP server (`claude mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest --isolated`) |
 
 ## License
 
