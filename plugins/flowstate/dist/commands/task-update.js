@@ -1,4 +1,5 @@
 import { BUCKETS } from "../core/store.js";
+import { validatePriority } from "../core/types.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError, InvalidArgumentError, SectionNotFoundError, } from "../core/errors.js";
 import { appendToSection, hasSection, tickCriteria } from "../core/markdown.js";
@@ -30,11 +31,16 @@ export async function taskUpdate(store, id, updates, log, checkCriteria = [], ev
     if (!task) {
         throw new EntityNotFoundError(id, "tasks/{pending,active,complete}");
     }
-    const REJECTED_KEYS = ["status", "blocked-by"];
-    for (const key of Object.keys(updates)) {
-        if (REJECTED_KEYS.includes(key)) {
+    for (const [key, value] of Object.entries(updates)) {
+        if (key === "status" || key === "blocked-by") {
             throw new InvalidArgumentError(`Cannot set "${key}" via task-update. Use task-move for status transitions or task-block/task-unblock for blocking.`);
         }
+        // The ID is the file name and the index key; rewriting it would leave two tasks sharing one.
+        if (key === "id") {
+            throw new InvalidArgumentError(`Cannot set "id" via task-update: the ID is assigned on creation and identifies the task file.`);
+        }
+        if (key === "priority")
+            validatePriority(value);
     }
     for (const key of Object.keys(evidence)) {
         if (!checkCriteria.includes(Number(key))) {
