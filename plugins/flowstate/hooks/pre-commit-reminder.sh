@@ -4,10 +4,10 @@ set -euo pipefail
 
 INPUT=$(cat)
 
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+COMMAND=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty')
 
 # Only trigger on git commit commands
-echo "$COMMAND" | grep -qE '\bgit[[:space:]]+commit\b' || exit 0
+printf '%s' "$COMMAND" | grep -qE '\bgit[[:space:]]+commit\b' || exit 0
 
 # Same resolution rule as the CLI (src/core/paths.ts): FLOWSTATE_BACKLOG_DIR
 # (absolute, or relative to the project root), else the nearest .backlog/ walking
@@ -43,9 +43,12 @@ TASKS=""
 for f in "$BACKLOG_DIR"/*.md; do
   TITLE=$(grep -m1 '^title:' "$f" | sed 's/^title: *//')
   ID=$(grep -m1 '^id:' "$f" | sed 's/^id: *//')
-  TASKS="${TASKS}  - ${ID}: ${TITLE}\n"
+  TASKS="${TASKS}  - ${ID}: ${TITLE}"$'\n'
 done
 
-cat <<EOF
-{"additionalContext": "Before committing — active tasks in backlog:\n${TASKS}Consider if this commit completes any of them (/flowstate:complete-task)."}
-EOF
+jq -n --arg tasks "$TASKS" '{
+  hookSpecificOutput: {
+    hookEventName: "PreToolUse",
+    additionalContext: ("Before committing — active tasks in backlog:\n" + $tasks + "Consider if this commit completes any of them (/flowstate:complete-task).")
+  }
+}'

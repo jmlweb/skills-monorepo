@@ -238,10 +238,10 @@ Ticking an acceptance criterion records *how you know*:
 
 | When | What happens |
 |------|--------------|
-| A test command (`vitest`, `jest`, `pytest`, `pnpm test`…) fails | Claude is nudged to consider `/flowstate:report` |
-| Before a `git commit` while tasks are active | Claude sees the active tasks and considers `/flowstate:complete-task` |
+| A test command (`vitest`, `jest`, `pytest`, `pnpm test`…) exits non-zero (`PostToolUseFailure`) | Claude is nudged to consider `/flowstate:report` |
+| Before a `git commit` while tasks are active (`PreToolUse`) | Claude sees the active tasks and considers `/flowstate:complete-task` |
 
-> Hooks need `jq` on your `PATH`.
+> Hooks need `jq` on your `PATH`. Both add context to Claude's conversation and never block the tool call.
 
 ### ⚡ Parallel execution
 

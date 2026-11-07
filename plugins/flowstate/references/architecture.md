@@ -52,5 +52,6 @@ Shared learnings: `core/registry.ts` owns the user-level registry (`$XDG_CONFIG_
 
 ## Hooks (`hooks/`)
 
-- `on-test-failure.sh` (PostToolUse) — Suggests `/flowstate:report` when tests fail.
-- `pre-commit-reminder.sh` (PreToolUse) — Before `git commit`, lists the active tasks so `/flowstate:complete-task` is considered.
+- `on-test-failure.sh` (PostToolUseFailure, matcher `Bash`) — Suggests `/flowstate:report` when a test command fails. `PostToolUse` fires only on success, so the hook keys on `tool_name`, `is_interrupt` and the `Exit code N` first line of `error`, the fields the failure payload documents; there is no `exit_code` field.
+- `pre-commit-reminder.sh` (PreToolUse, matcher `Bash`) — Before `git commit`, lists the active tasks so `/flowstate:complete-task` is considered.
+- Both print `hookSpecificOutput` with `hookEventName` and `additionalContext`, built with `jq`. Hooks use bash, coreutils, `find`, `grep`, `sed` and `jq` only; `scripts/flowstate-hooks.test.mjs` feeds them the documented payloads.
