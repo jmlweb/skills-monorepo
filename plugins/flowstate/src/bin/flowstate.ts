@@ -266,6 +266,16 @@ function parseCriteriaIndexes(value: string | undefined): number[] {
   });
 }
 
+function parseLimit(value: string | undefined): number | undefined {
+  if (value === undefined) return undefined;
+  if (!/^\d+$/.test(value) || Number(value) < 1) {
+    throw new InvalidArgumentError(
+      `Invalid --limit value: "${value}". Use a positive integer, e.g. --limit 5.`,
+    );
+  }
+  return Number(value);
+}
+
 function parseCriteria(value: string | undefined): string[] {
   if (value === undefined) return [];
   const usage = `Invalid --criteria value. Use a JSON array of non-empty strings, e.g. --criteria '["Tests pass","Docs updated"]'.`;
@@ -381,7 +391,7 @@ async function main(): Promise<void> {
 
       case "task-list": {
         const status = flags["status"] ? asTaskStatus(flags["status"]) : undefined;
-        const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+        const limit = parseLimit(flags["limit"]);
         const items = await taskList(store, status, limit);
         output(items, json);
         break;
@@ -553,7 +563,7 @@ async function main(): Promise<void> {
           }
           status = statusRaw as IdeaListStatus;
         }
-        const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+        const limit = parseLimit(flags["limit"]);
         const result = await ideaList(store, {
           ...(status !== undefined ? { status } : {}),
           ...(limit !== undefined ? { limit } : {}),
@@ -603,7 +613,7 @@ async function main(): Promise<void> {
           }
           status = statusRaw as ReportListStatus;
         }
-        const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+        const limit = parseLimit(flags["limit"]);
         const result = await reportList(store, {
           ...(status !== undefined ? { status } : {}),
           ...(limit !== undefined ? { limit } : {}),
@@ -646,7 +656,7 @@ async function main(): Promise<void> {
         const result = await learningSearch(root, {
           tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : undefined,
           query,
-          limit: flags["limit"] ? parseInt(flags["limit"], 10) : undefined,
+          limit: parseLimit(flags["limit"]),
           includeBody: flags["body"] === "true",
           scope,
           shared: await sharedForScope(root, scope),

@@ -417,6 +417,31 @@ describe("CLI integration", () => {
     });
   });
 
+  describe("--limit (RPT-017)", () => {
+    const LIST_COMMANDS = ["task-list", "idea-list", "report-list", "learning-search"] as const;
+
+    it.each(LIST_COMMANDS)("%s rejects -1, 0 and abc with an actionable error", (command) => {
+      run("setup", "--project-name", "IntTest");
+      for (const limit of ["-1", "0", "abc"]) {
+        const result = spawnSync("node", [CLI, command, "--limit", limit], {
+          cwd: tmp,
+          encoding: "utf-8",
+          env: cleanEnv(),
+        });
+        expect(result.status, `${command} --limit ${limit}`).toBe(1);
+        expect(result.stderr).toMatch(new RegExp(`Invalid --limit value: "${limit}"\\. Use a positive integer`));
+      }
+    });
+
+    it("still caps the rows with a positive integer", () => {
+      run("setup", "--project-name", "IntTest");
+      run("task-create", "--title", "A", "--priority", "P1", "--description", "x");
+      run("task-create", "--title", "B", "--priority", "P2", "--description", "x");
+      expect(runJson("task-list", "--limit", "1")).toHaveLength(1);
+      expect(runJson("task-list", "--limit", "5")).toHaveLength(2);
+    });
+  });
+
   it("learning-update rejects a title holding a newline and keeps the old one", async () => {
     run("setup", "--project-name", "IntTest");
     run("learning-create", "--title", "Old title", "--tags", "x", "--body", "x");

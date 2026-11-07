@@ -198,6 +198,14 @@ function parseCriteriaIndexes(value) {
         return Number(trimmed);
     });
 }
+function parseLimit(value) {
+    if (value === undefined)
+        return undefined;
+    if (!/^\d+$/.test(value) || Number(value) < 1) {
+        throw new InvalidArgumentError(`Invalid --limit value: "${value}". Use a positive integer, e.g. --limit 5.`);
+    }
+    return Number(value);
+}
 function parseCriteria(value) {
     if (value === undefined)
         return [];
@@ -302,7 +310,7 @@ async function main() {
             }
             case "task-list": {
                 const status = flags["status"] ? asTaskStatus(flags["status"]) : undefined;
-                const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+                const limit = parseLimit(flags["limit"]);
                 const items = await taskList(store, status, limit);
                 output(items, json);
                 break;
@@ -454,7 +462,7 @@ async function main() {
                     }
                     status = statusRaw;
                 }
-                const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+                const limit = parseLimit(flags["limit"]);
                 const result = await ideaList(store, {
                     ...(status !== undefined ? { status } : {}),
                     ...(limit !== undefined ? { limit } : {}),
@@ -494,7 +502,7 @@ async function main() {
                     }
                     status = statusRaw;
                 }
-                const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+                const limit = parseLimit(flags["limit"]);
                 const result = await reportList(store, {
                     ...(status !== undefined ? { status } : {}),
                     ...(limit !== undefined ? { limit } : {}),
@@ -529,7 +537,7 @@ async function main() {
                 const result = await learningSearch(root, {
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : undefined,
                     query,
-                    limit: flags["limit"] ? parseInt(flags["limit"], 10) : undefined,
+                    limit: parseLimit(flags["limit"]),
                     includeBody: flags["body"] === "true",
                     scope,
                     shared: await sharedForScope(root, scope),
