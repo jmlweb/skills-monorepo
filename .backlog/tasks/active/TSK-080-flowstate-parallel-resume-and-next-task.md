@@ -62,20 +62,23 @@ A checkpoint file would duplicate state and could drift from it. Task status, Pr
 
 ## Acceptance Criteria
 
-- [ ] parallel step 1 runs a resume check comparing active tasks without blockedBy against git worktree list --porcelain, skipping main and prunable entries, matching through TSK- references in git log BASE..branch
-- [ ] shared/worktree-brief.md has a first step making an empty marker commit naming the task
-- [ ] Leftovers are classified as merged, unmerged commits, uncommitted changes or marker-only; a worktree with no task match, including detached, is reported as unmatched with git status --short and never touched
-- [ ] Each matched task offers merge, relaunch or return to pending with no destructive action without approval; relaunch removes the old worktree only when it holds nothing unmerged; return to pending commits the move when the backlog is tracked; active tasks with no worktree are informational only
-- [ ] Resume steps live in shared/parallel-resume.md, referenced through CLAUDE_PLUGIN_ROOT by an inline sentence in parallel step 1 with no added lines
-- [ ] next-task shows Automatable, Needs review and Blocked labels on its shown rows (up to 8), read through each task path; Blocked means an unresolved depends-on only; the Automatable filter sits in the step 3 group rule, not in parallel
-- [ ] plugins/flowstate/README.md notes resume behaviour
+- [x] parallel step 1 runs a resume check comparing active tasks without blockedBy against git worktree list --porcelain, skipping main and prunable entries, matching through TSK- references in git log BASE..branch
+- [x] shared/worktree-brief.md has a first step making an empty marker commit naming the task
+- [x] Leftovers are classified as merged, unmerged commits, uncommitted changes or marker-only; a worktree with no task match, including detached, is reported as unmatched with git status --short and never touched
+- [x] Each matched task offers merge, relaunch or return to pending with no destructive action without approval; relaunch removes the old worktree only when it holds nothing unmerged; return to pending commits the move when the backlog is tracked; active tasks with no worktree are informational only
+- [x] Resume steps live in shared/parallel-resume.md, referenced through CLAUDE_PLUGIN_ROOT by an inline sentence in parallel step 1 with no added lines — evidence: shared/parallel-resume.md referenced from parallel step 1; parallel body 149 lines (2026-11-07)
+- [x] next-task shows Automatable, Needs review and Blocked labels on its shown rows (up to 8), read through each task path; Blocked means an unresolved depends-on only; the Automatable filter sits in the step 3 group rule, not in parallel — evidence: next-task body 140 lines, labels in step 2 and Label column, Automatable rule in step 3 (2026-11-07)
+- [x] plugins/flowstate/README.md notes resume behaviour
 - [ ] pnpm lint:skills and claude plugin validate . pass, and the version is set with pnpm bump
 
 ## Notes
 
 ## Learnings
 
+- LRN-055: Matching a worktree branch to a task through BASE..branch needs a merged-branch fallback
+- LRN-056: A marker commit breaks merge --ff-only base sync; worktree briefs rebase instead
 ## Progress Log
 
 - [2026-11-07] Created
 - [2026-11-07] Started
+- [2026-11-07] Merged 788125e into main. lint:skills 0/0, routing-eval flowstate 0.974, plugin validate passed. Bump pending the coordinated release.

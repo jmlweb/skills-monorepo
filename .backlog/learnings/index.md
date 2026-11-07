@@ -58,3 +58,5 @@
 | LRN-052 | A conditional template block needs a negative fixture check in the sandbox | kickstart, sandbox, templates, testing | active | 2026-11-07 |
 | LRN-053 | PostToolUse never sees a failed Bash call; key PostToolUseFailure on the Exit code N line of error | flowstate, hooks, claude-code | active | 2026-11-07 |
 | LRN-054 | Worktree isolation guard inspects command text: any payload mentioning git is refused | tooling, worktree, agents, isolation-guard | active | 2026-11-07 |
+| LRN-055 | Matching a worktree branch to a task through BASE..branch needs a merged-branch fallback | flowstate, parallel, git, resume | active | 2026-11-07 |
+| LRN-056 | A marker commit breaks merge --ff-only base sync; worktree briefs rebase instead | worktree, parallel, git, flowstate | active | 2026-11-07 |
