@@ -102,6 +102,13 @@ test('pre-commit-reminder: lists active tasks inside hookSpecificOutput before g
   })
 })
 
+test('pre-commit-reminder: prints valid JSON when a title holds a double quote and a backslash', async () => {
+  await withBacklog({ 'TSK-002': 'Handle "draft" PRs on C:\\repo' }, async (dir) => {
+    const { json } = runHook('pre-commit-reminder.sh', commit('git commit -am "fix"'), { cwd: dir })
+    assert.match(json.hookSpecificOutput.additionalContext, /  - TSK-002: Handle "draft" PRs on C:\\repo\n/)
+  })
+})
+
 test('pre-commit-reminder: stays silent for non-commit commands and when no task is active', async () => {
   await withBacklog({ 'TSK-003': 'Anything' }, async (dir) => {
     assert.equal(runHook('pre-commit-reminder.sh', commit('git status'), { cwd: dir }).stdout, '')

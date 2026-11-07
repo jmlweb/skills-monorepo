@@ -46,6 +46,7 @@ for f in "$BACKLOG_DIR"/*.md; do
   TASKS="${TASKS}  - ${ID}: ${TITLE}"$'\n'
 done
 
+# Titles are raw user text (quotes, backslashes); jq --arg escapes them, a heredoc did not.
 jq -n --arg tasks "$TASKS" '{
   hookSpecificOutput: {
     hookEventName: "PreToolUse",
