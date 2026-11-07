@@ -1,13 +1,14 @@
 ---
 id: TSK-066
 title: Fix: md-to-adf silently drops table cells beyond the header width
-status: active
+status: complete
 priority: P3
 tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-018
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # Fix: md-to-adf silently drops table cells beyond the header width
@@ -20,16 +21,19 @@ Repro: `printf '| a | b |\n|---|---|\n| 1 | 2 | 3 |\n' | node plugins/atlassian-
 
 ## Acceptance Criteria
 
-- [ ] A table body row with more cells than the header no longer loses cells silently: md-to-adf exits 2 with a line N: message naming the row, or keeps every cell
-- [ ] A vitest case in md-to-adf.test.ts covers a row wider than its header
-- [ ] references/atlassian-formats.md describes the chosen behaviour
-- [ ] dist/ rebuilt and committed
+- [x] A table body row with more cells than the header no longer loses cells silently: md-to-adf exits 2 with a line N: message naming the row, or keeps every cell
+- [x] A vitest case in md-to-adf.test.ts covers a row wider than its header
+- [x] references/atlassian-formats.md describes the chosen behaviour
+- [x] dist/ rebuilt and committed
 
 ## Notes
 
 ## Learnings
 
+- LRN-051: A wider table row cannot be told apart from an unescaped pipe, so md-to-adf refuses it
 ## Progress Log
 
 - [2026-10-28] Created
 - [2026-11-07] Started
+- [2026-11-07] Merged worktree commits f77c014/0d25b61/f9e4e7a into main. pnpm test: atlassian-polish 44 passed, typecheck and build green, dist rebuilt.
+- [2026-11-07] Completed

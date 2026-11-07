@@ -1,13 +1,14 @@
 ---
 id: TSK-067
 title: Fix: md-to-adf turns a fenced code block inside a list item into inline text
-status: active
+status: complete
 priority: P3
 tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-019
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # Fix: md-to-adf turns a fenced code block inside a list item into inline text
@@ -20,16 +21,19 @@ Repro: `printf -- '- item\n  ```\n  code\n  ```\n' | node plugins/atlassian-poli
 
 ## Acceptance Criteria
 
-- [ ] A fenced code block indented under a list item becomes a codeBlock inside the listItem with its newlines kept, or md-to-adf exits 2 with a line N: message at the fence
-- [ ] No literal backtick fence markers leak into list item text
-- [ ] A vitest case in md-to-adf.test.ts covers a fence nested in a bullet item
-- [ ] dist/ rebuilt and committed
+- [x] A fenced code block indented under a list item becomes a codeBlock inside the listItem with its newlines kept, or md-to-adf exits 2 with a line N: message at the fence
+- [x] No literal backtick fence markers leak into list item text
+- [x] A vitest case in md-to-adf.test.ts covers a fence nested in a bullet item
+- [x] dist/ rebuilt and committed
 
 ## Notes
 
 ## Learnings
 
+- LRN-050: Worktree guard rejects printf -- pipelines, not only git
 ## Progress Log
 
 - [2026-10-28] Created
 - [2026-11-07] Started
+- [2026-11-07] Merged worktree commits f77c014/0d25b61/f9e4e7a into main. pnpm test: atlassian-polish 44 passed, typecheck and build green, dist rebuilt.
+- [2026-11-07] Completed

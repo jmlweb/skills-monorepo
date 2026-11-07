@@ -1,13 +1,14 @@
 ---
 id: TSK-068
 title: Fix: md-to-adf truncates link URLs that contain parentheses
-status: active
+status: complete
 priority: P4
 tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-020
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # Fix: md-to-adf truncates link URLs that contain parentheses
@@ -20,10 +21,10 @@ Repro: `printf 'See [docs](https://x.y/a_(b)) now\n' | node plugins/atlassian-po
 
 ## Acceptance Criteria
 
-- [ ] [text](https://x.y/a_(b)) yields href https://x.y/a_(b) with no stray ) in the following text
-- [ ] Unbalanced or titled links keep their current behaviour
-- [ ] A vitest case in md-to-adf.test.ts covers a link destination with balanced parentheses
-- [ ] dist/ rebuilt and committed
+- [x] [text](https://x.y/a_(b)) yields href https://x.y/a_(b) with no stray ) in the following text
+- [x] Unbalanced or titled links keep their current behaviour
+- [x] A vitest case in md-to-adf.test.ts covers a link destination with balanced parentheses
+- [x] dist/ rebuilt and committed
 
 ## Notes
 
@@ -33,3 +34,5 @@ Repro: `printf 'See [docs](https://x.y/a_(b)) now\n' | node plugins/atlassian-po
 
 - [2026-10-28] Created
 - [2026-11-07] Started
+- [2026-11-07] Merged worktree commits f77c014/0d25b61/f9e4e7a into main. pnpm test: atlassian-polish 44 passed, typecheck and build green, dist rebuilt.
+- [2026-11-07] Completed

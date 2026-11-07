@@ -53,3 +53,5 @@
 | LRN-047 | Package-manager detection must walk ancestors once, not per lockfile | dev-workflow, testing, tooling | active | 2026-11-01 |
 | LRN-048 | Pin git diff output before parsing it: user config rewrites headers and paths | dev-workflow, git, scan-secrets | active | 2026-11-05 |
 | LRN-049 | Any Agent spawn without a model inherits the caller model, so pin one on every spawn | agents, tokens, model, caveman, delegation | active | 2026-11-07 |
+| LRN-050 | Worktree guard rejects printf -- pipelines, not only git | worktree, tooling, shell, isolation-guard | active | 2026-11-07 |
+| LRN-051 | A wider table row cannot be told apart from an unescaped pipe, so md-to-adf refuses it | atlassian-polish, md-to-adf, tables, design | active | 2026-11-07 |

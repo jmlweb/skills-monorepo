@@ -5,9 +5,9 @@
 | Status | Count |
 |--------|-------|
 | Pending | 1 |
-| Active | 19 |
+| Active | 16 |
 | Blocked | 1 |
-| Complete | 60 |
+| Complete | 63 |
 
 ## Active Tasks
 
@@ -18,9 +18,6 @@
 - TSK-063: Fix: report-move and idea-move accept any --status value (P2)
 - TSK-064: Fix: task-update --set writes unvalidated values, including id and priority (P2)
 - TSK-065: Fix: list commands accept a negative or non-numeric --limit (P4)
-- TSK-066: Fix: md-to-adf silently drops table cells beyond the header width (P3)
-- TSK-067: Fix: md-to-adf turns a fenced code block inside a list item into inline text (P3)
-- TSK-068: Fix: md-to-adf truncates link URLs that contain parentheses (P4)
 - TSK-070: Fix: on-test-failure hook never fires: wrong event and nonexistent exit_code field (P3)
 - TSK-071: Fix: pre-commit-reminder hook emits invalid JSON when an active task title holds a double quote (P4)
 - TSK-072: Fix: test-static-scan drops a test whose body holds a quote inside a regex literal (P3)
@@ -44,11 +41,11 @@
 |----|-------|-----------|
 | TSK-053 | Fix: review-idea and triage-report number their decision menus after a numbered list | 2026-11-07 |
 | TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | 2026-11-07 |
+| TSK-066 | Fix: md-to-adf silently drops table cells beyond the header width | 2026-11-07 |
+| TSK-067 | Fix: md-to-adf turns a fenced code block inside a list item into inline text | 2026-11-07 |
+| TSK-068 | Fix: md-to-adf truncates link URLs that contain parentheses | 2026-11-07 |
 | TSK-075 | Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn | 2026-11-07 |
 | TSK-069 | Fix: scan-secrets skips every file when git diff paths lack the b/ prefix | 2026-11-05 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | 2026-11-01 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | 2026-10-28 |
 | TSK-055 | Fix: parallel skill leaves worktrees behind after merge | 2026-10-26 |
-| TSK-054 | Fix: Skills put user text in double-quoted CLI args without a phrasing rule | 2026-10-24 |
-| TSK-056 | dev-workflow: readme-media skill generates README screenshots and GIFs | 2026-10-23 |
-| TSK-052 | flowstate kickstart skill: description to evaluated, documented, tasked project | 2026-10-19 |
