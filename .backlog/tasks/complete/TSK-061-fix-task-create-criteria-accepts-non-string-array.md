@@ -28,7 +28,7 @@ Add a `parseCriteria` validator next to `validatePriority` in the entry point. T
 - [x] --criteria that is not a JSON array of non-empty strings exits 1 with an InvalidArgumentError showing the expected format
 - [x] Invalid JSON in --criteria gets the same actionable message instead of the raw parser error
 - [x] Tests cover a JSON string, an array with non-string items and invalid JSON
-- [ ] dist rebuilt and committed
+- [x] dist rebuilt and committed
 
 ## Notes
 

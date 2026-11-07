@@ -28,7 +28,7 @@ Validate titles at the CLI boundary (reject newlines). Escape `|` as `\|` in one
 - [x] Every *-create and learning-update rejects a title holding a newline with an actionable error and exit 1
 - [x] A pipe in a title is escaped in task-create and index-rebuild table rows so each row keeps its column count
 - [x] Regression tests cover a pipe and a newline title for task-create, learning-create and index-rebuild
-- [ ] dist rebuilt and committed
+- [x] dist rebuilt and committed
 
 ## Notes
 

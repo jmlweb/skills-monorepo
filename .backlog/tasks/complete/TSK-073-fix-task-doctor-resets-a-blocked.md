@@ -22,7 +22,7 @@ See RPT-025. `task-block` leaves a blocked pending task in `tasks/pending/` (LRN
 - [x] task-doctor keeps status blocked for a task in tasks/pending that has blocked-by
 - [x] task-list --status blocked lists blocked tasks from tasks/pending as well as tasks/active
 - [x] stats and tasks/index.md count a blocked pending task as blocked
-- [ ] A test blocks a pending task, runs task-doctor, and asserts status and blocked-by are unchanged
+- [x] A test blocks a pending task, runs task-doctor, and asserts status and blocked-by are unchanged
 
 ## Notes
 
