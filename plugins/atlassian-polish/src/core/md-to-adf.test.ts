@@ -251,6 +251,26 @@ describe("markdownToAdf", () => {
     ]);
   });
 
+  it("refuses a table row wider than its header, naming the row's line", () => {
+    expect(() => convert("| a | b |\n|---|---|\n| 1 | 2 | 3 |")).toThrow(
+      /^line 3: table row has 3 cells but the header has 2/,
+    );
+  });
+
+  it("ignores trailing empty cells and pads short rows", () => {
+    const [table] = convert("| a | b |\n|---|---|\n| 1 | 2 | |\n| 3 |");
+    expect(table?.content?.slice(1)).toEqual([
+      row("tableCell", [[t("1")], [t("2")]]),
+      {
+        type: "tableRow",
+        content: [
+          { type: "tableCell", attrs: {}, content: [{ type: "paragraph", content: [t("3")] }] },
+          { type: "tableCell", attrs: {}, content: [{ type: "paragraph" }] },
+        ],
+      },
+    ]);
+  });
+
   it("converts fenced code, blockquotes and rules", () => {
     expect(convert("```ts\nconst a = 1;\n```\n\n> note\n\n---")).toEqual([
       {

@@ -356,11 +356,29 @@ function splitRow(text: string): string[] {
   return cells;
 }
 
+/**
+ * A row wider than its header is most often an unescaped `|`; GFM would drop the
+ * extra cells, but this converter writes real Jira descriptions, so it refuses
+ * instead. Trailing empty cells (a stray `|`) carry nothing and are ignored.
+ */
+function fitRow(cells: readonly string[], width: number, no: number): string[] {
+  let end = cells.length;
+  while (end > width && cells[end - 1] === "") end--;
+  if (end > width) {
+    throw new MarkdownConversionError(
+      `table row has ${end} cells but the header has ${width}; escape literal pipes as \\| or add header columns`,
+      no,
+    );
+  }
+  return cells.slice(0, end);
+}
+
 function parseTable(
   lines: readonly Line[],
   start: number,
 ): { node: AdfNode; next: number } {
   const header = splitRow(lines[start]!.text);
+  const width = header.length;
   const rows: string[][] = [];
   let i = start + 2;
   while (
@@ -368,10 +386,9 @@ function parseTable(
     !isBlank(lines[i]!) &&
     lines[i]!.text.includes("|")
   ) {
-    rows.push(splitRow(lines[i]!.text));
+    rows.push(fitRow(splitRow(lines[i]!.text), width, lines[i]!.no));
     i++;
   }
-  const width = header.length;
   const toRow = (cells: readonly string[], kind: string): AdfNode => ({
     type: "tableRow",
     content: Array.from({ length: width }, (_, c) => {
