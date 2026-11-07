@@ -19,8 +19,8 @@ From RPT-017. `plugins/flowstate/src/bin/flowstate.ts:366`, `:538`, `:588`, `:63
 
 ## Acceptance Criteria
 
-- [ ] --limit on task-list, idea-list, report-list and learning-search accepts only a positive integer; anything else exits 1 with an actionable error
-- [ ] Regression tests cover -1, 0 and abc; pnpm test passes
+- [x] --limit on task-list, idea-list, report-list and learning-search accepts only a positive integer; anything else exits 1 with an actionable error — evidence: parseLimit rejects -1, 0, abc with exit 1 on task-list, idea-list, report-list, learning-search (2026-11-07)
+- [x] Regression tests cover -1, 0 and abc; pnpm test passes — evidence: integration it.each over four commands; flowstate 397 tests pass (2026-11-07)
 
 ## Notes
 
