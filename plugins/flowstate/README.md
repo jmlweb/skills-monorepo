@@ -146,6 +146,7 @@ Use `/reload-plugins` after making changes.
 | `/flowstate:block-task` | Block a task with a documented reason; suggests alternatives |
 | `/flowstate:check-task` | Does the declared status match the code? One task or the whole backlog |
 | `/flowstate:parallel` | Run independent tasks side by side in isolated git worktrees |
+| 🙋 `/flowstate:groom-tasks [--tag t] [--priority P]` | Review open tasks against the code: one table of priority, spec and obsolescence proposals with evidence, then apply only the rows you approve. Never deletes a task |
 | 🙋 `/flowstate:condense-tasks` | Shrink completed task files (drop notes, trim the log, compress prose). Runs in an isolated subagent so the loop stays out of your context |
 
 ![Asking /flowstate:next-task what to start and getting a parallel-safe pair](docs/media/next-task.gif)

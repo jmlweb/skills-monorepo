@@ -48,7 +48,7 @@ Done when: every behaviour claim in the reply comes from a SKILL.md read in this
 
 **Knowledge.** `add-learning` records an insight, `learnings` searches them, `retro` mines a session's mistakes into durable fixes.
 
-**Maintenance.** `overview` shows backlog health; `condense-tasks` and `condense-learnings` shrink the archives.
+**Maintenance.** `overview` shows backlog health; `groom-tasks` reviews open tasks against the code and applies the priority, spec and close proposals you approve; `condense-tasks` and `condense-learnings` shrink the archives.
 
 ## Confirmation
 
