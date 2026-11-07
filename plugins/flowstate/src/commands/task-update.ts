@@ -1,6 +1,6 @@
 import type { BacklogStore } from "../core/store.js";
 import { BUCKETS } from "../core/store.js";
-import { validatePriority } from "../core/types.js";
+import { validatePriority, validateTitle } from "../core/types.js";
 import { today } from "../core/date.js";
 import {
   EntityNotFoundError,
@@ -57,6 +57,7 @@ export async function taskUpdate(
       );
     }
     if (key === "priority") validatePriority(value);
+    if (key === "title") validateTitle(value);
   }
 
   for (const key of Object.keys(evidence)) {

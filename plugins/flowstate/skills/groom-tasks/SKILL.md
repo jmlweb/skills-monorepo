@@ -71,7 +71,7 @@ Done when: the user has answered with `yes`, a set of letters, `all`, or `none`.
 
 Run only the approved rows, in table order. Every change leaves a dated Progress Log reason through `--log`. The heredoc is quoted, so the reason text needs no escaping.
 
-**Priority row**: `--set` does not validate values, so `{{P}}` is one of `P1`, `P2`, `P3`, `P4`.
+**Priority row**: `--set priority=` rejects anything outside `P1`–`P4` with exit 1, so `{{P}}` is one of `P1`, `P2`, `P3`, `P4`.
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/bin/flowstate.js" task-update TSK-{{ID}} --set priority={{P}} --log - <<'BODY'

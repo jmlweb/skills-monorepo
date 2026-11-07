@@ -12,8 +12,15 @@ async function readStdin() {
 runReadOnlyZonesHook({
     projectDir: process.env["CLAUDE_PROJECT_DIR"],
     readStdin,
-}).then((outcome) => {
+})
+    .then((outcome) => {
     if (outcome.message !== null)
         process.stderr.write(`${outcome.message}\n`);
     process.exit(outcome.exitCode);
+})
+    .catch((err) => {
+    // An unhandled rejection would exit 1, which Claude Code treats as
+    // non-blocking; the guard fails closed instead.
+    process.stderr.write(`read-only-zones: ${err instanceof Error ? err.message : String(err)}\n`);
+    process.exit(2);
 });

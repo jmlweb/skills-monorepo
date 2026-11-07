@@ -38,7 +38,7 @@ export async function taskList(
     items.push({
       id: String(fm["id"] ?? ""),
       title: String(fm["title"] ?? ""),
-      status: String(fm["status"] ?? task.bucket),
+      status: taskStatusOf(task.bucket, fm),
       priority: String(fm["priority"] ?? ""),
       tags: Array.isArray(fm["tags"]) ? fm["tags"] as string[] : [],
       created: String(fm["created"] ?? ""),

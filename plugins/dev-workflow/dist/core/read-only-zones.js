@@ -1,7 +1,9 @@
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { ReadOnlyZonesConfigError } from "./errors.js";
 export const ZONES_CONFIG_PATH = ".claude/read-only-zones.json";
+// macOS and Windows file systems fold case by default, so `DIST/a.js` is `dist/a.js`.
+const FOLDS_CASE = process.platform === "darwin" || process.platform === "win32";
 // The config file guards itself: a session that could edit it could lift any zone.
 const IMPLICIT_ZONE = {
     glob: ZONES_CONFIG_PATH,
@@ -9,8 +11,10 @@ const IMPLICIT_ZONE = {
 };
 // Converts one glob to a RegExp over a root-relative posix path. `**` crosses
 // directories, `*` and `?` stay within one segment, `{a,b}` lists alternatives
-// and `[...]` passes through as a character class.
-export function globToRegExp(glob) {
+// and `[...]` is a character class (`[!a]` negates, as in gitignore). A trailing
+// `/` names a directory and matches everything below it.
+export function globToRegExp(pattern) {
+    const glob = pattern.endsWith("/") ? `${pattern}**` : pattern;
     let out = "";
     let i = 0;
     while (i < glob.length) {
@@ -51,7 +55,8 @@ export function globToRegExp(glob) {
                 out += "\\[";
             }
             else {
-                out += glob.slice(i, end + 1);
+                const body = glob.slice(i + 1, end);
+                out += `[${body.startsWith("!") ? `^${body.slice(1)}` : body}]`;
                 i = end + 1;
                 continue;
             }
@@ -61,7 +66,7 @@ export function globToRegExp(glob) {
         }
         i++;
     }
-    return new RegExp(`^${out}$`);
+    return new RegExp(`^${out}$`, FOLDS_CASE ? "i" : "");
 }
 export function parseZonesConfig(raw, configPath) {
     let parsed;
@@ -119,8 +124,24 @@ export function findGitRoot(startDir) {
     }
 }
 function isInside(parent, child) {
-    const rel = relative(parent, child);
+    const fold = (p) => (FOLDS_CASE ? p.toLowerCase() : p);
+    const rel = relative(fold(parent), fold(child));
     return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
+// Resolves symlinks through the nearest existing ancestor, so a target under
+// `/var` and a project under `/private/var` (macOS temp dirs) still compare,
+// and a symlink into a zone is checked at its real location.
+function canonical(path) {
+    let existing = resolve(path);
+    const rest = [];
+    while (!existsSync(existing)) {
+        const parent = dirname(existing);
+        if (parent === existing)
+            return resolve(path);
+        rest.unshift(existing.slice(parent.length + 1));
+        existing = parent;
+    }
+    return join(realpathSync(existing), ...rest);
 }
 // A linked worktree outside the project dir still belongs to the project when
 // its `.git` file points into the project's own `.git/worktrees/`.
@@ -132,7 +153,7 @@ function worktreeBelongsToProject(gitRoot, projectDir) {
         const pointer = readFileSync(gitEntry, "utf8").match(/^gitdir:\s*(.+)$/m)?.[1]?.trim();
         if (!pointer)
             return false;
-        return isInside(join(projectDir, ".git"), resolve(gitRoot, pointer));
+        return isInside(join(projectDir, ".git"), canonical(resolve(gitRoot, pointer)));
     }
     catch {
         // An unreadable `.git` file is not a worktree of this project; the
@@ -140,16 +161,28 @@ function worktreeBelongsToProject(gitRoot, projectDir) {
         return false;
     }
 }
+// The directory zone globs are relative to. The repository root when the
+// session started at it (or holds linked worktrees); the session directory
+// itself when Claude was opened in a subdirectory of a larger repository, so
+// `dist/**` in `packages/app/.claude/read-only-zones.json` means
+// `packages/app/dist/`. Anything else is another project and is allowed.
+function matchRoot(gitRoot, projectDir, target) {
+    if (isInside(projectDir, gitRoot) || worktreeBelongsToProject(gitRoot, projectDir))
+        return gitRoot;
+    if (isInside(gitRoot, projectDir) && isInside(projectDir, target))
+        return projectDir;
+    return null;
+}
 export function checkTarget(input) {
-    const projectDir = resolve(input.projectDir);
-    const target = resolve(input.targetPath);
+    const projectDir = canonical(input.projectDir);
+    const target = canonical(input.targetPath);
     const gitRoot = findGitRoot(dirname(target));
     if (gitRoot === null)
         return { blocked: false, reason: "no-root" };
-    if (!isInside(projectDir, gitRoot) && !worktreeBelongsToProject(gitRoot, projectDir)) {
+    const root = matchRoot(gitRoot, projectDir, target);
+    if (root === null)
         return { blocked: false, reason: "outside-project" };
-    }
-    const relativePath = relative(gitRoot, target).split(sep).join("/");
+    const relativePath = relative(root, target).split(sep).join("/");
     const zone = input.zones.find((candidate) => globToRegExp(candidate.glob).test(relativePath));
     return zone ? { blocked: true, relativePath, zone } : { blocked: false, reason: "no-match" };
 }

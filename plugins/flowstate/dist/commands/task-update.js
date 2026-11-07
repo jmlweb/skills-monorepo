@@ -1,5 +1,5 @@
 import { BUCKETS } from "../core/store.js";
-import { validatePriority } from "../core/types.js";
+import { validatePriority, validateTitle } from "../core/types.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError, InvalidArgumentError, SectionNotFoundError, } from "../core/errors.js";
 import { appendToSection, hasSection, tickCriteria } from "../core/markdown.js";
@@ -41,6 +41,8 @@ export async function taskUpdate(store, id, updates, log, checkCriteria = [], ev
         }
         if (key === "priority")
             validatePriority(value);
+        if (key === "title")
+            validateTitle(value);
     }
     for (const key of Object.keys(evidence)) {
         if (!checkCriteria.includes(Number(key))) {

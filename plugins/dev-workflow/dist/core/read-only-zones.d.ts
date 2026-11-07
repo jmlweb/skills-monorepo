@@ -15,7 +15,7 @@ export type HookOutcome = {
     readonly exitCode: 0 | 2;
     readonly message: string | null;
 };
-export declare function globToRegExp(glob: string): RegExp;
+export declare function globToRegExp(pattern: string): RegExp;
 export declare function parseZonesConfig(raw: string, configPath: string): readonly Zone[];
 export declare function loadZonesConfig(projectDir: string): readonly Zone[] | null;
 export declare function findGitRoot(startDir: string): string | null;

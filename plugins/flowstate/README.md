@@ -321,7 +321,7 @@ stateDiagram-v2
 flowstate/
 ├── .claude-plugin/
 │   └── plugin.json           # plugin manifest
-├── skills/                   # 21 slash commands (SKILL.md each)
+├── skills/                   # 22 slash commands (SKILL.md each)
 ├── agents/                   # kickstart-reviewer, read-only reviewer for /flowstate:kickstart
 ├── shared/                   # prose shared by skills (grilling, templates)
 ├── hooks/

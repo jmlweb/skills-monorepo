@@ -85,6 +85,17 @@ describe("taskUpdate", () => {
     expect(await readFile(path, "utf-8")).toBe(before);
   });
 
+  it("rejects a title holding a newline with the task-create check", async () => {
+    const path = join(tmp, "tasks", "pending", "TSK-001-fix-bug.md");
+    const before = await readFile(path, "utf-8");
+
+    await expect(
+      taskUpdate(new FileStore(tmp), "TSK-001", { title: "one\ntwo" }),
+    ).rejects.toThrow(/title/);
+
+    expect(await readFile(path, "utf-8")).toBe(before);
+  });
+
   it("throws for non-existent task", async () => {
     await expect(
       taskUpdate(new FileStore(tmp), "TSK-999", { priority: "P1" }),

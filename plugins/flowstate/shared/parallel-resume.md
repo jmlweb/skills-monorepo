@@ -42,7 +42,7 @@ git -C "{{WORKTREE_PATH}}" status --short
 | State | Evidence |
 |-------|----------|
 | uncommitted changes | `status --short` prints lines |
-| merged | `git log {{BASE}}..{{BRANCH}}` is empty (a squash merge still shows commits; the user says when one happened) |
+| merged | `git log {{BASE}}..{{BRANCH}}` is empty (a squash merge still shows commits; the user says when one happened). A worktree created moments ago with no marker yet looks the same and holds nothing, so relaunch is safe for it |
 | marker-only | the range holds only the `chore: start TSK-NNN` commit |
 | unmerged commits | the range holds real commits |
 

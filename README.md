@@ -61,7 +61,7 @@ flowchart LR
 </details>
 
 <details open>
-<summary><strong>🛠️ dev-workflow</strong> — 12 skills</summary>
+<summary><strong>🛠️ dev-workflow</strong> — 13 skills</summary>
 
 | Skill | What it does |
 |-------|--------------|
@@ -158,7 +158,7 @@ pnpm sandbox:readme-media # Live /readme-media run on a copy of flowstate, then 
 .claude-plugin/           # Root marketplace definition
 plugins/
 ├── flowstate/            # Backlog management (22 skills + CLI + hooks + agent)
-├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests, UI checks (12 skills + CLI + hooks + 2 agents)
+├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests, UI checks (13 skills + CLI + hooks + 2 agents)
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
 └── shared-config/        # Shared TypeScript base config

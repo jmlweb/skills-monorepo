@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { realpathSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -61,6 +62,10 @@ describe("globToRegExp", () => {
     ["src/[ab].ts", "src/b.ts", true],
     ["src/[ab].ts", "src/c.ts", false],
     ["a.b", "axb", false],
+    ["dist/", "dist/a.js", true],
+    ["dist/", "dist", false],
+    ["src/[!a].ts", "src/b.ts", true],
+    ["src/[!a].ts", "src/a.ts", false],
   ])("%s against %s is %s", (glob, path, expected) => {
     expect(globToRegExp(glob).test(path)).toBe(expected);
   });
@@ -169,6 +174,29 @@ describe("checkTarget", () => {
     } finally {
       await rm(wt, { recursive: true, force: true });
     }
+  });
+
+  it("matches relative to the session directory when it sits inside a larger repository", async () => {
+    const app = join(project, "packages/app");
+    await write("packages/app/.claude/read-only-zones.json", JSON.stringify([{ glob: "dist/**", why: "built" }]));
+    const appZones: Zone[] = [{ glob: "dist/**", why: "built" }];
+    expect(checkTarget({ projectDir: app, zones: appZones, targetPath: join(app, "dist/a.js") })).toMatchObject({
+      blocked: true,
+      relativePath: "dist/a.js",
+    });
+    expect(checkTarget({ projectDir: app, zones: appZones, targetPath: join(project, "packages/other/dist/a.js") })).toEqual({
+      blocked: false,
+      reason: "outside-project",
+    });
+  });
+
+  it("compares the project and the target through their real paths", () => {
+    const result = checkTarget({ projectDir: realpathSync(project), zones, targetPath: join(project, "plugins/x/dist/a.js") });
+    expect(result).toMatchObject({ blocked: true, relativePath: "plugins/x/dist/a.js" });
+  });
+
+  it.runIf(process.platform === "darwin" || process.platform === "win32")("folds case on case-insensitive platforms", () => {
+    expect(checkTarget({ projectDir: project, zones, targetPath: join(project, "plugins/x/DIST/a.js") }).blocked).toBe(true);
   });
 
   it("allows a target in another repository", async () => {
