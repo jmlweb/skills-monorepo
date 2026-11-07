@@ -25,6 +25,7 @@ IDs are zero-padded to 3 digits (e.g., `TSK-001`). The `id.ts` module handles pa
 - **`file-store.ts`** — `FileStore`, the `.backlog/` backend: one file per entity, one folder per bucket. It owns ID assignment (`nextFileId`) and keeps `tasks/index.md` in step (row on create, rebuild on move). `store.contract.test.ts` holds the suite every backend must pass.
 - **`frontmatter.ts`** — Custom YAML frontmatter parser/serializer (no library). Handles `[array]` syntax.
 - **`markdown.ts`** — Section manipulation: find, append, replace, table row add/remove, stats table update. Used by index rebuilds.
+- **`args.ts`** — `parseArgs()` for the entry point: `--key value` pairs, repeated flags into `flagArrays`, positionals. Only the listed switches (`--json`, `--private`, `--dry-run`, `--all`, `--include-archived`) may appear bare; any other flag without a value, or followed by a `--` token, throws `InvalidArgumentError` instead of storing `"true"`.
 - **`errors.ts`** — `BacklogNotFoundError`, `BacklogDirMissingError`, `EntityNotFoundError`, `InvalidArgumentError`.
 - **`types.ts`** — Shared type aliases: `EntityType`, `Priority`, `TaskStatus`, `IdeaStatus`, `ReportStatus`, `LearningStatus`, `ReportType`.
 - **`id.ts`** — `parseId`/`formatId`/`normalizeIdInput` — zero-padded IDs, case-insensitive input, bare number support.

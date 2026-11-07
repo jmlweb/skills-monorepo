@@ -64,6 +64,11 @@ describe("validateTitle", () => {
     expect(() => validateTitle(v)).toThrow(InvalidArgumentError);
     expect(() => validateTitle(v)).toThrow(/single line/);
   });
+
+  it.each(["", "   ", "\t"])("rejects a blank title %j", (v) => {
+    expect(() => validateTitle(v)).toThrow(InvalidArgumentError);
+    expect(() => validateTitle(v)).toThrow(/must not be empty/);
+  });
 });
 
 describe("validateIdeaDecision", () => {

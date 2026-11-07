@@ -353,6 +353,70 @@ describe("CLI integration", () => {
     expect((await readdir(join(tmp, dir))).filter((f) => /^(TSK|PLN|RPT|LRN)-/.test(f))).toEqual([]);
   });
 
+  describe("flag values that are empty, blank or start with -- (RPT-014)", () => {
+    const CREATES: readonly [string, readonly string[], string][] = [
+      ["task-create", ["--priority", "P2", "--description", "x"], ".backlog/tasks/pending"],
+      ["idea-create", ["--complexity", "low", "--body", "x"], ".backlog/ideas/pending"],
+      ["report-create", ["--type", "bug", "--severity", "low", "--body", "x"], ".backlog/reports/pending"],
+      ["learning-create", ["--tags", "x", "--body", "x"], ".backlog/learnings"],
+    ];
+
+    async function entityFiles(dir: string): Promise<string[]> {
+      return (await readdir(join(tmp, dir))).filter((f) => /^(TSK|PLN|RPT|LRN)-/.test(f));
+    }
+
+    it.each(CREATES)("%s rejects --title \"\" and \"   \" and writes nothing", async (command, extra, dir) => {
+      run("setup", "--project-name", "IntTest");
+      for (const title of ["", "   "]) {
+        const result = spawnSync("node", [CLI, command, "--title", title, ...extra], {
+          cwd: tmp,
+          encoding: "utf-8",
+          env: cleanEnv(),
+        });
+        expect(result.status).toBe(1);
+        expect(result.stderr).toMatch(/--title cannot be empty or whitespace-only/);
+      }
+      expect(await entityFiles(dir)).toEqual([]);
+    });
+
+    it.each(CREATES)("%s rejects a --title that starts with -- and writes nothing", async (command, extra, dir) => {
+      run("setup", "--project-name", "IntTest");
+      const result = spawnSync("node", [CLI, command, "--title", "--x", ...extra], {
+        cwd: tmp,
+        encoding: "utf-8",
+        env: cleanEnv(),
+      });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Flag --title needs a value, but "--x" reads as the next flag/);
+      expect(await entityFiles(dir)).toEqual([]);
+    });
+
+    it("task-update --log with a value starting with -- exits 1 and never logs true", async () => {
+      run("setup", "--project-name", "IntTest");
+      const created = runJson("task-create", "--title", "Log me", "--priority", "P2", "--description", "d") as { path: string };
+      const before = await readFile(created.path, "utf-8");
+
+      const result = spawnSync("node", [CLI, "task-update", "TSK-001", "--log", "--x"], {
+        cwd: tmp,
+        encoding: "utf-8",
+        env: cleanEnv(),
+      });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Flag --log needs a value/);
+      const after = await readFile(created.path, "utf-8");
+      expect(after).toBe(before);
+      expect(after).not.toMatch(/\] true$/m);
+    });
+
+    it("keeps bare switches working: task-condense --all, setup --private", () => {
+      run("setup", "--project-name", "IntTest");
+      expect(runJson("task-condense", "--all")).toEqual([]);
+      execFileSync("git", ["init", "-q"], { cwd: tmp });
+      const out = JSON.parse(run("setup", "--private", "--json", "true")) as { root: string };
+      expect(out.root.endsWith(join(".git", "flowstate"))).toBe(true);
+    });
+  });
+
   it("learning-update rejects a title holding a newline and keeps the old one", async () => {
     run("setup", "--project-name", "IntTest");
     run("learning-create", "--title", "Old title", "--tags", "x", "--body", "x");

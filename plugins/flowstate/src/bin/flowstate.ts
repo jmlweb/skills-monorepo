@@ -44,6 +44,7 @@ import {
   settingsSnippet,
 } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import { parseArgs, type ParsedArgs } from "../core/args.js";
 import { FileStore } from "../core/file-store.js";
 import type { BacklogStore } from "../core/store.js";
 import {
@@ -184,34 +185,22 @@ function asTaskStatus(value: string): TaskStatus {
   return value as TaskStatus;
 }
 
-function parseArgs(args: readonly string[]): {
-  flags: Record<string, string>;
-  flagArrays: Record<string, string[]>;
-  positional: string[];
-} {
-  const flags: Record<string, string> = {};
-  const flagArrays: Record<string, string[]> = {};
-  const positional: string[] = [];
+// Flags that may appear without a value; every other flag needs one.
+const SWITCHES: ReadonlySet<string> = new Set([
+  "json",
+  "private",
+  "dry-run",
+  "all",
+  "include-archived",
+]);
 
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i]!;
-    if (arg.startsWith("--")) {
-      const key = arg.slice(2);
-      const next = args[i + 1];
-      if (next && !next.startsWith("--")) {
-        flags[key] = next;
-        (flagArrays[key] ??= []).push(next);
-        i++;
-      } else {
-        flags[key] = "true";
-        (flagArrays[key] ??= []).push("true");
-      }
-    } else {
-      positional.push(arg);
-    }
+function parseArgsOrExit(args: readonly string[]): ParsedArgs {
+  try {
+    return parseArgs(args, SWITCHES);
+  } catch (err) {
+    console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
   }
-
-  return { flags, flagArrays, positional };
 }
 
 // Registration is best-effort: a failed write must never fail the command that triggered it.
@@ -246,9 +235,12 @@ async function sharedForScope(
 
 function required(flags: Record<string, string>, key: string): string {
   const val = flags[key];
-  if (!val) {
+  if (val === undefined) {
     console.error(`Missing required flag: --${key}`);
     process.exit(1);
+  }
+  if (val.trim() === "") {
+    throw new InvalidArgumentError(`Flag --${key} cannot be empty or whitespace-only.`);
   }
   return val;
 }
@@ -321,7 +313,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const { flags, flagArrays, positional } = parseArgs(rest);
+  const { flags, flagArrays, positional } = parseArgsOrExit(rest);
   const json = flags["json"] === "true";
   try {
     // Resolved once here; commands only ever see the final backlog directory.

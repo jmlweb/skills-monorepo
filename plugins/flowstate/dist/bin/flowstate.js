@@ -28,6 +28,7 @@ import { learningCompress } from "../commands/learning-compress.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, validateTitle, } from "../core/types.js";
 import { resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import { parseArgs } from "../core/args.js";
 import { FileStore } from "../core/file-store.js";
 import { isSharedEnabled, registerBacklog, resolveSharedBacklogs, } from "../core/registry.js";
 const VALID_ENTITY_TYPES = new Set([
@@ -122,30 +123,22 @@ function asTaskStatus(value) {
     }
     return value;
 }
-function parseArgs(args) {
-    const flags = {};
-    const flagArrays = {};
-    const positional = [];
-    for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-        if (arg.startsWith("--")) {
-            const key = arg.slice(2);
-            const next = args[i + 1];
-            if (next && !next.startsWith("--")) {
-                flags[key] = next;
-                (flagArrays[key] ??= []).push(next);
-                i++;
-            }
-            else {
-                flags[key] = "true";
-                (flagArrays[key] ??= []).push("true");
-            }
-        }
-        else {
-            positional.push(arg);
-        }
+// Flags that may appear without a value; every other flag needs one.
+const SWITCHES = new Set([
+    "json",
+    "private",
+    "dry-run",
+    "all",
+    "include-archived",
+]);
+function parseArgsOrExit(args) {
+    try {
+        return parseArgs(args, SWITCHES);
     }
-    return { flags, flagArrays, positional };
+    catch (err) {
+        console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+        process.exit(1);
+    }
 }
 // Registration is best-effort: a failed write must never fail the command that triggered it.
 async function registerForSharing(root) {
@@ -178,9 +171,12 @@ async function sharedForScope(root, scope) {
 }
 function required(flags, key) {
     const val = flags[key];
-    if (!val) {
+    if (val === undefined) {
         console.error(`Missing required flag: --${key}`);
         process.exit(1);
+    }
+    if (val.trim() === "") {
+        throw new InvalidArgumentError(`Flag --${key} cannot be empty or whitespace-only.`);
     }
     return val;
 }
@@ -244,7 +240,7 @@ async function main() {
         console.error(`Unknown command: ${command}\n\n${TOP_LEVEL_HELP}`);
         process.exit(1);
     }
-    const { flags, flagArrays, positional } = parseArgs(rest);
+    const { flags, flagArrays, positional } = parseArgsOrExit(rest);
     const json = flags["json"] === "true";
     try {
         // Resolved once here; commands only ever see the final backlog directory.

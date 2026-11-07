@@ -42,6 +42,9 @@ export const validateSeverity = (v) => {
 // Titles live on one frontmatter line and in one index-table row; a line break would
 // truncate the stored title and break the row.
 export const validateTitle = (v) => {
+    if (v.trim() === "") {
+        throw new InvalidArgumentError("Invalid title: it must not be empty or whitespace-only.");
+    }
     if (/[\r\n]/.test(v)) {
         throw new InvalidArgumentError("Invalid title: it must be a single line. Put the extra lines in --description or --body.");
     }
