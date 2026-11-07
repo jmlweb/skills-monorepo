@@ -274,6 +274,24 @@ function parseCriteriaIndexes(value: string | undefined): number[] {
   });
 }
 
+function parseCriteria(value: string | undefined): string[] {
+  if (value === undefined) return [];
+  const usage = `Invalid --criteria value. Use a JSON array of non-empty strings, e.g. --criteria '["Tests pass","Docs updated"]'.`;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new InvalidArgumentError(usage);
+  }
+  if (
+    !Array.isArray(parsed) ||
+    !parsed.every((item): item is string => typeof item === "string" && item.trim() !== "")
+  ) {
+    throw new InvalidArgumentError(usage);
+  }
+  return parsed;
+}
+
 async function getBody(flags: Record<string, string>): Promise<string> {
   const body = flags["body"];
   if (body === "-") return readStdin();
@@ -359,7 +377,7 @@ async function main(): Promise<void> {
           priority: validatePriority(required(flags, "priority")),
           tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
           description: body || flags["description"] || "",
-          criteria: flags["criteria"] ? JSON.parse(flags["criteria"]) as string[] : [],
+          criteria: parseCriteria(flags["criteria"]),
           source: flags["source"] ?? "manual",
           dependsOn: flags["depends-on"]
             ? flags["depends-on"].split(",").map((t) => t.trim())

@@ -106,6 +106,24 @@ describe("CLI integration", () => {
     expect(content).toMatch(/\] Wired the parser\n- \[\d{4}-\d{2}-\d{2}\] Next: docs/);
   });
 
+  it.each([
+    ["a JSON string", '"one"'],
+    ["an array with non-string items", '[1,{"a":2}]'],
+    ["an array with an empty string", '["ok",""]'],
+    ["invalid JSON", "[not json"],
+  ])("task-create --criteria rejects %s with the expected format", async (_label, criteria) => {
+    run("setup", "--project-name", "IntTest");
+    const result = spawnSync(
+      "node",
+      [CLI, "task-create", "--title", "A", "--priority", "P1", "--criteria", criteria],
+      { cwd: tmp, encoding: "utf-8", env: cleanEnv() },
+    );
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid --criteria value\. Use a JSON array of non-empty strings/);
+    expect(result.stderr).not.toMatch(/map is not a function|Unexpected token/);
+    expect(await readdir(join(tmp, ".backlog/tasks/pending"))).not.toContain(expect.stringMatching(/^TSK-/));
+  });
+
   it("task-update --check rejects a non-numeric value", () => {
     run("setup", "--project-name", "IntTest");
     run("task-create", "--title", "A", "--priority", "P1", "--description", "test");

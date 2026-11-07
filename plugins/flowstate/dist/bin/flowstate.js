@@ -202,6 +202,23 @@ function parseCriteriaIndexes(value) {
         return Number(trimmed);
     });
 }
+function parseCriteria(value) {
+    if (value === undefined)
+        return [];
+    const usage = `Invalid --criteria value. Use a JSON array of non-empty strings, e.g. --criteria '["Tests pass","Docs updated"]'.`;
+    let parsed;
+    try {
+        parsed = JSON.parse(value);
+    }
+    catch {
+        throw new InvalidArgumentError(usage);
+    }
+    if (!Array.isArray(parsed) ||
+        !parsed.every((item) => typeof item === "string" && item.trim() !== "")) {
+        throw new InvalidArgumentError(usage);
+    }
+    return parsed;
+}
 async function getBody(flags) {
     const body = flags["body"];
     if (body === "-")
@@ -278,7 +295,7 @@ async function main() {
                     priority: validatePriority(required(flags, "priority")),
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
                     description: body || flags["description"] || "",
-                    criteria: flags["criteria"] ? JSON.parse(flags["criteria"]) : [],
+                    criteria: parseCriteria(flags["criteria"]),
                     source: flags["source"] ?? "manual",
                     dependsOn: flags["depends-on"]
                         ? flags["depends-on"].split(",").map((t) => t.trim())
