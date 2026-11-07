@@ -39,3 +39,28 @@ export const validateSeverity = (v) => {
     }
     return v;
 };
+// Titles live on one frontmatter line and in one index-table row; a line break would
+// truncate the stored title and break the row.
+export const validateTitle = (v) => {
+    if (v.trim() === "") {
+        throw new InvalidArgumentError("Invalid title: it must not be empty or whitespace-only.");
+    }
+    if (/[\r\n]/.test(v)) {
+        throw new InvalidArgumentError("Invalid title: it must be a single line. Put the extra lines in --description or --body.");
+    }
+    return v;
+};
+const IDEA_DECISIONS = new Set(["approved", "discarded"]);
+const REPORT_DECISIONS = new Set(["triaged", "discarded"]);
+export const validateIdeaDecision = (v) => {
+    if (!IDEA_DECISIONS.has(v)) {
+        throw new InvalidArgumentError(`Invalid --status value: "${v}". Expected: approved, discarded`);
+    }
+    return v;
+};
+export const validateReportDecision = (v) => {
+    if (!REPORT_DECISIONS.has(v)) {
+        throw new InvalidArgumentError(`Invalid --status value: "${v}". Expected: triaged, discarded`);
+    }
+    return v;
+};

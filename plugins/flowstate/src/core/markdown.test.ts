@@ -8,7 +8,22 @@ import {
   appendToBody,
   hasSection,
   tickCriteria,
+  tableRow,
 } from "./markdown.js";
+
+describe("tableRow", () => {
+  it("joins cells with pipes", () => {
+    expect(tableRow(["TSK-001", "Title", "P2", "", "2026-01-01"])).toBe(
+      "| TSK-001 | Title | P2 |  | 2026-01-01 |",
+    );
+  });
+
+  it("escapes a pipe inside a cell so the column count holds", () => {
+    const row = tableRow(["TSK-001", "a | b", "P2"]);
+    expect(row).toBe("| TSK-001 | a \\| b | P2 |");
+    expect(row.split(/(?<!\\)\|/)).toHaveLength(5);
+  });
+});
 
 describe("appendToSection", () => {
   const doc = `# Title

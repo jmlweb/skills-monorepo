@@ -63,6 +63,28 @@ describe("taskUpdate", () => {
     ).rejects.toThrow(/Cannot set "blocked-by" via task-update/);
   });
 
+  it("rejects id as a key and leaves the task unchanged", async () => {
+    const path = join(tmp, "tasks", "pending", "TSK-001-fix-bug.md");
+    const before = await readFile(path, "utf-8");
+
+    await expect(
+      taskUpdate(new FileStore(tmp), "TSK-001", { id: "TSK-003" }),
+    ).rejects.toThrow(/Cannot set "id" via task-update/);
+
+    expect(await readFile(path, "utf-8")).toBe(before);
+  });
+
+  it("rejects an invalid priority with the task-create message", async () => {
+    const path = join(tmp, "tasks", "pending", "TSK-001-fix-bug.md");
+    const before = await readFile(path, "utf-8");
+
+    await expect(
+      taskUpdate(new FileStore(tmp), "TSK-001", { priority: "P9" }),
+    ).rejects.toThrow(/Invalid priority: "P9". Expected: P1, P2, P3, P4/);
+
+    expect(await readFile(path, "utf-8")).toBe(before);
+  });
+
   it("throws for non-existent task", async () => {
     await expect(
       taskUpdate(new FileStore(tmp), "TSK-999", { priority: "P1" }),

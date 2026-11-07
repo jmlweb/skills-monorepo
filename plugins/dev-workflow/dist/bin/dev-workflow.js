@@ -8,6 +8,7 @@ import { generateUniqueChangesetName, listChangesetNames, } from "../commands/ch
 import { readPackageInfo } from "../core/packages.js";
 import { readFileSync } from "node:fs";
 import { InvalidArgumentError } from "../core/errors.js";
+import { parseFlags } from "../core/args.js";
 import { detectRunnerInDir } from "../commands/detect-test-runner.js";
 import { lastChangedAtFromGit, readSourceFiles, scanTests, } from "../commands/test-static-scan.js";
 import { Claim, verifyRewrite, } from "../commands/test-verify-rewrite.js";
@@ -55,24 +56,8 @@ function printVerify(report) {
     for (const reason of report.reasons)
         console.log(`  - ${reason}`);
 }
-function parseFlags(args) {
-    const flags = {};
-    for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-        if (!arg.startsWith("--"))
-            continue;
-        const key = arg.slice(2);
-        const next = args[i + 1];
-        if (next && !next.startsWith("--")) {
-            flags[key] = next;
-            i++;
-        }
-        else {
-            flags[key] = "true";
-        }
-    }
-    return flags;
-}
+// Flags that may appear without a value; every other flag needs one.
+const SWITCHES = new Set(["json", "include-private", "help"]);
 function printHuman(findings, scope) {
     if (findings.length === 0) {
         console.log(`No secrets detected in ${scope}.`);
@@ -108,10 +93,12 @@ async function main() {
         ].join("\n"));
         return command ? EXIT_CLEAN : EXIT_ERROR;
     }
-    const flags = parseFlags(rest);
-    const json = flags["json"] === "true";
-    const cwd = flags["cwd"] ?? process.cwd();
+    // Parsed inside the try so a bad flag reports like any other InvalidArgumentError.
+    let json = false;
     try {
+        const flags = parseFlags(rest, SWITCHES);
+        json = flags["json"] === "true";
+        const cwd = flags["cwd"] ?? process.cwd();
         switch (command) {
             case "scan-secrets": {
                 const range = flags["range"];

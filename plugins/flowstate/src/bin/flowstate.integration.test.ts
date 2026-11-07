@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, afterAll } from "vitest";
-import { mkdtemp, rm, readFile, readdir, mkdir, realpath } from "node:fs/promises";
+import { mkdtemp, rm, readFile, readdir, mkdir, realpath, writeFile } from "node:fs/promises";
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -106,6 +106,24 @@ describe("CLI integration", () => {
     expect(content).toMatch(/\] Wired the parser\n- \[\d{4}-\d{2}-\d{2}\] Next: docs/);
   });
 
+  it.each([
+    ["a JSON string", '"one"'],
+    ["an array with non-string items", '[1,{"a":2}]'],
+    ["an array with an empty string", '["ok",""]'],
+    ["invalid JSON", "[not json"],
+  ])("task-create --criteria rejects %s with the expected format", async (_label, criteria) => {
+    run("setup", "--project-name", "IntTest");
+    const result = spawnSync(
+      "node",
+      [CLI, "task-create", "--title", "A", "--priority", "P1", "--criteria", criteria],
+      { cwd: tmp, encoding: "utf-8", env: cleanEnv() },
+    );
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid --criteria value\. Use a JSON array of non-empty strings/);
+    expect(result.stderr).not.toMatch(/map is not a function|Unexpected token/);
+    expect(await readdir(join(tmp, ".backlog/tasks/pending"))).not.toContain(expect.stringMatching(/^TSK-/));
+  });
+
   it("task-update --check rejects a non-numeric value", () => {
     run("setup", "--project-name", "IntTest");
     run("task-create", "--title", "A", "--priority", "P1", "--description", "test");
@@ -166,6 +184,44 @@ describe("CLI integration", () => {
     expect(report.id).toBe("RPT-001");
 
     run("report-move", "RPT-001", "--status", "triaged", "--task-id", "TSK-001");
+  });
+
+  it("report-move rejects an unknown --status and leaves the report pending", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("report-create", "--title", "Auth bug", "--type", "bug", "--severity", "high", "--body", "x");
+
+    const result = spawnSync("node", [CLI, "report-move", "RPT-001", "--status", "bogus"], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid --status value: "bogus".*triaged, discarded/);
+
+    const pending = await readdir(join(tmp, ".backlog/reports/pending"));
+    expect(pending.some((f) => f.startsWith("RPT-001-"))).toBe(true);
+    const content = await readFile(join(tmp, ".backlog/reports/pending", pending.find((f) => f.startsWith("RPT-001-"))!), "utf-8");
+    expect(content).toContain("status: pending");
+    expect(await readdir(join(tmp, ".backlog/reports/complete"))).not.toContain(expect.stringMatching(/^RPT-001/));
+  });
+
+  it("idea-move rejects an unknown --status and leaves the idea pending", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("idea-create", "--title", "Refactor auth", "--complexity", "low", "--body", "x");
+
+    const result = spawnSync("node", [CLI, "idea-move", "PLN-001", "--status", "bogus"], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid --status value: "bogus".*approved, discarded/);
+
+    const pending = await readdir(join(tmp, ".backlog/ideas/pending"));
+    const file = pending.find((f) => f.startsWith("PLN-001-"));
+    expect(file).toBeDefined();
+    expect(await readFile(join(tmp, ".backlog/ideas/pending", file!), "utf-8")).toContain("status: pending");
+    expect(await readdir(join(tmp, ".backlog/ideas/complete"))).not.toContain(expect.stringMatching(/^PLN-001/));
   });
 
   it("learning-create creates directory", () => {
@@ -278,6 +334,145 @@ describe("CLI integration", () => {
 
     const json = runJson("learning-list") as { body: string }[];
     expect(json[0]!.body).toContain("line a\n\nline b");
+  });
+
+  it.each([
+    ["task-create", ["--priority", "P2", "--description", "x"], ".backlog/tasks/pending"],
+    ["idea-create", ["--complexity", "low", "--body", "x"], ".backlog/ideas/pending"],
+    ["report-create", ["--type", "bug", "--severity", "low", "--body", "x"], ".backlog/reports/pending"],
+    ["learning-create", ["--tags", "x", "--body", "x"], ".backlog/learnings"],
+  ])("%s rejects a title holding a newline and writes nothing", async (command, extra, dir) => {
+    run("setup", "--project-name", "IntTest");
+    const result = spawnSync("node", [CLI, command, "--title", "Line one\nline two", ...extra], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid title: it must be a single line/);
+    expect((await readdir(join(tmp, dir))).filter((f) => /^(TSK|PLN|RPT|LRN)-/.test(f))).toEqual([]);
+  });
+
+  describe("flag values that are empty, blank or start with -- (RPT-014)", () => {
+    const CREATES: readonly [string, readonly string[], string][] = [
+      ["task-create", ["--priority", "P2", "--description", "x"], ".backlog/tasks/pending"],
+      ["idea-create", ["--complexity", "low", "--body", "x"], ".backlog/ideas/pending"],
+      ["report-create", ["--type", "bug", "--severity", "low", "--body", "x"], ".backlog/reports/pending"],
+      ["learning-create", ["--tags", "x", "--body", "x"], ".backlog/learnings"],
+    ];
+
+    async function entityFiles(dir: string): Promise<string[]> {
+      return (await readdir(join(tmp, dir))).filter((f) => /^(TSK|PLN|RPT|LRN)-/.test(f));
+    }
+
+    it.each(CREATES)("%s rejects --title \"\" and \"   \" and writes nothing", async (command, extra, dir) => {
+      run("setup", "--project-name", "IntTest");
+      for (const title of ["", "   "]) {
+        const result = spawnSync("node", [CLI, command, "--title", title, ...extra], {
+          cwd: tmp,
+          encoding: "utf-8",
+          env: cleanEnv(),
+        });
+        expect(result.status).toBe(1);
+        expect(result.stderr).toMatch(/--title cannot be empty or whitespace-only/);
+      }
+      expect(await entityFiles(dir)).toEqual([]);
+    });
+
+    it.each(CREATES)("%s rejects a --title that starts with -- and writes nothing", async (command, extra, dir) => {
+      run("setup", "--project-name", "IntTest");
+      const result = spawnSync("node", [CLI, command, "--title", "--x", ...extra], {
+        cwd: tmp,
+        encoding: "utf-8",
+        env: cleanEnv(),
+      });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Flag --title needs a value, but "--x" reads as the next flag/);
+      expect(await entityFiles(dir)).toEqual([]);
+    });
+
+    it("task-update --log with a value starting with -- exits 1 and never logs true", async () => {
+      run("setup", "--project-name", "IntTest");
+      const created = runJson("task-create", "--title", "Log me", "--priority", "P2", "--description", "d") as { path: string };
+      const before = await readFile(created.path, "utf-8");
+
+      const result = spawnSync("node", [CLI, "task-update", "TSK-001", "--log", "--x"], {
+        cwd: tmp,
+        encoding: "utf-8",
+        env: cleanEnv(),
+      });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Flag --log needs a value/);
+      const after = await readFile(created.path, "utf-8");
+      expect(after).toBe(before);
+      expect(after).not.toMatch(/\] true$/m);
+    });
+
+    it("keeps bare switches working: task-condense --all, setup --private", () => {
+      run("setup", "--project-name", "IntTest");
+      expect(runJson("task-condense", "--all")).toEqual([]);
+      execFileSync("git", ["init", "-q"], { cwd: tmp });
+      const out = JSON.parse(run("setup", "--private", "--json", "true")) as { root: string };
+      expect(out.root.endsWith(join(".git", "flowstate"))).toBe(true);
+    });
+  });
+
+  describe("--limit (RPT-017)", () => {
+    const LIST_COMMANDS = ["task-list", "idea-list", "report-list", "learning-search"] as const;
+
+    it.each(LIST_COMMANDS)("%s rejects -1, 0 and abc with an actionable error", (command) => {
+      run("setup", "--project-name", "IntTest");
+      for (const limit of ["-1", "0", "abc"]) {
+        const result = spawnSync("node", [CLI, command, "--limit", limit], {
+          cwd: tmp,
+          encoding: "utf-8",
+          env: cleanEnv(),
+        });
+        expect(result.status, `${command} --limit ${limit}`).toBe(1);
+        expect(result.stderr).toMatch(new RegExp(`Invalid --limit value: "${limit}"\\. Use a positive integer`));
+      }
+    });
+
+    it("still caps the rows with a positive integer", () => {
+      run("setup", "--project-name", "IntTest");
+      run("task-create", "--title", "A", "--priority", "P1", "--description", "x");
+      run("task-create", "--title", "B", "--priority", "P2", "--description", "x");
+      expect(runJson("task-list", "--limit", "1")).toHaveLength(1);
+      expect(runJson("task-list", "--limit", "5")).toHaveLength(2);
+    });
+  });
+
+  it("learning-update rejects a title holding a newline and keeps the old one", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("learning-create", "--title", "Old title", "--tags", "x", "--body", "x");
+    const result = spawnSync("node", [CLI, "learning-update", "LRN-001", "--title", "New\ntitle"], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid title: it must be a single line/);
+    expect(await readFile(join(tmp, ".backlog/learnings/LRN-001-old-title/index.md"), "utf-8")).toContain("title: Old title");
+  });
+
+  it("task-doctor plain output prints one tab-separated row per fix", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("task-create", "--title", "Drifted", "--priority", "P2", "--description", "x");
+    run("task-move", "TSK-001", "--to", "complete");
+    const path = join(tmp, ".backlog/tasks/complete/TSK-001-drifted.md");
+    const original = await readFile(path, "utf-8");
+    await writeFile(path, original.replace("status: complete", "status: done"), "utf-8");
+
+    const out = run("task-doctor");
+    expect(out).not.toContain("[object Object]");
+    const lines = out.split("\n");
+    expect(lines[0]).toBe("scanned: 1");
+    expect(lines[1]).toBe("fixed:");
+    const cells = lines[2]!.split("\t");
+    // The CLI resolves the backlog through realpath, so compare the path by its tail (LRN-036).
+    expect(cells[1]).toMatch(/\/tasks\/complete\/TSK-001-drifted\.md$/);
+    expect([cells[0], ...cells.slice(2)]).toEqual(["TSK-001", "complete", "done", "complete"]);
+    expect(lines).toHaveLength(3);
   });
 
   it("idea-list lists pending ideas and supports --status filter", () => {

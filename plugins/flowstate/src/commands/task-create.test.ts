@@ -6,6 +6,7 @@ import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
 import { taskCondense } from "./task-condense.js";
 import { taskMove } from "./task-move.js";
+import { indexRebuild } from "./index-rebuild.js";
 import { FileStore } from "../core/file-store.js";
 
 let tmp: string;
@@ -86,6 +87,26 @@ describe("taskCreate", () => {
     );
     expect(index).toContain("| TSK-001 | Fix bug | P2 |");
     expect(index).toContain("| Pending | 1 |");
+  });
+
+  it("escapes a pipe in the title in the index row and keeps the rebuilt index identical", async () => {
+    await taskCreate(new FileStore(tmp), {
+      title: "Support a | b",
+      priority: "P2",
+      tags: [],
+      description: "Desc",
+      criteria: [],
+      source: "manual",
+      dependsOn: [],
+    });
+
+    const indexPath = join(tmp, "tasks", "index.md");
+    const incremental = await readFile(indexPath, "utf-8");
+    expect(incremental).toContain("| TSK-001 | Support a \\| b | P2 |  |");
+
+    await indexRebuild(tmp, "tasks");
+    // The rebuild only differs by its trailing newline (LRN-020); the rows must match byte for byte.
+    expect((await readFile(indexPath, "utf-8")).trimEnd()).toBe(incremental.trimEnd());
   });
 
   it("handles plan source", async () => {

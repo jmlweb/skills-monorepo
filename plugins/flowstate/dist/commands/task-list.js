@@ -1,14 +1,16 @@
-import { BUCKETS } from "../core/store.js";
+import { BLOCKABLE_BUCKETS, BUCKETS, taskStatusOf } from "../core/store.js";
 export async function taskList(store, status, limit) {
-    // Blocked tasks sit in the active bucket.
+    // pending/active/complete name a bucket, so a blocked task still lists under the bucket
+    // it sits in (LRN-040); only "blocked" filters on the derived status.
     const buckets = !status
         ? BUCKETS.task
-        : [status === "blocked" ? "active" : status];
+        : status === "blocked"
+            ? BLOCKABLE_BUCKETS
+            : [status];
     const items = [];
     for (const task of await store.list("task", buckets)) {
         const fm = task.frontmatter;
-        // Filter blocked tasks when status=blocked
-        if (status === "blocked" && !fm["blocked-by"])
+        if (status === "blocked" && taskStatusOf(task.bucket, fm) !== "blocked")
             continue;
         items.push({
             id: String(fm["id"] ?? ""),

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { taskDoctor } from "./task-doctor.js";
@@ -103,6 +103,32 @@ describe("taskDoctor", () => {
 
     const result = await taskDoctor(tmp);
     expect(result.fixed).toHaveLength(1);
+    expect(result.fixed[0]!.statusAfter).toBe("blocked");
+  });
+
+  it("keeps a blocked task in tasks/pending blocked (LRN-040)", async () => {
+    await createTask("Never started");
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting on design");
+    const path = join(tmp, "tasks", "pending", "TSK-001-never-started.md");
+    const before = await readFile(path, "utf-8");
+
+    const result = await taskDoctor(tmp);
+    expect(result.fixed).toEqual([]);
+
+    expect(await readFile(path, "utf-8")).toBe(before);
+    const fm = (await readEntity(path)).frontmatter as Record<string, unknown>;
+    expect(fm["status"]).toBe("blocked");
+    expect(fm["blocked-by"]).toBe("waiting on design");
+  });
+
+  it("restores blocked for a pending task whose status drifted while blocked-by is set", async () => {
+    await createTask("Drifted block");
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting on api");
+    await injectStatus("pending", "TSK-001-drifted-block.md", "pending");
+
+    const result = await taskDoctor(tmp);
+    expect(result.fixed).toHaveLength(1);
+    expect(result.fixed[0]!.folder).toBe("pending");
     expect(result.fixed[0]!.statusAfter).toBe("blocked");
   });
 

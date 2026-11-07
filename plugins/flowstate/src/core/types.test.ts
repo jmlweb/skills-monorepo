@@ -4,6 +4,9 @@ import {
   validateComplexity,
   validateReportType,
   validateSeverity,
+  validateIdeaDecision,
+  validateReportDecision,
+  validateTitle,
 } from "./types.js";
 import { InvalidArgumentError } from "./errors.js";
 
@@ -49,5 +52,43 @@ describe("validateSeverity", () => {
 
   it("throws InvalidArgumentError for unknown values", () => {
     expect(() => validateSeverity("catastrophic")).toThrow(InvalidArgumentError);
+  });
+});
+
+describe("validateTitle", () => {
+  it("returns a single-line title unchanged, pipes included", () => {
+    expect(validateTitle("Fix a | b")).toBe("Fix a | b");
+  });
+
+  it.each(["Line one\nline two", "Carriage\rreturn", "trailing\n"])("rejects %j", (v) => {
+    expect(() => validateTitle(v)).toThrow(InvalidArgumentError);
+    expect(() => validateTitle(v)).toThrow(/single line/);
+  });
+
+  it.each(["", "   ", "\t"])("rejects a blank title %j", (v) => {
+    expect(() => validateTitle(v)).toThrow(InvalidArgumentError);
+    expect(() => validateTitle(v)).toThrow(/must not be empty/);
+  });
+});
+
+describe("validateIdeaDecision", () => {
+  it.each(["approved", "discarded"])("accepts %s", (v) => {
+    expect(validateIdeaDecision(v)).toBe(v);
+  });
+
+  it.each(["pending", "bogus", ""])("rejects %j with the expected values", (v) => {
+    expect(() => validateIdeaDecision(v)).toThrow(InvalidArgumentError);
+    expect(() => validateIdeaDecision(v)).toThrow(/approved, discarded/);
+  });
+});
+
+describe("validateReportDecision", () => {
+  it.each(["triaged", "discarded"])("accepts %s", (v) => {
+    expect(validateReportDecision(v)).toBe(v);
+  });
+
+  it.each(["pending", "approved", ""])("rejects %j with the expected values", (v) => {
+    expect(() => validateReportDecision(v)).toThrow(InvalidArgumentError);
+    expect(() => validateReportDecision(v)).toThrow(/triaged, discarded/);
   });
 });

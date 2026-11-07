@@ -1,6 +1,6 @@
 import type { TaskStatus } from "../core/types.js";
 import type { BacklogStore, TaskBucket } from "../core/store.js";
-import { BUCKETS } from "../core/store.js";
+import { BLOCKABLE_BUCKETS, BUCKETS, taskStatusOf } from "../core/store.js";
 
 export interface TaskListItem {
   readonly id: string;
@@ -20,18 +20,20 @@ export async function taskList(
   status?: TaskStatus,
   limit?: number,
 ): Promise<TaskListItem[]> {
-  // Blocked tasks sit in the active bucket.
+  // pending/active/complete name a bucket, so a blocked task still lists under the bucket
+  // it sits in (LRN-040); only "blocked" filters on the derived status.
   const buckets: readonly TaskBucket[] = !status
     ? BUCKETS.task
-    : [status === "blocked" ? "active" : status];
+    : status === "blocked"
+      ? BLOCKABLE_BUCKETS
+      : [status];
 
   const items: TaskListItem[] = [];
 
   for (const task of await store.list("task", buckets)) {
     const fm = task.frontmatter;
 
-    // Filter blocked tasks when status=blocked
-    if (status === "blocked" && !fm["blocked-by"]) continue;
+    if (status === "blocked" && taskStatusOf(task.bucket, fm) !== "blocked") continue;
 
     items.push({
       id: String(fm["id"] ?? ""),

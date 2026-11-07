@@ -1,10 +1,13 @@
 // The storage seam for tasks, ideas and reports. Commands talk to a BacklogStore, never to
 // paths, so a non-file backend can stand in later. Learnings stay file-based on purpose.
 
+import type { TaskStatus } from "./types.js";
+
 export type StoredType = "task" | "idea" | "report";
 
-// Where an entity sits, not its frontmatter status: a blocked task stays in "active",
-// and every approved, discarded or triaged idea or report sits in "complete".
+// Where an entity sits, not its frontmatter status: task-block never moves a file, so a
+// blocked task stays in "pending" or "active" (LRN-040), and every approved, discarded or
+// triaged idea or report sits in "complete".
 export type TaskBucket = "pending" | "active" | "complete";
 export type ClosableBucket = "pending" | "complete";
 
@@ -15,6 +18,18 @@ export const BUCKETS: { readonly [T in StoredType]: readonly BucketOf<T>[] } = {
   idea: ["pending", "complete"],
   report: ["pending", "complete"],
 };
+
+// Buckets a blocked task can sit in; "blocked" is a status, never a folder.
+export const BLOCKABLE_BUCKETS: readonly TaskBucket[] = ["pending", "active"];
+
+// The one rule that turns a bucket plus frontmatter into a task status. Every reader
+// (doctor, list, stats, index) derives status here so a non-file backend maps the same way.
+export function taskStatusOf(
+  bucket: TaskBucket,
+  frontmatter: Readonly<Record<string, unknown>>,
+): TaskStatus {
+  return bucket !== "complete" && Boolean(frontmatter["blocked-by"]) ? "blocked" : bucket;
+}
 
 export interface StoredEntity {
   readonly type: StoredType;

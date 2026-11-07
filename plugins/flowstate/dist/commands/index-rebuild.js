@@ -2,7 +2,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { taskDir, taskIndexPath, learningsIndexPath, learningsDir } from "../core/paths.js";
 import { listFiles, readEntity } from "../core/fs.js";
-import { updateStatsTable, replaceSection } from "../core/markdown.js";
+import { updateStatsTable, replaceSection, tableRow } from "../core/markdown.js";
+import { taskStatusOf } from "../core/store.js";
 import { readdir } from "node:fs/promises";
 export async function indexRebuild(root, type = "all") {
     if (type === "tasks" || type === "all") {
@@ -12,7 +13,8 @@ export async function indexRebuild(root, type = "all") {
         await rebuildLearningsIndex(root);
     }
 }
-async function readTasksFromDir(dir) {
+async function readTasksFromDir(root, bucket) {
+    const dir = taskDir(root, bucket);
     const files = await listFiles(dir);
     const tasks = [];
     for (const file of files) {
@@ -27,7 +29,7 @@ async function readTasksFromDir(dir) {
             tags: Array.isArray(fm["tags"]) ? fm["tags"] : [],
             created: String(fm["created"] ?? ""),
             completed: fm["completed"] ? String(fm["completed"]) : undefined,
-            status: String(fm["status"] ?? ""),
+            status: taskStatusOf(bucket, fm),
             blockedBy: fm["blocked-by"] ? String(fm["blocked-by"]) : undefined,
         });
     }
@@ -36,17 +38,16 @@ async function readTasksFromDir(dir) {
 async function rebuildTaskIndex(root) {
     const indexPath = taskIndexPath(root);
     let content = await readFile(indexPath, "utf-8");
-    const pending = await readTasksFromDir(taskDir(root, "pending"));
-    const active = await readTasksFromDir(taskDir(root, "active"));
-    const complete = await readTasksFromDir(taskDir(root, "complete"));
-    const blockedCount = active.filter((t) => t.blockedBy).length;
-    const activeCount = active.length - blockedCount;
-    // Update stats
+    const pending = await readTasksFromDir(root, "pending");
+    const active = await readTasksFromDir(root, "active");
+    const complete = await readTasksFromDir(root, "complete");
+    // Stats count by derived status, so a blocked task in pending/ is Blocked, not Pending.
+    const countStatus = (status) => [...pending, ...active, ...complete].filter((t) => t.status === status).length;
     content = updateStatsTable(content, {
-        Pending: pending.length,
-        Active: activeCount,
-        Blocked: blockedCount,
-        Complete: complete.length,
+        Pending: countStatus("pending"),
+        Active: countStatus("active"),
+        Blocked: countStatus("blocked"),
+        Complete: countStatus("complete"),
     });
     // Rebuild Active Tasks section
     const activeLines = active.length > 0
@@ -61,7 +62,7 @@ async function rebuildTaskIndex(root) {
     // Rebuild Pending Tasks table
     const pendingHeader = `| ID | Title | Priority | Tags | Created |\n|----|-------|----------|------|---------|`;
     const pendingRows = pending
-        .map((t) => `| ${t.id} | ${t.title} | ${t.priority} | ${t.tags.join(", ")} | ${t.created} |`)
+        .map((t) => tableRow([t.id, t.title, t.priority, t.tags.join(", "), t.created]))
         .join("\n");
     const pendingContent = pendingRows
         ? `${pendingHeader}\n${pendingRows}`
@@ -73,7 +74,7 @@ async function rebuildTaskIndex(root) {
         .sort((a, b) => (b.completed ?? "").localeCompare(a.completed ?? ""))
         .slice(0, 10);
     const completeRows = recentComplete
-        .map((t) => `| ${t.id} | ${t.title} | ${t.completed ?? ""} |`)
+        .map((t) => tableRow([t.id, t.title, t.completed ?? ""]))
         .join("\n");
     const completeContent = completeRows
         ? `${completeHeader}${completeRows}`
@@ -118,7 +119,7 @@ async function rebuildLearningsIndex(root) {
             const fm = doc.frontmatter;
             const tags = Array.isArray(fm["tags"]) ? fm["tags"].join(", ") : "";
             const status = fm["status"] ? String(fm["status"]) : "active";
-            rows.push(`| ${fm["id"]} | ${fm["title"]} | ${tags} | ${status} | ${fm["created"]} |`);
+            rows.push(tableRow([String(fm["id"]), String(fm["title"]), tags, status, String(fm["created"])]));
         }
         catch {
             // Skip invalid entries

@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { indexRebuild } from "./index-rebuild.js";
 import { taskCreate } from "./task-create.js";
 import { taskMove } from "./task-move.js";
+import { taskBlock } from "./task-block.js";
 import { learningCreate } from "./learning-create.js";
 import { setup } from "./setup.js";
 import { FileStore } from "../core/file-store.js";
@@ -35,6 +36,33 @@ describe("indexRebuild", () => {
     expect(index).toContain("| Pending | 1 |");
     expect(index).toContain("| Active | 1 |");
     expect(index).toContain("| TSK-002 | B | P2 |");
+  });
+
+  it("counts a blocked task in tasks/pending as Blocked and keeps its Pending row", async () => {
+    await taskCreate(new FileStore(tmp), { title: "A", priority: "P1", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskCreate(new FileStore(tmp), { title: "B", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting");
+
+    await indexRebuild(tmp, "tasks");
+
+    const index = await readFile(join(tmp, "tasks", "index.md"), "utf-8");
+    expect(index).toContain("| Pending | 1 |");
+    expect(index).toContain("| Blocked | 1 |");
+    expect(index).toContain("| Active | 0 |");
+    expect(index).toContain("| TSK-001 | A | P1 |");
+  });
+
+  it("escapes pipes in pending and completed task rows", async () => {
+    await taskCreate(new FileStore(tmp), { title: "Pending a | b", priority: "P1", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskCreate(new FileStore(tmp), { title: "Done c | d", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskMove(new FileStore(tmp), "TSK-002", "complete");
+
+    await indexRebuild(tmp, "tasks");
+
+    const index = await readFile(join(tmp, "tasks", "index.md"), "utf-8");
+    expect(index).toContain("| TSK-001 | Pending a \\| b | P1 |  |");
+    expect(index).toContain("| TSK-002 | Done c \\| d |");
+    expect(index).not.toMatch(/\| Pending a \| b \|/);
   });
 
   it("handles empty backlog", async () => {

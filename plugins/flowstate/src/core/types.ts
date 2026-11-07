@@ -118,6 +118,44 @@ export const validateSeverity = (v: string): Severity => {
   return v as Severity;
 };
 
+// Titles live on one frontmatter line and in one index-table row; a line break would
+// truncate the stored title and break the row.
+export const validateTitle = (v: string): string => {
+  if (v.trim() === "") {
+    throw new InvalidArgumentError("Invalid title: it must not be empty or whitespace-only.");
+  }
+  if (/[\r\n]/.test(v)) {
+    throw new InvalidArgumentError(
+      "Invalid title: it must be a single line. Put the extra lines in --description or --body.",
+    );
+  }
+  return v;
+};
+
+export type IdeaDecision = Exclude<IdeaStatus, "pending">;
+export type ReportDecision = Exclude<ReportStatus, "pending">;
+
+const IDEA_DECISIONS = new Set<string>(["approved", "discarded"]);
+const REPORT_DECISIONS = new Set<string>(["triaged", "discarded"]);
+
+export const validateIdeaDecision = (v: string): IdeaDecision => {
+  if (!IDEA_DECISIONS.has(v)) {
+    throw new InvalidArgumentError(
+      `Invalid --status value: "${v}". Expected: approved, discarded`,
+    );
+  }
+  return v as IdeaDecision;
+};
+
+export const validateReportDecision = (v: string): ReportDecision => {
+  if (!REPORT_DECISIONS.has(v)) {
+    throw new InvalidArgumentError(
+      `Invalid --status value: "${v}". Expected: triaged, discarded`,
+    );
+  }
+  return v as ReportDecision;
+};
+
 export interface ParsedDocument<T = Record<string, unknown>> {
   readonly frontmatter: T;
   readonly body: string;

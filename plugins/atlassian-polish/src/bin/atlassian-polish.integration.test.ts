@@ -45,6 +45,12 @@ describe("atlassian-polish CLI", () => {
     });
   });
 
+  it("exits 2 when a value flag is followed by another flag", () => {
+    const r = run(["md-to-adf", "--file", "--pretty"], "x");
+    expect(r.status).toBe(2);
+    expect(r.stderr).toContain('Flag --file needs a value, but "--pretty" reads as the next flag');
+  });
+
   it("exits 2 when --jira-base comes without --projects", () => {
     const r = run(["md-to-adf", "--jira-base", "https://acme.atlassian.net"], "x");
     expect(r.status).toBe(2);

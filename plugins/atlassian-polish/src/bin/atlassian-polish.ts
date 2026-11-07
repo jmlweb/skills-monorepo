@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { markdownToAdf } from "../core/md-to-adf.js";
 import { readbackToMarkdown } from "../core/readback.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import { parseFlags } from "../core/args.js";
 import { blocking, scanLossy } from "../core/lossy-scan.js";
 
 const EXIT_OK = 0;
@@ -36,21 +37,8 @@ const HELP = [
   "  --adf <path>    ADF JSON from REST v3 (the most reliable source)",
 ].join("\n");
 
-function parseFlags(args: readonly string[]): Record<string, string> {
-  const flags: Record<string, string> = {};
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i]!;
-    if (!arg.startsWith("--")) continue;
-    const next = args[i + 1];
-    if (next && !next.startsWith("--")) {
-      flags[arg.slice(2)] = next;
-      i++;
-    } else {
-      flags[arg.slice(2)] = "true";
-    }
-  }
-  return flags;
-}
+// Flags that may appear without a value; every other flag needs one.
+const SWITCHES: ReadonlySet<string> = new Set(["pretty"]);
 
 function main(): number {
   const [command, ...rest] = process.argv.slice(2);
@@ -68,7 +56,7 @@ function main(): number {
     if (command !== "md-to-adf" && command !== "readback-to-md" && command !== "lossy-scan") {
       throw new InvalidArgumentError(`Unknown command: ${command}`);
     }
-    const flags = parseFlags(rest);
+    const flags = parseFlags(rest, SWITCHES);
     if (command === "lossy-scan") {
       const read = (flag: string): string | undefined => {
         const path = flags[flag];

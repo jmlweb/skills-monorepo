@@ -130,6 +130,17 @@ export function appendToBody(body: string, entry: string): string {
   return lines.join("\n");
 }
 
+// A literal "|" inside a cell would open a new column; "\|" is the Markdown escape.
+function escapeTableCell(cell: string): string {
+  return cell.replace(/\|/g, "\\|");
+}
+
+// The one row writer for every index table, so an incremental write (task-create) and a
+// full rebuild (index-rebuild) produce byte-identical rows (LRN-020).
+export function tableRow(cells: readonly string[]): string {
+  return `| ${cells.map(escapeTableCell).join(" | ")} |`;
+}
+
 export function addTableRow(
   content: string,
   heading: string,

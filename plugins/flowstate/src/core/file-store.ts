@@ -7,7 +7,7 @@ import { ENTITY_DIRS, ideaDir, reportDir, taskDir, taskIndexPath } from "./paths
 import { findEntityFile, listFiles, moveFile, readEntity, writeEntity } from "./fs.js";
 import { formatId } from "./id.js";
 import { titleToSlug } from "./slug.js";
-import { addTableRow } from "./markdown.js";
+import { addTableRow, tableRow } from "./markdown.js";
 import { indexRebuild } from "../commands/index-rebuild.js";
 import type {
   BacklogStore,
@@ -99,7 +99,13 @@ export class FileStore implements BacklogStore {
   private async addTaskIndexRow(frontmatter: Readonly<Record<string, unknown>>): Promise<void> {
     const indexPath = taskIndexPath(this.root);
     const tags = Array.isArray(frontmatter["tags"]) ? frontmatter["tags"].join(", ") : "";
-    const row = `| ${String(frontmatter["id"])} | ${String(frontmatter["title"])} | ${String(frontmatter["priority"])} | ${tags} | ${String(frontmatter["created"])} |`;
+    const row = tableRow([
+      String(frontmatter["id"]),
+      String(frontmatter["title"]),
+      String(frontmatter["priority"]),
+      tags,
+      String(frontmatter["created"]),
+    ]);
     const content = addTableRow(await readFile(indexPath, "utf-8"), "Pending Tasks", row);
     await writeFile(indexPath, incrementStat(content, "Pending"), "utf-8");
   }

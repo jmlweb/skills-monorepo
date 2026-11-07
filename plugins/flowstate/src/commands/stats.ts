@@ -1,5 +1,7 @@
 import { taskDir, ideaDir, reportDir, learningsDir } from "../core/paths.js";
 import { listFiles, readEntity } from "../core/fs.js";
+import { BUCKETS, taskStatusOf } from "../core/store.js";
+import type { TaskStatus } from "../core/types.js";
 import { join } from "node:path";
 import { readdir } from "node:fs/promises";
 
@@ -14,34 +16,19 @@ export interface BacklogStats {
 }
 
 export async function stats(root: string): Promise<BacklogStats> {
-  let pending = 0;
-  let active = 0;
-  let blocked = 0;
-  let complete = 0;
+  const counts: Record<TaskStatus, number> = { pending: 0, active: 0, blocked: 0, complete: 0 };
 
-  const [taskCounts, pendingIdeas, pendingReports, learnings] = await Promise.all([
+  const [taskStatuses, pendingIdeas, pendingReports, learnings] = await Promise.all([
     Promise.all(
-      (["pending", "active", "complete"] as const).map(async (status) => {
-        const dir = taskDir(root, status);
-        const files = await listFiles(dir);
-        const filtered = files.filter((f) => f.name !== "index.md");
-
-        if (status === "active") {
-          let activeCount = 0;
-          let blockedCount = 0;
-          for (const file of filtered) {
+      BUCKETS.task.map(async (bucket) => {
+        const dir = taskDir(root, bucket);
+        const files = (await listFiles(dir)).filter((f) => f.name !== "index.md");
+        return Promise.all(
+          files.map(async (file) => {
             const doc = await readEntity(join(dir, file.name));
-            const fm = doc.frontmatter as Record<string, unknown>;
-            if (fm["blocked-by"]) {
-              blockedCount++;
-            } else {
-              activeCount++;
-            }
-          }
-          return { status, active: activeCount, blocked: blockedCount, count: 0 };
-        }
-
-        return { status, count: filtered.length, active: 0, blocked: 0 };
+            return taskStatusOf(bucket, doc.frontmatter as Record<string, unknown>);
+          }),
+        );
       }),
     ),
     listFiles(ideaDir(root, "pending")).then((f) => f.length),
@@ -49,13 +36,7 @@ export async function stats(root: string): Promise<BacklogStats> {
     readdir(learningsDir(root)).then((e) => e.filter((n) => n.startsWith("LRN-")).length).catch(() => 0),
   ]);
 
-  for (const c of taskCounts) {
-    if (c.status === "pending") pending = c.count;
-    else if (c.status === "active") {
-      active = c.active;
-      blocked = c.blocked;
-    } else if (c.status === "complete") complete = c.count;
-  }
+  for (const status of taskStatuses.flat()) counts[status] += 1;
 
-  return { pending, active, blocked, complete, pendingIdeas, pendingReports, learnings };
+  return { ...counts, pendingIdeas, pendingReports, learnings };
 }

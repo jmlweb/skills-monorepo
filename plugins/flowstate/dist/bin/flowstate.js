@@ -25,9 +25,10 @@ import { learningList } from "../commands/learning-list.js";
 import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { learningCompress } from "../commands/learning-compress.js";
-import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
+import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, validateTitle, } from "../core/types.js";
 import { resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
+import { parseArgs } from "../core/args.js";
 import { FileStore } from "../core/file-store.js";
 import { isSharedEnabled, registerBacklog, resolveSharedBacklogs, } from "../core/registry.js";
 const VALID_ENTITY_TYPES = new Set([
@@ -122,30 +123,22 @@ function asTaskStatus(value) {
     }
     return value;
 }
-function parseArgs(args) {
-    const flags = {};
-    const flagArrays = {};
-    const positional = [];
-    for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-        if (arg.startsWith("--")) {
-            const key = arg.slice(2);
-            const next = args[i + 1];
-            if (next && !next.startsWith("--")) {
-                flags[key] = next;
-                (flagArrays[key] ??= []).push(next);
-                i++;
-            }
-            else {
-                flags[key] = "true";
-                (flagArrays[key] ??= []).push("true");
-            }
-        }
-        else {
-            positional.push(arg);
-        }
+// Flags that may appear without a value; every other flag needs one.
+const SWITCHES = new Set([
+    "json",
+    "private",
+    "dry-run",
+    "all",
+    "include-archived",
+]);
+function parseArgsOrExit(args) {
+    try {
+        return parseArgs(args, SWITCHES);
     }
-    return { flags, flagArrays, positional };
+    catch (err) {
+        console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+        process.exit(1);
+    }
 }
 // Registration is best-effort: a failed write must never fail the command that triggered it.
 async function registerForSharing(root) {
@@ -178,9 +171,12 @@ async function sharedForScope(root, scope) {
 }
 function required(flags, key) {
     const val = flags[key];
-    if (!val) {
+    if (val === undefined) {
         console.error(`Missing required flag: --${key}`);
         process.exit(1);
+    }
+    if (val.trim() === "") {
+        throw new InvalidArgumentError(`Flag --${key} cannot be empty or whitespace-only.`);
     }
     return val;
 }
@@ -201,6 +197,31 @@ function parseCriteriaIndexes(value) {
         }
         return Number(trimmed);
     });
+}
+function parseLimit(value) {
+    if (value === undefined)
+        return undefined;
+    if (!/^\d+$/.test(value) || Number(value) < 1) {
+        throw new InvalidArgumentError(`Invalid --limit value: "${value}". Use a positive integer, e.g. --limit 5.`);
+    }
+    return Number(value);
+}
+function parseCriteria(value) {
+    if (value === undefined)
+        return [];
+    const usage = `Invalid --criteria value. Use a JSON array of non-empty strings, e.g. --criteria '["Tests pass","Docs updated"]'.`;
+    let parsed;
+    try {
+        parsed = JSON.parse(value);
+    }
+    catch {
+        throw new InvalidArgumentError(usage);
+    }
+    if (!Array.isArray(parsed) ||
+        !parsed.every((item) => typeof item === "string" && item.trim() !== "")) {
+        throw new InvalidArgumentError(usage);
+    }
+    return parsed;
 }
 async function getBody(flags) {
     const body = flags["body"];
@@ -227,7 +248,7 @@ async function main() {
         console.error(`Unknown command: ${command}\n\n${TOP_LEVEL_HELP}`);
         process.exit(1);
     }
-    const { flags, flagArrays, positional } = parseArgs(rest);
+    const { flags, flagArrays, positional } = parseArgsOrExit(rest);
     const json = flags["json"] === "true";
     try {
         // Resolved once here; commands only ever see the final backlog directory.
@@ -274,11 +295,11 @@ async function main() {
             case "task-create": {
                 const body = await getBody(flags);
                 const result = await taskCreate(store, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     priority: validatePriority(required(flags, "priority")),
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
                     description: body || flags["description"] || "",
-                    criteria: flags["criteria"] ? JSON.parse(flags["criteria"]) : [],
+                    criteria: parseCriteria(flags["criteria"]),
                     source: flags["source"] ?? "manual",
                     dependsOn: flags["depends-on"]
                         ? flags["depends-on"].split(",").map((t) => t.trim())
@@ -289,7 +310,7 @@ async function main() {
             }
             case "task-list": {
                 const status = flags["status"] ? asTaskStatus(flags["status"]) : undefined;
-                const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+                const limit = parseLimit(flags["limit"]);
                 const items = await taskList(store, status, limit);
                 output(items, json);
                 break;
@@ -423,7 +444,7 @@ async function main() {
             case "idea-create": {
                 const body = await getBody(flags);
                 const result = await ideaCreate(store, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     complexity: validateComplexity(required(flags, "complexity")),
                     body,
                 });
@@ -441,7 +462,7 @@ async function main() {
                     }
                     status = statusRaw;
                 }
-                const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+                const limit = parseLimit(flags["limit"]);
                 const result = await ideaList(store, {
                     ...(status !== undefined ? { status } : {}),
                     ...(limit !== undefined ? { limit } : {}),
@@ -455,14 +476,14 @@ async function main() {
                     console.error("Usage: flowstate idea-move <id> --status <approved|discarded>");
                     process.exit(1);
                 }
-                const result = await ideaMove(store, id, required(flags, "status"), flags["task-id"]);
+                const result = await ideaMove(store, id, validateIdeaDecision(required(flags, "status")), flags["task-id"]);
                 output(result, json);
                 break;
             }
             case "report-create": {
                 const body = await getBody(flags);
                 const result = await reportCreate(store, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     type: validateReportType(required(flags, "type")),
                     severity: validateSeverity(required(flags, "severity")),
                     body,
@@ -481,7 +502,7 @@ async function main() {
                     }
                     status = statusRaw;
                 }
-                const limit = flags["limit"] ? parseInt(flags["limit"], 10) : undefined;
+                const limit = parseLimit(flags["limit"]);
                 const result = await reportList(store, {
                     ...(status !== undefined ? { status } : {}),
                     ...(limit !== undefined ? { limit } : {}),
@@ -495,14 +516,14 @@ async function main() {
                     console.error("Usage: flowstate report-move <id> --status <triaged|discarded>");
                     process.exit(1);
                 }
-                const result = await reportMove(store, id, required(flags, "status"), flags["task-id"]);
+                const result = await reportMove(store, id, validateReportDecision(required(flags, "status")), flags["task-id"]);
                 output(result, json);
                 break;
             }
             case "learning-create": {
                 const body = await getBody(flags);
                 const result = await learningCreate(root, {
-                    title: required(flags, "title"),
+                    title: validateTitle(required(flags, "title")),
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
                     body,
                     task: flags["task"],
@@ -516,7 +537,7 @@ async function main() {
                 const result = await learningSearch(root, {
                     tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : undefined,
                     query,
-                    limit: flags["limit"] ? parseInt(flags["limit"], 10) : undefined,
+                    limit: parseLimit(flags["limit"]),
                     includeBody: flags["body"] === "true",
                     scope,
                     shared: await sharedForScope(root, scope),
@@ -572,7 +593,7 @@ async function main() {
                 }
                 const body = flags["body"] ? await getBody(flags) : undefined;
                 const updateInput = {
-                    ...(flags["title"] !== undefined ? { title: flags["title"] } : {}),
+                    ...(flags["title"] !== undefined ? { title: validateTitle(flags["title"]) } : {}),
                     ...(flags["tags"] !== undefined ? { tags: flags["tags"].split(",").map((t) => t.trim()) } : {}),
                     ...(body !== undefined ? { body } : {}),
                 };
@@ -613,30 +634,41 @@ async function main() {
         process.exit(1);
     }
 }
+function isRecord(value) {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 // Plain rows are one line per entity; escape characters that would split a row or column.
+// A nested object has no row shape of its own, so it prints as JSON rather than [object Object].
 function toPlainCell(value) {
-    return String(value).replace(/\r?\n|\r/g, "\\n").replace(/\t/g, "\\t");
+    const text = isRecord(value) ? JSON.stringify(value) : String(value);
+    return text.replace(/\r?\n|\r/g, "\\n").replace(/\t/g, "\\t");
+}
+function printRows(items) {
+    for (const item of items) {
+        if (!isRecord(item))
+            continue;
+        console.log(Object.values(item)
+            .filter((v) => v !== undefined)
+            .map(toPlainCell)
+            .join("\t"));
+    }
 }
 function output(data, json) {
     if (json) {
         console.log(JSON.stringify(data, null, 2));
     }
-    else if (typeof data === "object" && data !== null) {
-        if (Array.isArray(data)) {
-            for (const item of data) {
-                if (typeof item === "object" && item !== null) {
-                    const record = item;
-                    console.log(Object.values(record)
-                        .filter((v) => v !== undefined)
-                        .map(toPlainCell)
-                        .join("\t"));
-                }
+    else if (Array.isArray(data)) {
+        printRows(data);
+    }
+    else if (isRecord(data)) {
+        for (const [key, value] of Object.entries(data)) {
+            // A list of objects under a key (task-doctor's fixed) gets one row per item.
+            if (Array.isArray(value) && value.some(isRecord)) {
+                console.log(`${key}:`);
+                printRows(value);
             }
-        }
-        else {
-            const record = data;
-            for (const [key, value] of Object.entries(record)) {
-                console.log(`${key}: ${value}`);
+            else {
+                console.log(`${key}: ${isRecord(value) ? JSON.stringify(value) : value}`);
             }
         }
     }
