@@ -1,3 +1,4 @@
+import type { TaskStatus } from "./types.js";
 export type StoredType = "task" | "idea" | "report";
 export type TaskBucket = "pending" | "active" | "complete";
 export type ClosableBucket = "pending" | "complete";
@@ -5,6 +6,8 @@ export type BucketOf<T extends StoredType> = T extends "task" ? TaskBucket : Clo
 export declare const BUCKETS: {
     readonly [T in StoredType]: readonly BucketOf<T>[];
 };
+export declare const BLOCKABLE_BUCKETS: readonly TaskBucket[];
+export declare function taskStatusOf(bucket: TaskBucket, frontmatter: Readonly<Record<string, unknown>>): TaskStatus;
 export interface StoredEntity {
     readonly type: StoredType;
     readonly id: string;

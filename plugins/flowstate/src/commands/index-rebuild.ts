@@ -3,6 +3,9 @@ import { join } from "node:path";
 import { taskDir, taskIndexPath, learningsIndexPath, learningsDir } from "../core/paths.js";
 import { listFiles, readEntity } from "../core/fs.js";
 import { updateStatsTable, replaceSection } from "../core/markdown.js";
+import type { TaskBucket } from "../core/store.js";
+import { taskStatusOf } from "../core/store.js";
+import type { TaskStatus } from "../core/types.js";
 import { readdir } from "node:fs/promises";
 
 export async function indexRebuild(
@@ -24,13 +27,15 @@ interface TaskInfo {
   tags: string[];
   created: string;
   completed: string | undefined;
-  status: string;
+  status: TaskStatus;
   blockedBy: string | undefined;
 }
 
 async function readTasksFromDir(
-  dir: string,
+  root: string,
+  bucket: TaskBucket,
 ): Promise<TaskInfo[]> {
+  const dir = taskDir(root, bucket);
   const files = await listFiles(dir);
   const tasks: TaskInfo[] = [];
 
@@ -45,7 +50,7 @@ async function readTasksFromDir(
       tags: Array.isArray(fm["tags"]) ? fm["tags"] as string[] : [],
       created: String(fm["created"] ?? ""),
       completed: fm["completed"] ? String(fm["completed"]) : undefined,
-      status: String(fm["status"] ?? ""),
+      status: taskStatusOf(bucket, fm),
       blockedBy: fm["blocked-by"] ? String(fm["blocked-by"]) : undefined,
     });
   }
@@ -57,19 +62,18 @@ async function rebuildTaskIndex(root: string): Promise<void> {
   const indexPath = taskIndexPath(root);
   let content = await readFile(indexPath, "utf-8");
 
-  const pending = await readTasksFromDir(taskDir(root, "pending"));
-  const active = await readTasksFromDir(taskDir(root, "active"));
-  const complete = await readTasksFromDir(taskDir(root, "complete"));
+  const pending = await readTasksFromDir(root, "pending");
+  const active = await readTasksFromDir(root, "active");
+  const complete = await readTasksFromDir(root, "complete");
 
-  const blockedCount = active.filter((t) => t.blockedBy).length;
-  const activeCount = active.length - blockedCount;
-
-  // Update stats
+  // Stats count by derived status, so a blocked task in pending/ is Blocked, not Pending.
+  const countStatus = (status: TaskStatus): number =>
+    [...pending, ...active, ...complete].filter((t) => t.status === status).length;
   content = updateStatsTable(content, {
-    Pending: pending.length,
-    Active: activeCount,
-    Blocked: blockedCount,
-    Complete: complete.length,
+    Pending: countStatus("pending"),
+    Active: countStatus("active"),
+    Blocked: countStatus("blocked"),
+    Complete: countStatus("complete"),
   });
 
   // Rebuild Active Tasks section

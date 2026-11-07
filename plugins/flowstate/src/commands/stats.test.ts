@@ -46,4 +46,13 @@ describe("stats", () => {
     const result = await stats(tmp);
     expect(result).toEqual({ pending: 0, active: 0, blocked: 1, complete: 0, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
   });
+
+  it("counts a blocked task that sits in tasks/pending as blocked, not pending", async () => {
+    await taskCreate(new FileStore(tmp), { title: "A", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskCreate(new FileStore(tmp), { title: "B", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
+    await taskBlock(new FileStore(tmp), "TSK-001", "waiting");
+
+    const result = await stats(tmp);
+    expect(result).toEqual({ pending: 1, active: 0, blocked: 1, complete: 0, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
+  });
 });

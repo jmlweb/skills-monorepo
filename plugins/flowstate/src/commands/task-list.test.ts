@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { taskList } from "./task-list.js";
 import { taskCreate } from "./task-create.js";
 import { taskMove } from "./task-move.js";
+import { taskBlock } from "./task-block.js";
 import { setup } from "./setup.js";
 import { FileStore } from "../core/file-store.js";
 
@@ -73,6 +74,35 @@ describe("taskList", () => {
     const active = await taskList(new FileStore(tmp), "active");
     expect(active).toHaveLength(1);
     expect(active[0]!.id).toBe("TSK-002");
+  });
+
+  it("lists blocked tasks from pending and active buckets under --status blocked", async () => {
+    for (const title of ["Pending blocked", "Active blocked", "Plain pending"]) {
+      await taskCreate(new FileStore(tmp), {
+        title,
+        priority: "P2",
+        tags: [],
+        description: "",
+        criteria: [],
+        source: "manual",
+        dependsOn: [],
+      });
+    }
+    await taskBlock(new FileStore(tmp), "TSK-001", "design");
+    await taskMove(new FileStore(tmp), "TSK-002", "active");
+    await taskBlock(new FileStore(tmp), "TSK-002", "api");
+
+    const blocked = await taskList(new FileStore(tmp), "blocked");
+    expect(blocked.map((t) => [t.id, t.status, t.blockedBy]).sort()).toEqual([
+      ["TSK-001", "blocked", "design"],
+      ["TSK-002", "blocked", "api"],
+    ]);
+
+    // pending names the bucket, so a blocked task that never started still lists there.
+    expect((await taskList(new FileStore(tmp), "pending")).map((t) => t.id).sort()).toEqual([
+      "TSK-001",
+      "TSK-003",
+    ]);
   });
 
   it("returns empty for no tasks", async () => {
