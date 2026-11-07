@@ -3,7 +3,7 @@ id: TSK-072
 title: Fix: test-static-scan drops a test whose body holds a quote inside a regex literal
 status: pending
 priority: P3
-tags: []
+tags: [dev-workflow, test-static-scan]
 created: 2026-11-05
 source: report/RPT-024
 depends-on: []

@@ -3,7 +3,7 @@ id: TSK-078
 title: flowstate groom-tasks skill for relevance and priority
 status: pending
 priority: P2
-tags: []
+tags: [flowstate, skill, grooming]
 created: 2026-11-06
 source: idea/PLN-032
 depends-on: []
@@ -61,3 +61,4 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-07] The GitHub Issues backend risk now points at TSK-081: TSK-057 was split and closed

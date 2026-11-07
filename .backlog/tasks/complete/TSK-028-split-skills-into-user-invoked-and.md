@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [skills, invocation, context]
 created: 2026-10-08
-source: plan/PLN-009
+source: idea/PLN-009
 depends-on: [TSK-039]
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # Split skills into user-invoked and model-invoked
@@ -51,12 +52,5 @@ README grouping by invocation dropped from scope (review decision).
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Scope added from discarded PLN-018: next-task SKILL.md lines ~121/123 hand off to /flowstate:parallel operatively. If parallel stays model-invoked, rewrite as 'Call the Skill tool with flowstate:parallel'; if flipped to user-invoked, change to 'tell the user to run /flowstate:parallel <IDs>'.
-- [2026-10-08] Backlog check: criterion 7 and step 8 (one-line description test for user-invoked skills) are absorbed by TSK-038 lint rule 3. If TSK-038 lands first, satisfy criterion 7 by pointing at the lint rule instead of adding a separate test.
-- [2026-10-08] TSK-041: model-invoked skill descriptions follow docs/writing-skills.md section 6 (what clause, 3+ quoted triggers, Not for X). User-invoked ones stay one-line human-facing.
-- [2026-10-08] TSK-038 lint absorbs step 8 (one-line description guard for user-invoked skills); implement it as a lint rule, not a plugin test.
-- [2026-10-08] Started
-- [2026-10-08] Verdicts user-invoked (disable-model-invocation, one-line description): flowstate condense-tasks, condense-learnings, setup, parallel, review-idea, triage-report; atlassian-polish atlassian-setup; dev-workflow agent-handoff, pr-ready; repo-local release-plugin. Reason: hand-fired, no model or skill reaches them autonomously (retro was already user-invoked).
-- [2026-10-08] Verdicts model-invoked: report and add-learning (model files findings on its own); all other flowstate CRUD skills, dev-workflow commit/changeset/check-docs/ci-triage/open-pr/review-pr, polish-atlassian, repo-local new-plugin/new-skill (auto-scaffold on request).
-- [2026-10-08] Side effects: next-task handoffs now tell the user to run /flowstate:parallel and /flowstate:review-idea; routing.json entries and negatives for flipped skills removed; condense-tasks/condense-learnings/parallel tier-2 fires evals deleted; flowstate rank1Ratchet lowered 0.925 to 0.916 (same 3 misses, smaller denominator); routing-eval skips negative minimum when only one routable skill (atlassian-polish).
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

@@ -9,6 +9,7 @@ source: report/RPT-009
 depends-on: []
 started: 2026-10-24
 completed: 2026-10-24
+condensed: true
 ---
 
 # Fix: Skills put user text in double-quoted CLI args without a phrasing rule
@@ -36,8 +37,5 @@ Each free-text value either goes through `--body -` with a quoted heredoc or has
 ## Progress Log
 
 - [2026-10-19] Created
-- [2026-10-24] Started
-- [2026-10-24] criterion 1 — evidence: node --test scripts/lint-skills.test.mjs → 7 new shell-quoted-text tests pass (3 failed before the rule); rule flagged 30 unguarded sites before the skill fixes (2026-10-24)
-- [2026-10-24] criterion 2 — evidence: pnpm lint:skills --strict → 0 shell-quoted-text findings across 15 flowstate skills; {{DEPS}} renamed {{DEP_IDS}} (2026-10-24)
-- [2026-10-24] criterion 3 — evidence: pnpm lint:skills --strict → 0 error(s), 0 warning(s); pnpm test → exit 0 (2026-10-24)
 - [2026-10-24] Completed
+- [2026-11-07] Condensed

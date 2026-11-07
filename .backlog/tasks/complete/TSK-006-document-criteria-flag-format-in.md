@@ -9,6 +9,7 @@ source: report/email-analyzer-usage
 depends-on: []
 started: 2026-04-06
 completed: 2026-04-06
+condensed: true
 ---
 
 # Document --criteria flag format in triage-report and review-plan skills
@@ -31,6 +32,5 @@ The --criteria flag in task-create expects a JSON array but the skill templates 
 ## Progress Log
 
 - [2026-04-06] Created
-- [2026-04-06] Started
-- [2026-04-06] Completed
 - [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met (review-plan is now review-idea).
+- [2026-11-07] Condensed

@@ -9,6 +9,7 @@ source: report/RPT-011
 depends-on: []
 started: 2026-11-01
 completed: 2026-11-01
+condensed: true
 ---
 
 # Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm
@@ -39,10 +40,5 @@ Walk ancestors once from the package dir upward; at each level check `pnpm-lock.
 ## Progress Log
 
 - [2026-10-20] Created
-- [2026-11-01] Started
-- [2026-11-01] criterion 1 — evidence: pnpm vitest run src/commands/detect-test-runner.test.ts (detectPackageManager 'returns the manager of the nearest level holding any lockfile') → 14 passed (2026-11-01)
-- [2026-11-01] criterion 2 — evidence: pnpm vitest run src/commands/detect-test-runner.test.ts ('detects package-lock.json as npm') → passed (2026-11-01)
-- [2026-11-01] criterion 3 — evidence: detectRunnerInDir tests 'yarn.lock / package-lock.json in the package dir beat a pnpm-lock.yaml in an ancestor' fail on the old code, pass on the new (2026-11-01)
-- [2026-11-01] criterion 4 — evidence: TMPDIR=<dir with stray pnpm-lock.yaml> pnpm vitest run src/commands/detect-test-runner.test.ts → 14 passed (old code: 7 failed) (2026-11-01)
-- [2026-11-01] criterion 5 — evidence: pnpm build regenerated plugins/dev-workflow/dist/commands/detect-test-runner.{js,d.ts}; full pnpm test green (2026-11-01)
 - [2026-11-01] Completed
+- [2026-11-07] Condensed

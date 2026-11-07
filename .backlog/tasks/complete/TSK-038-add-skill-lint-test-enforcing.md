@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [skills, lint, ci]
 created: 2026-10-08
-source: plan/PLN-020
+source: idea/PLN-020
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # Add skill lint test enforcing the skill quality bar
@@ -72,7 +73,5 @@ The skills call the CLIs: about 25 distinct `flowstate.js` subcommands, plus `de
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Started
-- [2026-10-08] Implemented on branch worktree-agent-a85a46fcd92cdb2ae (6068285, ec2c919); awaiting merge. Annotations on TSK-028/033-035 done. Lint: 0 errors, 1 warning (polish-atlassian length, TSK-035).
-- [2026-10-08] Merged as dd424cc. Post-merge: pnpm build/typecheck/test green, pnpm lint:skills 0 errors / 1 warning (polish-atlassian length, TSK-035). Flowstate stays 2.9.0 (main already past 2.8.1).
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

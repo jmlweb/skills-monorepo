@@ -5,10 +5,11 @@ status: complete
 priority: P3
 tags: [writing-rules, audit, flowstate]
 created: 2026-10-08
-source: plan/PLN-013
+source: idea/PLN-013
 depends-on: [TSK-028, TSK-032, TSK-041]
 started: 2026-10-09
 completed: 2026-10-11
+condensed: true
 ---
 
 # Audit flowstate and repo-local skills against writing rules
@@ -39,8 +40,5 @@ Steps 4-7 of PLN-013. Depends on the rules task and TSK-028.
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] TSK-041: audit also rewrites workflow-summary descriptions to the docs/writing-skills.md section 6 shape and considers a section 7 Rationalizations table for discipline skills.
-- [2026-10-08] Audit ends by clearing its plugin's pnpm lint:skills warnings (TSK-038); a follow-up flips CI to --strict.
-- [2026-10-09] Started
-- [2026-10-11] Sandbox verification of 18 audited skills vs pre-slim (8607a4e^): all CLI steps run. Found+fixed: Done-when lines inside code fences (parallel, idea, check-task, next-task, overview, learnings) moved below fences; complete-task dedupe check restored. Not exercised: parallel subagents/worktrees (dry run), interactive prompts (simulated). Minor wording softening left: parallel subagent backlog prohibition, overview never-edit-index.
 - [2026-10-11] Completed
+- [2026-11-07] Condensed

@@ -5,7 +5,7 @@ status: complete
 priority: P2
 tags: []
 created: 2026-10-06
-source: plan/PLN-002
+source: idea/PLN-002
 depends-on: [TSK-019]
 started: 2026-10-06
 completed: 2026-10-06

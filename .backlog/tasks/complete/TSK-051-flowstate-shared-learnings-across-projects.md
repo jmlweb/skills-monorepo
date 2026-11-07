@@ -9,6 +9,7 @@ source: idea/PLN-026
 depends-on: []
 started: 2026-10-15
 completed: 2026-10-16
+condensed: true
 ---
 
 # flowstate: shared learnings across projects, on by default
@@ -57,6 +58,5 @@ Learnings are the one entity that carries across projects (tooling footguns, Cla
 ## Progress Log
 
 - [2026-10-15] Created
-- [2026-10-15] Started
-- [2026-10-15] Implemented registry, scope and source; shared learnings on by default with FLOWSTATE_SHARED=off opt-out. Full suite green: flowstate 314, dev-workflow 145, atlassian-polish 37, scripts 98. lint:skills 0/0; claude plugin validate passes for marketplace and flowstate. flowstate bumped to 2.15.0. Integrity script and its fixture now disable sharing so tests do not write the real registry. Not committed; TSK-051 stays active for review.
 - [2026-10-16] Completed
+- [2026-11-07] Condensed

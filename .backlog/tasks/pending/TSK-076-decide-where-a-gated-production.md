@@ -3,7 +3,7 @@ id: TSK-076
 title: Decide where a gated production protocol lives
 status: pending
 priority: P3
-tags: []
+tags: [flowstate, kickstart]
 created: 2026-11-06
 source: idea/PLN-034
 depends-on: []

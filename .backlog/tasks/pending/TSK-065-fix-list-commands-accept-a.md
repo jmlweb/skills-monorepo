@@ -3,7 +3,7 @@ id: TSK-065
 title: Fix: list commands accept a negative or non-numeric --limit
 status: pending
 priority: P4
-tags: []
+tags: [flowstate, cli]
 created: 2026-10-26
 source: report/RPT-017
 depends-on: []

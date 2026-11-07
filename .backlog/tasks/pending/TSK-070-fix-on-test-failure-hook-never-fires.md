@@ -3,7 +3,7 @@ id: TSK-070
 title: Fix: on-test-failure hook never fires: wrong event and nonexistent exit_code field
 status: pending
 priority: P3
-tags: []
+tags: [flowstate, hooks]
 created: 2026-11-01
 source: report/RPT-022
 depends-on: []
@@ -13,7 +13,6 @@ depends-on: []
 
 ## Description
 
-### Description
 From RPT-022. `plugins/flowstate/hooks/hooks.json:3-13` registers `on-test-failure.sh` on `PostToolUse`, which runs only after a tool succeeds, and the script reads `.tool_output.exit_code` (`plugins/flowstate/hooks/on-test-failure.sh:8`), a field no hook input has. The README promise (`plugins/flowstate/README.md:241`) is never kept. Both hooks also print top-level `additionalContext` instead of `hookSpecificOutput`.
 
 ### Approach

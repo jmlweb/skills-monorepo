@@ -3,7 +3,7 @@ id: TSK-067
 title: Fix: md-to-adf turns a fenced code block inside a list item into inline text
 status: pending
 priority: P3
-tags: []
+tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-019
 depends-on: []

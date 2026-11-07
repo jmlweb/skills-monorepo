@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [flowstate, skill, retro]
 created: 2026-10-08
-source: plan/PLN-012
+source: idea/PLN-012
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # Add retro skill that turns session mistakes into checks
@@ -58,6 +59,5 @@ Idea from mattpocock/skills `retro`. Our `add-learning` records lessons but neve
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Started
-- [2026-10-08] Merged 8aefeb7; dogfood filed TSK-044..048
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

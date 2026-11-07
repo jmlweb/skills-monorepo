@@ -32,7 +32,7 @@ The caveman repo is not owned by jmlweb, so the upstream change goes through a f
 
 - [ ] Upstream PR opened against JuliusBrussee/caveman adding model: sonnet to plugins/caveman/agents/cavecrew-builder.md, matching the sibling agents layout
 - [ ] PR body states why sonnet and not haiku: the builder re-reads and verifies its own diff
-- [ ] Every place in this repo that spawns caveman:cavecrew-builder passes model: sonnet explicitly until the upstream fix ships (grep finds none without it)
+- [x] Every place in this repo that spawns caveman:cavecrew-builder passes model: sonnet explicitly until the upstream fix ships (grep finds none without it) — evidence: git grep cavecrew-builder outside .backlog → no matches, no spawn site exists in this repo (2026-11-07)
 - [ ] A learning records the rule: any Agent spawn without a model inherits the caller model, so pin one on every spawn
 
 ## Notes
@@ -42,3 +42,4 @@ The caveman repo is not owned by jmlweb, so the upstream change goes through a f
 ## Progress Log
 
 - [2026-11-05] Created
+- [2026-11-07] Checked 2026-11-07: upstream main and installed caveman 4.0.1 still have no model field on cavecrew-builder, so the PR is still needed. gh is not authenticated on this Mac; run gh auth login before criterion 1.

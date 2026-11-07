@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [skills, evals, routing]
 created: 2026-10-08
-source: plan/PLN-021
+source: idea/PLN-021
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # Add routing evals for skill descriptions
@@ -61,7 +62,5 @@ Why we need it: flowstate has 18 skills with overlapping vocabulary (`idea`/`add
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Started
-- [2026-10-08] Merged d189a65; tier-2 run 10/10 pass (1 run each, check-task/next-task hit max_turns 4); claude plugin details token-cost check not run
-- [2026-10-08] Completed with criterion 5 unverified: claude plugin details token cost not run (evals/ holds no skills/agents/hooks). Criterion 4 met via prompt.md+graders (LRN-011), not case.yaml.
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

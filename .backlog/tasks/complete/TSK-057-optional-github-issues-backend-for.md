@@ -1,14 +1,15 @@
 ---
 id: TSK-057
 title: Optional GitHub Issues backend for tasks, ideas and reports
-status: blocked
+status: complete
 priority: P2
-tags: []
+tags: [flowstate, store, github]
 created: 2026-10-19
 source: idea/PLN-027
 depends-on: []
 started: 2026-10-22
-blocked-by: Phase 1 (criteria 1, 2, 4) landed on hustle/maintainer/task-2026-10-22. Phase 2 remains: criteria 3, 5-11 need the gh wrapper, GithubStore, resolveStore backend selection, setup --github, GitHub-mode compress/condense/stats/doctor/hook, stub-gh contract tests and docs. Too large for one unattended run; split Phase 2 into its own task.
+completed: 2026-11-07
+condensed: true
 ---
 
 # Optional GitHub Issues backend for tasks, ideas and reports
@@ -42,9 +43,6 @@ Approach: Phase 1 introduces a BacklogStore seam (FileStore extraction, commands
 ## Progress Log
 
 - [2026-10-19] Created
-- [2026-10-22] Started
-- [2026-10-22] criterion 1 — evidence: pnpm vitest run src/core/store.contract.test.ts → 10 passed against FileStore; full suite 314 baseline tests unchanged and green (331 total) (2026-10-22)
-- [2026-10-22] criterion 2 — evidence: pnpm typecheck → 0 errors with every task/idea/report command taking BacklogStore; learning commands still take root; pnpm vitest run → 331 passed (2026-10-22)
-- [2026-10-22] criterion 4 — evidence: pnpm vitest run src/plugin.test.ts src/commands/report-list.test.ts → 7 passed; the skills test flags 20 folder-read lines in the HEAD~1 skills and 0 now; pnpm lint:skills → 0 errors (2026-10-22)
-- [2026-10-22] Blocked: Phase 1 (criteria 1, 2, 4) landed on hustle/maintainer/task-2026-10-22. Phase 2 remains: criteria 3, 5-11 need the gh wrapper, GithubStore, resolveStore backend selection, setup --github, GitHub-mode compress/condense/stats/doctor/hook, stub-gh contract tests and docs. Too large for one unattended run; split Phase 2 into its own task.
-- [2026-10-22] FileStore.list/find read a missing ideas/ or reports/ folder as empty (old backlogs; skills now call report-list); tests in idea-list.test.ts and report-list.test.ts → pass (2026-10-22)
+- [2026-11-07] Completed
+- [2026-11-07] Condensed
+- [2026-11-07] Split: phase 1 merged in 53a52a4 (#10), scope done. Criteria 3 and 5-11 moved to TSK-081, approved by the user 2026-11-07. Phase 1 evidence (criteria 1, 2, 4): store.contract.test.ts 10 passed, typecheck 0 errors, plugin.test.ts and report-list.test.ts 7 passed, all on 2026-10-22

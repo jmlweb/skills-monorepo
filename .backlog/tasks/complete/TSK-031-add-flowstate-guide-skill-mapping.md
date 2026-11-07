@@ -5,10 +5,11 @@ status: complete
 priority: P3
 tags: [flowstate, skill, docs]
 created: 2026-10-08
-source: plan/PLN-010
+source: idea/PLN-010
 depends-on: [TSK-030]
 started: 2026-10-09
 completed: 2026-10-09
+condensed: true
 ---
 
 # Add flowstate guide skill mapping the flows
@@ -57,7 +58,5 @@ Idea from mattpocock/skills `ask-matt`: a router over user-invoked skills, organ
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-09] Started
-- [2026-10-09] Added skills/guide/SKILL.md, SKILL.md table row, README row, AGENTS.md sync rule
-- [2026-10-09] Bumped flowstate to 2.12.0; lint:skills, plugin validate, pnpm test all pass
 - [2026-10-09] Completed
+- [2026-11-07] Condensed

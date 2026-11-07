@@ -9,6 +9,7 @@ source: report/RPT-006
 depends-on: []
 started: 2026-10-09
 completed: 2026-10-09
+condensed: true
 ---
 
 # Fix: review-idea approve nests idea headings under empty Description and duplicates Notes
@@ -42,6 +43,5 @@ completed: 2026-10-09
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-09] Started
-- [2026-10-09] Fixed in task-create (embedUnderDescription: lift idea Notes, demote ## headings, fence-aware). Added task-normalize command to merge duplicate Notes; repaired TSK-024/025/026 through it.
 - [2026-10-09] Completed
+- [2026-11-07] Condensed

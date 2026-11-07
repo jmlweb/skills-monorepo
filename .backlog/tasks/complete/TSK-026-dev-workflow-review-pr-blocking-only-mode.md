@@ -5,10 +5,11 @@ status: complete
 priority: P3
 tags: [dev-workflow, review-pr]
 created: 2026-10-08
-source: plan/PLN-005
+source: idea/PLN-005
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # dev-workflow: review-pr blocking-only mode
@@ -37,7 +38,7 @@ Make review-pr report only blocking/important findings by default and post only 
 
 ## Notes
 
-- Keep SKILL.md within the 150-line house range (76 lines today).
+
 
 ## Acceptance Criteria
 
@@ -59,3 +60,4 @@ Make review-pr report only blocking/important findings by default and post only 
 - [2026-10-08] Created
 - [2026-10-08] Started
 - [2026-10-08] Completed
+- [2026-11-07] Condensed
