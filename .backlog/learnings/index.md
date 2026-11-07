@@ -56,3 +56,5 @@
 | LRN-050 | Worktree guard rejects printf -- pipelines, not only git | worktree, tooling, shell, isolation-guard | active | 2026-11-07 |
 | LRN-051 | A wider table row cannot be told apart from an unescaped pipe, so md-to-adf refuses it | atlassian-polish, md-to-adf, tables, design | active | 2026-11-07 |
 | LRN-052 | A conditional template block needs a negative fixture check in the sandbox | kickstart, sandbox, templates, testing | active | 2026-11-07 |
+| LRN-053 | PostToolUse never sees a failed Bash call; key PostToolUseFailure on the Exit code N line of error | flowstate, hooks, claude-code | active | 2026-11-07 |
+| LRN-054 | Worktree isolation guard inspects command text: any payload mentioning git is refused | tooling, worktree, agents, isolation-guard | active | 2026-11-07 |
