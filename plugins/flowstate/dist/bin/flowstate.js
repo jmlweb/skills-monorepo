@@ -613,30 +613,41 @@ async function main() {
         process.exit(1);
     }
 }
+function isRecord(value) {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 // Plain rows are one line per entity; escape characters that would split a row or column.
+// A nested object has no row shape of its own, so it prints as JSON rather than [object Object].
 function toPlainCell(value) {
-    return String(value).replace(/\r?\n|\r/g, "\\n").replace(/\t/g, "\\t");
+    const text = isRecord(value) ? JSON.stringify(value) : String(value);
+    return text.replace(/\r?\n|\r/g, "\\n").replace(/\t/g, "\\t");
+}
+function printRows(items) {
+    for (const item of items) {
+        if (!isRecord(item))
+            continue;
+        console.log(Object.values(item)
+            .filter((v) => v !== undefined)
+            .map(toPlainCell)
+            .join("\t"));
+    }
 }
 function output(data, json) {
     if (json) {
         console.log(JSON.stringify(data, null, 2));
     }
-    else if (typeof data === "object" && data !== null) {
-        if (Array.isArray(data)) {
-            for (const item of data) {
-                if (typeof item === "object" && item !== null) {
-                    const record = item;
-                    console.log(Object.values(record)
-                        .filter((v) => v !== undefined)
-                        .map(toPlainCell)
-                        .join("\t"));
-                }
+    else if (Array.isArray(data)) {
+        printRows(data);
+    }
+    else if (isRecord(data)) {
+        for (const [key, value] of Object.entries(data)) {
+            // A list of objects under a key (task-doctor's fixed) gets one row per item.
+            if (Array.isArray(value) && value.some(isRecord)) {
+                console.log(`${key}:`);
+                printRows(value);
             }
-        }
-        else {
-            const record = data;
-            for (const [key, value] of Object.entries(record)) {
-                console.log(`${key}: ${value}`);
+            else {
+                console.log(`${key}: ${isRecord(value) ? JSON.stringify(value) : value}`);
             }
         }
     }

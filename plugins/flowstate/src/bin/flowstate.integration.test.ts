@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, afterAll } from "vitest";
-import { mkdtemp, rm, readFile, readdir, mkdir, realpath } from "node:fs/promises";
+import { mkdtemp, rm, readFile, readdir, mkdir, realpath, writeFile } from "node:fs/promises";
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -316,6 +316,26 @@ describe("CLI integration", () => {
 
     const json = runJson("learning-list") as { body: string }[];
     expect(json[0]!.body).toContain("line a\n\nline b");
+  });
+
+  it("task-doctor plain output prints one tab-separated row per fix", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("task-create", "--title", "Drifted", "--priority", "P2", "--description", "x");
+    run("task-move", "TSK-001", "--to", "complete");
+    const path = join(tmp, ".backlog/tasks/complete/TSK-001-drifted.md");
+    const original = await readFile(path, "utf-8");
+    await writeFile(path, original.replace("status: complete", "status: done"), "utf-8");
+
+    const out = run("task-doctor");
+    expect(out).not.toContain("[object Object]");
+    const lines = out.split("\n");
+    expect(lines[0]).toBe("scanned: 1");
+    expect(lines[1]).toBe("fixed:");
+    const cells = lines[2]!.split("\t");
+    // The CLI resolves the backlog through realpath, so compare the path by its tail (LRN-036).
+    expect(cells[1]).toMatch(/\/tasks\/complete\/TSK-001-drifted\.md$/);
+    expect([cells[0], ...cells.slice(2)]).toEqual(["TSK-001", "complete", "done", "complete"]);
+    expect(lines).toHaveLength(3);
   });
 
   it("idea-list lists pending ideas and supports --status filter", () => {
