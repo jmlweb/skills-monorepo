@@ -28,7 +28,9 @@
     "workflow",
     "git",
     "commit",
-    "review"
+    "review",
+    "hooks",
+    "guardrails"
   ],
   "author": "jmlweb (https://github.com/jmlweb)",
   "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/dev-workflow",

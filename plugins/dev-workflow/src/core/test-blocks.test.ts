@@ -47,4 +47,39 @@ describe("extractTestBlocks", () => {
   it("skips method calls that only look like test calls", () => {
     expect(extractTestBlocks(`harness.test("x", () => {});`)).toHaveLength(0);
   });
+
+  // RPT-024: a quote inside a regex literal used to open a string that ran to
+  // the next quote in the file, so the test's closing paren was never found.
+  it("ignores quotes inside regex literals", () => {
+    const src = [
+      `test("quote regex", () => {`,
+      `  expect("x").toMatch(/don't/);`,
+      `  expect(s).toMatch(/"[/]'/);`,
+      `  const re = /it's/g;`,
+      `  return /can't/.test(s);`,
+      `});`,
+      ``,
+      `test("second", () => {`,
+      `  expect(1).toBe(1);`,
+      `});`,
+    ].join("\n");
+    const blocks = extractTestBlocks(src);
+    expect(blocks.map((b) => b.name)).toEqual(["quote regex", "second"]);
+    expect(blocks[0]?.body).toContain("return /can't/.test(s);");
+    expect(blocks[1]?.body?.trim()).toBe("expect(1).toBe(1);");
+  });
+
+  it("does not mistake division for a regex literal", () => {
+    const src = [
+      `test("division", () => {`,
+      `  const half = total / 2; const s = "x/y"; expect(s).toBe("x/y");`,
+      `  expect(items.length / (count) / [n][0]).toBe(1);`,
+      `});`,
+      `test("second", () => { expect(1).toBe(1); });`,
+    ].join("\n");
+    const blocks = extractTestBlocks(src);
+    expect(blocks.map((b) => b.name)).toEqual(["division", "second"]);
+    expect(blocks[0]?.body).toContain(`expect(s).toBe("x/y");`);
+    expect(blocks[0]?.body).toContain("[n][0]).toBe(1);");
+  });
 });

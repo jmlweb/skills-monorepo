@@ -19,6 +19,20 @@ export class InvalidArgumentError extends Error {
   }
 }
 
+// Edit is blocked on the config file by its implicit zone, so the message
+// tells the reader to repair it by hand.
+export class ReadOnlyZonesConfigError extends Error {
+  constructor(configPath: string, detail: string) {
+    super(
+      `read-only-zones: ${configPath} is broken: ${detail}. ` +
+        "All edits in this project are blocked until it is fixed. " +
+        "Fix the file by hand (the agent cannot edit it): it must be a JSON array of " +
+        '{ "glob": "<pattern>", "why": "<reason>" } entries.',
+    );
+    this.name = "ReadOnlyZonesConfigError";
+  }
+}
+
 export class TestCommandError extends Error {
   constructor(message: string) {
     super(message);

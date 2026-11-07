@@ -15,8 +15,9 @@ const TEST_CALL = /(?<![\w$.])(it|test|xit|xtest|specify)(?:\.(only|skip|todo|ea
 
 const QUOTES = new Set(["'", '"', "`"]);
 
-// Skips string literals and comments so brackets inside them do not confuse
-// the matcher. Template literal interpolation is not parsed; it is rare in titles.
+// Skips string literals, regex literals and comments so brackets and quotes
+// inside them do not confuse the matcher. Template literal interpolation is
+// not parsed; it is rare in titles.
 export function findClosing(
   source: string,
   openIndex: number,
@@ -36,6 +37,10 @@ export function findClosing(
     if (ch === "/" && next === "*") {
       const endComment = source.indexOf("*/", i + 2);
       i = endComment === -1 ? source.length : endComment + 2;
+      continue;
+    }
+    if (ch === "/" && startsRegex(source, i)) {
+      i = skipRegex(source, i);
       continue;
     }
     if (QUOTES.has(ch)) {
@@ -59,6 +64,49 @@ function skipString(source: string, start: number): number {
     i += source[i] === "\\" ? 2 : 1;
   }
   return i + 1;
+}
+
+// Keywords after which a `/` starts a regex rather than dividing the keyword.
+const REGEX_AFTER_KEYWORD = new Set([
+  "return", "typeof", "instanceof", "in", "of", "case", "do", "else",
+  "void", "delete", "throw", "new", "await", "yield",
+]);
+
+// A `/` divides when it follows a value (identifier, number, closing bracket
+// or quote); anywhere else it opens a regex literal. `}` counts as a value,
+// which misreads a regex at the start of a statement after a block; tests
+// rarely do that, and a division misread as a regex is the costlier mistake.
+function startsRegex(source: string, slashIndex: number): boolean {
+  let i = slashIndex - 1;
+  while (i >= 0 && /\s/.test(source[i]!)) i--;
+  if (i < 0) return true;
+  const prev = source[i]!;
+  if (/[\w$]/.test(prev)) {
+    let start = i;
+    while (start > 0 && /[\w$]/.test(source[start - 1]!)) start--;
+    return REGEX_AFTER_KEYWORD.has(source.slice(start, i + 1));
+  }
+  return !/[)\]}'"`]/.test(prev);
+}
+
+// Ends at the first unescaped `/` outside a character class. A regex cannot
+// span lines, so a newline means the slash was not a regex after all.
+function skipRegex(source: string, start: number): number {
+  let i = start + 1;
+  let inClass = false;
+  while (i < source.length) {
+    const ch = source[i]!;
+    if (ch === "\n") return i;
+    if (ch === "\\") {
+      i += 2;
+      continue;
+    }
+    if (ch === "[") inClass = true;
+    else if (ch === "]") inClass = false;
+    else if (ch === "/" && !inClass) return i + 1;
+    i++;
+  }
+  return i;
 }
 
 function readTitle(source: string, from: number): { name: string; end: number } | null {

@@ -1,6 +1,6 @@
 # 🛠️ dev-workflow
 
-> A Claude Code plugin with slash commands for the day-to-day developer workflow — committing, reviewing PRs, generating changesets, and keeping docs in shape.
+> A Claude Code plugin with slash commands for the day-to-day developer workflow — committing, reviewing PRs, generating changesets, keeping docs in shape — plus a hook that keeps the agent out of files you declare [read-only](#-read-only-zones).
 
 ## Installation
 
@@ -385,6 +385,33 @@ Checks the running app against your project's `docs/verify-ui.md` contract and r
 
 Contract format with a worked example: [`references/verify-ui-contract.md`](references/verify-ui-contract.md).
 
+## 🔒 Read-only zones
+
+A `PreToolUse` hook that blocks `Edit`, `Write` and `NotebookEdit` calls on files your repo declares off-limits: generated output, lockfiles, vendored code, anything the agent should read but never touch. Repos without the config file see no change.
+
+Declare the zones in `.claude/read-only-zones.json` at the project root: a JSON array of entries, each with a `glob` and a `why`. Both are required; the `why` is what Claude reads when it is blocked, so write it for a reader who was about to make the edit.
+
+```json
+[
+  { "glob": "plugins/*/dist/**", "why": "build output; edit src/ and run pnpm build" },
+  { "glob": "**/*.lock", "why": "lockfiles are written by the package manager" },
+  { "glob": "vendor/**", "why": "third-party code, patched upstream only" }
+]
+```
+
+**Glob rules:** patterns match the whole path relative to the repository root, with `/` separators. `**` crosses directories (`dist/**`, `**/generated/*.ts`), `*` and `?` stay within one segment, `{js,ts}` lists alternatives and `[ab]` is a character class. `*.md` matches a root-level file only; use `**/*.md` for any depth.
+
+**How a path is matched:** the hook walks up from the target file to the nearest `.git` entry (a directory in the main checkout, a file in a linked worktree) and matches the path relative to that root, so the same zones apply inside `git worktree` checkouts. Paths are normalised first, so `src/../dist/x.js` is still `dist/x.js`. A file outside the project (another repository, or no `.git` above it) is always allowed.
+
+**What to expect:**
+- 🚫 A blocked call fails with the matched path, the glob and your `why`; Claude sees that message and can tell you what it wanted to change
+- 🔐 `.claude/read-only-zones.json` is itself an implicit zone, so the agent cannot widen or remove a zone; you edit it by hand
+- 💥 A config that is missing a `why`, is not an array or is not valid JSON blocks **every** edit in that project until you fix the file by hand; the message names the file and the error
+- 📍 The config is always read from `CLAUDE_PROJECT_DIR`, the directory where the Claude Code session started. A config that only exists on a worktree branch is not seen, and a session started in a subdirectory does not see the config at the repository root
+- ⚡ Without the config file the hook exits before reading its input, so it costs nothing
+
+> ⚠️ **Not a security boundary.** The hook only sees `Edit`, `Write` and `NotebookEdit`. A `Bash` command (`echo > dist/x.js`, `sed -i`, `git checkout`) can still write to a zone. Use it to keep an agent from drifting into files it should leave alone, not to protect secrets or enforce policy; for that, use [permission rules](https://code.claude.com/docs/en/permissions) and your repository's own protections.
+
 ---
 
 ## 🚢 Semver gate
@@ -435,6 +462,7 @@ Exit codes: `0` clean, `1` findings or a failed verification, `2` error.
 | `/harden` | Git (clean working tree) + a test command it can discover or you provide |
 | `/readme-media` | Git; GIFs need `vhs`, `ttyd` and `ffmpeg`; screenshots need Playwright with Chromium (`npx playwright install chromium`) |
 | `/verify-ui` | Git + `docs/verify-ui.md` + the `chrome-devtools` MCP server (`claude mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest --isolated`) |
+| Read-only zones hook | Node (bundled with Claude Code's requirements) + `.claude/read-only-zones.json` in the project |
 
 ## License
 

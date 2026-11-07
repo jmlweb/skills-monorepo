@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "description": "Developer workflow tools for Claude Code: Conventional Commits, Changesets, PR creation with template-driven descriptions, PR reviews, and documentation audits.",
+  "description": "Developer workflow tools for Claude Code: Conventional Commits, Changesets, PR creation with template-driven descriptions, PR reviews, documentation audits, and a read-only zones hook that keeps edits out of declared paths.",
   "version": "1.10.0",
   "author": {
     "name": "jmlweb",
@@ -15,7 +15,9 @@
     "git",
     "commit",
     "review",
-    "pr"
+    "pr",
+    "hooks",
+    "guardrails"
   ],
   "skills": "./skills/"
 }
