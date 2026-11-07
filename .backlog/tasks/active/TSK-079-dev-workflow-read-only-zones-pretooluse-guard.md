@@ -67,3 +67,4 @@ Ship a `PreToolUse` hook in `dev-workflow` that blocks file edits inside zones a
 - [2026-11-06] Created
 - [2026-11-07] Started
 - [2026-11-07] Merged a46c7fa into main (README conflicts with verify-ui resolved as union). plugin validate passed, version:sync in sync. AGENTS.md map updated. Bump pending the coordinated release.
+- [2026-11-07] Fresh-context review follow-up in 2635661: hook fails closed on unexpected errors (.catch exits 2), paths canonicalised through realpath with case folding on darwin/win32, session directory inside a larger repository becomes the match root, trailing-slash globs and [!a] classes supported.
