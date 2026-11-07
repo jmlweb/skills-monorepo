@@ -1,13 +1,14 @@
 ---
 id: TSK-061
 title: Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object
-status: active
+status: complete
 priority: P4
 tags: [flowstate, cli]
 created: 2026-10-22
 source: report/RPT-013
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object
@@ -24,9 +25,9 @@ Add a `parseCriteria` validator next to `validatePriority` in the entry point. T
 
 ## Acceptance Criteria
 
-- [ ] --criteria that is not a JSON array of non-empty strings exits 1 with an InvalidArgumentError showing the expected format
-- [ ] Invalid JSON in --criteria gets the same actionable message instead of the raw parser error
-- [ ] Tests cover a JSON string, an array with non-string items and invalid JSON
+- [x] --criteria that is not a JSON array of non-empty strings exits 1 with an InvalidArgumentError showing the expected format
+- [x] Invalid JSON in --criteria gets the same actionable message instead of the raw parser error
+- [x] Tests cover a JSON string, an array with non-string items and invalid JSON
 - [ ] dist rebuilt and committed
 
 ## Notes
@@ -38,3 +39,5 @@ Add a `parseCriteria` validator next to `validatePriority` in the entry point. T
 - [2026-10-22] Created
 - [2026-11-07] Line reference refreshed: the criteria JSON.parse now sits at flowstate.ts:354
 - [2026-11-07] Started
+- [2026-11-07] Merged worktree branch into main; flowstate 397 tests pass; dist clean.
+- [2026-11-07] Completed

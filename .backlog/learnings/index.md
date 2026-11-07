@@ -64,3 +64,5 @@
 | LRN-058 | Routing eval negative cases with a built-in owner need external: true and prompts free of description tokens | routing, evals, skills, tf-idf | active | 2026-11-07 |
 | LRN-059 | A JS scanner decides division vs regex from the previous token; bail a regex scan at a newline | dev-workflow, test-static-scan, parser, javascript | active | 2026-11-07 |
 | LRN-060 | Probe a plugin hook end to end with a nested claude -p --plugin-dir in a scratch repo | claude-code, hooks, testing, plugins | active | 2026-11-07 |
+| LRN-061 | Declare the few switch flags that may appear bare; every other flag must carry a value | cli, args, flowstate, dev-workflow, atlassian-polish | active | 2026-11-07 |
+| LRN-062 | Compare CLI-printed paths by suffix in integration tests: the CLI prints realpath | flowstate, testing, macos, paths | active | 2026-11-07 |
