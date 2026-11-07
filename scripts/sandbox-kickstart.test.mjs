@@ -242,6 +242,16 @@ test("flags a task 1 with dependencies and links to tasks that do not exist", ()
   });
 });
 
+test("flags a prod-ops skill written for a project with no production target", () => {
+  withSandbox((dir) => {
+    kickstarted(dir);
+    writeFiles(dir, { ".claude/skills/release/SKILL.md": "---\nname: release\n---\n" });
+    assert.deepEqual(checkSandbox(dir).failures, []);
+    writeFiles(dir, { ".claude/skills/prod-ops/SKILL.md": "---\nname: prod-ops\n---\n" });
+    assert.ok(checkSandbox(dir).failures.includes(".claude/skills/prod-ops/ was written for a project with no production target"));
+  });
+});
+
 test("flags a commit made in the sandbox", () => {
   withSandbox((dir) => {
     kickstarted(dir);

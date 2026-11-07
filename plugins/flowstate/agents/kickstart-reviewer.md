@@ -49,7 +49,9 @@ Read every listed file, then check:
 7. **Template shape.** An ADR missing Status, Context, Decision or Consequences.
    `proposed` is the expected Status at review time; the skill accepts ADRs after you.
 8. **Project skills.** A written project skill that is not a procedure the project
-   will repeat, or whose steps contradict an ADR or an `AGENTS.md` rule.
+   will repeat, or whose steps contradict an ADR or an `AGENTS.md` rule. A `prod-ops`
+   skill written for a project whose scope and constraints name no live system, or one
+   missing a step of the templates' write protocol.
 
 ## Output
 
