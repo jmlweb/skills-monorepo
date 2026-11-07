@@ -4,6 +4,8 @@ import {
   validateComplexity,
   validateReportType,
   validateSeverity,
+  validateIdeaDecision,
+  validateReportDecision,
 } from "./types.js";
 import { InvalidArgumentError } from "./errors.js";
 
@@ -49,5 +51,27 @@ describe("validateSeverity", () => {
 
   it("throws InvalidArgumentError for unknown values", () => {
     expect(() => validateSeverity("catastrophic")).toThrow(InvalidArgumentError);
+  });
+});
+
+describe("validateIdeaDecision", () => {
+  it.each(["approved", "discarded"])("accepts %s", (v) => {
+    expect(validateIdeaDecision(v)).toBe(v);
+  });
+
+  it.each(["pending", "bogus", ""])("rejects %j with the expected values", (v) => {
+    expect(() => validateIdeaDecision(v)).toThrow(InvalidArgumentError);
+    expect(() => validateIdeaDecision(v)).toThrow(/approved, discarded/);
+  });
+});
+
+describe("validateReportDecision", () => {
+  it.each(["triaged", "discarded"])("accepts %s", (v) => {
+    expect(validateReportDecision(v)).toBe(v);
+  });
+
+  it.each(["pending", "approved", ""])("rejects %j with the expected values", (v) => {
+    expect(() => validateReportDecision(v)).toThrow(InvalidArgumentError);
+    expect(() => validateReportDecision(v)).toThrow(/triaged, discarded/);
   });
 });

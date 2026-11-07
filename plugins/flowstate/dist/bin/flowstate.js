@@ -25,7 +25,7 @@ import { learningList } from "../commands/learning-list.js";
 import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { learningCompress } from "../commands/learning-compress.js";
-import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
+import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, } from "../core/types.js";
 import { resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
 import { FileStore } from "../core/file-store.js";
@@ -455,7 +455,7 @@ async function main() {
                     console.error("Usage: flowstate idea-move <id> --status <approved|discarded>");
                     process.exit(1);
                 }
-                const result = await ideaMove(store, id, required(flags, "status"), flags["task-id"]);
+                const result = await ideaMove(store, id, validateIdeaDecision(required(flags, "status")), flags["task-id"]);
                 output(result, json);
                 break;
             }
@@ -495,7 +495,7 @@ async function main() {
                     console.error("Usage: flowstate report-move <id> --status <triaged|discarded>");
                     process.exit(1);
                 }
-                const result = await reportMove(store, id, required(flags, "status"), flags["task-id"]);
+                const result = await reportMove(store, id, validateReportDecision(required(flags, "status")), flags["task-id"]);
                 output(result, json);
                 break;
             }

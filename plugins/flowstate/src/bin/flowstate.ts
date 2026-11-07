@@ -29,7 +29,14 @@ import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { learningCompress } from "../commands/learning-compress.js";
 import type { EntityType, TaskStatus } from "../core/types.js";
-import { validatePriority, validateComplexity, validateReportType, validateSeverity } from "../core/types.js";
+import {
+  validatePriority,
+  validateComplexity,
+  validateReportType,
+  validateSeverity,
+  validateIdeaDecision,
+  validateReportDecision,
+} from "../core/types.js";
 import {
   resolveBacklog,
   resolveSetupTarget,
@@ -553,7 +560,7 @@ async function main(): Promise<void> {
         const result = await ideaMove(
           store,
           id,
-          required(flags, "status") as "approved" | "discarded",
+          validateIdeaDecision(required(flags, "status")),
           flags["task-id"],
         );
         output(result, json);
@@ -603,7 +610,7 @@ async function main(): Promise<void> {
         const result = await reportMove(
           store,
           id,
-          required(flags, "status") as "triaged" | "discarded",
+          validateReportDecision(required(flags, "status")),
           flags["task-id"],
         );
         output(result, json);

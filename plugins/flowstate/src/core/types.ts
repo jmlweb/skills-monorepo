@@ -118,6 +118,30 @@ export const validateSeverity = (v: string): Severity => {
   return v as Severity;
 };
 
+export type IdeaDecision = Exclude<IdeaStatus, "pending">;
+export type ReportDecision = Exclude<ReportStatus, "pending">;
+
+const IDEA_DECISIONS = new Set<string>(["approved", "discarded"]);
+const REPORT_DECISIONS = new Set<string>(["triaged", "discarded"]);
+
+export const validateIdeaDecision = (v: string): IdeaDecision => {
+  if (!IDEA_DECISIONS.has(v)) {
+    throw new InvalidArgumentError(
+      `Invalid --status value: "${v}". Expected: approved, discarded`,
+    );
+  }
+  return v as IdeaDecision;
+};
+
+export const validateReportDecision = (v: string): ReportDecision => {
+  if (!REPORT_DECISIONS.has(v)) {
+    throw new InvalidArgumentError(
+      `Invalid --status value: "${v}". Expected: triaged, discarded`,
+    );
+  }
+  return v as ReportDecision;
+};
+
 export interface ParsedDocument<T = Record<string, unknown>> {
   readonly frontmatter: T;
   readonly body: string;

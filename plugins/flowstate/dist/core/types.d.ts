@@ -54,6 +54,10 @@ export declare const validatePriority: (v: string) => Priority;
 export declare const validateComplexity: (v: string) => Complexity;
 export declare const validateReportType: (v: string) => ReportType;
 export declare const validateSeverity: (v: string) => Severity;
+export type IdeaDecision = Exclude<IdeaStatus, "pending">;
+export type ReportDecision = Exclude<ReportStatus, "pending">;
+export declare const validateIdeaDecision: (v: string) => IdeaDecision;
+export declare const validateReportDecision: (v: string) => ReportDecision;
 export interface ParsedDocument<T = Record<string, unknown>> {
     readonly frontmatter: T;
     readonly body: string;

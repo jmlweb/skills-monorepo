@@ -1,11 +1,12 @@
 import type { BacklogStore } from "../core/store.js";
+import type { ReportDecision } from "../core/types.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
 
 export async function reportMove(
   store: BacklogStore,
   id: string,
-  status: "triaged" | "discarded",
+  status: ReportDecision,
   taskId?: string,
 ): Promise<{ path: string }> {
   const report = await store.find("report", id, ["pending"]);

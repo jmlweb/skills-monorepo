@@ -39,3 +39,17 @@ export const validateSeverity = (v) => {
     }
     return v;
 };
+const IDEA_DECISIONS = new Set(["approved", "discarded"]);
+const REPORT_DECISIONS = new Set(["triaged", "discarded"]);
+export const validateIdeaDecision = (v) => {
+    if (!IDEA_DECISIONS.has(v)) {
+        throw new InvalidArgumentError(`Invalid --status value: "${v}". Expected: approved, discarded`);
+    }
+    return v;
+};
+export const validateReportDecision = (v) => {
+    if (!REPORT_DECISIONS.has(v)) {
+        throw new InvalidArgumentError(`Invalid --status value: "${v}". Expected: triaged, discarded`);
+    }
+    return v;
+};

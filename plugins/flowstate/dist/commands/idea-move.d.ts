@@ -1,4 +1,5 @@
 import type { BacklogStore } from "../core/store.js";
-export declare function ideaMove(store: BacklogStore, id: string, status: "approved" | "discarded", taskId?: string): Promise<{
+import type { IdeaDecision } from "../core/types.js";
+export declare function ideaMove(store: BacklogStore, id: string, status: IdeaDecision, taskId?: string): Promise<{
     path: string;
 }>;

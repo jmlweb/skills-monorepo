@@ -168,6 +168,44 @@ describe("CLI integration", () => {
     run("report-move", "RPT-001", "--status", "triaged", "--task-id", "TSK-001");
   });
 
+  it("report-move rejects an unknown --status and leaves the report pending", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("report-create", "--title", "Auth bug", "--type", "bug", "--severity", "high", "--body", "x");
+
+    const result = spawnSync("node", [CLI, "report-move", "RPT-001", "--status", "bogus"], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid --status value: "bogus".*triaged, discarded/);
+
+    const pending = await readdir(join(tmp, ".backlog/reports/pending"));
+    expect(pending.some((f) => f.startsWith("RPT-001-"))).toBe(true);
+    const content = await readFile(join(tmp, ".backlog/reports/pending", pending.find((f) => f.startsWith("RPT-001-"))!), "utf-8");
+    expect(content).toContain("status: pending");
+    expect(await readdir(join(tmp, ".backlog/reports/complete"))).not.toContain(expect.stringMatching(/^RPT-001/));
+  });
+
+  it("idea-move rejects an unknown --status and leaves the idea pending", async () => {
+    run("setup", "--project-name", "IntTest");
+    run("idea-create", "--title", "Refactor auth", "--complexity", "low", "--body", "x");
+
+    const result = spawnSync("node", [CLI, "idea-move", "PLN-001", "--status", "bogus"], {
+      cwd: tmp,
+      encoding: "utf-8",
+      env: cleanEnv(),
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid --status value: "bogus".*approved, discarded/);
+
+    const pending = await readdir(join(tmp, ".backlog/ideas/pending"));
+    const file = pending.find((f) => f.startsWith("PLN-001-"));
+    expect(file).toBeDefined();
+    expect(await readFile(join(tmp, ".backlog/ideas/pending", file!), "utf-8")).toContain("status: pending");
+    expect(await readdir(join(tmp, ".backlog/ideas/complete"))).not.toContain(expect.stringMatching(/^PLN-001/));
+  });
+
   it("learning-create creates directory", () => {
     run("setup", "--project-name", "IntTest");
 

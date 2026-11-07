@@ -1,11 +1,12 @@
 import type { BacklogStore } from "../core/store.js";
+import type { IdeaDecision } from "../core/types.js";
 import { today } from "../core/date.js";
 import { EntityNotFoundError } from "../core/errors.js";
 
 export async function ideaMove(
   store: BacklogStore,
   id: string,
-  status: "approved" | "discarded",
+  status: IdeaDecision,
   taskId?: string,
 ): Promise<{ path: string }> {
   const idea = await store.find("idea", id, ["pending"]);
