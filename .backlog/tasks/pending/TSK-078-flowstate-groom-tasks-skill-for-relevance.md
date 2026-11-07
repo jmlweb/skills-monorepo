@@ -39,7 +39,7 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 - Evidence must come from code, not from task titles, or the output becomes confident guessing.
 - LRN-040: a blocked task can sit in `tasks/pending`, so status does not say where a task lives. Read location from the CLI.
 - LRN-041: `task-block` can leave `tasks/index.md` stale. `index-rebuild` covers this in any repo, since `pnpm backlog:check` exists only in this monorepo.
-- TSK-057 will add a GitHub Issues backend, so this skill must use only the CLI and never read task files directly for state.
+- TSK-081 will add a GitHub Issues backend, so this skill must use only the CLI and never read task files directly for state.
 
 ## Acceptance Criteria
 
