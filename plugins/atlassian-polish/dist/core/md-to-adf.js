@@ -4,6 +4,7 @@ const ITEM_RE = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
 const TASK_RE = /^\[( |x|X)\]\s+(.*)$/;
 const HEADING_RE = /^(#{1,6})\s+(.*)$/;
 const FENCE_RE = /^\s*```\s*([\w+-]*)\s*$/;
+const CLOSE_FENCE_RE = /^\s*```\s*$/;
 const RULE_RE = /^\s*([-*_])(\s*\1){2,}\s*$/;
 const TABLE_SEP_RE = /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/;
 export function markdownToAdf(markdown, options = {}) {
@@ -94,24 +95,10 @@ function parseBlocks(lines, ctx) {
             i++;
             continue;
         }
-        const fence = FENCE_RE.exec(line.text);
-        if (fence) {
-            let j = i + 1;
-            const body = [];
-            while (j < lines.length && !/^\s*```\s*$/.test(lines[j].text)) {
-                body.push(lines[j].text);
-                j++;
-            }
-            if (j >= lines.length) {
-                throw new MarkdownConversionError("unclosed code fence", line.no);
-            }
-            const code = body.join("\n");
-            out.push({
-                type: "codeBlock",
-                ...(fence[1] ? { attrs: { language: fence[1] } } : {}),
-                ...(code ? { content: [{ type: "text", text: code }] } : {}),
-            });
-            i = j + 1;
+        if (FENCE_RE.test(line.text)) {
+            const { node, next } = parseFence(lines, i);
+            out.push(node);
+            i = next;
             continue;
         }
         const heading = HEADING_RE.exec(line.text.trim());
@@ -168,6 +155,34 @@ function parseBlocks(lines, ctx) {
     }
     return out;
 }
+/**
+ * Reads a fenced block opened at `start`. Body lines lose at most the opening
+ * fence's indent (CommonMark), so a fence nested in a list keeps its own indentation.
+ */
+function parseFence(lines, start) {
+    const open = lines[start];
+    const lang = FENCE_RE.exec(open.text)[1];
+    const strip = indentOf(open.text);
+    const body = [];
+    let i = start + 1;
+    while (i < lines.length && !CLOSE_FENCE_RE.test(lines[i].text)) {
+        const raw = lines[i].text;
+        body.push(raw.slice(Math.min(strip, indentOf(raw))));
+        i++;
+    }
+    if (i >= lines.length) {
+        throw new MarkdownConversionError("unclosed code fence", open.no);
+    }
+    const code = body.join("\n");
+    return {
+        node: {
+            type: "codeBlock",
+            ...(lang ? { attrs: { language: lang } } : {}),
+            ...(code ? { content: [{ type: "text", text: code }] } : {}),
+        },
+        next: i + 1,
+    };
+}
 function itemKind(text) {
     const m = ITEM_RE.exec(text);
     if (/^\d/.test(m[2]))
@@ -215,6 +230,12 @@ function parseList(lines, start, base, ctx) {
             const indent = indentOf(next.text);
             if (indent > base && ITEM_RE.test(next.text)) {
                 const sub = parseList(lines, i, indent, ctx);
+                nested.push(sub.node);
+                i = sub.next;
+                continue;
+            }
+            if (indent > base && FENCE_RE.test(next.text)) {
+                const sub = parseFence(lines, i);
                 nested.push(sub.node);
                 i = sub.next;
                 continue;

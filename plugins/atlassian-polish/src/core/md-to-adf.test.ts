@@ -289,6 +289,39 @@ describe("markdownToAdf", () => {
   it("throws on an unclosed code fence with the opening line number", () => {
     expect(() => convert("a\n\n```\nnever closed")).toThrow(/line 3/);
   });
+
+  it("turns a fence nested in a bullet item into a codeBlock with newlines kept", () => {
+    const [list, after] = convert(
+      "- item\n  ```sh\n  one\n\n    two\n  ```\n- next\n\nafter",
+    );
+    expect(list).toEqual({
+      type: "bulletList",
+      content: [
+        {
+          type: "listItem",
+          content: [
+            { type: "paragraph", content: [t("item")] },
+            {
+              type: "codeBlock",
+              attrs: { language: "sh" },
+              content: [{ type: "text", text: "one\n\n  two" }],
+            },
+          ],
+        },
+        { type: "listItem", content: [{ type: "paragraph", content: [t("next")] }] },
+      ],
+    });
+    expect(JSON.stringify(list)).not.toContain("`");
+    expect(after).toEqual({ type: "paragraph", content: [t("after")] });
+  });
+
+  it("throws on an unclosed fence nested in a list item at the fence line", () => {
+    expect(() => convert("- item\n  ```\n  code")).toThrow(/^line 2: unclosed code fence/);
+  });
+
+  it("refuses a fence under a checklist item rather than inlining it", () => {
+    expect(() => convert("- [ ] a\n  ```\n  x\n  ```")).toThrow(/^line 1/);
+  });
 });
 
 function t(value: string) {

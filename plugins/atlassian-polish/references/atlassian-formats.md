@@ -54,7 +54,8 @@ MD
 ```
 
 It converts headings, paragraphs, bullet/numbered lists (nesting ≤ 2 levels), tables, fenced
-code, blockquotes, rules, inline code/bold/italic/strike, links, bare URLs and mentions
+code (also indented under a bullet or numbered item, as a `codeBlock` inside the `listItem`),
+blockquotes, rules, inline code/bold/italic/strike, links, bare URLs and mentions
 (`[@Name](mention:<accountId>)` → ADF `mention` node; mentioned people get notified).
 ADF does not auto-link bare issue keys: always pass `--jira-base <site URL> --projects
 <PREFIX,…>` so keys of those projects become `inlineCard` smart links (code spans and
