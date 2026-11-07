@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: []
 created: 2026-10-08
-source: plan/PLN-008
+source: idea/PLN-008
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # flowstate: configurable backlog directory for private backlogs
@@ -57,7 +58,5 @@ Today the backlog is hard-wired to `<project>/.backlog`. `findBacklogRoot` (`src
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Started
-- [2026-10-08] Completed
-- [2026-10-08] Backlog check 2026-10-08: criteria ticked retroactively after verification. LRN-007 records step 0; resolveBacklog in paths.ts + BacklogDirMissingError; d8e3798 is the mechanical cwd->root rename; setup --dir/--private + path command; parallel skips the commit for private backlogs; hook mirrors the rule; paths.test.ts + integration tests cover env abs/rel/unset/missing, setup --dir, path; README/architecture/SKILL.md updated; released v2.7.0.
 - [2026-10-08] Deviation on criterion 2: a relative FLOWSTATE_BACKLOG_DIR resolves against the project root, not CLAUDE_PROJECT_DIR, because LRN-007 shows CLAUDE_PROJECT_DIR is hook-only and absent from Bash tool calls.
+- [2026-11-07] Condensed

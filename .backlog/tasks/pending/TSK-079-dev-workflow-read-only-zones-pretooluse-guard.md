@@ -3,7 +3,7 @@ id: TSK-079
 title: dev-workflow read-only zones PreToolUse guard
 status: pending
 priority: P2
-tags: []
+tags: [dev-workflow, hooks]
 created: 2026-11-06
 source: idea/PLN-033
 depends-on: []

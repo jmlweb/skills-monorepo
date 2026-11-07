@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: []
 created: 2026-10-07
-source: plan/PLN-004
+source: idea/PLN-004
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # dev-workflow: agent-handoff skill
@@ -33,7 +34,7 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 
 ## Notes
 
-- Open: whether prompts should name each repo's branch/worktree — settle during implementation.
+
 
 ## Acceptance Criteria
 
@@ -53,6 +54,5 @@ Standardize multi-repo work run by parallel agents: write self-contained handoff
 ## Progress Log
 
 - [2026-10-07] Created
-- [2026-10-08] Started
-- [2026-10-08] Completed
 - [2026-10-08] Backlog check 2026-10-08: criteria ticked retroactively after verification. SKILL.md has out sections Goal/Links/Constraints/Decisions/Done when/Report back, in mode Done/Open/Contradicted + next handoffs, allowed-tools Read/Grep/Glob, text-claims-only limit stated, safety check for secrets and absolute paths, required frontmatter and when-NOT line; README section + Requirements row; claude plugin validate . passes; shipped in dev-workflow v1.3.0 (1f80493 not in v1.2.0).
+- [2026-11-07] Condensed

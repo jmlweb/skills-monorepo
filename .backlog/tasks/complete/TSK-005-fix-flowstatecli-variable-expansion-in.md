@@ -9,6 +9,7 @@ source: report/email-analyzer-usage
 depends-on: []
 started: 2026-04-06
 completed: 2026-04-06
+condensed: true
 ---
 
 # Fix FLOWSTATE_CLI variable expansion in zsh shells
@@ -30,6 +31,5 @@ All 15 skill templates define FLOWSTATE_CLI as a variable and then invoke it via
 ## Progress Log
 
 - [2026-04-06] Created
-- [2026-04-06] Started
-- [2026-04-06] Completed
 - [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met.
+- [2026-11-07] Condensed

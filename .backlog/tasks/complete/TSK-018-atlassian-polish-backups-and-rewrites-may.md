@@ -9,6 +9,7 @@ source: manual
 depends-on: []
 started: 2026-10-01
 completed: 2026-10-08
+condensed: true
 ---
 
 # atlassian-polish: backups and rewrites may lose rich Jira content
@@ -43,13 +44,5 @@ Priority P2 is a recommendation: it is silent data loss on a write path, but not
 ## Progress Log
 
 - [2026-10-01] Created
-- [2026-10-01] Started
-- [2026-10-01] Returned to pending
-- [2026-10-01] Paused 2026-10-01 (7d7c0b6: lossy-content.md, fetch with renderedFields, 3-file backup, LOSSY preview notice). Left: verify panel/mention/macro markers on a real ticket; test REST ADF backup (needs consent; a broad REST scan was blocked by the permission check, so name one ticket); enforce preserve-lossy-nodes rewrite; real-ticket test with panel+mention+screenshot; step 5 of SKILL.md still describes a single backup file.
-- [2026-10-07] Backlog review: since pause, b7a6041/9b15aa4/b8105f1/1185135 made backups verbatim and non-overwriting, stopped flagging issue-key smart links as LOSSY, and preserve mentions/smart links via readback-to-md + ADF writes. Criteria 1 (MCP returns Markdown, documented in lossy-content.md) and 6 (History tab in docs) look met; 3-4 are documented as rules but panel/mention markers are unverified. Left: one real ticket with panel+mention+screenshot (criterion 5, also verifies markers); first REST v3 ADF backup with consent (criterion 2); SKILL.md step 5 path still shows one <KEY>.<md|json|xml> file instead of .md + .rendered.html + .adf.json.
-- [2026-10-07] SKILL.md step 5 now names the Jira backup set (.md + .rendered.html + .adf.json with consent) instead of a single file.
-- [2026-10-07] Ticked 1 (lossy-content.md documents MCP returns Markdown, REST v3 for ADF) and 6 (History tab in lossy-content.md rule 6 and SKILL.md step 5).
-- [2026-10-08] Started
-- [2026-10-08] Real-ticket evidence on CF-620 (test ticket, delete after): REST v3 returns full ADF (2 panels, 1 mention, 1 mediaSingle); HTML markers class="panel" and user-hover verified; Markdown shows no panel marker. lossy-scan on the 3 files found all 4 node types once --adf unwrapped fields.description (fix: a saved curl response read as clean, exit 0). Skip path on the old skill left the ADF byte-identical. Left: end-to-end run of the new preserve/skip/flatten flow on CF-620 (criterion 5), then tick 2-5.
-- [2026-10-08] Real run of atlassian-polish 0.8.1 on CF-620 (test ticket, delete after): lossy-scan flagged panel x2 + media x1 as blocking (mention handled); 3-file backup incl. REST ADF saved; LOSSY gate asked 'Flatten? (yes / skip)', answer skip, description not written, stored ADF byte-identical to backup. Flatten path not exercised. Ticked 2-5.
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

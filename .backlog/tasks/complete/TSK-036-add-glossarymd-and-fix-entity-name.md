@@ -5,7 +5,7 @@ status: complete
 priority: P3
 tags: [docs, naming, flowstate]
 created: 2026-10-08
-source: plan/PLN-015
+source: idea/PLN-015
 depends-on: []
 started: 2026-10-09
 completed: 2026-10-09

@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [flowstate, cli, acceptance-criteria]
 created: 2026-10-08
-source: plan/PLN-022
+source: idea/PLN-022
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # Require evidence for ticked acceptance criteria
@@ -61,6 +62,5 @@ Constraints found in the code:
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Started
-- [2026-10-08] Merged fd0c845; 268 flowstate tests, validate green
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

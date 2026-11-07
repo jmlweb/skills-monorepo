@@ -3,7 +3,7 @@ id: TSK-080
 title: flowstate parallel resume and next-task automation labels
 status: pending
 priority: P2
-tags: []
+tags: [flowstate, skill, parallel]
 created: 2026-11-07
 source: idea/PLN-035
 depends-on: []

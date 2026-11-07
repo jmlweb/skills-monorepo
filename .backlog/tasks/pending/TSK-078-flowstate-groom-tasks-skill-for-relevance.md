@@ -3,7 +3,7 @@ id: TSK-078
 title: flowstate groom-tasks skill for relevance and priority
 status: pending
 priority: P2
-tags: []
+tags: [flowstate, skill, grooming]
 created: 2026-11-06
 source: idea/PLN-032
 depends-on: []
@@ -39,7 +39,7 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 - Evidence must come from code, not from task titles, or the output becomes confident guessing.
 - LRN-040: a blocked task can sit in `tasks/pending`, so status does not say where a task lives. Read location from the CLI.
 - LRN-041: `task-block` can leave `tasks/index.md` stale. `index-rebuild` covers this in any repo, since `pnpm backlog:check` exists only in this monorepo.
-- TSK-057 will add a GitHub Issues backend, so this skill must use only the CLI and never read task files directly for state.
+- TSK-081 will add a GitHub Issues backend, so this skill must use only the CLI and never read task files directly for state.
 
 ## Acceptance Criteria
 
@@ -61,3 +61,4 @@ Add a user-invoked `flowstate:groom-tasks` skill that reviews all open tasks and
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-07] The GitHub Issues backend risk now points at TSK-081: TSK-057 was split and closed

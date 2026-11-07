@@ -5,10 +5,11 @@ status: complete
 priority: P3
 tags: [writing-rules, audit, atlassian-polish]
 created: 2026-10-08
-source: plan/PLN-013
+source: idea/PLN-013
 depends-on: [TSK-028, TSK-032, TSK-041]
 started: 2026-10-09
 completed: 2026-10-15
+condensed: true
 ---
 
 # Audit atlassian-polish skills against writing rules
@@ -39,10 +40,5 @@ Also: bring polish-atlassian/SKILL.md (243 lines) under 150 by disclosing detail
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Backlog grooming: priority P2 -> P3 to match sibling audits TSK-033/034; depends-on set to TSK-028, TSK-032, TSK-041.
-- [2026-10-08] TSK-041: audit also rewrites workflow-summary descriptions to the docs/writing-skills.md section 6 shape and considers a section 7 Rationalizations table for discipline skills.
-- [2026-10-08] Audit ends by clearing its plugin's pnpm lint:skills warnings (TSK-038); a follow-up flips CI to --strict.
-- [2026-10-09] Started
-- [2026-10-11] Dry-run verification, no Atlassian access: every old polish-atlassian step/guard mapped to new SKILL.md or references with file:line; all refs exist and are linked; md-to-adf/readback-to-md/lossy-scan commands run as documented. NOT verified: live MCP/REST calls, runtime reference-reading, formatter agent behaviour (needs tier-2 eval + Atlassian). Minor wording softening: never-guess, never-invent, never-summarize now implied.
-- [2026-10-15] Completed with unproven criteria 2: no Atlassian access; 2026-10-11 dry-run covered the slimmed skills, live verification deferred to TSK-023
 - [2026-10-15] Completed
+- [2026-11-07] Condensed

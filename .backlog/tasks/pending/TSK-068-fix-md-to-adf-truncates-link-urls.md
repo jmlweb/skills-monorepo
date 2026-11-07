@@ -3,7 +3,7 @@ id: TSK-068
 title: Fix: md-to-adf truncates link URLs that contain parentheses
 status: pending
 priority: P4
-tags: []
+tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-020
 depends-on: []

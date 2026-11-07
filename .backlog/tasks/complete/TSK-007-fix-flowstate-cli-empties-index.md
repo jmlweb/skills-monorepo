@@ -9,6 +9,7 @@ source: report/RPT-002
 depends-on: []
 started: 2026-04-09
 completed: 2026-04-09
+condensed: true
 ---
 
 # Fix: Flowstate CLI empties index tables on rapid moves
@@ -55,6 +56,5 @@ RPT-002
 ## Progress Log
 
 - [2026-04-09] Created
-- [2026-04-09] Started
-- [2026-04-09] Completed
 - [2026-10-07] Backlog review 2026-10-07: criteria checked against the code. All met (/flowstate:status is now overview).
+- [2026-11-07] Condensed

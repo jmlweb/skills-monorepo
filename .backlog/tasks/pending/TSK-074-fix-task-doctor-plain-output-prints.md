@@ -3,7 +3,7 @@ id: TSK-074
 title: Fix: task-doctor plain output prints [object Object] for each fixed task
 status: pending
 priority: P4
-tags: []
+tags: [flowstate, cli]
 created: 2026-11-05
 source: report/RPT-026
 depends-on: []

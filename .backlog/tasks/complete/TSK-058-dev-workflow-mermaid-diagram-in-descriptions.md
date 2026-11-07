@@ -9,6 +9,7 @@ source: idea/PLN-029
 depends-on: []
 started: 2026-10-28
 completed: 2026-10-28
+condensed: true
 ---
 
 # dev-workflow: Mermaid diagram in descriptions of complex PRs
@@ -37,12 +38,5 @@ Approach: add a Diagrams section to pr-style-guide.md (when, where, shape, safe 
 ## Progress Log
 
 - [2026-10-19] Created
-- [2026-10-28] Started
-- [2026-10-28] criterion 1 — evidence: pnpm vitest run src/pr-writer.test.ts (style guide defines when, where, shape and safe syntax) → pass (2026-10-28)
-- [2026-10-28] criterion 2 — evidence: pnpm vitest run src/pr-writer.test.ts (self-check and things to leave out cover diagrams) → pass (2026-10-28)
-- [2026-10-28] criterion 3 — evidence: pnpm vitest run src/pr-writer.test.ts (agent decides on a diagram and honours a user veto) → pass (2026-10-28)
-- [2026-10-28] criterion 4 — evidence: pnpm vitest run src/pr-writer.test.ts (open-pr and pr-ready share a cap of 5 files) → pass (2026-10-28)
-- [2026-10-28] criterion 5 — evidence: pnpm vitest run src/pr-writer.test.ts (README /open-pr section mentions the diagram) → pass (2026-10-28)
-- [2026-10-28] criterion 6 — evidence: pnpm lint:skills → 0 errors, 0 warnings; claude plugin validate . → Validation passed (2026-10-28)
-- [2026-10-28] criterion 7 — evidence: pr-writer run on PR #6 feat/flowstate-kickstart inputs → one 9-node flowchart, rendered by mmdc 11.12.0 without error; on 6be928a deps bump → no diagram (2026-10-28)
 - [2026-10-28] Completed
+- [2026-11-07] Condensed

@@ -1,13 +1,15 @@
 ---
 id: TSK-053
 title: Fix: review-idea and triage-report number their decision menus after a numbered list
-status: active
+status: complete
 priority: P3
-tags: []
+tags: [flowstate, skill, menus]
 created: 2026-10-19
 source: report/RPT-008
 depends-on: []
 started: 2026-10-19
+completed: 2026-11-07
+condensed: true
 ---
 
 # Fix: review-idea and triage-report number their decision menus after a numbered list
@@ -22,10 +24,10 @@ review-idea step 4 lists the revise changes as a numbered list, then offers Appr
 
 ## Acceptance Criteria
 
-- [ ] review-idea decision menu uses letters or bold words, not numbers
-- [ ] triage-report decision menu uses letters or bold words, not numbers
-- [ ] Menus follow docs/writing-skills.md "Menus in skill output"
-- [ ] pnpm lint:skills passes
+- [x] review-idea decision menu uses letters or bold words, not numbers — evidence: plugins/flowstate/skills/review-idea/SKILL.md:85-88 → lettered A-D menu, fixed in b3d5341 (2026-11-07)
+- [x] triage-report decision menu uses letters or bold words, not numbers — evidence: plugins/flowstate/skills/triage-report/SKILL.md → lettered A-D menu, fixed in b3d5341 (2026-11-07)
+- [x] Menus follow docs/writing-skills.md "Menus in skill output" — evidence: docs/writing-skills.md section Menus in skill output → both menus use letters (2026-11-07)
+- [x] pnpm lint:skills passes — evidence: pnpm lint:skills → 0 errors, 0 warnings (2026-11-07)
 
 ## Notes
 
@@ -34,4 +36,6 @@ review-idea step 4 lists the revise changes as a numbered list, then offers Appr
 ## Progress Log
 
 - [2026-10-19] Created
-- [2026-10-19] Started
+- [2026-11-07] Completed
+- [2026-11-07] Condensed
+- [2026-11-07] Closed by check-task sweep: fixed by b3d5341 on 2026-10-20

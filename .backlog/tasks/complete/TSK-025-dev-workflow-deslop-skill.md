@@ -5,10 +5,11 @@ status: complete
 priority: P3
 tags: [dev-workflow, skill, comments]
 created: 2026-10-07
-source: plan/PLN-003
+source: idea/PLN-003
 depends-on: []
 started: 2026-10-09
 completed: 2026-10-09
+condensed: true
 ---
 
 # dev-workflow: deslop skill
@@ -34,8 +35,7 @@ Remove LLM-style comments and prose from the current branch diff, keeping only c
 
 ## Notes
 
-- Open: numbered list across all files at once vs per file — settle during implementation.
-- Deferred: `--pr` mode (overlaps `/pr-ready`).
+
 
 ## Acceptance Criteria
 
@@ -56,3 +56,4 @@ Remove LLM-style comments and prose from the current branch diff, keeping only c
 - [2026-10-07] Created
 - [2026-10-09] Started
 - [2026-10-09] Completed
+- [2026-11-07] Condensed

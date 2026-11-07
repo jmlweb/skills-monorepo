@@ -3,7 +3,7 @@ id: TSK-077
 title: dev-workflow verify-ui skill with a measuring subagent
 status: pending
 priority: P2
-tags: []
+tags: [dev-workflow, skill, ui]
 created: 2026-11-06
 source: idea/PLN-031
 depends-on: []

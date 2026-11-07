@@ -9,6 +9,7 @@ source: idea/PLN-025
 depends-on: []
 started: 2026-10-15
 completed: 2026-10-15
+condensed: true
 ---
 
 # dev-workflow prune-tests skill for redundant tests
@@ -59,9 +60,5 @@ Full criteria tables, rewrite verification protocol, never-flag rules, risks and
 ## Progress Log
 
 - [2026-10-15] Created
-- [2026-10-15] Started
-- [2026-10-15] Built the spike findings, five CLI commands with tests, the prune-tests skill, README docs and a 1.6.0 minor bump. Not yet run: the skill end to end on a real repo (apply, restore, re-run). Vitest coverage not measured: no provider installed (needs approval to add). Nothing committed.
-- [2026-10-15] Live sandbox runs found 5 bugs, all fixed with regression tests (141 pass): node:assert tautology and delay(n) sleeps not detected, parameterisable groups crossing files, node:test spec reporter count unparsed, fold rewrites dropped by static assertion count (new --claim fold).
-- [2026-10-15] Post-test adaptations: test-verify-rewrite --coverage-command compares covered lines/branches of code under test before and after (test file's own lines excluded); skill verifies merged same-file rewrites before applying; Group B clutter now gets C-labels. 145 tests pass, lint 0/0, validate passed; live LCOV check: fold 0 lost, coverage-dropping rewrite fails with 2 lost.
-- [2026-10-15] pnpm sandbox:prune-tests live run: PASS (no commit, nothing staged, only test/ changed, RPT-007 guard kept, suite green). All approved labels applied incl. clutter C-labels, merged fold + mock-timer rewrite in one file. Harness and rules (playbook mistakes 17-23) added.
 - [2026-10-15] Completed
+- [2026-11-07] Condensed

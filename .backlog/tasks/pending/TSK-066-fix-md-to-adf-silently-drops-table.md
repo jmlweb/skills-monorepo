@@ -3,7 +3,7 @@ id: TSK-066
 title: Fix: md-to-adf silently drops table cells beyond the header width
 status: pending
 priority: P3
-tags: []
+tags: [atlassian-polish, adf, md-to-adf]
 created: 2026-10-28
 source: report/RPT-018
 depends-on: []

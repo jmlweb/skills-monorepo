@@ -3,7 +3,7 @@ id: TSK-062
 title: Fix: CLI arg parsers store true for flag values that are empty or start with --
 status: pending
 priority: P3
-tags: []
+tags: [flowstate, dev-workflow, atlassian-polish, cli]
 created: 2026-10-24
 source: report/RPT-014
 depends-on: []

@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [skills, writing-rules, docs]
 created: 2026-10-08
-source: plan/PLN-013
+source: idea/PLN-013
 depends-on: []
 started: 2026-10-08
 completed: 2026-10-08
+condensed: true
 ---
 
 # Write skill-writing rules doc and wire into AGENTS.md and new-skill
@@ -37,8 +38,5 @@ Steps 1-3 of PLN-013: write docs/writing-skills.md, add trigger-worded AGENTS.md
 ## Progress Log
 
 - [2026-10-08] Created
-- [2026-10-08] Scope added from discarded PLN-017: rules doc must state the hard vs soft setup-dependency rule (explicit 'run setup first' pointer only where output is wrong without setup; audit 2026-10-08 found all 8 existing pointers are hard deps, no fixes needed).
-- [2026-10-08] Scope added from discarded PLN-018: rules doc states the skill-call convention: operative call = explicit 'Call the Skill tool with <plugin:skill>', one skill per call, model-invoked targets only; user suggestion = '/plugin:skill'.
-- [2026-10-08] Started
-- [2026-10-08] Merged 6e5da36; criteria verified by agent, post-merge typecheck/build/test green
 - [2026-10-08] Completed
+- [2026-11-07] Condensed

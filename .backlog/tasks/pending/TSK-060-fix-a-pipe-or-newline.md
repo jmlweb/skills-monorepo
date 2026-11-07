@@ -15,7 +15,7 @@ depends-on: []
 
 ### Context
 
-From RPT-012. Titles go verbatim into frontmatter (`plugins/flowstate/src/core/frontmatter.ts:61-67`) and index rows (`plugins/flowstate/src/commands/task-create.ts:92`, `plugins/flowstate/src/commands/index-rebuild.ts:90,103,161`). A `|` shifts table columns; a newline truncates the stored title to its first line and breaks the row.
+From RPT-012. Titles go verbatim into frontmatter (`plugins/flowstate/src/core/frontmatter.ts:61-67`) and index rows (`plugins/flowstate/src/core/file-store.ts:102`, `plugins/flowstate/src/commands/index-rebuild.ts:90,103,161`). A `|` shifts table columns; a newline truncates the stored title to its first line and breaks the row.
 
 ### Approach
 
@@ -35,3 +35,4 @@ Validate titles at the CLI boundary (reject newlines). Escape `|` as `\|` in one
 ## Progress Log
 
 - [2026-10-22] Created
+- [2026-11-07] Line reference refreshed: the task-create row writer moved to core/file-store.ts:102 in the BacklogStore extraction

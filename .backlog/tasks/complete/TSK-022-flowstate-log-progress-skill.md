@@ -5,10 +5,11 @@ status: complete
 priority: P2
 tags: [flowstate, cli, skill, progress-log]
 created: 2026-10-07
-source: plan/PLN-006
+source: idea/PLN-006
 depends-on: []
 started: 2026-10-07
 completed: 2026-10-07
+condensed: true
 ---
 
 # flowstate: log-progress skill
@@ -63,8 +64,5 @@ Give users a one-step way to record session progress on a task, including tickin
 ## Progress Log
 
 - [2026-10-07] Created
-- [2026-10-07] Started
-- [2026-10-07] task-update: --log is section-aware (SectionNotFoundError), --check ticks criteria via tickCriteria, --log - reads stdin one bullet per line
-- [2026-10-07] log-progress skill (haiku) added; complete-task points to it; SKILL.md, README, AGENTS.md skill count updated
-- [2026-10-07] typecheck, 335 tests and claude plugin validate green
 - [2026-10-07] Completed
+- [2026-11-07] Condensed
