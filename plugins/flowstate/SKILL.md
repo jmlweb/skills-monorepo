@@ -8,6 +8,8 @@ version: 2.18.3
 
 This project uses **Flowstate** for backlog management. All data lives in `.backlog/` by default, or in the directory named by `FLOWSTATE_BACKLOG_DIR` (private backlog). Get the resolved directory from `flowstate path`.
 
+**Backend.** With `FLOWSTATE_BACKEND=github` (set by `setup --github`), tasks, ideas and reports are GitHub Issues of the project's repository (`FLOWSTATE_GITHUB_REPO`, else the checkout's remote): the ID is the issue number (`TSK-051` is #51), labels carry type, status and priority, and the rest of the frontmatter sits in a fenced `flowstate` block at the top of the body. Only `learnings/` stays in the backlog directory. Every CLI command and skill below works the same in both modes; the CLI is the only thing that calls `gh`. `flowstate path --json true` shows `backend` and `repo`.
+
 ## Structure
 
 ```
@@ -42,8 +44,8 @@ Never store `node <path>` in a shell variable and run `$F ...`: zsh does not wor
 
 | Command | Description |
 |---------|-------------|
-| `flowstate setup --project-name <name> [--dir <path> \| --private]` | Create the backlog structure (default `.backlog/`; `--dir`/`--private` for a private backlog, prints the settings snippet) |
-| `flowstate path` | Print the resolved backlog directory (`--json true` adds the source) |
+| `flowstate setup --project-name <name> [--dir <path> \| --private \| --github [--repo <owner/name>]]` | Create the backlog structure (default `.backlog/`; `--dir`/`--private` for a private backlog; `--github` for GitHub Issues: verifies `gh`, creates labels and only `learnings/`; each prints the settings snippet) |
+| `flowstate path` | Print the resolved backlog directory (`--json true` adds the source, the backend and the repo) |
 | `flowstate task-create --title <t> --priority <P> --tags <csv> --body -` | Create task |
 | `flowstate task-move <id> --to <active\|complete\|pending>` | Move task between states |
 | `flowstate task-update <id> [--set <key=value>] [--log <msg\|->] [--check <n,...>]` | Update task fields, append Progress Log bullets (`-` = stdin, one per line), tick criteria by 1-based index |
@@ -52,9 +54,9 @@ Never store `node <path>` in a shell variable and run `$F ...`: zsh does not wor
 | `flowstate task-list [--status <s>] [--json true]` | List tasks |
 | `flowstate task-condense <id\|--all>` | Trim Notes + middle Progress Log of complete tasks |
 | `flowstate task-compress <id> --body -` | Replace complete-task body with validated compressed version |
-| `flowstate task-doctor` | Reconcile task frontmatter status with folder location |
+| `flowstate task-doctor` | Reconcile task frontmatter status with folder location (GitHub mode: realign labels, list invalid closed ideas/reports) |
 | `flowstate stats [--json true]` | Get backlog stats |
-| `flowstate index-rebuild [--type <tasks\|learnings\|all>]` | Rebuild indexes |
+| `flowstate index-rebuild [--type <tasks\|learnings\|all>]` | Rebuild indexes (GitHub mode: learnings only, tasks reported as not applicable) |
 | `flowstate idea-create --title <t> --complexity <c> --body -` | Create idea |
 | `flowstate idea-list [--status <pending\|complete\|all>]` | List ideas (pending by default) |
 | `flowstate idea-move <id> --status <approved\|discarded> [--task-id <TSK-XXX>]` | Move idea |
@@ -67,13 +69,13 @@ Never store `node <path>` in a shell variable and run `$F ...`: zsh does not wor
 | `flowstate learning-move <id> --to archived` | Archive a learning |
 | `flowstate learning-update <id> [--title <t>] [--tags <csv>] [--body -]` | Update learning fields |
 | `flowstate learning-compress <id> --body -` | Replace learning body with validated compressed version |
-| `flowstate next-id <task\|idea\|report\|learning>` | Get next sequential ID |
+| `flowstate next-id <task\|idea\|report\|learning>` | Get next sequential ID (GitHub mode: learning only) |
 
 ## Available Slash Commands
 
 | Command | Description |
 |---------|-------------|
-| `/flowstate:setup` | User-only: initialize `.backlog/` in the current project (uses CLI) |
+| `/flowstate:setup` | User-only: initialize the backlog in the current project, as files or GitHub Issues (uses CLI) |
 | `/flowstate:guide` | User-only: map the commands into flows and name the next one to run |
 | `/flowstate:kickstart` | User-only: turn a project description into an evaluation, ADRs, starter docs, a reviewed draft and first tasks |
 | `/flowstate:overview` | Show backlog overview and health |

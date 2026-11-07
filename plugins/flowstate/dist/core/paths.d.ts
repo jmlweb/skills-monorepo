@@ -31,4 +31,5 @@ export interface SetupTarget {
 }
 export declare function resolveSetupTarget(start: string, input: SetupTargetInput, env?: Env): SetupTarget;
 export declare function settingsSnippet(dir: string): string;
+export declare function envSettingsSnippet(env: Readonly<Record<string, string>>): string;
 export {};

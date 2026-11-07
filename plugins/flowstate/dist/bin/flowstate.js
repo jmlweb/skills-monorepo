@@ -26,10 +26,14 @@ import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { learningCompress } from "../commands/learning-compress.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, validateTitle, } from "../core/types.js";
-import { resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
+import { BACKLOG_DIR_ENV, envSettingsSnippet, resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
 import { parseArgs } from "../core/args.js";
-import { FileStore } from "../core/file-store.js";
+import { BACKEND_ENV, GITHUB_REPO_ENV, resolveRepo, resolveStore, validateRepo, } from "../core/backend.js";
+import { createGhRunner } from "../core/gh.js";
+import { GithubStore } from "../core/github-store.js";
+import { setupGithub } from "../commands/setup-github.js";
+import { taskDoctorGithub } from "../commands/task-doctor.js";
 import { isSharedEnabled, registerBacklog, resolveSharedBacklogs, } from "../core/registry.js";
 const VALID_ENTITY_TYPES = new Set([
     "task",
@@ -46,8 +50,8 @@ const VALID_TASK_STATUSES = new Set([
 const TOP_LEVEL_HELP = `Usage: flowstate <command> [args]
 
 Commands:
-  setup              Initialize the backlog structure (.backlog, or a custom/private dir)
-  path               Print the resolved backlog directory
+  setup              Initialize the backlog structure (.backlog, a custom/private dir, or --github)
+  path               Print the resolved backlog directory (and the backend in use)
   next-id            Get next ID for an entity type
   task-create        Create a new task
   task-list          List tasks (optionally filter by status)
@@ -80,9 +84,9 @@ Global flags:
 
 Run 'flowstate <command> --help' for command-specific usage.`;
 const COMMAND_HELP = {
-    setup: "Usage: flowstate setup [--project-name <name>] [--dir <path> | --private]\n  --dir <path>  create the backlog at a custom directory (absolute, or relative to the project root) and print the .claude/settings.local.json snippet that points flowstate at it\n  --private     shorthand for --dir <common-git-dir>/flowstate (untracked, shared across worktrees)\n  Runtime resolution: FLOWSTATE_BACKLOG_DIR if set (absolute; a relative value resolves against the project root), else the nearest .backlog/ walking up from cwd.",
-    path: 'Usage: flowstate path [--json true]\n  Prints the resolved backlog directory. With --json true: {"path": ..., "source": "env"|"walk-up"}.',
-    "next-id": "Usage: flowstate next-id <task|idea|report|learning>",
+    setup: "Usage: flowstate setup [--project-name <name>] [--dir <path> | --private] [--github [--repo <owner/name>]]\n  --dir <path>  create the backlog at a custom directory (absolute, or relative to the project root) and print the .claude/settings.local.json snippet that points flowstate at it\n  --private     shorthand for --dir <common-git-dir>/flowstate (untracked, shared across worktrees)\n  --github      keep tasks, ideas and reports in GitHub Issues: verifies gh auth and the repo (--repo, else FLOWSTATE_GITHUB_REPO, else the checkout's remote), creates the flowstate labels, creates only learnings/ on disk and prints the settings snippet that sets FLOWSTATE_BACKEND=github\n  Runtime resolution: FLOWSTATE_BACKLOG_DIR if set (absolute; a relative value resolves against the project root), else the nearest .backlog/ walking up from cwd. FLOWSTATE_BACKEND=github selects the GitHub backend; anything else selects the files.",
+    path: 'Usage: flowstate path [--json true]\n  Prints the resolved backlog directory (learnings only in GitHub mode). With --json true: {"path": ..., "source": "env"|"walk-up", "backend": "file"|"github", "repo": "owner/name" (GitHub mode only)}.',
+    "next-id": "Usage: flowstate next-id <task|idea|report|learning>\n  In GitHub mode only learning is available: task, idea and report IDs are issue numbers assigned on creation.",
     "task-create": "Usage: flowstate task-create --title <text> --priority <P1|P2|P3|P4> [--tags t1,t2] [--description <text> | --body <text|->] [--criteria <json-array>] [--source <ref>] [--depends-on id1,id2]",
     "task-list": "Usage: flowstate task-list [--status <pending|active|blocked|complete>] [--limit <n>]",
     "task-move": "Usage: flowstate task-move <id> --to <active|complete|pending>",
@@ -92,9 +96,9 @@ const COMMAND_HELP = {
     "task-condense": "Usage: flowstate task-condense <id> | flowstate task-condense --all\n  Trims Notes section and middle Progress Log entries from complete tasks. Idempotent (sets condensed: true).",
     "task-normalize": "Usage: flowstate task-normalize <id>\n  Merges repeated ## Notes sections of a task (any status) into the first one. Idempotent.",
     "task-compress": "Usage: flowstate task-compress <id> --body -\n  Replace task body with caveman-compressed version piped on stdin. Validates that all code blocks, inline code, URLs, IDs, dates, version numbers, and headings are preserved, and that the Acceptance Criteria section is byte-exact. Rejects on invariant failure with JSON diagnostics. Sets compressed: true on success. Idempotent.",
-    "task-doctor": "Usage: flowstate task-doctor [--dry-run true]\n  Reconciles frontmatter `status` field with folder location for every task in tasks/{pending,active,complete}/. Maps synonyms (done, completed, todo, wip, ...) to canonical values. Idempotent.",
-    stats: "Usage: flowstate stats",
-    "index-rebuild": "Usage: flowstate index-rebuild [--type <tasks|learnings|all>]",
+    "task-doctor": "Usage: flowstate task-doctor [--dry-run true]\n  Reconciles frontmatter `status` field with folder location for every task in tasks/{pending,active,complete}/. Maps synonyms (done, completed, todo, wip, ...) to canonical values. Idempotent.\n  GitHub mode: realigns status and priority labels with each issue's state and metadata block, and lists closed ideas or reports whose final-state labels are missing, duplicated or unknown (`invalid`).",
+    stats: "Usage: flowstate stats\n  Counts tasks, ideas and reports through the active backend (files or GitHub Issues); learnings always come from the backlog directory.",
+    "index-rebuild": "Usage: flowstate index-rebuild [--type <tasks|learnings|all>]\n  GitHub mode has no tasks/index.md: --type tasks reports it as not applicable, and all rebuilds learnings only.",
     "idea-create": "Usage: flowstate idea-create --title <text> --complexity <low|medium|high> [--body <text|->]",
     "idea-list": "Usage: flowstate idea-list [--status <pending|complete|all>] [--limit <n>]\n  Default: pending only.",
     "idea-move": "Usage: flowstate idea-move <id> --status <approved|discarded> [--task-id <id>]",
@@ -127,6 +131,7 @@ function asTaskStatus(value) {
 const SWITCHES = new Set([
     "json",
     "private",
+    "github",
     "dry-run",
     "all",
     "include-archived",
@@ -206,6 +211,13 @@ function parseLimit(value) {
     }
     return Number(value);
 }
+function parseIndexType(value) {
+    if (value === undefined || value === "all")
+        return "all";
+    if (value === "tasks" || value === "learnings")
+        return value;
+    throw new InvalidArgumentError(`Invalid --type value: "${value}". Must be one of: tasks, learnings, all`);
+}
 function parseCriteria(value) {
     if (value === undefined)
         return [];
@@ -258,6 +270,26 @@ async function main() {
                 ...(flags["dir"] !== undefined ? { dir: flags["dir"] } : {}),
                 isPrivate: flags["private"] === "true",
             });
+            if (flags["github"] === "true") {
+                const gh = createGhRunner({ cwd: process.cwd() });
+                const repo = flags["repo"] !== undefined ? validateRepo(flags["repo"]) : await resolveRepo(gh);
+                const result = await setupGithub(target.dir, { repo, projectName: name }, gh);
+                await registerForSharing(result.root);
+                output({
+                    ...result,
+                    backend: "github",
+                    settingsFile: ".claude/settings.local.json",
+                    settingsSnippet: envSettingsSnippet({
+                        [BACKEND_ENV]: "github",
+                        ...(flags["repo"] !== undefined ? { [GITHUB_REPO_ENV]: repo } : {}),
+                        ...(target.isCustom ? { [BACKLOG_DIR_ENV]: result.root } : {}),
+                    }),
+                }, json);
+                return;
+            }
+            if (flags["repo"] !== undefined) {
+                throw new InvalidArgumentError("--repo only applies with --github.");
+            }
             const created = await setup(target.dir, name);
             await registerForSharing(created);
             output(target.isCustom
@@ -271,15 +303,17 @@ async function main() {
         }
         const resolved = resolveBacklog(process.cwd());
         const root = resolved.dir;
-        // Learnings, stats, index-rebuild and task-doctor still read the directory directly.
-        const store = new FileStore(root);
+        // Learnings and index-rebuild still read the directory directly, in every mode.
+        const { backend, store, repo } = await resolveStore(root, process.cwd());
         await registerForSharing(root);
         switch (command) {
             case "path": {
-                if (json)
-                    output({ path: root, source: resolved.source }, true);
-                else
+                if (json) {
+                    output({ path: root, source: resolved.source, backend, ...(repo !== undefined ? { repo } : {}) }, true);
+                }
+                else {
                     console.log(root);
+                }
                 break;
             }
             case "next-id": {
@@ -288,7 +322,11 @@ async function main() {
                     console.error("Usage: flowstate next-id <task|idea|report|learning>");
                     process.exit(1);
                 }
-                const id = await nextId(root, asEntityType(raw));
+                const type = asEntityType(raw);
+                if (backend === "github" && type !== "learning") {
+                    throw new InvalidArgumentError(`next-id ${type} is not available in GitHub mode: the ID is the issue number, assigned by ${type}-create.`);
+                }
+                const id = await nextId(root, type);
                 output({ id }, json);
                 break;
             }
@@ -424,19 +462,31 @@ async function main() {
                 break;
             }
             case "task-doctor": {
-                const result = await taskDoctor(root, {
-                    dryRun: flags["dry-run"] === "true",
-                });
+                const dryRun = flags["dry-run"] === "true";
+                const result = store instanceof GithubStore
+                    ? await taskDoctorGithub(store, { dryRun })
+                    : await taskDoctor(root, { dryRun });
                 output(result, json);
                 break;
             }
             case "stats": {
-                const result = await stats(root);
+                const result = await stats(store, root);
                 output(result, json);
                 break;
             }
             case "index-rebuild": {
-                const type = (flags["type"] ?? "all");
+                const type = parseIndexType(flags["type"]);
+                if (backend === "github" && type !== "learnings") {
+                    // Tasks have no index.md in GitHub mode; say so instead of a silent no-op.
+                    const skipped = "tasks: not applicable in GitHub mode (issues have no index.md)";
+                    if (type === "tasks") {
+                        output({ rebuilt: "none", skipped }, json);
+                        break;
+                    }
+                    await indexRebuild(root, "learnings");
+                    output({ rebuilt: "learnings", skipped }, json);
+                    break;
+                }
                 await indexRebuild(root, type);
                 output({ rebuilt: type }, json);
                 break;

@@ -27,7 +27,7 @@ _No active tasks._
 | ID | Title | Completed |
 |----|-------|-----------|
 `;
-const LEARNINGS_INDEX_TEMPLATE = (name) => `# ${name} - Learnings Index
+export const LEARNINGS_INDEX_TEMPLATE = (name) => `# ${name} - Learnings Index
 
 > Consult a learning's full document before starting related work.
 

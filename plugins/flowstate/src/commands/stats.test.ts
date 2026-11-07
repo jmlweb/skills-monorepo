@@ -22,7 +22,7 @@ afterEach(async () => {
 
 describe("stats", () => {
   it("returns zeros for empty backlog", async () => {
-    const result = await stats(tmp);
+    const result = await stats(new FileStore(tmp), tmp);
     expect(result).toEqual({ pending: 0, active: 0, blocked: 0, complete: 0, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
   });
 
@@ -34,7 +34,7 @@ describe("stats", () => {
     await taskMove(new FileStore(tmp), "TSK-003", "active");
     await taskMove(new FileStore(tmp), "TSK-003", "complete");
 
-    const result = await stats(tmp);
+    const result = await stats(new FileStore(tmp), tmp);
     expect(result).toEqual({ pending: 1, active: 1, blocked: 0, complete: 1, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
   });
 
@@ -43,7 +43,7 @@ describe("stats", () => {
     await taskMove(new FileStore(tmp), "TSK-001", "active");
     await taskBlock(new FileStore(tmp), "TSK-001", "waiting");
 
-    const result = await stats(tmp);
+    const result = await stats(new FileStore(tmp), tmp);
     expect(result).toEqual({ pending: 0, active: 0, blocked: 1, complete: 0, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
   });
 
@@ -52,7 +52,7 @@ describe("stats", () => {
     await taskCreate(new FileStore(tmp), { title: "B", priority: "P2", tags: [], description: "", criteria: [], source: "manual", dependsOn: [] });
     await taskBlock(new FileStore(tmp), "TSK-001", "waiting");
 
-    const result = await stats(tmp);
+    const result = await stats(new FileStore(tmp), tmp);
     expect(result).toEqual({ pending: 1, active: 0, blocked: 1, complete: 0, pendingIdeas: 0, pendingReports: 0, learnings: 0 });
   });
 });

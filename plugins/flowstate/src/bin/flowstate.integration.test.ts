@@ -671,6 +671,7 @@ describe("CLI integration", () => {
       expect(JSON.parse(runWithEnv(env, "path", "--json", "true"))).toEqual({
         path: priv,
         source: "env",
+        backend: "file",
       });
 
       run("setup");

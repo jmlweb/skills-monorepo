@@ -39,6 +39,66 @@ export class SectionNotFoundError extends Error {
   }
 }
 
+export class GhMissingError extends Error {
+  constructor() {
+    super(
+      "The GitHub backend needs the gh CLI on PATH (https://cli.github.com). Install it, or unset FLOWSTATE_BACKEND to use the .backlog/ files.",
+    );
+    this.name = "GhMissingError";
+  }
+}
+
+export class GhAuthError extends Error {
+  constructor(detail: string) {
+    super(`gh is not authenticated: ${detail.trim() || "no GitHub host is logged in"}. Run "gh auth login", then retry.`);
+    this.name = "GhAuthError";
+  }
+}
+
+export class GhRepoError extends Error {
+  constructor(repo: string, detail: string) {
+    super(
+      `GitHub repository "${repo}" is not reachable: ${detail.trim() || "unknown error"}. Check FLOWSTATE_GITHUB_REPO (owner/name) or run the command inside a checkout with a GitHub remote.`,
+    );
+    this.name = "GhRepoError";
+  }
+}
+
+// Any other gh failure (network, rate limit, unexpected output). The message carries the gh stderr.
+export class GhCommandError extends Error {
+  constructor(args: readonly string[], detail: string) {
+    super(`gh ${args.join(" ")} failed: ${detail.trim() || "no output"}`);
+    this.name = "GhCommandError";
+  }
+}
+
+// An issue the lookup reached but that is not the entity asked for: a pull request, or an
+// issue carrying another flowstate type label (or none).
+export class GhIssueTypeError extends Error {
+  constructor(readonly issueNumber: number, detail: string) {
+    super(`Issue #${issueNumber} is not usable here: ${detail}`);
+    this.name = "GhIssueTypeError";
+  }
+}
+
+// A closed idea or report must carry exactly one final-state label; anything else is
+// rejected rather than guessed. task-doctor lists these.
+export class GhIssueStateError extends Error {
+  constructor(readonly issueNumber: number, detail: string) {
+    super(`Issue #${issueNumber} has an invalid flowstate state: ${detail}`);
+    this.name = "GhIssueStateError";
+  }
+}
+
+export class MetadataBlockError extends Error {
+  constructor(readonly issueNumber: number, detail: string) {
+    super(
+      `Issue #${issueNumber} has a malformed flowstate metadata block: ${detail}. Fix the fenced \`\`\`flowstate block at the top of the issue body, then retry.`,
+    );
+    this.name = "MetadataBlockError";
+  }
+}
+
 export class RegistryReadError extends Error {
   constructor(path: string, cause: unknown) {
     const reason = cause instanceof Error ? cause.message : String(cause);

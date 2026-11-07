@@ -166,5 +166,11 @@ export function resolveSetupTarget(
 }
 
 export function settingsSnippet(dir: string): string {
-  return JSON.stringify({ env: { [BACKLOG_DIR_ENV]: dir } });
+  return envSettingsSnippet({ [BACKLOG_DIR_ENV]: dir });
+}
+
+// The .claude/settings.local.json fragment that makes a choice (private dir, GitHub
+// backend) stick for the next session.
+export function envSettingsSnippet(env: Readonly<Record<string, string>>): string {
+  return JSON.stringify({ env });
 }

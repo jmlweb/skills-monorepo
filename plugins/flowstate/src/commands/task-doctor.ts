@@ -3,6 +3,60 @@ import type { TaskStatus } from "../core/types.js";
 import type { TaskBucket } from "../core/store.js";
 import { BUCKETS, taskStatusOf } from "../core/store.js";
 import { listFiles, readEntity, writeEntity } from "../core/fs.js";
+import type { GithubStore } from "../core/github-store.js";
+
+export interface TaskDoctorLabelFix {
+  readonly id: string;
+  readonly path: string;
+  readonly added: string;
+  readonly removed: string;
+}
+
+export interface TaskDoctorInvalidIssue {
+  readonly id: string;
+  readonly path: string;
+  readonly reason: string;
+}
+
+export interface TaskDoctorGithubResult {
+  readonly scanned: number;
+  readonly fixed: readonly TaskDoctorLabelFix[];
+  readonly invalid: readonly TaskDoctorInvalidIssue[];
+}
+
+// The GitHub equivalent: the issue state and the metadata block are the truth, labels
+// are what drifts (someone adds status:blocked on github.com), so labels get realigned.
+// Closed ideas and reports with no, two or unknown final-state labels cannot be fixed
+// by guessing; they are listed for a human to relabel.
+export async function taskDoctorGithub(
+  store: GithubStore,
+  options: { readonly dryRun?: boolean } = {},
+): Promise<TaskDoctorGithubResult> {
+  const apply = options.dryRun !== true;
+  const fixed: TaskDoctorLabelFix[] = [];
+  const invalid: TaskDoctorInvalidIssue[] = [];
+  let scanned = 0;
+
+  for (const type of ["task", "idea", "report"] as const) {
+    for (const issue of await store.inspect(type)) {
+      scanned += 1;
+      if (!issue.entity) {
+        invalid.push({ id: `#${issue.number}`, path: issue.url, reason: issue.error ?? "unreadable" });
+        continue;
+      }
+      const diff = await store.repairLabels(issue.entity, apply);
+      if (diff.add.length === 0 && diff.remove.length === 0) continue;
+      fixed.push({
+        id: issue.entity.id,
+        path: issue.url,
+        added: diff.add.join(","),
+        removed: diff.remove.join(","),
+      });
+    }
+  }
+
+  return { scanned, fixed, invalid };
+}
 
 export interface TaskDoctorFix {
   readonly id: string;
