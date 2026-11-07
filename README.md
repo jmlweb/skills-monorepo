@@ -157,7 +157,7 @@ pnpm sandbox:readme-media # Live /readme-media run on a copy of flowstate, then 
 .claude-plugin/           # Root marketplace definition
 plugins/
 ├── flowstate/            # Backlog management (21 skills + CLI + hooks + agent)
-├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests (11 skills + CLI + agent)
+├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests (11 skills + CLI + hooks + agent)
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
 └── shared-config/        # Shared TypeScript base config

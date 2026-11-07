@@ -38,7 +38,8 @@ plugins/
 │   └── dist/                     # COMMITTED build output
 ├── dev-workflow/                 # commit/changeset/check-docs/review-pr/prune-tests skills + CLI
 │   ├── shared/commit-basics.md   # prose shared by commit + changeset skills
-│   └── (same structure, no root SKILL.md, no hooks)
+│   ├── hooks/hooks.json          # PreToolUse read-only zones guard → dist/bin/read-only-zones-hook.js
+│   └── (same structure, no root SKILL.md)
 └── atlassian-polish/             # 2 skills + 1 agent + references + tiny CLI (md-to-adf); src/dist
 packages/shared-config/           # tsconfig.base.json all plugins extend
 scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh, sandbox-*.mjs (+ node:test tests)
