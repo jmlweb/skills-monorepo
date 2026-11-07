@@ -129,7 +129,7 @@ Use `/reload-plugins` after making changes.
 
 | Command | Description |
 |---------|-------------|
-| 🙋 `/flowstate:setup` | Create the backlog (`.backlog/` by default, or a [private location](#-private-backlog)). Safe to re-run |
+| 🙋 `/flowstate:setup` | Create the backlog (`.backlog/` by default, a [private location](#-private-backlog), or [GitHub Issues](#-github-mode)). Safe to re-run |
 | 🙋 `/flowstate:kickstart [description]` | New project? Grills the idea, then evaluates it honestly: is the need real, what already covers it, does it work for your goal, and what is the riskiest assumption. Drafts ADRs, `AGENTS.md` and an overview, has an independent agent review them, then seeds tasks that start by testing that assumption. Creates the backlog if missing and never overwrites existing files |
 | 🙋 `/flowstate:guide [situation]` | Not sure what to run? Maps the commands into flows and names the next one |
 | `/flowstate:overview` | Stats, active work, and health warnings at a glance |
@@ -242,7 +242,7 @@ Ticking an acceptance criterion records *how you know*:
 | A test command (`vitest`, `jest`, `pytest`, `pnpm test`…) exits non-zero (`PostToolUseFailure`) | Claude is nudged to consider `/flowstate:report` |
 | Before a `git commit` while tasks are active (`PreToolUse`) | Claude sees the active tasks and considers `/flowstate:complete-task` |
 
-> Hooks need `jq` on your `PATH`. Both add context to Claude's conversation and never block the tool call.
+> Hooks need `jq` on your `PATH`. Both add context to Claude's conversation and never block the tool call. In [GitHub mode](#-github-mode) the commit reminder asks the CLI for the active issues and stays silent if `gh` cannot answer.
 
 ### ⚡ Parallel execution
 
@@ -341,7 +341,7 @@ flowstate/
 The plugin follows a clear separation of concerns:
 
 - **Skills** (markdown) handle orchestration — they tell Claude *what* to do
-- **CLI** (TypeScript) handles mutations — it *does* the file operations deterministically
+- **CLI** (TypeScript) handles mutations — it *does* the file operations deterministically (or the `gh` calls, in [GitHub mode](#-github-mode); skills never call `gh` themselves)
 - **Hooks** handle proactive triggers — they fire on events like test failures
 
 ```mermaid
@@ -457,6 +457,46 @@ Want the backlog out of version control without touching `.gitignore`? Create it
 node dist/bin/flowstate.js setup --private          # <common-git-dir>/flowstate, shared by all worktrees
 node dist/bin/flowstate.js setup --dir /abs/path    # or any directory you like
 ```
+
+### 🐙 GitHub mode
+
+Prefer your tasks, ideas and reports as GitHub Issues (assignees, PR links, notifications, no `chore(backlog)` commits)? Opt in per project; learnings stay in `.backlog/learnings/` so they keep being shared across projects.
+
+```
+/flowstate:setup
+```
+
+Answer **GitHub** when asked where the backlog lives, or run the CLI yourself:
+
+```bash
+node dist/bin/flowstate.js setup --github                      # repo from the checkout's remote
+node dist/bin/flowstate.js setup --github --repo owner/name    # or name it
+```
+
+It needs the [`gh` CLI](https://cli.github.com) logged in (`gh auth status`) with write access to the repository. It creates the labels, creates only `.backlog/learnings/`, and prints the snippet to merge into `.claude/settings.local.json`:
+
+```json
+{ "env": { "FLOWSTATE_BACKEND": "github" } }
+```
+
+From then on every skill and CLI command works the same, backed by issues:
+
+| In files | On GitHub |
+|----------|-----------|
+| `TSK-051` from a counter | `TSK-051` is issue **#51**, so numbers are shared with ideas, reports and PRs and are not contiguous per type |
+| `tasks/pending` → `active` → `complete` | open → open with `status:active` → closed |
+| `status: blocked` | `status:blocked` label; a blocked task that was never started still counts as pending |
+| approved / discarded idea, triaged / discarded report | closed with exactly one `status:approved`, `status:discarded` or `status:triaged` label; anything else is reported by `task-doctor`, never guessed |
+| priority and tags in frontmatter | `P1`…`P4` and tag labels (created on first use) |
+| the rest of the frontmatter | a fenced ```` ```flowstate ```` block at the top of the issue body |
+
+Good to know:
+
+- `task-compress` and `task-condense` rewrite the issue body; the old version stays in the issue's edit history.
+- `index-rebuild` has nothing to rebuild for tasks and says so; `stats` and `task-doctor` read the issues; `path` still prints the learnings directory (`--json true` adds `backend` and `repo`).
+- Labels are the part humans edit by hand on github.com. Run `flowstate task-doctor` to realign them with the issue state and metadata; `--dry-run true` lists first.
+- Importing an existing `.backlog/` into issues is not supported yet.
+- Maintainers: `pnpm sandbox:github-backend --repo owner/name` runs the full lifecycle on a throwaway repository (it leaves closed issues behind). The test suite uses a stub `gh` and never touches the network.
 
 `setup` prints a snippet; merge it into the git-ignored `.claude/settings.local.json` and restart the session:
 

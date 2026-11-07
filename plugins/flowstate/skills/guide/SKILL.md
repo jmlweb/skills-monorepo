@@ -31,7 +31,7 @@ Done when: every behaviour claim in the reply comes from a SKILL.md read in this
 
 ## The map
 
-**Precondition.** `setup` creates `.backlog/`; every other flow needs it.
+**Precondition.** `setup` creates `.backlog/` (or, with `--github`, keeps tasks, ideas and reports in GitHub Issues and only learnings in `.backlog/`); every other flow needs it and runs the same in both modes.
 
 **New project.** `kickstart` takes a project description through evaluation, ADRs, starter docs, an independent review and the first tasks (creating `.backlog/` if missing), then continue at `start-task`.
 

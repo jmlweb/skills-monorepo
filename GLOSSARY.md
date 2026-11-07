@@ -6,12 +6,16 @@ CLI output. Each entry lists words to avoid.
 ## Language
 
 **Backlog**:
-The `.backlog/` directory holding every entity of one project, managed by the flowstate CLI.
+Every entity of one project, managed by the flowstate CLI. In file mode (the default) it is the `.backlog/` directory. In GitHub mode (`FLOWSTATE_BACKEND=github`) tasks, ideas and reports are issues of the project's repository, and `.backlog/` holds only learnings.
 _Avoid_: board, queue, tracker
 
+**Backend**:
+Where a **backlog**'s tasks, ideas and reports are stored: `file` (`.backlog/` markdown files) or `github` (GitHub Issues through `gh`). Learnings are file-based in both. Chosen by `setup --github` and the `FLOWSTATE_BACKEND` variable.
+_Avoid_: storage, provider, driver
+
 **Entity**:
-A markdown file with YAML frontmatter and a CLI-assigned ID. Exactly four kinds exist: task, idea, report, learning.
-_Avoid_: item, record, ticket, issue
+A markdown file with YAML frontmatter and a CLI-assigned ID (in GitHub mode, an issue whose number is the ID and whose labels and metadata block replace the frontmatter). Exactly four kinds exist: task, idea, report, learning.
+_Avoid_: item, record, ticket, issue (except when naming the GitHub object that backs an entity)
 
 **Task**:
 A unit of work to implement, with acceptance criteria. ID prefix `TSK`; moves pending → active → complete (or blocked).
