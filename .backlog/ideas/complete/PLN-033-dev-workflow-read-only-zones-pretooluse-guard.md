@@ -1,9 +1,11 @@
 ---
 id: PLN-033
 title: dev-workflow read-only zones PreToolUse guard
-status: pending
+status: approved
 created: 2026-11-06
 complexity: medium
+reviewed: 2026-11-06
+task-id: TSK-079
 ---
 
 ## Goal

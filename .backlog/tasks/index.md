@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 16 |
+| Pending | 20 |
 | Active | 1 |
 | Blocked | 2 |
 | Complete | 57 |
@@ -35,6 +35,10 @@
 | TSK-074 | Fix: task-doctor plain output prints [object Object] for each fixed task | P4 |  | 2026-11-05 |
 | TSK-075 | Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn | P3 | tokens, agents, upstream | 2026-11-05 |
 | TSK-076 | Decide where a gated production protocol lives | P3 |  | 2026-11-06 |
+| TSK-077 | dev-workflow verify-ui skill with a measuring subagent | P2 |  | 2026-11-06 |
+| TSK-078 | flowstate groom-tasks skill for relevance and priority | P2 |  | 2026-11-06 |
+| TSK-079 | dev-workflow read-only zones PreToolUse guard | P2 |  | 2026-11-06 |
+| TSK-080 | flowstate parallel resume and next-task automation labels | P2 |  | 2026-11-07 |
 
 ## Recently Completed
 

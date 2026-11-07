@@ -1,9 +1,11 @@
 ---
 id: PLN-031
 title: dev-workflow verify-ui skill with a measuring subagent
-status: pending
+status: approved
 created: 2026-11-06
 complexity: high
+reviewed: 2026-11-06
+task-id: TSK-077
 ---
 
 ## Goal
