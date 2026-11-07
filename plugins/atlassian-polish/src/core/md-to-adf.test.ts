@@ -65,6 +65,25 @@ describe("markdownToAdf", () => {
     ]);
   });
 
+  it("keeps balanced parentheses in a link destination", () => {
+    const [p] = convert('See [docs](https://x.y/a_(b)) and [t](https://x.y/c_(d) "title") now');
+    expect(p?.content).toEqual([
+      t("See "),
+      { type: "text", text: "docs", marks: [{ type: "link", attrs: { href: "https://x.y/a_(b)" } }] },
+      t(" and "),
+      { type: "text", text: "t", marks: [{ type: "link", attrs: { href: "https://x.y/c_(d)" } }] },
+      t(" now"),
+    ]);
+  });
+
+  it("reads an unbalanced link destination up to the first ) as before", () => {
+    const [p] = convert("[a](https://x.y/(b) tail");
+    expect(p?.content).toEqual([
+      { type: "text", text: "a", marks: [{ type: "link", attrs: { href: "https://x.y/(b" } }] },
+      t(" tail"),
+    ]);
+  });
+
   it("turns [@Name](mention:<id>) into a mention node, in lists too", () => {
     const [list] = convert("- Owners: [@Ana López](mention:712020:abc), [Bo](mention:42)");
     expect(list?.content?.[0]?.content?.[0]?.content).toEqual([

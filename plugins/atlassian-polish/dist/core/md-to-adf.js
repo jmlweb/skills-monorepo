@@ -379,6 +379,41 @@ const isAlnum = (c) => c !== undefined && /[A-Za-z0-9]/.test(c);
 function codeMarks(marks) {
     return [...marks.filter((m) => m.type === "link"), { type: "code" }];
 }
+const LINK_OPEN_RE = /^\[([^\]]+)\]\(/;
+const LINK_CLOSE_RE = /^(?:\s+"[^"]*")?\)/;
+const LINK_FALLBACK_RE = /^\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/;
+/**
+ * CommonMark lets a destination hold balanced parentheses (`/wiki/Foo_(bar)`),
+ * so the destination ends at the first unmatched `)` or whitespace. When the
+ * balanced scan finds no closing `)`, the pre-existing first-`)` regex applies,
+ * so unbalanced input keeps its old reading.
+ */
+function matchLink(s) {
+    const open = LINK_OPEN_RE.exec(s);
+    if (!open)
+        return undefined;
+    const start = open[0].length;
+    let depth = 0;
+    let i = start;
+    for (; i < s.length; i++) {
+        const c = s[i];
+        if (/\s/.test(c))
+            break;
+        if (c === "(")
+            depth++;
+        else if (c === ")") {
+            if (depth === 0)
+                break;
+            depth--;
+        }
+    }
+    const close = LINK_CLOSE_RE.exec(s.slice(i));
+    if (i > start && depth === 0 && close) {
+        return { label: open[1], href: s.slice(start, i), length: i + close[0].length };
+    }
+    const legacy = LINK_FALLBACK_RE.exec(s);
+    return legacy ? { label: legacy[1], href: legacy[2], length: legacy[0].length } : undefined;
+}
 function parseInline(src, marks) {
     const out = [];
     let buf = "";
@@ -438,25 +473,25 @@ function parseInline(src, marks) {
             }
         }
         if (c === "[" && !hasLink) {
-            const m = /^\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/.exec(src.slice(i));
-            if (m?.[2].startsWith("mention:")) {
+            const m = matchLink(src.slice(i));
+            if (m?.href.startsWith("mention:")) {
                 // [@Name](mention:<accountId>) → real ADF mention; plain text can't notify.
                 flush();
-                const name = m[1].replace(/^@/, "");
+                const name = m.label.replace(/^@/, "");
                 out.push({
                     type: "mention",
-                    attrs: { id: m[2].slice("mention:".length), text: `@${name}` },
+                    attrs: { id: m.href.slice("mention:".length), text: `@${name}` },
                 });
-                i += m[0].length;
+                i += m.length;
                 continue;
             }
             if (m) {
                 flush();
-                out.push(...parseInline(m[1], [
+                out.push(...parseInline(m.label, [
                     ...marks,
-                    { type: "link", attrs: { href: m[2] } },
+                    { type: "link", attrs: { href: m.href } },
                 ]));
-                i += m[0].length;
+                i += m.length;
                 continue;
             }
         }

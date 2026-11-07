@@ -72,6 +72,8 @@ Node shape it emits, for reference:
 
 - `- [ ]` → `state: "TODO"`, `- [x]` → `"DONE"`. Every `localId` is a fresh UUID.
 - `taskItem` holds inline nodes directly (text, code-marked text), not a `paragraph`.
+- Links: `[text](url)` and `[text](url "title")` become a `link` mark (the title is dropped);
+  the URL may hold balanced parentheses, as in `/wiki/Foo_(bar)`.
 - Tables: `tableHeader`/`tableCell` each wrap a `paragraph`. Links are a `link` mark. `code`
   never combines with bold/italic; the converter drops the other marks there. The header sets
   the column count: a shorter body row is padded with empty cells, a row with extra non-empty
