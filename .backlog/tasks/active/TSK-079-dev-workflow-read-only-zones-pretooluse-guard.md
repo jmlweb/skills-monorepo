@@ -46,22 +46,24 @@ Ship a `PreToolUse` hook in `dev-workflow` that blocks file edits inside zones a
 
 ## Acceptance Criteria
 
-- [ ] Config at .claude/read-only-zones.json is an array of glob and why entries with why required, matched by a hand-rolled glob with zero runtime dependencies
-- [ ] Check lives in src/core/read-only-zones.ts with colocated vitest tests on real temp dirs, compiled to committed dist/
-- [ ] hooks/hooks.json matches Edit|Write|NotebookEdit and calls the compiled script through node and CLAUDE_PLUGIN_ROOT, reading notebook_path for NotebookEdit
-- [ ] Globs match relative to the nearest .git file or directory found by walking up from the target file, covering a worktree case and a cwd in a subdirectory, with no git spawn
-- [ ] Paths are normalised so .. segments cannot escape a zone, and a target outside the project root is allowed and tested
-- [ ] No config exits 0 before stdin is read, malformed or unreadable config exits 2 naming the file and parse error, stdin parse failure with a config exits 2, and a match exits 2 with path and why on stderr
-- [ ] The config itself is an implicit zone, and the broken-config message tells the reader to fix the file by hand
-- [ ] Hook stdin fields and exit 2 behaviour are confirmed against official docs
-- [ ] README documents the config format, the implicit zone, that config is always read from CLAUDE_PROJECT_DIR, and that this is not a security boundary because Bash can still write
+- [x] Config at .claude/read-only-zones.json is an array of glob and why entries with why required, matched by a hand-rolled glob with zero runtime dependencies
+- [x] Check lives in src/core/read-only-zones.ts with colocated vitest tests on real temp dirs, compiled to committed dist/ — evidence: src/core/read-only-zones.ts, 47 vitest cases on mkdtemp dirs, dist committed (2026-11-07)
+- [x] hooks/hooks.json matches Edit|Write|NotebookEdit and calls the compiled script through node and CLAUDE_PLUGIN_ROOT, reading notebook_path for NotebookEdit
+- [x] Globs match relative to the nearest .git file or directory found by walking up from the target file, covering a worktree case and a cwd in a subdirectory, with no git spawn
+- [x] Paths are normalised so .. segments cannot escape a zone, and a target outside the project root is allowed and tested
+- [x] No config exits 0 before stdin is read, malformed or unreadable config exits 2 naming the file and parse error, stdin parse failure with a config exits 2, and a match exits 2 with path and why on stderr
+- [x] The config itself is an implicit zone, and the broken-config message tells the reader to fix the file by hand
+- [x] Hook stdin fields and exit 2 behaviour are confirmed against official docs — evidence: hooks page: file_path always absolute for Edit/Write, exit 2 blocks PreToolUse with stderr as reason; permissions page: notebook_path for NotebookEdit; live claude -p probe blocked dist/x.js (2026-11-07)
+- [x] README documents the config format, the implicit zone, that config is always read from CLAUDE_PROJECT_DIR, and that this is not a security boundary because Bash can still write
 - [ ] AGENTS.md map updated, plugin description and keywords checked, claude plugin validate . passes and the version is set with pnpm bump
 
 ## Notes
 
 ## Learnings
 
+- LRN-060: Probe a plugin hook end to end with a nested claude -p --plugin-dir in a scratch repo
 ## Progress Log
 
 - [2026-11-06] Created
 - [2026-11-07] Started
+- [2026-11-07] Merged a46c7fa into main (README conflicts with verify-ui resolved as union). plugin validate passed, version:sync in sync. AGENTS.md map updated. Bump pending the coordinated release.

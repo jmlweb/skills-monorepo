@@ -5,9 +5,9 @@
 | Status | Count |
 |--------|-------|
 | Pending | 1 |
-| Active | 13 |
+| Active | 12 |
 | Blocked | 1 |
-| Complete | 66 |
+| Complete | 67 |
 
 ## Active Tasks
 
@@ -18,7 +18,6 @@
 - TSK-063: Fix: report-move and idea-move accept any --status value (P2)
 - TSK-064: Fix: task-update --set writes unvalidated values, including id and priority (P2)
 - TSK-065: Fix: list commands accept a negative or non-numeric --limit (P4)
-- TSK-072: Fix: test-static-scan drops a test whose body holds a quote inside a regex literal (P3)
 - TSK-073: Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears (P2)
 - TSK-074: Fix: task-doctor plain output prints [object Object] for each fixed task (P4)
 - TSK-077: dev-workflow verify-ui skill with a measuring subagent (P2)
@@ -43,6 +42,6 @@
 | TSK-068 | Fix: md-to-adf truncates link URLs that contain parentheses | 2026-11-07 |
 | TSK-070 | Fix: on-test-failure hook never fires: wrong event and nonexistent exit_code field | 2026-11-07 |
 | TSK-071 | Fix: pre-commit-reminder hook emits invalid JSON when an active task title holds a double quote | 2026-11-07 |
+| TSK-072 | Fix: test-static-scan drops a test whose body holds a quote inside a regex literal | 2026-11-07 |
 | TSK-075 | Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn | 2026-11-07 |
 | TSK-076 | Decide where a gated production protocol lives | 2026-11-07 |
-| TSK-069 | Fix: scan-secrets skips every file when git diff paths lack the b/ prefix | 2026-11-05 |

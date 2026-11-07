@@ -62,3 +62,5 @@
 | LRN-056 | A marker commit breaks merge --ff-only base sync; worktree briefs rebase instead | worktree, parallel, git, flowstate | active | 2026-11-07 |
 | LRN-057 | Agent tools entries for an absent MCP server are dropped silently when any other tool resolves | claude-code, plugin-agents, mcp, tools | active | 2026-11-07 |
 | LRN-058 | Routing eval negative cases with a built-in owner need external: true and prompts free of description tokens | routing, evals, skills, tf-idf | active | 2026-11-07 |
+| LRN-059 | A JS scanner decides division vs regex from the previous token; bail a regex scan at a newline | dev-workflow, test-static-scan, parser, javascript | active | 2026-11-07 |
+| LRN-060 | Probe a plugin hook end to end with a nested claude -p --plugin-dir in a scratch repo | claude-code, hooks, testing, plugins | active | 2026-11-07 |
