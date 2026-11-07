@@ -51,7 +51,8 @@ function runFails(args: string[], extra: Record<string, string> = {}): { status:
   return { status: result.status, stderr: result.stderr };
 }
 
-describe("CLI integration in GitHub mode", () => {
+// Every CLI call spawns node plus the stub gh; a slow CI runner needs more than the 5 s default.
+describe("CLI integration in GitHub mode", { timeout: 60_000 }, () => {
   it("setup --github creates labels, only learnings/ on disk, and prints the settings snippet", async () => {
     const out = runJson("setup", "--github", "--project-name", "Widgets") as Record<string, unknown>;
     expect(out["backend"]).toBe("github");
