@@ -5,9 +5,9 @@
 | Status | Count |
 |--------|-------|
 | Pending | 1 |
-| Active | 16 |
+| Active | 15 |
 | Blocked | 1 |
-| Complete | 63 |
+| Complete | 64 |
 
 ## Active Tasks
 
@@ -23,7 +23,6 @@
 - TSK-072: Fix: test-static-scan drops a test whose body holds a quote inside a regex literal (P3)
 - TSK-073: Fix: task-doctor resets a blocked task in tasks/pending to pending and the block disappears (P2)
 - TSK-074: Fix: task-doctor plain output prints [object Object] for each fixed task (P4)
-- TSK-076: Decide where a gated production protocol lives (P3)
 - TSK-077: dev-workflow verify-ui skill with a measuring subagent (P2)
 - TSK-078: flowstate groom-tasks skill for relevance and priority (P2)
 - TSK-079: dev-workflow read-only zones PreToolUse guard (P2)
@@ -45,7 +44,7 @@
 | TSK-067 | Fix: md-to-adf turns a fenced code block inside a list item into inline text | 2026-11-07 |
 | TSK-068 | Fix: md-to-adf truncates link URLs that contain parentheses | 2026-11-07 |
 | TSK-075 | Pin cavecrew-builder to sonnet: upstream PR plus explicit model on every spawn | 2026-11-07 |
+| TSK-076 | Decide where a gated production protocol lives | 2026-11-07 |
 | TSK-069 | Fix: scan-secrets skips every file when git diff paths lack the b/ prefix | 2026-11-05 |
 | TSK-059 | Fix: detect-test-runner picks a farther lockfile over the nearest one and never detects npm | 2026-11-01 |
 | TSK-058 | dev-workflow: Mermaid diagram in descriptions of complex PRs | 2026-10-28 |
-| TSK-055 | Fix: parallel skill leaves worktrees behind after merge | 2026-10-26 |

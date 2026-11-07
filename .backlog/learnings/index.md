@@ -55,3 +55,4 @@
 | LRN-049 | Any Agent spawn without a model inherits the caller model, so pin one on every spawn | agents, tokens, model, caveman, delegation | active | 2026-11-07 |
 | LRN-050 | Worktree guard rejects printf -- pipelines, not only git | worktree, tooling, shell, isolation-guard | active | 2026-11-07 |
 | LRN-051 | A wider table row cannot be told apart from an unescaped pipe, so md-to-adf refuses it | atlassian-polish, md-to-adf, tables, design | active | 2026-11-07 |
+| LRN-052 | A conditional template block needs a negative fixture check in the sandbox | kickstart, sandbox, templates, testing | active | 2026-11-07 |

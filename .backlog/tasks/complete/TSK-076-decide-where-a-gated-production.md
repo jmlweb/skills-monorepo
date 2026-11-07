@@ -1,13 +1,14 @@
 ---
 id: TSK-076
 title: Decide where a gated production protocol lives
-status: active
+status: complete
 priority: P3
 tags: [flowstate, kickstart]
 created: 2026-11-06
 source: idea/PLN-034
 depends-on: []
 started: 2026-11-07
+completed: 2026-11-07
 ---
 
 # Decide where a gated production protocol lives
@@ -34,17 +35,20 @@ Decide how the gated production protocol from `subbuteo` reaches other projects,
 
 ## Acceptance Criteria
 
-- [ ] subbuteo prod-ops and deploy are read and generic steps are separated from WP facts
-- [ ] Both placements are compared on whether the result changes agent behaviour in a project with no prod notes
-- [ ] kickstart-templates.md section Project skill proposal gains a conditional production block with write steps and placeholders for project facts
-- [ ] Projects with no production target get no proposal
-- [ ] kickstart-reviewer and sandbox-kickstart are updated only if the change affects them
+- [x] subbuteo prod-ops and deploy are read and generic steps are separated from WP facts
+- [x] Both placements are compared on whether the result changes agent behaviour in a project with no prod notes
+- [x] kickstart-templates.md section Project skill proposal gains a conditional production block with write steps and placeholders for project facts — evidence: kickstart-templates.md Production target paragraph plus prod-ops skill template, merged from 52f572f (2026-11-07)
+- [x] Projects with no production target get no proposal — evidence: rule text plus reviewer check 8 clause plus sandbox-kickstart negative check (139 scripts tests pass) (2026-11-07)
+- [x] kickstart-reviewer and sandbox-kickstart are updated only if the change affects them
 
 ## Notes
 
 ## Learnings
 
+- LRN-052: A conditional template block needs a negative fixture check in the sandbox
 ## Progress Log
 
 - [2026-11-06] Created
 - [2026-11-07] Started
+- [2026-11-07] Placement decision: kickstart template section, because a generic dev-workflow skill carries no project facts and changes nothing in a project with no prod notes. Merged 52f572f into main; lint:skills 0/0, plugin validate passed, test:scripts 139 pass.
+- [2026-11-07] Completed
