@@ -48,12 +48,12 @@ flowchart LR
 | ✨ **atlassian-polish** | `atlassian-setup` → `polish-atlassian` (preview → approve → write) |
 
 <details open>
-<summary><strong>🌊 flowstate</strong> — 21 skills</summary>
+<summary><strong>🌊 flowstate</strong> — 22 skills</summary>
 
 | Area | Skills |
 |------|--------|
 | Setup & navigation | `setup` · `kickstart` · `guide` · `overview` |
-| Tasks | `add-task` · `next-task` · `start-task` · `log-progress` · `complete-task` · `block-task` · `check-task` · `parallel` · `condense-tasks` |
+| Tasks | `add-task` · `next-task` · `start-task` · `log-progress` · `complete-task` · `block-task` · `check-task` · `groom-tasks` · `parallel` · `condense-tasks` |
 | Ideas | `idea` · `review-idea` |
 | Reports | `report` · `triage-report` |
 | Learnings | `add-learning` · `learnings` · `condense-learnings` · `retro` |
@@ -156,7 +156,7 @@ pnpm sandbox:readme-media # Live /readme-media run on a copy of flowstate, then 
 ```text
 .claude-plugin/           # Root marketplace definition
 plugins/
-├── flowstate/            # Backlog management (21 skills + CLI + hooks + agent)
+├── flowstate/            # Backlog management (22 skills + CLI + hooks + agent)
 ├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests (11 skills + CLI + agent)
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
