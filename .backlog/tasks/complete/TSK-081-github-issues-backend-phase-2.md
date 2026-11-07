@@ -34,6 +34,7 @@ Phase 2 of TSK-057, split out because it is too large for one run. Phase 1 (Back
 
 - LRN-063: A server-assigned ID backend keeps the ID out of the stored payload and derives it on read
 - LRN-064: A stub for an external CLI must mirror its global preconditions, not only the happy subcommands
+- LRN-065: Wait for CI on main before pushing a release tag; CLI-spawning suites need an explicit vitest timeout
 ## Progress Log
 
 - [2026-11-07] Created

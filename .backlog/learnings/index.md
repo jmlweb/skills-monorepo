@@ -68,3 +68,4 @@
 | LRN-062 | Compare CLI-printed paths by suffix in integration tests: the CLI prints realpath | flowstate, testing, macos, paths | active | 2026-11-07 |
 | LRN-063 | A server-assigned ID backend keeps the ID out of the stored payload and derives it on read | flowstate, store, github, design | active | 2026-11-07 |
 | LRN-064 | A stub for an external CLI must mirror its global preconditions, not only the happy subcommands | testing, gh, hooks, stubs | active | 2026-11-07 |
+| LRN-065 | Wait for CI on main before pushing a release tag; CLI-spawning suites need an explicit vitest timeout | release, ci, testing, vitest, flowstate | active | 2026-11-07 |
