@@ -208,6 +208,68 @@ Propose a project skill only for a procedure the project will repeat (a release,
 fixture refresh). Show name, one-line description and the steps. Write
 `.claude/skills/<name>/SKILL.md` only after the user approves that proposal.
 
+**Production target.** When the grilled scope or constraints name a live system the
+project changes in place (a deployed site or service, a store, a database holding real
+users' data, devices in the field), add a `prod-ops` proposal from the template below.
+The target is inferred from scope and constraints, with no grilling question of its own;
+a wrong inference costs the user one declined proposal. A project with no such target
+gets no `prod-ops` proposal. Each `{{…}}` is a project fact from grilling or an existing
+runbook; a fact nobody stated is written as `unknown: confirm before the first write`.
+When a deploy script already gates code pushes, the description names it as the path for
+code and `prod-ops` covers every other write.
+
+```markdown
+---
+name: prod-ops
+description: Gated protocol for any write to {{PRODUCTION TARGET}}. Use when the user says "touch prod", "change it in production", "run it on the server", or "fix it live". Not for reads (safe at any time){{ or for code pushes (use the deploy script)}}.
+---
+
+# prod-ops
+
+{{PRODUCTION TARGET}} is live: {{no staging, no easy rollback, real users' data}}.
+Reads (`{{command that reads live state}}`) run at any time. A write follows the five
+steps below in order, with one approval per operation.
+
+Out of scope: {{what a write never touches: uploads, the database, user credentials}}.
+
+## 1. Read production first
+
+Production diverges from the local copy. Build the change from what production holds:
+`{{command that reads the live value or file}}`.
+
+Done when: the current live value or file is in the conversation.
+
+## 2. Back up
+
+Back up what the write touches, on production and locally: `{{backup command}}`, then
+`{{copy-down command}}`. Record the backup names in the task notes; they are the rollback.
+
+Done when: the backup exists in both places and its names are in the task notes.
+
+## 3. Get approval
+
+Show the exact command(s) and the rollback command. The approval covers this operation
+only.
+
+Done when: the user answered yes to the commands shown.
+
+## 4. Apply
+
+Run the approved command(s) over {{transport: ssh, admin CLI, console}}, then
+{{the refresh the change needs: cache flush, service reload, or none}}.
+{{Transport traps: no TTY for sudo, a heredoc to a non-interactive remote shell, touch after a file write}}
+
+Done when: every command exited 0.
+
+## 5. Verify live, keep the rollback warm
+
+Check the change at {{live URL, including a page a cache could hide it on}}. Write the
+executed rollback command into the task notes, then report done; a failed check runs
+the rollback first.
+
+Done when: the live check shows the change and the task notes hold the rollback.
+```
+
 ## Seed tasks
 
 - Each task delivers something a user can see or try. "Set up the database" is a

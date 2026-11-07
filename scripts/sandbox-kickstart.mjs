@@ -149,6 +149,12 @@ export function checkSandbox(dir = DEFAULT_DIR) {
 
   failures.push(...claudeMdFailures(dir));
 
+  // The brief names no live system, so a prod-ops proposal here is a wrong inference
+  // that the auto-accepting prompt would turn into a written skill.
+  if (existsSync(join(dir, ".claude", "skills", "prod-ops"))) {
+    failures.push(".claude/skills/prod-ops/ was written for a project with no production target");
+  }
+
   const pendingDir = join(dir, ".backlog", "tasks", "pending");
   const tasks = listFiles(pendingDir, /^TSK-\d+.*\.md$/);
   if (tasks.length < TASK_RANGE.min || tasks.length > TASK_RANGE.max) {
@@ -169,6 +175,7 @@ function printExpectations() {
   ADRs        docs/adr/0001-….md onward, status accepted, no deny-listed library in any Decision
   docs        AGENTS.md, CLAUDE.md -> AGENTS.md (symlink or @AGENTS.md pointer), docs/overview.md with Problem, Success metric, Riskiest assumption, Kill criteria
   review      flowstate:kickstart-reviewer findings shown (by eye: it read the templates file)
+  skills      no .claude/skills/prod-ops/ (the brief names no production target)
   tasks       ${TASK_RANGE.min}-${TASK_RANGE.max} tasks in .backlog/tasks/pending/, each with an Outcome line; task 1 has no depends-on and gates the rest (unless the assumption held), every link resolves; task 1 tests the riskiest assumption (by eye)
   write-back  docs/evaluation.md and docs/overview.md name task 1's TSK ID, no "pending: task 1" left
 Shared learnings are off for this session (FLOWSTATE_SHARED=off), so the sandbox backlog stays out of the registry.
