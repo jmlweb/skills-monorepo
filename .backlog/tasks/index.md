@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 0 |
+| Pending | 2 |
 | Active | 0 |
 | Blocked | 1 |
 | Complete | 80 |
@@ -17,6 +17,8 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
+| TSK-082 | Fix: read-only-zones hook matches paths inside a nested git repo or submodule against the wrong root | P2 | dev-workflow, hooks, read-only-zones | 2026-11-08 |
+| TSK-083 | Fix: Flag values with a newline inject extra frontmatter keys (--task-id, --reason, --tags) | P3 | flowstate, cli, frontmatter, validation | 2026-11-08 |
 
 ## Recently Completed
 
