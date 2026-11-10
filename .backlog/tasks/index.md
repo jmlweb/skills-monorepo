@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 2 |
+| Pending | 4 |
 | Active | 0 |
 | Blocked | 1 |
 | Complete | 80 |
@@ -19,6 +19,8 @@
 |----|-------|----------|------|---------|
 | TSK-082 | Fix: read-only-zones hook matches paths inside a nested git repo or submodule against the wrong root | P2 | dev-workflow, hooks, read-only-zones | 2026-11-08 |
 | TSK-083 | Fix: Flag values with a newline inject extra frontmatter keys (--task-id, --reason, --tags) | P3 | flowstate, cli, frontmatter, validation | 2026-11-08 |
+| TSK-084 | Fix: md-to-adf fence recognition (tilde fences, info strings, longer fences) | P3 | atlassian-polish, md-to-adf | 2026-11-10 |
+| TSK-085 | Fix: flowstate CLI rejects unknown flags that carry a value | P3 | cli, args, flowstate | 2026-11-10 |
 
 ## Recently Completed
 
