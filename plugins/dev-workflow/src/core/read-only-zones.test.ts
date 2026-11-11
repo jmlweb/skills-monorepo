@@ -190,6 +190,58 @@ describe("checkTarget", () => {
     });
   });
 
+  describe.each([
+    ["a nested repo with a .git directory", () => mkdir(join(project, "vendor/lib/.git"), { recursive: true })],
+    [
+      "a submodule whose .git file points into .git/modules/",
+      async () => {
+        await mkdir(join(project, ".git/modules/vendor/lib"), { recursive: true });
+        await write("vendor/lib/.git", "gitdir: ../../.git/modules/vendor/lib\n");
+      },
+    ],
+  ])("inside %s", (_label, createNestedRepo) => {
+    const vendorZone: Zone = { glob: "vendor/lib/**", why: "vendored" };
+    const rootDistZone: Zone = { glob: "dist/**", why: "build output" };
+
+    beforeEach(async () => {
+      await createNestedRepo();
+    });
+
+    it("matches relative to the project root, so a zone naming the nested directory blocks it", () => {
+      const nestedZones = [rootDistZone, vendorZone];
+      expect(checkTarget({ projectDir: project, zones: nestedZones, targetPath: join(project, "vendor/lib/x.js") })).toEqual({
+        blocked: true,
+        relativePath: "vendor/lib/x.js",
+        zone: vendorZone,
+      });
+      expect(checkTarget({ projectDir: project, zones: nestedZones, targetPath: join(project, "vendor/lib/dist/a.js") })).toEqual({
+        blocked: true,
+        relativePath: "vendor/lib/dist/a.js",
+        zone: vendorZone,
+      });
+    });
+
+    it("keeps a root-level zone off the nested repo's own directories", () => {
+      expect(checkTarget({ projectDir: project, zones: [rootDistZone], targetPath: join(project, "vendor/lib/dist/a.js") })).toEqual({
+        blocked: false,
+        reason: "no-match",
+      });
+      expect(checkTarget({ projectDir: project, zones: [rootDistZone], targetPath: join(project, "dist/a.js") })).toMatchObject({
+        blocked: true,
+        relativePath: "dist/a.js",
+      });
+    });
+
+    it("matches relative to the session directory when the session started above the nested repo", () => {
+      const vendor = join(project, "vendor");
+      const libZone: Zone = { glob: "lib/dist/**", why: "built" };
+      expect(checkTarget({ projectDir: vendor, zones: [libZone], targetPath: join(vendor, "lib/dist/a.js") })).toMatchObject({
+        blocked: true,
+        relativePath: "lib/dist/a.js",
+      });
+    });
+  });
+
   it("compares the project and the target through their real paths", () => {
     const result = checkTarget({ projectDir: realpathSync(project), zones, targetPath: join(project, "plugins/x/dist/a.js") });
     expect(result).toMatchObject({ blocked: true, relativePath: "plugins/x/dist/a.js" });

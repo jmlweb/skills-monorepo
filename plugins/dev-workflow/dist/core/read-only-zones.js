@@ -143,8 +143,9 @@ function canonical(path) {
     }
     return join(realpathSync(existing), ...rest);
 }
-// A linked worktree outside the project dir still belongs to the project when
-// its `.git` file points into the project's own `.git/worktrees/`.
+// A linked worktree belongs to the project when its `.git` file points into
+// the project's own `.git/worktrees/`. A submodule's `.git` file points into
+// `.git/modules/` instead, so it is a nested repository, not a checkout.
 function worktreeBelongsToProject(gitRoot, projectDir) {
     const gitEntry = join(gitRoot, ".git");
     try {
@@ -153,7 +154,7 @@ function worktreeBelongsToProject(gitRoot, projectDir) {
         const pointer = readFileSync(gitEntry, "utf8").match(/^gitdir:\s*(.+)$/m)?.[1]?.trim();
         if (!pointer)
             return false;
-        return isInside(join(projectDir, ".git"), canonical(resolve(gitRoot, pointer)));
+        return isInside(join(projectDir, ".git", "worktrees"), canonical(resolve(gitRoot, pointer)));
     }
     catch {
         // An unreadable `.git` file is not a worktree of this project; the
@@ -173,13 +174,23 @@ function matchRoot(gitRoot, projectDir, target) {
         return projectDir;
     return null;
 }
+// A nested repository or submodule under the session directory is part of the
+// project, so its files match relative to the project's own root. Walks out of
+// every such repository; a linked worktree of the project keeps its own root.
+function outerRoot(gitRoot, projectDir) {
+    let root = gitRoot;
+    while (root !== projectDir && isInside(projectDir, root) && !worktreeBelongsToProject(root, projectDir)) {
+        root = findGitRoot(dirname(root)) ?? projectDir;
+    }
+    return root;
+}
 export function checkTarget(input) {
     const projectDir = canonical(input.projectDir);
     const target = canonical(input.targetPath);
     const gitRoot = findGitRoot(dirname(target));
     if (gitRoot === null)
         return { blocked: false, reason: "no-root" };
-    const root = matchRoot(gitRoot, projectDir, target);
+    const root = matchRoot(outerRoot(gitRoot, projectDir), projectDir, target);
     if (root === null)
         return { blocked: false, reason: "outside-project" };
     const relativePath = relative(root, target).split(sep).join("/");

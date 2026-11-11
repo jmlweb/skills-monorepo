@@ -69,3 +69,4 @@
 | LRN-063 | A server-assigned ID backend keeps the ID out of the stored payload and derives it on read | flowstate, store, github, design | active | 2026-11-07 |
 | LRN-064 | A stub for an external CLI must mirror its global preconditions, not only the happy subcommands | testing, gh, hooks, stubs | active | 2026-11-07 |
 | LRN-065 | Wait for CI on main before pushing a release tag; CLI-spawning suites need an explicit vitest timeout | release, ci, testing, vitest, flowstate | active | 2026-11-07 |
+| LRN-066 | A submodule .git file also points inside the parent .git: check .git/worktrees/, not .git/ | dev-workflow, hooks, read-only-zones, git | active | 2026-11-10 |
