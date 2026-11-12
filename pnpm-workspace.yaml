@@ -4,3 +4,8 @@ packages:
 
 # Refuse package versions published less than 7 days ago (minutes) — guards against compromised releases.
 minimumReleaseAge: 10080
+
+# pnpm 11+ fails install on unreviewed build scripts; neither is needed (esbuild ships its binary via optional deps, the root postinstall installs the git hooks).
+allowBuilds:
+  esbuild: false
+  simple-git-hooks: false

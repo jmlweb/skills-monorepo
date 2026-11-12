@@ -39,7 +39,7 @@ mistakes to avoid, the per-deliverable checklist, and the release mechanics.
     is the invocation router; include quoted user phrases or the skill is dead weight.
 12. **Silently swallows fs errors** (`catch { return [] }`). → LRN-001. Distinguish
     empty-result from lookup-failure.
-13. **Uses npm or yarn.** → pnpm 10 only; CI runs `--frozen-lockfile`, a foreign lockfile
+13. **Uses npm or yarn.** → pnpm only; CI runs `--frozen-lockfile`, a foreign lockfile
     breaks it.
 14. **Adds vitest to `scripts/` tests or node:test to plugin tests.** → Framework per area is
     fixed (see Conventions in `AGENTS.md`).
