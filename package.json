@@ -2,7 +2,7 @@
   "name": "@jmlweb/skills-monorepo",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@10.26.2",
+  "packageManager": "pnpm@12.18.0",
   "type": "module",
   "scripts": {
     "postinstall": "simple-git-hooks",
