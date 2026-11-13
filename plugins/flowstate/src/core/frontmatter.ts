@@ -50,7 +50,7 @@ export function serializeFrontmatter(
   const lines = [DELIMITER];
 
   for (const [key, value] of Object.entries(frontmatter)) {
-    lines.push(`${key}: ${serializeValue(value)}`);
+    lines.push(`${key}: ${serializeValue(key, value)}`);
   }
 
   lines.push(DELIMITER);
@@ -58,11 +58,22 @@ export function serializeFrontmatter(
   return lines.join("\n") + "\n" + body;
 }
 
-function serializeValue(value: unknown): string {
+// The format is one key per line, and the parser lets a later key win, so a line break in a
+// value would smuggle in an extra key that overrides the real one (RPT-028).
+function serializeValue(key: string, value: unknown): string {
   if (Array.isArray(value)) {
     if (value.length === 0) return "[]";
-    return `[${value.join(", ")}]`;
+    return `[${value.map((item) => singleLine(key, String(item))).join(", ")}]`;
   }
 
-  return String(value);
+  return singleLine(key, String(value));
+}
+
+function singleLine(key: string, text: string): string {
+  if (/[\r\n]/.test(text)) {
+    throw new InvalidArgumentError(
+      `Invalid frontmatter value for "${key}": it must be a single line. Remove the line breaks, then retry.`,
+    );
+  }
+  return text;
 }

@@ -132,6 +132,26 @@ export const validateTitle = (v: string): string => {
   return v;
 };
 
+// Free-text flags written to frontmatter must stay on one line: a line break would add a key.
+export const validateSingleLine = (flag: string, v: string): string => {
+  if (/[\r\n]/.test(v)) {
+    throw new InvalidArgumentError(
+      `Invalid ${flag}: it must be a single line. Remove the line breaks, then retry.`,
+    );
+  }
+  return v;
+};
+
+// Three or more digits: GitHub-mode IDs are issue numbers, which outgrow the zero padding.
+export const validateTaskId = (v: string): string => {
+  if (!/^TSK-\d{3,}$/.test(v)) {
+    throw new InvalidArgumentError(
+      `Invalid --task-id: ${JSON.stringify(v)}. Use a task ID like TSK-001.`,
+    );
+  }
+  return v;
+};
+
 export type IdeaDecision = Exclude<IdeaStatus, "pending">;
 export type ReportDecision = Exclude<ReportStatus, "pending">;
 

@@ -37,6 +37,8 @@ import {
   validateIdeaDecision,
   validateReportDecision,
   validateTitle,
+  validateSingleLine,
+  validateTaskId,
 } from "../core/types.js";
 import {
   BACKLOG_DIR_ENV,
@@ -431,7 +433,7 @@ async function main(): Promise<void> {
         const result = await taskCreate(store, {
           title: validateTitle(required(flags, "title")),
           priority: validatePriority(required(flags, "priority")),
-          tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
+          tags: flags["tags"] ? validateSingleLine("--tags", flags["tags"]).split(",").map((t) => t.trim()) : [],
           description: body || flags["description"] || "",
           criteria: parseCriteria(flags["criteria"]),
           source: flags["source"] ?? "manual",
@@ -484,7 +486,7 @@ async function main(): Promise<void> {
           console.error("Usage: flowstate task-block <id> --reason <text>");
           process.exit(1);
         }
-        const result = await taskBlock(store, id, required(flags, "reason"));
+        const result = await taskBlock(store, id, validateSingleLine("--reason", required(flags, "reason")));
         output(result, json);
         break;
       }
@@ -649,7 +651,7 @@ async function main(): Promise<void> {
           store,
           id,
           validateIdeaDecision(required(flags, "status")),
-          flags["task-id"],
+          flags["task-id"] !== undefined ? validateTaskId(flags["task-id"]) : undefined,
         );
         output(result, json);
         break;
@@ -699,7 +701,7 @@ async function main(): Promise<void> {
           store,
           id,
           validateReportDecision(required(flags, "status")),
-          flags["task-id"],
+          flags["task-id"] !== undefined ? validateTaskId(flags["task-id"]) : undefined,
         );
         output(result, json);
         break;
@@ -709,7 +711,7 @@ async function main(): Promise<void> {
         const body = await getBody(flags);
         const result = await learningCreate(root, {
           title: validateTitle(required(flags, "title")),
-          tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
+          tags: flags["tags"] ? validateSingleLine("--tags", flags["tags"]).split(",").map((t) => t.trim()) : [],
           body,
           task: flags["task"],
         });
@@ -785,7 +787,7 @@ async function main(): Promise<void> {
         const body = flags["body"] ? await getBody(flags) : undefined;
         const updateInput: import("../commands/learning-update.js").LearningUpdateInput = {
           ...(flags["title"] !== undefined ? { title: validateTitle(flags["title"]) } : {}),
-          ...(flags["tags"] !== undefined ? { tags: flags["tags"].split(",").map((t) => t.trim()) } : {}),
+          ...(flags["tags"] !== undefined ? { tags: validateSingleLine("--tags", flags["tags"]).split(",").map((t) => t.trim()) } : {}),
           ...(body !== undefined ? { body } : {}),
         };
         const result = await learningUpdate(root, id, updateInput);

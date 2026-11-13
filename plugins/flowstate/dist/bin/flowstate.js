@@ -25,7 +25,7 @@ import { learningList } from "../commands/learning-list.js";
 import { learningMove } from "../commands/learning-move.js";
 import { learningUpdate } from "../commands/learning-update.js";
 import { learningCompress } from "../commands/learning-compress.js";
-import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, validateTitle, } from "../core/types.js";
+import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, validateTitle, validateSingleLine, validateTaskId, } from "../core/types.js";
 import { BACKLOG_DIR_ENV, envSettingsSnippet, resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
 import { parseArgs } from "../core/args.js";
@@ -335,7 +335,7 @@ async function main() {
                 const result = await taskCreate(store, {
                     title: validateTitle(required(flags, "title")),
                     priority: validatePriority(required(flags, "priority")),
-                    tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
+                    tags: flags["tags"] ? validateSingleLine("--tags", flags["tags"]).split(",").map((t) => t.trim()) : [],
                     description: body || flags["description"] || "",
                     criteria: parseCriteria(flags["criteria"]),
                     source: flags["source"] ?? "manual",
@@ -384,7 +384,7 @@ async function main() {
                     console.error("Usage: flowstate task-block <id> --reason <text>");
                     process.exit(1);
                 }
-                const result = await taskBlock(store, id, required(flags, "reason"));
+                const result = await taskBlock(store, id, validateSingleLine("--reason", required(flags, "reason")));
                 output(result, json);
                 break;
             }
@@ -526,7 +526,7 @@ async function main() {
                     console.error("Usage: flowstate idea-move <id> --status <approved|discarded>");
                     process.exit(1);
                 }
-                const result = await ideaMove(store, id, validateIdeaDecision(required(flags, "status")), flags["task-id"]);
+                const result = await ideaMove(store, id, validateIdeaDecision(required(flags, "status")), flags["task-id"] !== undefined ? validateTaskId(flags["task-id"]) : undefined);
                 output(result, json);
                 break;
             }
@@ -566,7 +566,7 @@ async function main() {
                     console.error("Usage: flowstate report-move <id> --status <triaged|discarded>");
                     process.exit(1);
                 }
-                const result = await reportMove(store, id, validateReportDecision(required(flags, "status")), flags["task-id"]);
+                const result = await reportMove(store, id, validateReportDecision(required(flags, "status")), flags["task-id"] !== undefined ? validateTaskId(flags["task-id"]) : undefined);
                 output(result, json);
                 break;
             }
@@ -574,7 +574,7 @@ async function main() {
                 const body = await getBody(flags);
                 const result = await learningCreate(root, {
                     title: validateTitle(required(flags, "title")),
-                    tags: flags["tags"] ? flags["tags"].split(",").map((t) => t.trim()) : [],
+                    tags: flags["tags"] ? validateSingleLine("--tags", flags["tags"]).split(",").map((t) => t.trim()) : [],
                     body,
                     task: flags["task"],
                 });
@@ -644,7 +644,7 @@ async function main() {
                 const body = flags["body"] ? await getBody(flags) : undefined;
                 const updateInput = {
                     ...(flags["title"] !== undefined ? { title: validateTitle(flags["title"]) } : {}),
-                    ...(flags["tags"] !== undefined ? { tags: flags["tags"].split(",").map((t) => t.trim()) } : {}),
+                    ...(flags["tags"] !== undefined ? { tags: validateSingleLine("--tags", flags["tags"]).split(",").map((t) => t.trim()) } : {}),
                     ...(body !== undefined ? { body } : {}),
                 };
                 const result = await learningUpdate(root, id, updateInput);

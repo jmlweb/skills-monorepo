@@ -442,6 +442,91 @@ describe("CLI integration", () => {
     });
   });
 
+  describe("flag values that would inject frontmatter keys (RPT-028)", () => {
+    const fail = (...args: string[]) =>
+      spawnSync("node", [CLI, ...args], { cwd: tmp, encoding: "utf-8", env: cleanEnv() });
+
+    it.each([
+      ["report-move", "report-create", ["--type", "bug", "--severity", "low"], ".backlog/reports/pending/RPT-001-r.md", "RPT-001"],
+      ["idea-move", "idea-create", ["--complexity", "low"], ".backlog/ideas/pending/PLN-001-r.md", "PLN-001"],
+    ])("%s rejects a --task-id holding a newline and leaves the file unchanged", async (move, create, extra, file, id) => {
+      run("setup", "--project-name", "IntTest");
+      run(create, "--title", "r", ...extra, "--body", "x");
+      const path = join(tmp, file);
+      const before = await readFile(path, "utf-8");
+
+      const status = move === "report-move" ? "triaged" : "approved";
+      const result = fail(move, id, "--status", status, "--task-id", "TSK-001\nseverity: critical");
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Invalid --task-id/);
+      expect(await readFile(path, "utf-8")).toBe(before);
+    });
+
+    it.each([
+      ["report-move", "report-create", ["--type", "bug", "--severity", "low"], ".backlog/reports/pending/RPT-001-r.md", "RPT-001", "triaged"],
+      ["idea-move", "idea-create", ["--complexity", "low"], ".backlog/ideas/pending/PLN-001-r.md", "PLN-001", "approved"],
+    ])("%s rejects a --task-id that is not a task ID", async (move, create, extra, file, id, status) => {
+      run("setup", "--project-name", "IntTest");
+      run(create, "--title", "r", ...extra, "--body", "x");
+      const path = join(tmp, file);
+      const before = await readFile(path, "utf-8");
+
+      const result = fail(move, id, "--status", status, "--task-id", "banana");
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Invalid --task-id: "banana"\. Use a task ID like TSK-001/);
+      expect(await readFile(path, "utf-8")).toBe(before);
+    });
+
+    it("report-move still records a valid --task-id", async () => {
+      run("setup", "--project-name", "IntTest");
+      run("report-create", "--title", "r", "--type", "bug", "--severity", "low", "--body", "x");
+      run("report-move", "RPT-001", "--status", "triaged", "--task-id", "TSK-001");
+      const content = await readFile(join(tmp, ".backlog/reports/complete/RPT-001-r.md"), "utf-8");
+      expect(content).toContain("task-id: TSK-001\n");
+      expect(content).toContain("severity: low\n");
+    });
+
+    it("task-block rejects a --reason holding a newline and leaves the task unchanged", async () => {
+      run("setup", "--project-name", "IntTest");
+      run("task-create", "--title", "t", "--priority", "P3", "--description", "x");
+      const path = join(tmp, ".backlog/tasks/pending/TSK-001-t.md");
+      const before = await readFile(path, "utf-8");
+
+      const result = fail("task-block", "TSK-001", "--reason", "waiting\npriority: P1");
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Invalid --reason: it must be a single line/);
+      expect(await readFile(path, "utf-8")).toBe(before);
+    });
+
+    it.each([
+      ["task-create", ["--title", "t", "--priority", "P3", "--description", "x"], ".backlog/tasks/pending"],
+      ["learning-create", ["--title", "t", "--body", "x"], ".backlog/learnings"],
+    ])("%s rejects --tags holding a newline and writes nothing", async (command, extra, dir) => {
+      run("setup", "--project-name", "IntTest");
+      const result = fail(command, ...extra, "--tags", "a\npriority: P1");
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Invalid --tags: it must be a single line/);
+      expect((await readdir(join(tmp, dir))).filter((f) => /^(TSK|LRN)-/.test(f))).toEqual([]);
+    });
+
+    it("learning-update rejects --tags holding a newline and keeps the old tags", async () => {
+      run("setup", "--project-name", "IntTest");
+      run("learning-create", "--title", "Old title", "--tags", "x", "--body", "x");
+      const path = join(tmp, ".backlog/learnings/LRN-001-old-title/index.md");
+      const before = await readFile(path, "utf-8");
+
+      const result = fail("learning-update", "LRN-001", "--tags", "y\nstatus: archived");
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Invalid --tags: it must be a single line/);
+      expect(await readFile(path, "utf-8")).toBe(before);
+    });
+  });
+
   it("learning-update rejects a title holding a newline and keeps the old one", async () => {
     run("setup", "--project-name", "IntTest");
     run("learning-create", "--title", "Old title", "--tags", "x", "--body", "x");
