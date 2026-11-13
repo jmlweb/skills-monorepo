@@ -7,6 +7,8 @@ import {
   validateIdeaDecision,
   validateReportDecision,
   validateTitle,
+  validateSingleLine,
+  validateTaskId,
 } from "./types.js";
 import { InvalidArgumentError } from "./errors.js";
 
@@ -69,6 +71,31 @@ describe("validateTitle", () => {
     expect(() => validateTitle(v)).toThrow(InvalidArgumentError);
     expect(() => validateTitle(v)).toThrow(/must not be empty/);
   });
+});
+
+describe("validateSingleLine", () => {
+  it("returns a single-line value unchanged", () => {
+    expect(validateSingleLine("--reason", "waiting: on review")).toBe("waiting: on review");
+  });
+
+  it.each(["waiting\npriority: P1", "a\rb"])("rejects %j naming the flag", (v) => {
+    expect(() => validateSingleLine("--reason", v)).toThrow(InvalidArgumentError);
+    expect(() => validateSingleLine("--reason", v)).toThrow(/Invalid --reason: it must be a single line/);
+  });
+});
+
+describe("validateTaskId", () => {
+  it.each(["TSK-001", "TSK-084", "TSK-1234"])("accepts %s", (v) => {
+    expect(validateTaskId(v)).toBe(v);
+  });
+
+  it.each(["banana", "PLN-001", "TSK-1", "tsk-001", "TSK-001\nseverity: critical", ""])(
+    "rejects %j",
+    (v) => {
+      expect(() => validateTaskId(v)).toThrow(InvalidArgumentError);
+      expect(() => validateTaskId(v)).toThrow(/Invalid --task-id/);
+    },
+  );
 });
 
 describe("validateIdeaDecision", () => {

@@ -38,6 +38,19 @@ describe("ensureDir", () => {
 });
 
 describe("writeEntity / readEntity", () => {
+  it("rejects a multi-line value and leaves the existing file and folder untouched", async () => {
+    const path = join(tmp, "TSK-001-fix-bug.md");
+    await writeEntity(path, { id: "TSK-001", priority: "P3" }, "\n# Fix bug");
+    const before = await readFile(path, "utf-8");
+
+    await expect(
+      writeEntity(path, { id: "TSK-001", priority: "P3", "blocked-by": "waiting\npriority: P1" }, "\n# Fix bug"),
+    ).rejects.toThrow(/single line/);
+
+    expect(await readFile(path, "utf-8")).toBe(before);
+    expect(await readdir(tmp)).toEqual(["TSK-001-fix-bug.md"]);
+  });
+
   it("writes and reads back a document", async () => {
     const path = join(tmp, "TSK-001-fix-bug.md");
     const fm = { id: "TSK-001", title: "Fix bug", status: "pending" };

@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 3 |
+| Pending | 2 |
 | Active | 0 |
 | Blocked | 1 |
-| Complete | 81 |
+| Complete | 82 |
 
 ## Active Tasks
 
@@ -17,7 +17,6 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-083 | Fix: Flag values with a newline inject extra frontmatter keys (--task-id, --reason, --tags) | P3 | flowstate, cli, frontmatter, validation | 2026-11-08 |
 | TSK-084 | Fix: md-to-adf fence recognition (tilde fences, info strings, longer fences) | P3 | atlassian-polish, md-to-adf | 2026-11-10 |
 | TSK-085 | Fix: flowstate CLI rejects unknown flags that carry a value | P3 | cli, args, flowstate | 2026-11-10 |
 
@@ -25,6 +24,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-083 | Fix: Flag values with a newline inject extra frontmatter keys (--task-id, --reason, --tags) | 2026-11-13 |
 | TSK-082 | Fix: read-only-zones hook matches paths inside a nested git repo or submodule against the wrong root | 2026-11-10 |
 | TSK-053 | Fix: review-idea and triage-report number their decision menus after a numbered list | 2026-11-07 |
 | TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | 2026-11-07 |
@@ -34,4 +34,3 @@
 | TSK-063 | Fix: report-move and idea-move accept any --status value | 2026-11-07 |
 | TSK-064 | Fix: task-update --set writes unvalidated values, including id and priority | 2026-11-07 |
 | TSK-065 | Fix: list commands accept a negative or non-numeric --limit | 2026-11-07 |
-| TSK-066 | Fix: md-to-adf silently drops table cells beyond the header width | 2026-11-07 |

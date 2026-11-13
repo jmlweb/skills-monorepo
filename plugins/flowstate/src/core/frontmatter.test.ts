@@ -154,3 +154,21 @@ The auth flow fails.
     expect(reparsed.body).toBe(parsed.body);
   });
 });
+
+describe("serializeFrontmatter rejects multi-line values (RPT-028)", () => {
+  it.each([
+    ["a scalar holding \\n", { "task-id": "TSK-001\nseverity: critical" }, "task-id"],
+    ["a scalar holding \\r", { "blocked-by": "waiting\rpriority: P1" }, "blocked-by"],
+    ["an array item holding \\n", { tags: ["a", "b\npriority: P1"] }, "tags"],
+  ])("throws InvalidArgumentError naming the key for %s", (_case, frontmatter, key) => {
+    const serialize = () => serializeFrontmatter(frontmatter, "Body");
+    expect(serialize).toThrow(InvalidArgumentError);
+    expect(serialize).toThrow(new RegExp(`"${key}".*single line`));
+  });
+
+  it("still serializes single-line values unchanged", () => {
+    expect(serializeFrontmatter({ "blocked-by": "waiting: on review", tags: ["a", "b"] }, "")).toBe(
+      "---\nblocked-by: waiting: on review\ntags: [a, b]\n---\n",
+    );
+  });
+});
