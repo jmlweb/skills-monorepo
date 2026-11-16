@@ -3,8 +3,9 @@ import { MarkdownConversionError } from "./errors.js";
 const ITEM_RE = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
 const TASK_RE = /^\[( |x|X)\]\s+(.*)$/;
 const HEADING_RE = /^(#{1,6})\s+(.*)$/;
-const FENCE_RE = /^\s*```\s*([\w+-]*)\s*$/;
-const CLOSE_FENCE_RE = /^\s*```\s*$/;
+// CommonMark: a run of 3+ backticks or tildes; a backtick fence's info string has no backtick.
+const FENCE_RE = /^\s*(?:(`{3,})([^`]*)|(~{3,})(.*))$/;
+const CLOSE_FENCE_RE = /^\s*(`{3,}|~{3,})\s*$/;
 const RULE_RE = /^\s*([-*_])(\s*\1){2,}\s*$/;
 const TABLE_SEP_RE = /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/;
 export function markdownToAdf(markdown, options = {}) {
@@ -86,6 +87,20 @@ function startsBlock(lines, i) {
         text.trimStart().startsWith(">") ||
         isTableStart(lines, i));
 }
+function openFence(text) {
+    const m = FENCE_RE.exec(text);
+    if (!m)
+        return null;
+    const marker = m[1] ?? m[3] ?? "";
+    const info = (m[2] ?? m[4] ?? "").trim();
+    return { marker, language: info.split(/\s+/)[0] ?? "" };
+}
+function closesFence(text, open) {
+    const run = CLOSE_FENCE_RE.exec(text)?.[1];
+    return (run !== undefined &&
+        run[0] === open.marker[0] &&
+        run.length >= open.marker.length);
+}
 function parseBlocks(lines, ctx) {
     const out = [];
     let i = 0;
@@ -161,11 +176,11 @@ function parseBlocks(lines, ctx) {
  */
 function parseFence(lines, start) {
     const open = lines[start];
-    const lang = FENCE_RE.exec(open.text)[1];
+    const fence = openFence(open.text);
     const strip = indentOf(open.text);
     const body = [];
     let i = start + 1;
-    while (i < lines.length && !CLOSE_FENCE_RE.test(lines[i].text)) {
+    while (i < lines.length && !closesFence(lines[i].text, fence)) {
         const raw = lines[i].text;
         body.push(raw.slice(Math.min(strip, indentOf(raw))));
         i++;
@@ -177,7 +192,7 @@ function parseFence(lines, start) {
     return {
         node: {
             type: "codeBlock",
-            ...(lang ? { attrs: { language: lang } } : {}),
+            ...(fence.language ? { attrs: { language: fence.language } } : {}),
             ...(code ? { content: [{ type: "text", text: code }] } : {}),
         },
         next: i + 1,

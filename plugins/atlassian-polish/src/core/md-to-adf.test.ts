@@ -341,6 +341,81 @@ describe("markdownToAdf", () => {
   it("refuses a fence under a checklist item rather than inlining it", () => {
     expect(() => convert("- [ ] a\n  ```\n  x\n  ```")).toThrow(/^line 1/);
   });
+
+  it("converts a tilde fence to a codeBlock, not strike text", () => {
+    const blocks = convert("~~~\ncode\n~~~");
+    expect(blocks).toEqual([
+      { type: "codeBlock", content: [{ type: "text", text: "code" }] },
+    ]);
+    expect(JSON.stringify(blocks)).not.toContain("strike");
+  });
+
+  it("opens a tilde fence nested under a bullet item", () => {
+    const [list] = convert("- item\n  ~~~py\n  x = 1\n  ~~~");
+    expect(list).toEqual({
+      type: "bulletList",
+      content: [
+        {
+          type: "listItem",
+          content: [
+            { type: "paragraph", content: [t("item")] },
+            {
+              type: "codeBlock",
+              attrs: { language: "py" },
+              content: [{ type: "text", text: "x = 1" }],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it.each([
+    ["```c#", "c#"],
+    ["```.env", ".env"],
+    ["```shell script", "shell"],
+    ["```  ts  ", "ts"],
+    ["~~~ js `weird` info", "js"],
+  ])("opens a fence on info string %j with language %j", (opener, language) => {
+    const closer = opener.startsWith("~") ? "~~~" : "```";
+    expect(convert(`${opener}\nx\n${closer}`)).toEqual([
+      {
+        type: "codeBlock",
+        attrs: { language },
+        content: [{ type: "text", text: "x" }],
+      },
+    ]);
+  });
+
+  it("keeps a line with backticks in its info string as inline text", () => {
+    expect(convert("```a``` b").map((node) => node.type)).toEqual(["paragraph"]);
+  });
+
+  it("closes a longer fence only on the same character with at least its length", () => {
+    expect(convert("````\n```\n~~~~\n```js\n`````")).toEqual([
+      { type: "codeBlock", content: [{ type: "text", text: "```\n~~~~\n```js" }] },
+    ]);
+  });
+
+  it("shows a triple-backtick fence inside a four-backtick fence", () => {
+    expect(convert("````md\n```\ncode\n```\n````")).toEqual([
+      {
+        type: "codeBlock",
+        attrs: { language: "md" },
+        content: [{ type: "text", text: "```\ncode\n```" }],
+      },
+    ]);
+  });
+
+  it("keeps backtick lines inside a tilde fence as body", () => {
+    expect(convert("~~~\n```\n~~~")).toEqual([
+      { type: "codeBlock", content: [{ type: "text", text: "```" }] },
+    ]);
+  });
+
+  it("throws at the opener when a long fence never gets a long enough closer", () => {
+    expect(() => convert("````\nx\n```")).toThrow(/^line 1: unclosed code fence/);
+  });
 });
 
 function t(value: string) {
