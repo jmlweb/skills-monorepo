@@ -57,6 +57,10 @@ It converts headings, paragraphs, bullet/numbered lists (nesting ≤ 2 levels), 
 code (also indented under a bullet or numbered item, as a `codeBlock` inside the `listItem`),
 blockquotes, rules, inline code/bold/italic/strike, links, bare URLs and mentions
 (`[@Name](mention:<accountId>)` → ADF `mention` node; mentioned people get notified).
+Fences follow CommonMark: three or more backticks or tildes open one (a backtick fence's info
+string can't contain a backtick); the closer uses the same character and is at least as long,
+so a ```` ```` ```` fence can show ```` ``` ```` lines. The first word of the info string is the
+`language` (```` ```shell script ```` → `shell`).
 ADF does not auto-link bare issue keys: always pass `--jira-base <site URL> --projects
 <PREFIX,…>` so keys of those projects become `inlineCard` smart links (code spans and
 existing links are left alone). Exit 2 with a
