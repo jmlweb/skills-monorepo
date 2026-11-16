@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 4 |
+| Pending | 5 |
 | Active | 0 |
 | Blocked | 1 |
 | Complete | 83 |
@@ -21,6 +21,7 @@
 | TSK-086 | Fix: scan-secrets misses fine-grained GitHub tokens (github_pat_) | P3 | dev-workflow, scan-secrets, security | 2026-11-13 |
 | TSK-087 | Fix: md-to-adf accepts a --jira-base without a scheme and writes broken smart links | P4 | atlassian-polish, md-to-adf, validation | 2026-11-13 |
 | TSK-088 | Fix: md-to-adf turns a Markdown image into literal text plus a link instead of exiting 2 | P4 | atlassian-polish, md-to-adf | 2026-11-13 |
+| TSK-089 | Fix: task-update --set tags= or depends-on= writes a scalar that every reader drops | P3 | flowstate, cli, validation | 2026-11-16 |
 
 ## Recently Completed
 
