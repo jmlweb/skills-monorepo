@@ -72,3 +72,4 @@
 | LRN-066 | A submodule .git file also points inside the parent .git: check .git/worktrees/, not .git/ | dev-workflow, hooks, read-only-zones, git | active | 2026-11-10 |
 | LRN-067 | Task IDs can exceed three digits in GitHub mode; validate with TSK-\d{3,}, not parseId | flowstate, cli, validation, github | active | 2026-11-13 |
 | LRN-068 | serializeFrontmatter is the single choke point for injected frontmatter keys | flowstate, frontmatter, validation | active | 2026-11-13 |
+| LRN-069 | md-to-adf inline code only pairs single backticks, so backtick fence info strings must reject backticks | atlassian-polish, md-to-adf | active | 2026-11-16 |
