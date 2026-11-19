@@ -30,6 +30,16 @@ export function parseArgs(args, switches) {
     }
     return { flags, flagArrays, positional };
 }
+// A misspelt flag that carries a value would otherwise be stored and never read, so the
+// command would report success while dropping the change (RPT-030).
+export function rejectUnknownFlags(command, flags, accepted) {
+    const unknown = Object.keys(flags).filter((key) => !accepted.has(key));
+    if (unknown.length === 0)
+        return;
+    const label = unknown.length === 1 ? "flag" : "flags";
+    const acceptedList = [...accepted].map((key) => `--${key}`).join(", ");
+    throw new InvalidArgumentError(`Unknown ${label} for ${command}: ${unknown.map((key) => `--${key}`).join(", ")}. Accepted flags: ${acceptedList}.`);
+}
 function missingValueMessage(key, next) {
     return next === undefined
         ? `Flag --${key} needs a value.`

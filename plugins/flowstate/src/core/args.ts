@@ -39,6 +39,22 @@ export function parseArgs(args: readonly string[], switches: ReadonlySet<string>
   return { flags, flagArrays, positional };
 }
 
+// A misspelt flag that carries a value would otherwise be stored and never read, so the
+// command would report success while dropping the change (RPT-030).
+export function rejectUnknownFlags(
+  command: string,
+  flags: Readonly<Record<string, string>>,
+  accepted: ReadonlySet<string>,
+): void {
+  const unknown = Object.keys(flags).filter((key) => !accepted.has(key));
+  if (unknown.length === 0) return;
+  const label = unknown.length === 1 ? "flag" : "flags";
+  const acceptedList = [...accepted].map((key) => `--${key}`).join(", ");
+  throw new InvalidArgumentError(
+    `Unknown ${label} for ${command}: ${unknown.map((key) => `--${key}`).join(", ")}. Accepted flags: ${acceptedList}.`,
+  );
+}
+
 function missingValueMessage(key: string, next: string | undefined): string {
   return next === undefined
     ? `Flag --${key} needs a value.`

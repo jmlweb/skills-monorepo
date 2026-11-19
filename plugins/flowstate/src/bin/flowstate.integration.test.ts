@@ -417,6 +417,62 @@ describe("CLI integration", () => {
     });
   });
 
+  describe("unknown flags (RPT-030)", () => {
+    function runRaw(...args: string[]): ReturnType<typeof spawnSync> & { stderr: string } {
+      return spawnSync("node", [CLI, ...args], { cwd: tmp, encoding: "utf-8", env: cleanEnv() }) as ReturnType<typeof spawnSync> & { stderr: string };
+    }
+
+    it("task-create --tag exits 1, names the flag and writes nothing", async () => {
+      run("setup", "--project-name", "IntTest");
+      const result = runRaw("task-create", "--title", "z", "--priority", "P2", "--tag", "cli", "--depends", "TSK-001");
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Unknown flags for task-create: --tag, --depends\./);
+      expect(result.stderr).toMatch(/Accepted flags: .*--tags.*--depends-on/);
+      const files = (await readdir(join(tmp, ".backlog/tasks/pending"))).filter((f) => f.startsWith("TSK-"));
+      expect(files).toEqual([]);
+    });
+
+    it("task-update --tick exits 1 and leaves the task unchanged", async () => {
+      run("setup", "--project-name", "IntTest");
+      const created = runJson("task-create", "--title", "Tick me", "--priority", "P2", "--criteria", '["One"]') as { path: string };
+      const before = await readFile(created.path, "utf-8");
+      const result = runRaw("task-update", "TSK-001", "--tick", "1");
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Unknown flag for task-update: --tick\. Accepted flags: .*--check/);
+      expect(await readFile(created.path, "utf-8")).toBe(before);
+    });
+
+    it("reports the error as JSON under --json true", () => {
+      run("setup", "--project-name", "IntTest");
+      const result = runRaw("task-list", "--state", "active", "--json", "true");
+      expect(result.status).toBe(1);
+      expect(JSON.parse(result.stderr) as { error: string }).toEqual({
+        error: expect.stringMatching(/Unknown flag for task-list: --state\./) as unknown as string,
+      });
+    });
+
+    it("rejects an unknown flag on setup before creating anything", async () => {
+      const result = runRaw("setup", "--project", "X");
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Unknown flag for setup: --project\./);
+      await expect(readdir(join(tmp, ".backlog"))).rejects.toThrow();
+    });
+
+    it("rejects an unknown flag on a command that takes no flags", () => {
+      run("setup", "--project-name", "IntTest");
+      const result = runRaw("stats", "--verbose", "true");
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Unknown flag for stats: --verbose\. Accepted flags: --json\./);
+    });
+
+    it("still reports an unknown command as such", () => {
+      run("setup", "--project-name", "IntTest");
+      const result = runRaw("bogus", "--x", "1");
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(/Unknown command: bogus/);
+    });
+  });
+
   describe("--limit (RPT-017)", () => {
     const LIST_COMMANDS = ["task-list", "idea-list", "report-list", "learning-search"] as const;
 

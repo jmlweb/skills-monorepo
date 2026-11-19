@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 5 |
+| Pending | 4 |
 | Active | 0 |
 | Blocked | 1 |
-| Complete | 83 |
+| Complete | 84 |
 
 ## Active Tasks
 
@@ -17,7 +17,6 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-085 | Fix: flowstate CLI rejects unknown flags that carry a value | P3 | cli, args, flowstate | 2026-11-10 |
 | TSK-086 | Fix: scan-secrets misses fine-grained GitHub tokens (github_pat_) | P3 | dev-workflow, scan-secrets, security | 2026-11-13 |
 | TSK-087 | Fix: md-to-adf accepts a --jira-base without a scheme and writes broken smart links | P4 | atlassian-polish, md-to-adf, validation | 2026-11-13 |
 | TSK-088 | Fix: md-to-adf turns a Markdown image into literal text plus a link instead of exiting 2 | P4 | atlassian-polish, md-to-adf | 2026-11-13 |
@@ -27,6 +26,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-085 | Fix: flowstate CLI rejects unknown flags that carry a value | 2026-11-19 |
 | TSK-084 | Fix: md-to-adf fence recognition (tilde fences, info strings, longer fences) | 2026-11-16 |
 | TSK-083 | Fix: Flag values with a newline inject extra frontmatter keys (--task-id, --reason, --tags) | 2026-11-13 |
 | TSK-082 | Fix: read-only-zones hook matches paths inside a nested git repo or submodule against the wrong root | 2026-11-10 |
@@ -36,4 +36,3 @@
 | TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | 2026-11-07 |
 | TSK-062 | Fix: CLI arg parsers store true for flag values that are empty or start with -- | 2026-11-07 |
 | TSK-063 | Fix: report-move and idea-move accept any --status value | 2026-11-07 |
-| TSK-064 | Fix: task-update --set writes unvalidated values, including id and priority | 2026-11-07 |
