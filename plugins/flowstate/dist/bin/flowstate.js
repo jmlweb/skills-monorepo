@@ -28,7 +28,7 @@ import { learningCompress } from "../commands/learning-compress.js";
 import { validatePriority, validateComplexity, validateReportType, validateSeverity, validateIdeaDecision, validateReportDecision, validateTitle, validateSingleLine, validateTaskId, } from "../core/types.js";
 import { BACKLOG_DIR_ENV, envSettingsSnippet, resolveBacklog, resolveSetupTarget, settingsSnippet, } from "../core/paths.js";
 import { InvalidArgumentError } from "../core/errors.js";
-import { parseArgs } from "../core/args.js";
+import { parseArgs, rejectUnknownFlags } from "../core/args.js";
 import { BACKEND_ENV, GITHUB_REPO_ENV, resolveRepo, resolveStore, validateRepo, } from "../core/backend.js";
 import { createGhRunner } from "../core/gh.js";
 import { GithubStore } from "../core/github-store.js";
@@ -136,6 +136,43 @@ const SWITCHES = new Set([
     "all",
     "include-archived",
 ]);
+// Each command's flags, mirroring COMMAND_HELP. --json is accepted everywhere.
+const COMMAND_FLAGS = {
+    setup: ["project-name", "dir", "private", "github", "repo"],
+    path: [],
+    "next-id": [],
+    "task-create": ["title", "priority", "tags", "description", "body", "criteria", "source", "depends-on"],
+    "task-list": ["status", "limit"],
+    "task-move": ["to"],
+    "task-block": ["reason"],
+    "task-update": ["set", "log", "check", "evidence"],
+    "task-unblock": ["resolution"],
+    "task-condense": ["all"],
+    "task-normalize": [],
+    "task-compress": ["body"],
+    "task-doctor": ["dry-run"],
+    stats: [],
+    "index-rebuild": ["type"],
+    "idea-create": ["title", "complexity", "body"],
+    "idea-list": ["status", "limit"],
+    "idea-move": ["status", "task-id"],
+    "report-create": ["title", "type", "severity", "body"],
+    "report-list": ["status", "limit"],
+    "report-move": ["status", "task-id"],
+    "learning-create": ["title", "tags", "task", "body"],
+    "learning-search": ["tags", "query", "similar-to", "limit", "body", "scope"],
+    "learning-list": ["status", "include-archived", "all", "scope"],
+    "learning-move": ["to"],
+    "learning-update": ["title", "tags", "body"],
+    "learning-compress": ["body"],
+};
+// Unknown commands skip this check so the switch still reports them as unknown commands.
+function validateFlags(command, flags) {
+    const commandFlags = COMMAND_FLAGS[command];
+    if (commandFlags === undefined)
+        return;
+    rejectUnknownFlags(command, flags, new Set([...commandFlags, "json"]));
+}
 function parseArgsOrExit(args) {
     try {
         return parseArgs(args, SWITCHES);
@@ -263,6 +300,7 @@ async function main() {
     const { flags, flagArrays, positional } = parseArgsOrExit(rest);
     const json = flags["json"] === "true";
     try {
+        validateFlags(command, flags);
         // Resolved once here; commands only ever see the final backlog directory.
         if (command === "setup") {
             const name = flags["project-name"] ?? "Project";

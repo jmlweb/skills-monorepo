@@ -4,3 +4,4 @@ export interface ParsedArgs {
     readonly positional: string[];
 }
 export declare function parseArgs(args: readonly string[], switches: ReadonlySet<string>): ParsedArgs;
+export declare function rejectUnknownFlags(command: string, flags: Readonly<Record<string, string>>, accepted: ReadonlySet<string>): void;

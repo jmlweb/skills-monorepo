@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseArgs } from "./args.js";
+import { parseArgs, rejectUnknownFlags } from "./args.js";
 import { InvalidArgumentError } from "./errors.js";
 
 const SWITCHES = new Set(["json", "all"]);
@@ -45,5 +45,26 @@ describe("parseArgs", () => {
       /Flag --title needs a value, but "--json" reads as the next flag/,
     );
     expect(() => parseArgs(["--log", "--x"], SWITCHES)).toThrow(/Values cannot start with --/);
+  });
+});
+
+describe("rejectUnknownFlags", () => {
+  const ACCEPTED = new Set(["title", "tags", "json"]);
+
+  it("accepts flags that are all in the accepted set", () => {
+    expect(() => rejectUnknownFlags("task-create", { title: "x", tags: "a", json: "true" }, ACCEPTED)).not.toThrow();
+  });
+
+  it("names the unknown flag, the command and the accepted flags", () => {
+    expect(() => rejectUnknownFlags("task-create", { title: "x", tag: "cli" }, ACCEPTED)).toThrow(InvalidArgumentError);
+    expect(() => rejectUnknownFlags("task-create", { title: "x", tag: "cli" }, ACCEPTED)).toThrow(
+      "Unknown flag for task-create: --tag. Accepted flags: --title, --tags, --json.",
+    );
+  });
+
+  it("names every unknown flag at once", () => {
+    expect(() => rejectUnknownFlags("task-create", { tag: "a", depends: "b" }, ACCEPTED)).toThrow(
+      /Unknown flags for task-create: --tag, --depends\./,
+    );
   });
 });
