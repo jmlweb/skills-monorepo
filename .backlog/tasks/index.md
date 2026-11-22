@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 9 |
+| Pending | 8 |
 | Active | 0 |
 | Blocked | 1 |
-| Complete | 84 |
+| Complete | 85 |
 
 ## Active Tasks
 
@@ -17,7 +17,6 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-086 | Fix: scan-secrets misses fine-grained GitHub tokens (github_pat_) | P3 | dev-workflow, scan-secrets, security | 2026-11-13 |
 | TSK-087 | Fix: md-to-adf accepts a --jira-base without a scheme and writes broken smart links | P4 | atlassian-polish, md-to-adf, validation | 2026-11-13 |
 | TSK-088 | Fix: md-to-adf turns a Markdown image into literal text plus a link instead of exiting 2 | P4 | atlassian-polish, md-to-adf | 2026-11-13 |
 | TSK-089 | Fix: task-update --set tags= or depends-on= writes a scalar that every reader drops | P3 | flowstate, cli, validation | 2026-11-16 |
@@ -31,6 +30,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-086 | Fix: scan-secrets misses fine-grained GitHub tokens (github_pat_) | 2026-11-22 |
 | TSK-085 | Fix: flowstate CLI rejects unknown flags that carry a value | 2026-11-19 |
 | TSK-084 | Fix: md-to-adf fence recognition (tilde fences, info strings, longer fences) | 2026-11-16 |
 | TSK-083 | Fix: Flag values with a newline inject extra frontmatter keys (--task-id, --reason, --tags) | 2026-11-13 |
@@ -40,4 +40,3 @@
 | TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | 2026-11-07 |
 | TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | 2026-11-07 |
 | TSK-062 | Fix: CLI arg parsers store true for flag values that are empty or start with -- | 2026-11-07 |
-| TSK-063 | Fix: report-move and idea-move accept any --status value | 2026-11-07 |

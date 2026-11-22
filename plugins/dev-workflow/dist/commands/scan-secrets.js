@@ -20,6 +20,7 @@ const CONTENT_PATTERNS = [
     { name: "stripe restricted key", regex: /\brk_live_[A-Za-z0-9]{16,}\b/ },
     { name: "google api key", regex: /\bAIza[0-9A-Za-z_-]{35}\b/ },
     { name: "github token", regex: /\bgh[pousr]_[A-Za-z0-9]{36,}\b/ },
+    { name: "github token", regex: /\bgithub_pat_[A-Za-z0-9_]{22,}\b/ },
     { name: "npm token", regex: /\bnpm_[A-Za-z0-9]{36}\b/ },
     { name: "aws access key", regex: /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/ },
     {

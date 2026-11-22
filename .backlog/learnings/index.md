@@ -74,3 +74,4 @@
 | LRN-068 | serializeFrontmatter is the single choke point for injected frontmatter keys | flowstate, frontmatter, validation | active | 2026-11-13 |
 | LRN-069 | md-to-adf inline code only pairs single backticks, so backtick fence info strings must reject backticks | atlassian-polish, md-to-adf | active | 2026-11-16 |
 | LRN-070 | flowstate CLI flags live in two tables: COMMAND_HELP and COMMAND_FLAGS | cli, args, flowstate | active | 2026-11-19 |
+| LRN-071 | pnpm build via turbo can fail with Exec format error; run per-package scripts with pnpm -r | tooling, turbo, build | active | 2026-11-22 |

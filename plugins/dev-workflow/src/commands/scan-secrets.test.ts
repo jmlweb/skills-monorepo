@@ -128,17 +128,46 @@ describe("scanDiff", () => {
     expect(findings[0]!.pattern).toBe("google api key");
   });
 
-  it("detects github tokens (multiple prefixes)", () => {
+  it("detects classic github tokens (every gh*_ prefix)", () => {
+    const prefixes = ["ghp_", "gho_", "ghu_", "ghs_", "ghr_"];
     const diff = [
       "diff --git a/a.ts b/a.ts",
       "+++ b/a.ts",
-      "@@ -0,0 +1,2 @@",
-      "+ghp_1234567890abcdefghijklmnopqrstuvwxyz",
-      "+ghs_1234567890abcdefghijklmnopqrstuvwxyz",
+      `@@ -0,0 +1,${prefixes.length} @@`,
+      ...prefixes.map((p) => `+${p}1234567890abcdefghijklmnopqrstuvwxyz`),
     ].join("\n");
     const findings = scanDiff(diff);
-    expect(findings).toHaveLength(2);
+    expect(findings).toHaveLength(prefixes.length);
     expect(findings.every((f) => f.pattern === "github token")).toBe(true);
+  });
+
+  it("detects fine-grained github tokens (github_pat_) with file and line", () => {
+    const fineGrained = `github_pat_${"A1b2C3d4E5f6G7h8I9j0K1"}_${"x".repeat(59)}`;
+    const reportRepro = `github_pat_11ABCDEFG0${"a".repeat(72)}`;
+    const diff = [
+      "diff --git a/config.ts b/config.ts",
+      "+++ b/config.ts",
+      "@@ -0,0 +1,3 @@",
+      "+// config",
+      `+const token = "${fineGrained}";`,
+      `+const other = "${reportRepro}";`,
+    ].join("\n");
+    const findings = scanDiff(diff);
+    expect(findings.map(({ file, line, pattern }) => ({ file, line, pattern })))
+      .toEqual([
+        { file: "config.ts", line: 2, pattern: "github token" },
+        { file: "config.ts", line: 3, pattern: "github token" },
+      ]);
+  });
+
+  it("ignores a bare github_pat_ prefix with no token body", () => {
+    const diff = [
+      "diff --git a/docs.md b/docs.md",
+      "+++ b/docs.md",
+      "@@ -0,0 +1,1 @@",
+      "+Fine-grained tokens start with github_pat_ and are longer.",
+    ].join("\n");
+    expect(scanDiff(diff)).toEqual([]);
   });
 
   it("detects aws access keys", () => {
