@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 9 |
 | Active | 0 |
 | Blocked | 1 |
 | Complete | 84 |
@@ -23,6 +23,9 @@
 | TSK-089 | Fix: task-update --set tags= or depends-on= writes a scalar that every reader drops | P3 | flowstate, cli, validation | 2026-11-16 |
 | TSK-090 | Fix: task-update --set accepts malformed keys that bypass the status and priority guards | P3 | flowstate, cli, validation | 2026-11-19 |
 | TSK-091 | Fix: task-create stores non-ID depends-on values and empty tags | P4 | flowstate, cli, validation | 2026-11-19 |
+| TSK-092 | Fix: task-unblock rewrites a complete task to status active inside tasks/complete | P3 |  | 2026-11-22 |
+| TSK-093 | Fix: backlog:check rejects a blocked task in tasks/pending, which task-block writes by design | P3 |  | 2026-11-22 |
+| TSK-094 | Fix: task-move --to pending writes status pending on a blocked task that keeps blocked-by | P4 |  | 2026-11-22 |
 
 ## Recently Completed
 
