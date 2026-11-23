@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "simple-git-hooks": "^2.14.0",
-    "turbo": "^2.11.10"
+    "turbo": "^2.11.11"
   },
   "simple-git-hooks": {
     "pre-commit": "node scripts/pre-commit.mjs"
