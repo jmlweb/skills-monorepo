@@ -21,7 +21,8 @@
 | Plugin | Description | Status |
 |--------|-------------|:------:|
 | 🌊 [**flowstate**](./plugins/flowstate/) | Backlog management — tasks, ideas, reports & learnings in plain markdown | ✅ Stable |
-| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Developer workflow — smart commits, PR review, changesets, doc audits, test pruning and README media | ✅ Stable |
+| 🛠️ [**dev-workflow**](./plugins/dev-workflow/) | Git and GitHub workflow — smart commits, PR creation and review, changesets, CI triage | ✅ Stable |
+| 🧼 [**code-hygiene**](./plugins/code-hygiene/) | Code hygiene without a git host — deslop, test pruning, hardening, UI verification, doc audits, README media | 🧪 New |
 | ✨ [**atlassian-polish**](./plugins/atlassian-polish/) | Rewrite Jira issues and Confluence pages into scannable, human-friendly content | 🧪 New |
 
 > 🔭 More plugins coming soon. Contributions welcome!
@@ -45,6 +46,7 @@ flowchart LR
 |--------|---------------|
 | 🌊 **flowstate** | `idea` → `review-idea` → `start-task` → `log-progress` → `complete-task` |
 | 🛠️ **dev-workflow** | `commit` → `open-pr` → `ci-triage` / `review-pr` → `pr-ready` |
+| 🧼 **code-hygiene** | `deslop` → `prune-tests` / `harden` → `verify-ui` → `check-docs` |
 | ✨ **atlassian-polish** | `atlassian-setup` → `polish-atlassian` (preview → approve → write) |
 
 <details open>
@@ -61,18 +63,26 @@ flowchart LR
 </details>
 
 <details open>
-<summary><strong>🛠️ dev-workflow</strong> — 13 skills</summary>
+<summary><strong>🛠️ dev-workflow</strong> — 7 skills</summary>
 
 | Skill | What it does |
 |-------|--------------|
 | `commit` | Conventional Commits message from the staged diff, with secret scan |
 | `changeset` | Changesets entry with the right semver bump |
-| `deslop` | Strips LLM-style comments from your branch |
 | `open-pr` | Draft PR with a description written from your template |
 | `ci-triage` | Classifies red CI failures as real, flaky or infra |
 | `review-pr` | Parallel-agent PR review with risk matrix |
 | `pr-ready` | Gets your own PR mergeable: branch, threads, description |
 | `agent-handoff` | Per-repo prompts for multi-repo agent work, and report reconciliation |
+
+</details>
+
+<details open>
+<summary><strong>🧼 code-hygiene</strong> — 6 skills</summary>
+
+| Skill | What it does |
+|-------|--------------|
+| `deslop` | Strips LLM-style comments from your branch |
 | `check-docs` | Audits docs for drift and structure |
 | `prune-tests` | Finds redundant tests; deletes or rewrites only what you approve |
 | `harden` | Attacks code with the bugs the repo has shipped; proves each with a failing test before fixing |
@@ -110,6 +120,7 @@ claude plugin install flowstate@jmlweb
 ```bash
 # Install the others the same way
 claude plugin install dev-workflow@jmlweb
+claude plugin install code-hygiene@jmlweb
 claude plugin install atlassian-polish@jmlweb
 ```
 
@@ -119,6 +130,7 @@ Then open Claude Code in any repo and try:
 |--------|---------------|
 | 🌊 flowstate | `/flowstate:setup`, then `/flowstate:guide` for a map of every command |
 | 🛠️ dev-workflow | `/dev-workflow:commit` (or just `/commit`) |
+| 🧼 code-hygiene | `/code-hygiene:deslop` (or just `/deslop`) |
 | ✨ atlassian-polish | `/atlassian-polish:atlassian-setup`, then `/atlassian-polish:polish-atlassian PROJ-123` |
 
 Each plugin README has full usage, flags and requirements.
@@ -158,7 +170,8 @@ pnpm sandbox:readme-media # Live /readme-media run on a copy of flowstate, then 
 .claude-plugin/           # Root marketplace definition
 plugins/
 ├── flowstate/            # Backlog management (22 skills + CLI + hooks + agent)
-├── dev-workflow/         # Commits, PRs, CI, changesets, docs, tests, UI checks (13 skills + CLI + hooks + 2 agents)
+├── dev-workflow/         # Commits, PRs, CI, changesets (7 skills + CLI + hooks + agent)
+├── code-hygiene/         # Deslop, tests, hardening, UI checks, docs, README media (6 skills + CLI + agent)
 └── atlassian-polish/     # Jira/Confluence rewriting (2 skills + agent + CLI)
 packages/
 └── shared-config/        # Shared TypeScript base config

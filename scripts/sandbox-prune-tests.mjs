@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Live test harness for /dev-workflow:prune-tests. The skill refuses a dirty
+// Live test harness for /code-hygiene:prune-tests. The skill refuses a dirty
 // tree and this repo is rarely clean, so it runs against a throwaway git repo
 // seeded with known test smells, using the plugin source rather than the
 // installed copy.
@@ -106,7 +106,7 @@ function printExpectations() {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   process.exit(
     runHarness({
-      pluginName: "dev-workflow",
+      pluginName: "code-hygiene",
       skill: "prune-tests",
       dir: DEFAULT_DIR,
       create: createSandbox,

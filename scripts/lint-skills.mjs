@@ -47,9 +47,9 @@ const EXEMPTIONS = {
   // Always-on context skill: activated by project state, not by user phrases.
   'plugins/flowstate/SKILL.md': ['description-triggers'],
   // These run the project's own test/build commands, which no prefix rule can name.
-  'plugins/dev-workflow/skills/harden/SKILL.md': ['bash-scoped'],
+  'plugins/code-hygiene/skills/harden/SKILL.md': ['bash-scoped'],
   // Runs the project's own dev-server start command from docs/verify-ui.md.
-  'plugins/dev-workflow/skills/verify-ui/SKILL.md': ['bash-scoped'],
+  'plugins/code-hygiene/skills/verify-ui/SKILL.md': ['bash-scoped'],
   'plugins/flowstate/skills/check-task/SKILL.md': ['bash-scoped'],
   'plugins/flowstate/skills/complete-task/SKILL.md': ['bash-scoped'],
   'plugins/flowstate/skills/start-task/SKILL.md': ['bash-scoped'],

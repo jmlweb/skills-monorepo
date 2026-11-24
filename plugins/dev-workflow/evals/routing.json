@@ -18,23 +18,6 @@
         }
       ]
     },
-    "check-docs": {
-      "positive": [
-        "check docs",
-        "are the docs up to date with the code?",
-        "audit the README and AGENTS.md for drift before a release"
-      ],
-      "negative": [
-        {
-          "prompt": "review this pull request for security and quality",
-          "owner": "review-pr"
-        },
-        {
-          "prompt": "commit the README changes",
-          "owner": "commit"
-        }
-      ]
-    },
     "ci-triage": {
       "positive": [
         "why is CI red",
@@ -69,23 +52,6 @@
         }
       ]
     },
-    "deslop": {
-      "positive": [
-        "deslop my branch",
-        "remove the AI comments from this branch",
-        "strip the LLM slop comments from my diff"
-      ],
-      "negative": [
-        {
-          "prompt": "check docs for drift against the code",
-          "owner": "check-docs"
-        },
-        {
-          "prompt": "review this pull request for quality",
-          "owner": "review-pr"
-        }
-      ]
-    },
     "open-pr": {
       "positive": [
         "open a PR",
@@ -113,28 +79,6 @@
         {
           "prompt": "why is CI red on this PR",
           "owner": "ci-triage"
-        },
-        {
-          "prompt": "why is CI red on my branch",
-          "owner": "ci-triage"
-        }
-      ]
-    },
-    "verify-ui": {
-      "positive": [
-        "verify the UI",
-        "check the UI in the browser after my header change",
-        "audit the UI change against docs/verify-ui.md, does the page still match the contract"
-      ],
-      "negative": [
-        {
-          "prompt": "start the dev server and show me the app",
-          "owner": "run",
-          "external": true
-        },
-        {
-          "prompt": "review this pull request and give me a merge recommendation",
-          "owner": "review-pr"
         },
         {
           "prompt": "why is CI red on my branch",

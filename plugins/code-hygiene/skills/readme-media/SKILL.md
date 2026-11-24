@@ -106,6 +106,6 @@ State in five lines or fewer:
 - Sources: the `.tape` or `.mjs` files, and the command that regenerates them.
 - Doc: edited or unchanged.
 - Failed: shots that did not pass verification, with their files left in `docs/media/` for the user to delete or fix.
-- Next step: review with `git status` and `git diff`, then `/dev-workflow:commit`.
+- Next step: review with `git status` and `git diff`, then commit with your usual flow (for example `/dev-workflow:commit` if installed).
 
 Done when: the report is printed and `git status --porcelain` shows only the doc and `docs/media/` beyond the pre-run status.
