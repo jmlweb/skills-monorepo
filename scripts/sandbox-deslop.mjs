@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Live test harness for /dev-workflow:deslop. The skill needs a clean tree and
+// Live test harness for /code-hygiene:deslop. The skill needs a clean tree and
 // a branch that diverges from a base, so it runs against a throwaway repo whose
 // `feature` branch adds known LLM-style comments, using the plugin source
 // rather than the installed copy.
@@ -119,7 +119,7 @@ Answer "all" at the prompt; the skill is run with base "main".
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   process.exit(
     runHarness({
-      pluginName: "dev-workflow",
+      pluginName: "code-hygiene",
       skill: "deslop",
       args: "main",
       dir: DEFAULT_DIR,

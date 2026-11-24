@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Live test harness for /dev-workflow:readme-media. The acceptance target is
+// Live test harness for /code-hygiene:readme-media. The acceptance target is
 // plugins/flowstate's README, so the sandbox is a throwaway workspace root
 // holding a loadable copy of that plugin (skills, manifest, compiled CLI): the skill
 // must pick the sub-project, record a GIF of its slash commands in a live
@@ -107,7 +107,7 @@ function printExpectations() {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   process.exit(
     runHarness({
-      pluginName: "dev-workflow",
+      pluginName: "code-hygiene",
       skill: "readme-media",
       dir: DEFAULT_DIR,
       create: createSandbox,

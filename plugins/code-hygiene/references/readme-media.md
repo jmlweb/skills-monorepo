@@ -1,6 +1,6 @@
 # README media reference
 
-Detail for `/dev-workflow:readme-media`. Each section names the step that reads it.
+Detail for `/code-hygiene:readme-media`. Each section names the step that reads it.
 
 ## 1. Project-type detection (step 1)
 

@@ -23,10 +23,22 @@
       ]
     },
     {
+      "name": "code-hygiene",
+      "source": "./plugins/code-hygiene",
+      "description": "Code hygiene tools that need no git host — test pruning, test hardening, deslop, UI verification, docs audits and README media.",
+      "version": "1.0.0",
+      "keywords": [
+        "tests",
+        "documentation",
+        "quality",
+        "cleanup"
+      ]
+    },
+    {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "Developer workflow tools — documentation auditing, PR reviews, commits, task orchestration, and a read-only zones hook.",
-      "version": "1.11.1",
+      "description": "Git and GitHub workflow tools — commits, changesets, PR creation and reviews, CI triage, and a read-only zones hook.",
+      "version": "2.0.0",
       "keywords": [
         "documentation",
         "workflow",

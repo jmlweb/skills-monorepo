@@ -27,9 +27,3 @@ export class ReadOnlyZonesConfigError extends Error {
         this.name = "ReadOnlyZonesConfigError";
     }
 }
-export class TestCommandError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "TestCommandError";
-    }
-}

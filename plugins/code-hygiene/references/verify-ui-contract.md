@@ -1,6 +1,6 @@
 # The `docs/verify-ui.md` contract
 
-`/dev-workflow:verify-ui` reads one file in the project, `docs/verify-ui.md`, and measures the
+`/code-hygiene:verify-ui` reads one file in the project, `docs/verify-ui.md`, and measures the
 running app against it. The skill never writes this file; the project owns it. This page is the
 format, with one worked example at the end.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Live test harness for /dev-workflow:harden. The fixture's history holds one
+// Live test harness for /code-hygiene:harden. The fixture's history holds one
 // `fix:` for a zero denominator, and the planted bug repeats that class in a
 // helper the fix missed, so the run must find it from the repo's own history.
 //
@@ -127,7 +127,7 @@ The skill is run with target ${TARGET}.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   process.exit(
     runHarness({
-      pluginName: "dev-workflow",
+      pluginName: "code-hygiene",
       skill: "harden",
       args: TARGET,
       dir: DEFAULT_DIR,

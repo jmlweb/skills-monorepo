@@ -1,6 +1,6 @@
 # Test redundancy: criteria, spike findings and verification
 
-Deep reference for `/dev-workflow:prune-tests`. The skill reads this file at the judgment steps (never-flag rules, rewrite catalog, verification protocol). Terms follow `GLOSSARY.md`.
+Deep reference for `/code-hygiene:prune-tests`. The skill reads this file at the judgment steps (never-flag rules, rewrite catalog, verification protocol). Terms follow `GLOSSARY.md`.
 
 A passing suite with the same coverage does **not** prove that fault detection was kept. Reduced suites can miss real failures that full suites catch (Rothermel et al. 1998; Shi et al. 2018 found up to 52.2% of failed builds missed). The user's approval of each candidate, made with the evidence in front of them, is the safety gate. The re-run after applying only catches mistakes.
 

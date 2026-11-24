@@ -12,7 +12,7 @@ effort: medium
 
 Find redundant and clutter tests, propose rewrites that keep every check, and apply only what the user approves. Criteria, never-flag rules, the rewrite catalog and the verification protocol are in `${CLAUDE_PLUGIN_ROOT}/references/test-redundancy.md`. Read its sections 2 to 6 at the matching step.
 
-The CLI is run as `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" <command>`.
+The CLI is run as `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/code-hygiene.js" <command>`.
 
 ## Arguments
 
@@ -30,7 +30,7 @@ Done when: `git status --porcelain` prints nothing.
 
 ### 1. Detect the runner
 
-Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" detect-test-runner --cwd <dir> --json true`.
+Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/code-hygiene.js" detect-test-runner --cwd <dir> --json true`.
 
 If `runner` is `unknown`, stop and ask the user for the test command. Use it as `testCommand`, with `{file}` as the placeholder for a test file path.
 
@@ -38,7 +38,7 @@ Done when: `runner`, `testCommand` and `suiteCommand` are known.
 
 ### 2. Static scan
 
-Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" test-static-scan --cwd <dir> --json true`. Read the counts and keep the JSON for steps 4 and 5.
+Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/code-hygiene.js" test-static-scan --cwd <dir> --json true`. Read the counts and keep the JSON for steps 4 and 5.
 
 Done when: the report is in hand and you have stated the counts: assertion-free, trivial, skipped, duplicate groups, parameterisable groups, sleep tests.
 
@@ -55,9 +55,9 @@ Done when: the user has answered yes or no.
 
 For each test file from the scan, run `coverageCommand` with `{file}` replaced by the file and `{dir}` replaced by `<scratch>/cov/<n>`, where `<scratch>` comes from `mktemp -d`. Write `<scratch>/units.json`: an array of `{id, durationMs, coverage}`, where `coverage` is `coverage-final.json` or `lcov.info` inside that directory.
 
-Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" coverage-subsets --units <scratch>/units.json --json true`.
+Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/code-hygiene.js" coverage-subsets --units <scratch>/units.json --json true`.
 
-If Stryker is installed and the user approved it, run `pnpm exec stryker run --disableBail` (or the matching package manager) and then `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" mutation-subsets --report <report path> --json true`. Read the `bailSuspected` flag. If it is `true`, drop the mutation subsets and say so.
+If Stryker is installed and the user approved it, run `pnpm exec stryker run --disableBail` (or the matching package manager) and then `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/code-hygiene.js" mutation-subsets --report <report path> --json true`. Read the `bailSuspected` flag. If it is `true`, drop the mutation subsets and say so.
 
 Done when: `coverage-subsets` and, if run, `mutation-subsets` have reported.
 
@@ -77,7 +77,7 @@ Done when: every candidate is either kept for the report, with its evidence, or 
 For each parameterisable group, sleep test and shared-fixture candidate:
 
 1. Write the rewritten file to `<scratch>/rewrite-<n>/<basename>` with the same structure rules as `references/test-redundancy.md` section 4. Never change what a test checks.
-2. Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" test-verify-rewrite --cwd <dir> --file <test file> --rewritten <rewritten copy> --command '<testCommand as JSON array>' --shuffle-args '<shuffleArgs as JSON array>' --runs 3 --json true`. When `coverageCommand` is not null, add `--coverage-command '<coverageCommand as JSON array>'`. Add `--claim time` for sleep and fixture rewrites, and `--claim fold` for parameterised tables; for a fold, confirm each row maps to one original test.
+2. Run `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/code-hygiene.js" test-verify-rewrite --cwd <dir> --file <test file> --rewritten <rewritten copy> --command '<testCommand as JSON array>' --shuffle-args '<shuffleArgs as JSON array>' --runs 3 --json true`. When `coverageCommand` is not null, add `--coverage-command '<coverageCommand as JSON array>'`. Add `--claim time` for sleep and fixture rewrites, and `--claim fold` for parameterised tables; for a fold, confirm each row maps to one original test.
 3. Keep the rewrite only if `verdict` is `pass`. Count the dropped ones. Never show a failed rewrite.
 
 The command restores the original file itself. Confirm `git status --porcelain` is still empty after each call.
@@ -127,7 +127,7 @@ State the result in four lines or fewer:
 - Applied: the labels that stayed.
 - Restored: any label undone after the re-run, with the reason.
 - Dropped: the number of rewrites that failed verification.
-- Next step: review with `git diff`, then `/dev-workflow:commit`.
+- Next step: review with `git diff`, then commit with your usual flow (for example `/dev-workflow:commit` if installed).
 
 State that the re-run shows the suite passes and coverage held. It does not show fault detection held.
 

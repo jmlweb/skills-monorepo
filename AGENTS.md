@@ -36,10 +36,12 @@ plugins/
 │   ├── references/               # architecture.md, plugin-docs.md, templates.md
 │   ├── src/{bin,commands,core}/  # CLI source; colocated *.test.ts
 │   └── dist/                     # COMMITTED build output
-├── dev-workflow/                 # commit/changeset/check-docs/review-pr/prune-tests skills + CLI
+├── dev-workflow/                 # git/GitHub skills (commit, changeset, open-pr, pr-ready, ci-triage, review-pr, agent-handoff) + CLI
 │   ├── shared/commit-basics.md   # prose shared by commit + changeset skills
 │   ├── hooks/hooks.json          # PreToolUse read-only zones guard → dist/bin/read-only-zones-hook.js
 │   └── (same structure, no root SKILL.md)
+├── code-hygiene/                 # host-free skills (deslop, check-docs, prune-tests, harden, readme-media, verify-ui) + CLI
+│   └── (same structure; own copies of core/args + core/errors: no install runs on users' machines, so runtime sharing is impossible)
 └── atlassian-polish/             # 2 skills + 1 agent + references + tiny CLI (md-to-adf); src/dist
 packages/shared-config/           # tsconfig.base.json all plugins extend
 scripts/                          # pre-commit.mjs, version-sync.js, bump-plugin.sh, sandbox-*.mjs (+ node:test tests)
@@ -102,7 +104,7 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
 
 - Conventional Commits; scope = plugin name (`feat(flowstate): …`). Release commits:
   `chore: release <plugin> v<X.Y.Z>`.
-- Docs live in three tiers (enforced by `dev-workflow:check-docs`): rules files terse
+- Docs live in three tiers (enforced by `code-hygiene:check-docs`): rules files terse
   (<100 lines), READMEs human and emoji-friendly with no length cap, deep docs in
   `references/` or `docs/` under 300 lines. Don't hardcode plugin versions in READMEs —
   they drift (this bit us; see git history).
@@ -117,7 +119,7 @@ Flowstate's `src/bin/flowstate.integration.test.ts` spawns the *compiled* CLI �
   help text, and output formatting.
 - Dual output: `--json true` → pretty JSON; default → tab-separated rows / `key: value` lines.
 - Typed error classes (`core/errors.ts`), actionable messages. Exit codes: 0 success,
-  1 findings/validation failure, 2 hard error (dev-workflow) or invariant failure (flowstate
+  1 findings/validation failure, 2 hard error (dev-workflow, code-hygiene) or invariant failure (flowstate
   compression). Keep each binary's existing code meanings.
 - All state mutation and ID assignment happens in the CLI — deterministic and tested.
   Skills orchestrate and exercise judgment; they never hand-edit files the CLI owns

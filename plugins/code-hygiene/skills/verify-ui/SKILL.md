@@ -70,7 +70,7 @@ Done when: a non-empty surface list and its rule are known.
 
 ### 3. Delegate the measurement
 
-Invoke the `Agent` tool with `subagent_type: "dev-workflow:ui-auditor"` and `model: "sonnet"`.
+Invoke the `Agent` tool with `subagent_type: "code-hygiene:ui-auditor"` and `model: "sonnet"`.
 The prompt carries, pasted in full (the agent sees nothing from this conversation): the base
 URL, the contract's `Surfaces`, `Viewports`, `Invariants`, `Pending` and `Known` tables, the
 surface list from step 2 with its rule, and the sentence "Reply in the output shape of your

@@ -1,0 +1,19 @@
+{
+  "name": "code-hygiene",
+  "description": "Code hygiene tools for Claude Code that need no git host: test pruning, test hardening, deslop, UI verification, documentation audits and README media.",
+  "version": "1.0.0",
+  "author": {
+    "name": "jmlweb",
+    "url": "https://github.com/jmlweb"
+  },
+  "repository": "https://github.com/jmlweb/skills-monorepo",
+  "homepage": "https://github.com/jmlweb/skills-monorepo/tree/main/plugins/code-hygiene",
+  "license": "MIT",
+  "keywords": [
+    "tests",
+    "documentation",
+    "quality",
+    "cleanup"
+  ],
+  "skills": "./skills/"
+}

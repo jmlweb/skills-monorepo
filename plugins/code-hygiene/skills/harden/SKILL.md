@@ -32,7 +32,7 @@ Done when: `git status --porcelain` prints nothing.
 
 Find the test command, then every other gate (lint, typecheck, build):
 
-1. JS or TS repo: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/dev-workflow.js" detect-test-runner --cwd <dir> --json true`. A `runner` of `unknown` falls through to the next source.
+1. JS or TS repo: `node "${CLAUDE_PLUGIN_ROOT}/dist/bin/code-hygiene.js" detect-test-runner --cwd <dir> --json true`. A `runner` of `unknown` falls through to the next source.
 2. CI workflows, then `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, then manifest scripts and the `Makefile`.
 3. Nothing found → ask the user for the test command. Without one, this skill stops: an unproven bug is a guess.
 
@@ -99,6 +99,6 @@ Then:
 
 - Gates: each command with its result.
 - Failure-mode rows: one proposed row per confirmed bug class, in the format of `${CLAUDE_PLUGIN_ROOT}/references/failure-modes.md`, traced to the old fix it repeats. A bug from a `generic` class has no trace, so it gets no row. The user decides where they go.
-- Commits: one `fix:` per target with a real bug and one `test:` for the rest. Staging and committing wait for the user; suggest `/dev-workflow:commit`.
+- Commits: one `fix:` per target with a real bug and one `test:` for the rest. Staging and committing wait for the user; suggest the user's usual commit flow (for example `/dev-workflow:commit` if installed).
 
 Done when: the blocks are printed and every path in `git status --porcelain` appears in a block.
