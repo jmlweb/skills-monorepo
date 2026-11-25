@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 7 |
+| Pending | 9 |
 | Active | 0 |
 | Blocked | 1 |
 | Complete | 86 |
@@ -24,6 +24,8 @@
 | TSK-092 | Fix: task-unblock rewrites a complete task to status active inside tasks/complete | P3 |  | 2026-11-22 |
 | TSK-093 | Fix: backlog:check rejects a blocked task in tasks/pending, which task-block writes by design | P3 |  | 2026-11-22 |
 | TSK-094 | Fix: task-move --to pending writes status pending on a blocked task that keeps blocked-by | P4 |  | 2026-11-22 |
+| TSK-095 | Fix: scan-secrets skips renamed and copied files, so a rename to .env or a secret added to a moved file passes | P2 | dev-workflow, scan-secrets, security | 2026-11-25 |
+| TSK-096 | Fix: mutation-subsets drops tests named only in killedBy/coveredBy and exits 0 as clean | P4 | code-hygiene, mutation-subsets | 2026-11-25 |
 
 ## Recently Completed
 
