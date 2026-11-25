@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 7 |
 | Active | 0 |
 | Blocked | 1 |
-| Complete | 85 |
+| Complete | 86 |
 
 ## Active Tasks
 
@@ -19,7 +19,6 @@
 |----|-------|----------|------|---------|
 | TSK-087 | Fix: md-to-adf accepts a --jira-base without a scheme and writes broken smart links | P4 | atlassian-polish, md-to-adf, validation | 2026-11-13 |
 | TSK-088 | Fix: md-to-adf turns a Markdown image into literal text plus a link instead of exiting 2 | P4 | atlassian-polish, md-to-adf | 2026-11-13 |
-| TSK-089 | Fix: task-update --set tags= or depends-on= writes a scalar that every reader drops | P3 | flowstate, cli, validation | 2026-11-16 |
 | TSK-090 | Fix: task-update --set accepts malformed keys that bypass the status and priority guards | P3 | flowstate, cli, validation | 2026-11-19 |
 | TSK-091 | Fix: task-create stores non-ID depends-on values and empty tags | P4 | flowstate, cli, validation | 2026-11-19 |
 | TSK-092 | Fix: task-unblock rewrites a complete task to status active inside tasks/complete | P3 |  | 2026-11-22 |
@@ -30,6 +29,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-089 | Fix: task-update --set tags= or depends-on= writes a scalar that every reader drops | 2026-11-25 |
 | TSK-086 | Fix: scan-secrets misses fine-grained GitHub tokens (github_pat_) | 2026-11-22 |
 | TSK-085 | Fix: flowstate CLI rejects unknown flags that carry a value | 2026-11-19 |
 | TSK-084 | Fix: md-to-adf fence recognition (tilde fences, info strings, longer fences) | 2026-11-16 |
@@ -39,4 +39,3 @@
 | TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | 2026-11-07 |
 | TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | 2026-11-07 |
 | TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | 2026-11-07 |
-| TSK-062 | Fix: CLI arg parsers store true for flag values that are empty or start with -- | 2026-11-07 |

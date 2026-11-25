@@ -75,3 +75,4 @@
 | LRN-069 | md-to-adf inline code only pairs single backticks, so backtick fence info strings must reject backticks | atlassian-polish, md-to-adf | active | 2026-11-16 |
 | LRN-070 | flowstate CLI flags live in two tables: COMMAND_HELP and COMMAND_FLAGS | cli, args, flowstate | active | 2026-11-19 |
 | LRN-071 | pnpm build via turbo can fail with Exec format error; run per-package scripts with pnpm -r | tooling, turbo, build | active | 2026-11-22 |
+| LRN-072 | Root pnpm build/test fail with turbo 'Exec format error' on the hustle box; run per-plugin scripts | tooling, turbo, ci | active | 2026-11-25 |
