@@ -91,7 +91,7 @@ const COMMAND_HELP = {
     "task-list": "Usage: flowstate task-list [--status <pending|active|blocked|complete>] [--limit <n>]",
     "task-move": "Usage: flowstate task-move <id> --to <active|complete|pending>",
     "task-block": "Usage: flowstate task-block <id> --reason <text>",
-    "task-update": "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>] [--evidence <json>]\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)\n  --evidence '{\"2\":\"pnpm test → exit 0\"}'  attach proof to criteria ticked in the same call; keys must be in --check",
+    "task-update": "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>] [--evidence <json>]\n  --set tags=a,b  list fields (tags, depends-on) split on commas; an empty value clears them\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)\n  --evidence '{\"2\":\"pnpm test → exit 0\"}'  attach proof to criteria ticked in the same call; keys must be in --check",
     "task-unblock": "Usage: flowstate task-unblock <id> [--resolution <text>]",
     "task-condense": "Usage: flowstate task-condense <id> | flowstate task-condense --all\n  Trims Notes section and middle Progress Log entries from complete tasks. Idempotent (sets condensed: true).",
     "task-normalize": "Usage: flowstate task-normalize <id>\n  Merges repeated ## Notes sections of a task (any status) into the first one. Idempotent.",

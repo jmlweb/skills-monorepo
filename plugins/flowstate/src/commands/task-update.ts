@@ -31,6 +31,16 @@ export function parseEvidence(value: string | undefined): Record<number, string>
   return result;
 }
 
+// Every reader treats a non-array as an empty list, so a raw "x,y" string would silently drop
+// the tags (RPT-034); split it the way task-create splits --tags and --depends-on.
+const LIST_FIELDS: ReadonlySet<string> = new Set(["tags", "depends-on"]);
+
+const toList = (value: string): string[] =>
+  value
+    .split(",")
+    .map((item) => item.trim())
+    .filter((item) => item !== "");
+
 export async function taskUpdate(
   store: BacklogStore,
   id: string,
@@ -71,7 +81,7 @@ export async function taskUpdate(
   const fm = { ...task.frontmatter };
 
   for (const [key, value] of Object.entries(updates)) {
-    fm[key] = value;
+    fm[key] = LIST_FIELDS.has(key) ? toList(value) : value;
   }
 
   let body = task.body;

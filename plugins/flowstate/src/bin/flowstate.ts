@@ -135,7 +135,7 @@ const COMMAND_HELP: Record<string, string> = {
   "task-block":
     "Usage: flowstate task-block <id> --reason <text>",
   "task-update":
-    "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>] [--evidence <json>]\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)\n  --evidence '{\"2\":\"pnpm test → exit 0\"}'  attach proof to criteria ticked in the same call; keys must be in --check",
+    "Usage: flowstate task-update <id> [--set key=value ...] [--log <message|->] [--check <n[,n...]>] [--evidence <json>]\n  --set tags=a,b  list fields (tags, depends-on) split on commas; an empty value clears them\n  --log -      read the message from stdin; each non-empty line becomes a dated Progress Log bullet\n  --check 1,3  tick acceptance criteria by 1-based index (already ticked: no-op)\n  --evidence '{\"2\":\"pnpm test → exit 0\"}'  attach proof to criteria ticked in the same call; keys must be in --check",
   "task-unblock":
     "Usage: flowstate task-unblock <id> [--resolution <text>]",
   "task-condense":

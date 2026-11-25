@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { taskUpdate, parseEvidence } from "./task-update.js";
 import { taskCreate } from "./task-create.js";
 import { setup } from "./setup.js";
+import { taskList } from "./task-list.js";
 import { readEntity } from "../core/fs.js";
 import { FileStore } from "../core/file-store.js";
 
@@ -184,5 +185,35 @@ describe("taskUpdate", () => {
         expect.objectContaining({ name: "InvalidArgumentError" }),
       );
     }
+  });
+});
+
+describe("taskUpdate list fields (RPT-034)", () => {
+  it("stores --set tags=x,y as a YAML list that task-list reads back", async () => {
+    const result = await taskUpdate(new FileStore(tmp), "TSK-001", { tags: "x, y" });
+
+    const content = await readFile(result.path, "utf-8");
+    expect(content).toMatch(/^tags: \[x, y\]$/m);
+    const [task] = await taskList(new FileStore(tmp));
+    expect(task?.tags).toEqual(["x", "y"]);
+  });
+
+  it("stores --set depends-on=TSK-002,TSK-003 as a YAML list", async () => {
+    const result = await taskUpdate(new FileStore(tmp), "TSK-001", {
+      "depends-on": "TSK-002,TSK-003",
+    });
+
+    const content = await readFile(result.path, "utf-8");
+    expect(content).toMatch(/^depends-on: \[TSK-002, TSK-003\]$/m);
+    const fm = (await readEntity(result.path)).frontmatter as Record<string, unknown>;
+    expect(fm["depends-on"]).toEqual(["TSK-002", "TSK-003"]);
+  });
+
+  it("clears a list field when the value is empty", async () => {
+    await taskUpdate(new FileStore(tmp), "TSK-001", { tags: "a" });
+    const result = await taskUpdate(new FileStore(tmp), "TSK-001", { tags: "" });
+
+    const content = await readFile(result.path, "utf-8");
+    expect(content).toMatch(/^tags: \[\]$/m);
   });
 });
