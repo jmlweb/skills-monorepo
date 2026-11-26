@@ -2,7 +2,7 @@
   "name": "@jmlweb/skills-monorepo",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@12.18.0",
+  "packageManager": "pnpm@12.22.0",
   "type": "module",
   "scripts": {
     "postinstall": "simple-git-hooks",
@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "simple-git-hooks": "^2.14.0",
-    "turbo": "^2.11.11"
+    "turbo": "^2.11.13"
   },
   "simple-git-hooks": {
     "pre-commit": "node scripts/pre-commit.mjs"
