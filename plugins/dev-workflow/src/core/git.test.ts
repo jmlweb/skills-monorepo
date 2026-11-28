@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { detectPackages } from "../commands/detect-packages.js";
 import { detectScope } from "../commands/detect-scope.js";
 import { scanSecrets } from "../commands/scan-secrets.js";
 import { InvalidArgumentError } from "./errors.js";
@@ -193,5 +194,114 @@ describe("diff header format ignores user config", () => {
     git("add", "src/config.ts");
 
     expect(scanStaged().findings).toHaveLength(1);
+  });
+});
+
+describe("renamed and copied files", () => {
+  // Enough unchanged lines that git still pairs the edited file with its source.
+  const configBody = Array.from({ length: 8 }, (_, i) => `export const v${i} = ${i};\n`).join("");
+  const secretLine = `export const key = "${fakeStripeKey}";\n`;
+  const scanStaged = () => scanSecrets(getStagedFiles(repo), getStagedDiff(repo));
+  const scanRange = () =>
+    scanSecrets(getRangeFiles(repo, "main...HEAD"), getRangeDiff(repo, "main...HEAD"));
+
+  // Moves main up to the branch tip so the range diff starts after the source file exists.
+  const advanceBaseToHead = () => git("branch", "-f", "main", "HEAD");
+
+  async function renameWithSecret(): Promise<void> {
+    await commit("src/config.ts", configBody);
+    advanceBaseToHead();
+    git("mv", "src/config.ts", "src/app-config.ts");
+    await write("src/app-config.ts", configBody + secretLine);
+    git("add", "-A");
+  }
+
+  async function copyWithSecret(): Promise<void> {
+    // Copies are reported as C only when copy detection is on.
+    git("config", "diff.renames", "copies");
+    await commit("src/config.ts", configBody);
+    advanceBaseToHead();
+    await write("src/config-copy.ts", configBody + secretLine);
+    await write("src/config.ts", `${configBody}export const extra = 1;\n`);
+    git("add", "-A");
+  }
+
+  it("flags a staged rename to .env as a sensitive filename", async () => {
+    await commit("settings.txt", "A=1\n");
+    git("mv", "settings.txt", ".env");
+
+    expect(getStagedFiles(repo)).toEqual([".env"]);
+    expect(scanStaged().findings.map((f) => f.pattern)).toContain("env file");
+  });
+
+  it("flags a rename to .env across a range", async () => {
+    await commit("settings.txt", "A=1\n");
+    advanceBaseToHead();
+    git("mv", "settings.txt", ".env");
+    git("commit", "-m", "rename");
+
+    expect(getRangeFiles(repo, "main...HEAD")).toEqual([".env"]);
+    expect(scanRange().findings.map((f) => f.pattern)).toContain("env file");
+  });
+
+  it("flags a secret added to a staged renamed file", async () => {
+    await renameWithSecret();
+
+    expect(scanStaged().findings).toEqual([
+      expect.objectContaining({ file: "src/app-config.ts", pattern: "stripe live key" }),
+    ]);
+  });
+
+  it("flags a secret added to a renamed file across a range", async () => {
+    await renameWithSecret();
+    git("commit", "-m", "rename");
+
+    expect(scanRange().findings).toEqual([
+      expect.objectContaining({ file: "src/app-config.ts", pattern: "stripe live key" }),
+    ]);
+  });
+
+  it("flags a secret added to a staged copied file", async () => {
+    await copyWithSecret();
+
+    expect(getStagedFiles(repo).sort()).toEqual(["src/config-copy.ts", "src/config.ts"]);
+    expect(scanStaged().findings).toEqual([
+      expect.objectContaining({ file: "src/config-copy.ts", pattern: "stripe live key" }),
+    ]);
+  });
+
+  it("flags a secret added to a copied file across a range", async () => {
+    await copyWithSecret();
+    git("commit", "-m", "copy");
+
+    expect(scanRange().findings).toEqual([
+      expect.objectContaining({ file: "src/config-copy.ts", pattern: "stripe live key" }),
+    ]);
+  });
+
+  it("detects scope from a commit that only renames files", async () => {
+    await commit("plugins/foo/src/a.ts", "export const a = 1;\n");
+    advanceBaseToHead();
+    git("mv", "plugins/foo/src/a.ts", "plugins/foo/src/b.ts");
+
+    const staged = detectScope(getStagedFiles(repo), "feat/range", () => null);
+    expect([...staged.scopes]).toEqual(["foo"]);
+
+    git("commit", "-m", "rename");
+    const ranged = detectScope(getRangeFiles(repo, "main...HEAD"), "feat/range", () => null);
+    expect([...ranged.scopes]).toEqual(["foo"]);
+  });
+
+  it("detects packages from a staged rename", async () => {
+    await commit("packages/foo/package.json", '{"name":"foo","version":"1.0.0"}\n');
+    await commit("packages/foo/src/a.ts", "export const a = 1;\n");
+    git("mv", "packages/foo/src/a.ts", "packages/foo/src/b.ts");
+
+    const packages = detectPackages(getStagedFiles(repo), (dir) =>
+      dir === "packages/foo"
+        ? { name: "foo", shortName: "foo", private: false, dir }
+        : null,
+    );
+    expect(packages.map((p) => p.name)).toEqual(["foo"]);
   });
 });

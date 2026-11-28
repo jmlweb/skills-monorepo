@@ -10,6 +10,10 @@ const PINNED_DIFF_FORMAT = [
     "--dst-prefix=b/",
     "--no-ext-diff",
 ];
+// Rename detection is on by default, so a moved file reports R (or C for a copy
+// under diff.renames=copies) instead of A; dropping those would let a rename to
+// .env or a secret added during a move skip the scan.
+const CHANGED_PATHS_FILTER = "--diff-filter=ACMR";
 function runGit(cwd, args) {
     try {
         return execFileSync("git", [...PINNED_CONFIG, ...args], {
@@ -29,7 +33,7 @@ export function getStagedFiles(cwd) {
         "diff",
         "--cached",
         "--name-only",
-        "--diff-filter=AM",
+        CHANGED_PATHS_FILTER,
     ]);
     return out.split("\n").filter((line) => line.length > 0);
 }
@@ -40,7 +44,7 @@ export function getStagedDiff(cwd) {
         "--unified=0",
         "--no-color",
         ...PINNED_DIFF_FORMAT,
-        "--diff-filter=AM",
+        CHANGED_PATHS_FILTER,
     ]);
 }
 // A range is passed straight to git, so reject anything that could be read as
@@ -55,7 +59,7 @@ export function getRangeFiles(cwd, range) {
     const out = runGit(cwd, [
         "diff",
         "--name-only",
-        "--diff-filter=AM",
+        CHANGED_PATHS_FILTER,
         range,
         "--",
     ]);
@@ -68,7 +72,7 @@ export function getRangeDiff(cwd, range) {
         "--unified=0",
         "--no-color",
         ...PINNED_DIFF_FORMAT,
-        "--diff-filter=AM",
+        CHANGED_PATHS_FILTER,
         range,
         "--",
     ]);

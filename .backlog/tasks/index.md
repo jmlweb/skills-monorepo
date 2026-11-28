@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 9 |
+| Pending | 8 |
 | Active | 0 |
 | Blocked | 1 |
-| Complete | 86 |
+| Complete | 87 |
 
 ## Active Tasks
 
@@ -24,13 +24,13 @@
 | TSK-092 | Fix: task-unblock rewrites a complete task to status active inside tasks/complete | P3 |  | 2026-11-22 |
 | TSK-093 | Fix: backlog:check rejects a blocked task in tasks/pending, which task-block writes by design | P3 |  | 2026-11-22 |
 | TSK-094 | Fix: task-move --to pending writes status pending on a blocked task that keeps blocked-by | P4 |  | 2026-11-22 |
-| TSK-095 | Fix: scan-secrets skips renamed and copied files, so a rename to .env or a secret added to a moved file passes | P2 | dev-workflow, scan-secrets, security | 2026-11-25 |
 | TSK-096 | Fix: mutation-subsets drops tests named only in killedBy/coveredBy and exits 0 as clean | P4 | code-hygiene, mutation-subsets | 2026-11-25 |
 
 ## Recently Completed
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-095 | Fix: scan-secrets skips renamed and copied files, so a rename to .env or a secret added to a moved file passes | 2026-11-28 |
 | TSK-089 | Fix: task-update --set tags= or depends-on= writes a scalar that every reader drops | 2026-11-25 |
 | TSK-086 | Fix: scan-secrets misses fine-grained GitHub tokens (github_pat_) | 2026-11-22 |
 | TSK-085 | Fix: flowstate CLI rejects unknown flags that carry a value | 2026-11-19 |
@@ -40,4 +40,3 @@
 | TSK-053 | Fix: review-idea and triage-report number their decision menus after a numbered list | 2026-11-07 |
 | TSK-057 | Optional GitHub Issues backend for tasks, ideas and reports | 2026-11-07 |
 | TSK-060 | Fix: A pipe or newline in an entity title corrupts frontmatter and index tables | 2026-11-07 |
-| TSK-061 | Fix: task-create --criteria accepts non-string-array JSON and crashes or writes object Object | 2026-11-07 |
