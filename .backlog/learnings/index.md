@@ -76,3 +76,4 @@
 | LRN-070 | flowstate CLI flags live in two tables: COMMAND_HELP and COMMAND_FLAGS | cli, args, flowstate | active | 2026-11-19 |
 | LRN-071 | pnpm build via turbo can fail with Exec format error; run per-package scripts with pnpm -r | tooling, turbo, build | active | 2026-11-22 |
 | LRN-072 | The turbo Exec format error comes from the pnpm wrapper; ./node_modules/.bin/turbo works, and the pre-commit hook breaks too | tooling, turbo, build, pre-commit | active | 2026-11-25 |
+| LRN-073 | Range rename tests need the source file on the base, or git reports A and the test passes vacuously | dev-workflow, git, scan-secrets, testing | active | 2026-11-28 |
