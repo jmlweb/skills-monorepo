@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 10 |
 | Active | 0 |
 | Blocked | 1 |
 | Complete | 87 |
@@ -25,6 +25,8 @@
 | TSK-093 | Fix: backlog:check rejects a blocked task in tasks/pending, which task-block writes by design | P3 |  | 2026-11-22 |
 | TSK-094 | Fix: task-move --to pending writes status pending on a blocked task that keeps blocked-by | P4 |  | 2026-11-22 |
 | TSK-096 | Fix: mutation-subsets drops tests named only in killedBy/coveredBy and exits 0 as clean | P4 | code-hygiene, mutation-subsets | 2026-11-25 |
+| TSK-097 | Fix: detect-scope suggests a file name as scope for files directly under apps/, packages/ or plugins/ | P3 |  | 2026-11-28 |
+| TSK-098 | Fix: detect-scope exits 2 in a repository with no commits yet | P3 |  | 2026-11-28 |
 
 ## Recently Completed
 
